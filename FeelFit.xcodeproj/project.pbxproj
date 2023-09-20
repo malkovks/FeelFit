@@ -18,7 +18,14 @@
 		0A4494DD2AB82ED80082C909 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0A4494DC2AB82ED80082C909 /* RealmSwift */; };
 		0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */; };
 		0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44950F2ABA031B0082C909 /* SetupProtocol.swift */; };
-		0A4495142ABA1A300082C909 /* FFSideBarMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495132ABA1A300082C909 /* FFSideBarMenuViewController.swift */; };
+		0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495152ABA67CE0082C909 /* FFTabBarController.swift */; };
+		0A4495192ABA72A90082C909 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495182ABA72A90082C909 /* Resources.swift */; };
+		0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495282ABA79700082C909 /* FFExercisesViewController.swift */; };
+		0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */; };
+		0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */; };
+		0A44952F2ABA7A340082C909 /* FFUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952E2ABA7A340082C909 /* FFUserViewController.swift */; };
+		0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495302ABA863D0082C909 /* FFNavigationController.swift */; };
+		0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +38,14 @@
 		0A4494CD2AB822000082C909 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageViewModel.swift; sourceTree = "<group>"; };
 		0A44950F2ABA031B0082C909 /* SetupProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupProtocol.swift; sourceTree = "<group>"; };
-		0A4495132ABA1A300082C909 /* FFSideBarMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSideBarMenuViewController.swift; sourceTree = "<group>"; };
+		0A4495152ABA67CE0082C909 /* FFTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTabBarController.swift; sourceTree = "<group>"; };
+		0A4495182ABA72A90082C909 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
+		0A4495282ABA79700082C909 /* FFExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesViewController.swift; sourceTree = "<group>"; };
+		0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthViewController.swift; sourceTree = "<group>"; };
+		0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTRainingPlanViewController.swift; sourceTree = "<group>"; };
+		0A44952E2ABA7A340082C909 /* FFUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserViewController.swift; sourceTree = "<group>"; };
+		0A4495302ABA863D0082C909 /* FFNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNavigationController.swift; sourceTree = "<group>"; };
+		0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +82,7 @@
 		0A4494BE2AB821FD0082C909 /* FeelFit */ = {
 			isa = PBXGroup;
 			children = (
+				0A4495172ABA728F0082C909 /* Helpers */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
 				0A44950B2AB9FC260082C909 /* Managers */,
 				0A4495012AB9CFDF0082C909 /* Resources */,
@@ -79,14 +94,15 @@
 		0A4495002AB9CFB40082C909 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				0A4495302ABA863D0082C909 /* FFNavigationController.swift */,
+				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
 				0A4495032AB9D0D90082C909 /* News */,
 				0A4495042AB9D0F30082C909 /* Exercises */,
 				0A4495052AB9D11D0082C909 /* Health */,
-				0A4495072AB9D1460082C909 /* User */,
 				0A4495062AB9D1330082C909 /* TrainingPlan */,
+				0A4495072AB9D1460082C909 /* User */,
 				0A4495082AB9D1630082C909 /* Information */,
 				0A4495092AB9D16D0082C909 /* Terms */,
-				0A4495132ABA1A300082C909 /* FFSideBarMenuViewController.swift */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -116,7 +132,7 @@
 			children = (
 				0A44950E2AB9FCC40082C909 /* ViewModel */,
 				0A44950D2AB9FCBD0082C909 /* View */,
-				0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */,
+				0A4495272ABA794E0082C909 /* Model */,
 			);
 			path = News;
 			sourceTree = "<group>";
@@ -124,6 +140,9 @@
 		0A4495042AB9D0F30082C909 /* Exercises */ = {
 			isa = PBXGroup;
 			children = (
+				0A44951C2ABA78EF0082C909 /* ViewModel */,
+				0A44951B2ABA78EA0082C909 /* View */,
+				0A44951A2ABA78E30082C909 /* Model */,
 			);
 			path = Exercises;
 			sourceTree = "<group>";
@@ -131,6 +150,9 @@
 		0A4495052AB9D11D0082C909 /* Health */ = {
 			isa = PBXGroup;
 			children = (
+				0A4495202ABA79250082C909 /* ViewModel */,
+				0A44951F2ABA79210082C909 /* View */,
+				0A44951E2ABA79120082C909 /* Model */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -138,6 +160,9 @@
 		0A4495062AB9D1330082C909 /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
+				0A4495262ABA79440082C909 /* ViewModel */,
+				0A4495252ABA79400082C909 /* View */,
+				0A4495242ABA793C0082C909 /* Model */,
 			);
 			path = TrainingPlan;
 			sourceTree = "<group>";
@@ -145,6 +170,9 @@
 		0A4495072AB9D1460082C909 /* User */ = {
 			isa = PBXGroup;
 			children = (
+				0A4495232ABA79350082C909 /* ViewModel */,
+				0A4495222ABA79300082C909 /* View */,
+				0A4495212ABA792B0082C909 /* Model */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -174,6 +202,7 @@
 		0A44950C2AB9FC310082C909 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -181,6 +210,7 @@
 		0A44950D2AB9FCBD0082C909 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -191,6 +221,109 @@
 				0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		0A4495172ABA728F0082C909 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				0A4495182ABA72A90082C909 /* Resources.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		0A44951A2ABA78E30082C909 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0A44951B2ABA78EA0082C909 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0A4495282ABA79700082C909 /* FFExercisesViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		0A44951C2ABA78EF0082C909 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		0A44951E2ABA79120082C909 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0A44951F2ABA79210082C909 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		0A4495202ABA79250082C909 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		0A4495212ABA792B0082C909 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0A4495222ABA79300082C909 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0A44952E2ABA7A340082C909 /* FFUserViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		0A4495232ABA79350082C909 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		0A4495242ABA793C0082C909 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0A4495252ABA79400082C909 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		0A4495262ABA79440082C909 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		0A4495272ABA794E0082C909 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -274,12 +407,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
+				0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */,
+				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
+				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
-				0A4495142ABA1A300082C909 /* FFSideBarMenuViewController.swift in Sources */,
+				0A4495192ABA72A90082C909 /* Resources.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
+				0A44952F2ABA7A340082C909 /* FFUserViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
+				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
+				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
