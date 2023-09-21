@@ -1,5 +1,5 @@
 //
-//  FFUserViewController.swift
+//  FFProfileViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 20.09.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FFUserViewController: UIViewController, SetupViewController {
+class FFProfileViewController: UIViewController, SetupViewController {
     
     
 

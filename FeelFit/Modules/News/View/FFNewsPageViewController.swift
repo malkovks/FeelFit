@@ -8,55 +8,41 @@
 import UIKit
 import SnapKit
 
-struct Model {
-    let userName: String
-    let userSecondName: String
-    let userAge: Int
-}
 
+//доделать класс в соответствии с примером
+// вставить таблицу для примерного отображения данных
+//модель инициализировать из viewModel во вью при нажатии кнопки
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
-    var viewModel: ViewModel! {
-        didSet {
-            navigationItem.title = viewModel.user.userName + viewModel.user.userSecondName
-        }
-    }
+    private var viewModel: FFNewsPageViewModel!
     
     //MARK: - UI elements
     
-    let label: UILabel = {
-       let label = UILabel()
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 24)
-        label.textAlignment = .center
-        return label
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.color = FFResources.Colors.activeColor
+        return spinner
     }()
     
-    private lazy var sideBarMenu: UIBarButtonItem = {
-        return UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .done, target: self, action: #selector(didTapOpenMenu))
-    }()
+    private let customView = FFNewsPageView()
     
-    
-    
-    
+    //MARK: - View loading
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let user = Model(userName: "John", userSecondName: "Wick", userAge: 40)
-        viewModel = ViewModel(user: user)
-        viewModel.delegate = self
         setupConstraints()
         setupView()
         setupNavigationController()
+        setupSpinner()
+        setupNewViewModel()
     }
     //MARK: - Targets
     @objc private func didTapCheck(){
-        viewModel.fetchData()
+    
+        viewModel!.requestData()
     }
     
     @objc private func didTapOpenMenu(){
         
-        print("Button pressed")
         
     }
     
@@ -65,31 +51,44 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         view.backgroundColor = .systemBackground
     }
     
+    func setupNewViewModel(){
+        viewModel = FFNewsPageViewModel()
+        viewModel.delegate = self
+    }
+    
+    func setupSpinner() {
+        view.addSubview(spinner)
+        spinner.center = view.center
+    }
+    
     func setupNavigationController() {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapCheck))
-//        navigationItem.leftBarButtonItem = sideBarMenu
-        addNavigationBarButton(at: .left, title: nil, imageName: "trash.fill", action: #selector(didTapOpenMenu))
-        addNavigationBarButton(at: .right, title: nil, imageName: "bookmark.fill", action: #selector(didTapCheck))
-    }
-    
-    
-
-
-}
-
-extension FFNewsPageViewController: ViewModelDelegate {
-    func didTapRegister(text: String) {
-        label.text = text
+        addNavigationBarButton(at: .left, title: nil, imageName: "arrow.clockwise", action: #selector(didTapOpenMenu))
+        addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapCheck))
     }
 }
+
+extension FFNewsPageViewController: FFNewsPageDelegate {
+    func willLoadData() {
+        spinner.startAnimating()
+    }
+    
+    func didLoadData(model: [TestModel]) {
+        spinner.stopAnimating()
+        dump(model)
+    }
+}
+
 
 extension FFNewsPageViewController {
     private func setupConstraints(){
-        view.addSubview(label)
-        label.snp.makeConstraints { make in
+        view.addSubview(customView)
+        customView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+
     }
 }
 

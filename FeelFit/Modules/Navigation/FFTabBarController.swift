@@ -45,7 +45,7 @@ final class FFTabBarController: UITabBarController {
         let exercises = tabBarSetup(vc: FFExercisesViewController(), title: "Exercises", image: "figure.strengthtraining.traditional",tag: FFTabBarIndex.exercises.rawValue)
         let health = tabBarSetup(vc: FFHealthViewController(), title: "Health", image: "heart.text.square",tag: FFTabBarIndex.health.rawValue)
         let plan = tabBarSetup(vc: FFTRainingPlanViewController(), title: "Plan", image: "checkmark.diamond",tag: FFTabBarIndex.trainingPlan.rawValue)
-        let user = tabBarSetup(vc: FFUserViewController(), title: "User", image: "person.fill",tag: FFTabBarIndex.user.rawValue)
-        setViewControllers([news, exercises, plan, health, user], animated: true)
+        let profile = tabBarSetup(vc: FFProfileViewController(), title: "My Profile", image: "person.fill",tag: FFTabBarIndex.user.rawValue)
+        setViewControllers([news, exercises, plan, health, profile], animated: true)
     }
 }

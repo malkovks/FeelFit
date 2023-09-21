@@ -11,6 +11,7 @@ enum BarButtonPosition {
     case left
     case right
 }
+
 extension UIViewController {
     func addNavigationBarButton(at position: BarButtonPosition,title: String?,imageName: String,action: Selector){
         let image = UIImage(systemName: imageName)
