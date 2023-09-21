@@ -41,8 +41,12 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         viewModel!.requestData()
     }
     
+    //CALL NEWS API
     @objc private func didTapOpenMenu(){
-        
+//        let requestAccess = FFGetNewsRequest.shared
+//        requestAccess.getRequestResult { _ in
+//            <#code#>
+//        }
         
     }
     
@@ -63,6 +67,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     func setupNavigationController() {
         navigationController?.navigationBar.prefersLargeTitles = false
+        title = "News"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapCheck))
         addNavigationBarButton(at: .left, title: nil, imageName: "arrow.clockwise", action: #selector(didTapOpenMenu))
         addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapCheck))
@@ -74,9 +79,14 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         spinner.startAnimating()
     }
     
-    func didLoadData(model: [TestModel]) {
+    func didLoadData(model: [Articles]?,error: Error?) {
+        if error != nil {
+            alertError(title: "Error parsing data", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
+        } else {
+            dump(model)
+        }
         spinner.stopAnimating()
-        dump(model)
+        
     }
 }
 
@@ -85,7 +95,9 @@ extension FFNewsPageViewController {
     private func setupConstraints(){
         view.addSubview(customView)
         customView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         
 
