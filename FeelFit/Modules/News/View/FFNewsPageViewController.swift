@@ -43,10 +43,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     //CALL NEWS API
     @objc private func didTapOpenMenu(){
-//        let requestAccess = FFGetNewsRequest.shared
-//        requestAccess.getRequestResult { _ in
-//            <#code#>
-//        }
         
     }
     
