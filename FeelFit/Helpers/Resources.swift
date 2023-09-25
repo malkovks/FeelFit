@@ -15,6 +15,7 @@ enum FFResources {
         static var secondaryColor = UIColor(named: "secondaryColor") ?? .systemMint
         static var tabBarBackgroundColor = UIColor(named: "tabBarBackgroundColor") ?? .systemBlue
         static var textColor = UIColor(named: "textColor") ?? .black
+        static var detailTextColor = UIColor(named: "detailTextColor") ?? .black
     }
     
     enum Fonts {

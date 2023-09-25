@@ -41,6 +41,8 @@ struct Articles: Codable{
     let url: String?
     let urlToImage: String?
     let publishedAt: String
+    let author: String?
+    let content: String?
 
 }
 //отдельная структура тк там идет несколько подпунктов, которые мы не берем

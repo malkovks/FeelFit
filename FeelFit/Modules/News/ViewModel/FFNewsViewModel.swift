@@ -25,11 +25,16 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     
     ///function for request data from API
     func requestData() {
-//        localModel.append(Articles(source: Source(id: "some id", name: "Some name"), author: "Some author", title: "Some title", description: "Some description", url: "www.news.com", urlToImage: nil, publishedAt: "20.10.2023", content: ""))
-//        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-//            self.delegate?.didLoadData(model: self.localModel, error: nil)
-//            print("End work with view model")
-//        }
+        delegate?.willLoadData()
+        let request = FFGetNewsRequest.shared
+        request.getRequestResult { [weak self] result in
+            switch result{
+            case .success(let data):
+                self?.delegate?.didLoadData(model: data, error: nil)
+            case .failure(let error):
+                self?.delegate?.didLoadData(model: nil, error: error)
+            }
+        }
     }
     
     

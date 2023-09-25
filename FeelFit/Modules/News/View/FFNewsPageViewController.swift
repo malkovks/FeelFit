@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 
 
+
+
 //доделать класс в соответствии с примером
 // вставить таблицу для примерного отображения данных
 //модель инициализировать из viewModel во вью при нажатии кнопки
@@ -54,6 +56,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     func setupNewViewModel(){
         viewModel = FFNewsPageViewModel()
         viewModel.delegate = self
+        viewModel.requestData()//ГОТОВАЯ ФУНКЦИЯ ЗАГРУЗКИ ДАННЫХ ИЗ API
     }
     
     func setupSpinner() {
@@ -68,6 +71,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         addNavigationBarButton(at: .left, title: nil, imageName: "arrow.clockwise", action: #selector(didTapOpenMenu))
         addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapCheck))
     }
+    
 }
 
 extension FFNewsPageViewController: FFNewsPageDelegate {
@@ -79,7 +83,8 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         if error != nil {
             alertError(title: "Error parsing data", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
         } else {
-            dump(model)
+            customView.cellData = model!
+            customView.tableView.reloadData()
         }
         spinner.stopAnimating()
         
