@@ -14,7 +14,7 @@ class FFGetNewsRequest {
     static var shared = FFGetNewsRequest()
     
     //request содержит ссылку поиска по всем странам заданного вопроса. Размер страницы стоит пока 5, можно ставить до 100, но много так не нужно
-    private var request = "https://newsapi.org/v2/everything?q=fitness&pageSize=5&apiKey=726ada313f7a4371a04f04c875036854"
+    private var request = "https://newsapi.org/v2/everything?q=fitness&pageSize=10&apiKey=726ada313f7a4371a04f04c875036854"
     
     //Функция работает ,данные возвращает
     func getRequestResult(completion: @escaping (Result<[Articles],Error>) -> ()){

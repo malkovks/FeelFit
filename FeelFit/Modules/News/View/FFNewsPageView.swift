@@ -25,7 +25,7 @@ class FFNewsPageView: UIView, UITableViewDataSource, UITableViewDelegate {
         setupConstraints()
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -47,12 +47,7 @@ class FFNewsPageView: UIView, UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: NewsPageTableViewCell.identifier, for: indexPath) as! NewsPageTableViewCell
         let data = cellData?[indexPath.row]
         cell.configureCell(model: data)
-//        cell.textLabel?.text = data?.title
-//        cell.detailTextLabel?.text = data?.description
-////        let dataImage = try! Data(contentsOf: url)
-//        
-//        cell.imageView?.image = UIImage(systemName: "trash")
-//        cell.imageView?.tintColor = FFResources.Colors.activeColor
+        cell.delegate = self
         return cell
     }
     //TAbleView delegate
@@ -62,5 +57,12 @@ class FFNewsPageView: UIView, UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+}
+
+extension FFNewsPageView: TableViewCellDelegate {
+    func buttonDidTapped(sender: UITableViewCell) {
+        print("button pressed")
+    }
+    
     
 }

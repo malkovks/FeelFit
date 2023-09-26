@@ -7,13 +7,20 @@
 
 import UIKit
 
+protocol TableViewCellDelegate: AnyObject {
+    func buttonDidTapped(sender: UITableViewCell)
+}
+
 class NewsPageTableViewCell: UITableViewCell {
+    
+    weak var delegate: TableViewCellDelegate?
 
     static let identifier = "NewsPageTableViewCell"
     
+    private var isAddedToFavourite: Bool = false
+    
     let titleLabel: UILabel = {
        let label = UILabel()
-        label.backgroundColor = .systemMint
         label.font = .systemFont(ofSize: UIFont.systemFontSize,weight: .semibold)
         label.textColor = FFResources.Colors.textColor
         label.textAlignment = .left
@@ -26,7 +33,6 @@ class NewsPageTableViewCell: UITableViewCell {
 //        let underline = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.thick.rawValue]
         //подумать о подчеркивании ссылки для активного перехода или для копирования ссылки
         let label = UILabel()
-        label.backgroundColor = .systemIndigo
          label.text = "Source"
         label.textColor = .systemBlue
         label.font = .systemFont(ofSize: 16, weight: .thin)
@@ -38,7 +44,6 @@ class NewsPageTableViewCell: UITableViewCell {
     let authorLabel: UILabel = {
         let label = UILabel()
          label.text = "Author"
-        label.backgroundColor = .yellow
         label.textAlignment = .left
         label.numberOfLines = 1
         label.font = .systemFont(ofSize: 16, weight: .regular)
@@ -48,12 +53,10 @@ class NewsPageTableViewCell: UITableViewCell {
     
     let contentLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .green
         label.numberOfLines = 0
         label.textAlignment = .justified
         label.textColor = FFResources.Colors.textColor
-        label.font = .systemFont(ofSize: 16,weight: .light)
-         label.text = "Content"
+        label.font = .systemFont(ofSize: 14,weight: .thin)
          return label
     }()
     
@@ -69,19 +72,35 @@ class NewsPageTableViewCell: UITableViewCell {
     
     let newsAddFavouriteButton: UIButton = {
         let button = UIButton(type: .system)
-        button.imageView?.image = UIImage(systemName: "heart")
-        button.backgroundColor = .systemRed
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.tintColor = FFResources.Colors.activeColor
         return button
     }()
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         setupConstraints()
+        newsAddFavouriteButton.addTarget(self, action: #selector(didTapButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func didTapButtonTapped(sender: UIButton){
+        isAddedToFavourite.toggle()
+        
+        let imageName = isAddedToFavourite ? "heart.fill" : "heart"
+        let image = UIImage(systemName: imageName)
+        newsAddFavouriteButton.setImage(image, for: .normal)
+        delegate?.buttonDidTapped(sender: self)
     }
     
     func configureCell(model: Articles?){
         titleLabel.text = model?.title
-        contentLabel.text = model?.content
+        contentLabel.text = model?.description
+        sourceLabel.text = "Source: " + (model?.source.name ?? "")
+        authorLabel.text = "Author: " + (model?.author ?? "")
         
         if let image = model?.urlToImage {
             guard let url = URL(string: image) else { return }
@@ -93,38 +112,54 @@ class NewsPageTableViewCell: UITableViewCell {
             }.resume()
         }
     }
+    
+    
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+//    override func setSelected(_ selected: Bool, animated: Bool) {
+//        super.setSelected(selected, animated: animated)
+//
+//        // Configure the view for the selected state
+//    }
 
 }
 
 extension NewsPageTableViewCell {
     private func setupConstraints(){
         contentView.addSubview(newsImageView)
-        newsImageView.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview().inset(5)
-            make.width.equalTo(self.snp.height).inset(5)
-        }
-        contentView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
+        
+        let titleStackView = UIStackView(arrangedSubviews: [titleLabel,newsAddFavouriteButton])
+        titleStackView.axis = .horizontal
+        titleStackView.alignment = .center
+        titleStackView.distribution = .equalSpacing
+        
+        let secondaryStackView = UIStackView(arrangedSubviews: [sourceLabel,authorLabel])
+        secondaryStackView.axis = .vertical
+        secondaryStackView.alignment = .leading
+        secondaryStackView.distribution = .fillProportionally
+        
+        contentView.addSubview(titleStackView)
+        titleStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(3)
             make.top.equalToSuperview().offset(3)
-            make.leading.equalTo(newsImageView.snp.trailing).offset(3)
-            make.trailing.equalToSuperview().offset(23)
-            make.height.equalToSuperview().dividedBy(7)
+            make.height.equalToSuperview().dividedBy(6)
         }
-        contentView.addSubview(newsAddFavouriteButton)
-        newsAddFavouriteButton.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().offset(3)
-            make.leading.equalTo(titleLabel.snp.trailing).offset(3)
-            make.width.equalTo(20)
+        
+        contentView.addSubview(secondaryStackView)
+        secondaryStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(3)
+            make.top.equalTo(titleStackView.snp.bottom).offset(3)
+            make.height.equalToSuperview().dividedBy(4)
         }
+        
+        newsImageView.snp.makeConstraints { make in
+            make.top.equalTo(secondaryStackView.snp.bottom).offset(3)
+            make.bottom.leading.equalToSuperview().inset(3)
+            make.width.equalToSuperview().dividedBy(4)
+        }
+    
         contentView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(3)
+            make.top.equalTo(secondaryStackView.snp.bottom).offset(3)
             make.leading.equalTo(newsImageView.snp.trailing).offset(3)
             make.trailing.bottom.equalToSuperview().inset(3)
         }
