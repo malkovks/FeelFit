@@ -11,6 +11,7 @@ import UIKit
 protocol FFNewsPageDelegate: AnyObject {
     func willLoadData()
     func didLoadData(model: [Articles]?,error: Error?)
+    func didUpdateData(model: [Articles]?,error: Error?)
 }
 
 ///VIewModel setup protocol
@@ -33,6 +34,19 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
                 self?.delegate?.didLoadData(model: data, error: nil)
             case .failure(let error):
                 self?.delegate?.didLoadData(model: nil, error: error)
+            }
+        }
+    }
+    
+    func uploadNewData(pageNumber: Int = 1){
+        delegate?.willLoadData()
+        let request = FFGetNewsRequest.shared
+        request.getRequestResult(numberOfPage: pageNumber) { [weak self] result in
+            switch result {
+            case .success(let data):
+                self?.delegate?.didUpdateData(model: data, error: nil)
+            case .failure(let error):
+                self?.delegate?.didUpdateData(model: nil, error: error)
             }
         }
     }

@@ -26,7 +26,7 @@ final class FFTabBarController: UITabBarController {
     
     private func configureTabBar(){
         tabBar.tintColor = FFResources.Colors.activeColor
-        tabBar.barTintColor = FFResources.Colors.inactiveColor
+        tabBar.barTintColor = FFResources.Colors.tabBarBackgroundColor
         tabBar.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         tabBar.layer.masksToBounds = true
     }

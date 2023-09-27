@@ -32,7 +32,6 @@
 		0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */; };
 		0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */; };
 		0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495382ABC43B70082C909 /* FFNewsModel.swift */; };
-		0A44953B2ABC5DE30082C909 /* FFNewsPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44953A2ABC5DE30082C909 /* FFNewsPageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,7 +58,6 @@
 		0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+extension.swift"; sourceTree = "<group>"; };
 		0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetNewsRequest.swift; sourceTree = "<group>"; };
 		0A4495382ABC43B70082C909 /* FFNewsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModel.swift; sourceTree = "<group>"; };
-		0A44953A2ABC5DE30082C909 /* FFNewsPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,12 +75,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0A1BEC722AC1D9E000914FD5 /* CustomView */ = {
+		0A1BEC722AC1D9E000914FD5 /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
 				0A1BEC732AC1D9FE00914FD5 /* NewsPageTableViewCell.swift */,
 			);
-			path = CustomView;
+			path = TableViewCell;
 			sourceTree = "<group>";
 		};
 		0A22BB262AC3051B004FD282 /* TableViewDelegate */ = {
@@ -99,6 +97,16 @@
 				0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */,
 			);
 			path = TableViewDataSource;
+			sourceTree = "<group>";
+		};
+		0A22BB2C2AC4566E004FD282 /* TableViewGroup */ = {
+			isa = PBXGroup;
+			children = (
+				0A1BEC722AC1D9E000914FD5 /* TableViewCell */,
+				0A22BB272AC30523004FD282 /* TableViewDataSource */,
+				0A22BB262AC3051B004FD282 /* TableViewDelegate */,
+			);
+			path = TableViewGroup;
 			sourceTree = "<group>";
 		};
 		0A4494B32AB821FD0082C909 = {
@@ -168,8 +176,7 @@
 		0A4495032AB9D0D90082C909 /* News */ = {
 			isa = PBXGroup;
 			children = (
-				0A22BB272AC30523004FD282 /* TableViewDataSource */,
-				0A22BB262AC3051B004FD282 /* TableViewDelegate */,
+				0A22BB2C2AC4566E004FD282 /* TableViewGroup */,
 				0A44950E2AB9FCC40082C909 /* ViewModel */,
 				0A44950D2AB9FCBD0082C909 /* View */,
 				0A4495272ABA794E0082C909 /* Model */,
@@ -252,8 +259,6 @@
 			isa = PBXGroup;
 			children = (
 				0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */,
-				0A44953A2ABC5DE30082C909 /* FFNewsPageView.swift */,
-				0A1BEC722AC1D9E000914FD5 /* CustomView */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -470,7 +475,6 @@
 			files = (
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* NewsPageTableViewCell.swift in Sources */,
-				0A44953B2ABC5DE30082C909 /* FFNewsPageView.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,

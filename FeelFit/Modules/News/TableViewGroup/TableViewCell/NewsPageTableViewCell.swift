@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TableViewCellDelegate: AnyObject {
-    func buttonDidTapped(sender: UITableViewCell)
+    func buttonDidTapped(sender: UITableViewCell,status: Bool)
 }
 
 class NewsPageTableViewCell: UITableViewCell {
@@ -67,6 +67,8 @@ class NewsPageTableViewCell: UITableViewCell {
         image.clipsToBounds = true
         image.backgroundColor = .systemIndigo
         image.contentMode = .scaleAspectFill
+        image.image = UIImage(systemName: "photo")
+        image.tintColor = FFResources.Colors.tabBarBackgroundColor
         return image
     }()
     
@@ -79,6 +81,11 @@ class NewsPageTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        titleLabel.text = nil
+        contentLabel.text = nil
+        sourceLabel.text = nil
+        authorLabel.text = nil
+        newsImageView.image = nil
     }
     
     override func prepareForReuse() {
@@ -93,12 +100,12 @@ class NewsPageTableViewCell: UITableViewCell {
         let imageName = isAddedToFavourite ? "heart.fill" : "heart"
         let image = UIImage(systemName: imageName)
         newsAddFavouriteButton.setImage(image, for: .normal)
-        delegate?.buttonDidTapped(sender: self)
+        delegate?.buttonDidTapped(sender: self, status: isAddedToFavourite)
     }
     
     func configureCell(model: Articles?){
-        titleLabel.text = model?.title
-        contentLabel.text = model?.description
+        titleLabel.text = model?.title ?? nil
+        contentLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
         authorLabel.text = "Author: " + (model?.author ?? "")
         
@@ -110,6 +117,8 @@ class NewsPageTableViewCell: UITableViewCell {
                     self?.newsImageView.image = UIImage(data: data)
                 }
             }.resume()
+        } else {
+            newsImageView.image = nil
         }
     }
     
@@ -125,12 +134,15 @@ class NewsPageTableViewCell: UITableViewCell {
 
 extension NewsPageTableViewCell {
     private func setupConstraints(){
+        
+        
+        
         contentView.addSubview(newsImageView)
         
         let titleStackView = UIStackView(arrangedSubviews: [titleLabel,newsAddFavouriteButton])
         titleStackView.axis = .horizontal
         titleStackView.alignment = .center
-        titleStackView.distribution = .equalSpacing
+        titleStackView.distribution = .fillProportionally
         
         let secondaryStackView = UIStackView(arrangedSubviews: [sourceLabel,authorLabel])
         secondaryStackView.axis = .vertical
