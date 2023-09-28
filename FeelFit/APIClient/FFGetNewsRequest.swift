@@ -17,12 +17,20 @@ class FFGetNewsRequest {
     private var request = "https://newsapi.org/v2/everything?q=fitness&pageSize=20&page=1&apiKey=726ada313f7a4371a04f04c875036854"
     
     //Функция работает ,данные возвращает
-    func getRequestResult(numberOfPage: Int = 1,completion: @escaping (Result<[Articles],Error>) -> ()){
-        guard let url = URL(string: "https://newsapi.org/v2/everything?q=fitness&pageSize=20&page=\(numberOfPage)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
+    func getRequestResult(numberOfPage: Int = 1,requestType: RequestLoadingType = .fitness,completion: @escaping (Result<[Articles],Error>) -> ()){
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let lastDay = calendar.date(byAdding: .day, value: -1, to: currentDate)!
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let lastDayString = dateFormatter.string(from: lastDay)
+        let currentDayString = dateFormatter.string(from: currentDate)
+        
+        let requestType = requestType.rawValue
+        
+        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(lastDayString)&to\(currentDayString)&pageSize=20&page=\(numberOfPage)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
         AF.request(url).responseJSON { response in
-            
             if let data = response.data {
-//                print(String(data: data, encoding: .utf8) as Any)
                 let decoder = JSONDecoder()
                 do {
                     let model = try decoder.decode(APIResponse.self, from: data)

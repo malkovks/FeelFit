@@ -17,9 +17,11 @@ final class FFNavigationController: UINavigationController {
     private func configure(){
         view.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         navigationBar.isTranslucent = false
+        
         navigationBar.standardAppearance.titleTextAttributes = [.foregroundColor: FFResources.Colors.textColor,
                                                                 .font: FFResources.Fonts.didotFont(size: UIFont.systemFontSize)]
         navigationBar.tintColor = FFResources.Colors.activeColor
+        navigationBar.barTintColor = FFResources.Colors.tabBarBackgroundColor
     }
     
 

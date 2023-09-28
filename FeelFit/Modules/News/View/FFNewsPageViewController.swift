@@ -8,9 +8,12 @@
 import UIKit
 import SnapKit
 
-//доделать класс в соответствии с примером
-// вставить таблицу для примерного отображения данных
-//модель инициализировать из viewModel во вью при нажатии кнопки
+enum RequestLoadingType: String {
+    case fitness = "fitness"
+    case health = "health"
+    case trainings = "gym"
+}
+
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
     private var viewModel: FFNewsPageViewModel!
@@ -26,7 +29,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         return spinner
     }()
     
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .plain)
         table.register(NewsPageTableViewCell.self, forCellReuseIdentifier: NewsPageTableViewCell.identifier)
         return table
@@ -44,6 +47,15 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         return button
     }()
     
+    private let newsSegmentalController: UISegmentedControl = {
+       let controller = UISegmentedControl(items: ["Fitness","Health","Trainings"])
+        controller.selectedSegmentIndex = 0
+        controller.tintColor = FFResources.Colors.activeColor
+        controller.selectedSegmentTintColor = FFResources.Colors.activeColor
+        controller.backgroundColor = FFResources.Colors.tabBarBackgroundColor
+        return controller
+    }()
+    
     //MARK: - View loading
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,17 +63,11 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupView()
         setupNavigationController()
         setupSpinner()
-        setupTableView()
         setupNewViewModel()
+        setupTableView()
         DispatchQueue.main.asyncAfter(deadline: .now()+1){
             self.viewModel!.requestData()
         }
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
@@ -76,6 +82,24 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     @objc private func didTapLoadMore(){
         let pageNumber = model.count/20+1
         viewModel!.uploadNewData(pageNumber: pageNumber)
+    }
+    
+    @objc private func didTapRefreshData(){
+        viewModel!.requestData()
+    }
+    
+    @objc private func didTapChangeSegment(){
+        switch newsSegmentalController.selectedSegmentIndex {
+        case 0:
+            
+            viewModel!.requestData(type: .fitness)
+        case 1:
+            viewModel!.requestData(type: .health)
+        case 2:
+            viewModel!.requestData(type: .trainings)
+        default:
+            break
+        }
     }
     
     //MARK: - Setup methods
@@ -97,7 +121,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.maximumContentSizeCategory = .small
         title = "News"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapOpenFavourite))
         addNavigationBarButton(at: .left, title: nil, imageName: "arrow.clockwise", action: #selector(didTapOpenMenu))
         addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite))
     }
@@ -109,24 +132,27 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         tableView.delegate = delegateClass
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.automaticallyAdjustsScrollIndicatorInsets = false
-        tableView.tableHeaderView = nil
-        tableView.tableFooterView = nil
+        
+        
+        tableView.tableHeaderView = newsSegmentalController
+        tableView.refreshControl = viewModel.refreshControll
+        viewModel.refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
+        newsSegmentalController.addTarget(self, action: #selector(didTapChangeSegment), for: .valueChanged)
     }
 }
-
+/// отвечает за нажатие строки пользователем и возвращает индекс
 extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
-    //функция отвечает за нажатие строки пользователем и возвращает индекс
+    
     func selectedCell(indexPath: IndexPath) {
         
         print("\(indexPath.row) - Index Selected")
     }
-    
-    
 }
-
+///view model delegate
 extension FFNewsPageViewController: FFNewsPageDelegate {
     func willLoadData() {
         spinner.startAnimating()
+        viewModel!.refreshControll.beginRefreshing()
     }
     
     func didLoadData(model: [Articles]?,error: Error?) {
@@ -144,6 +170,7 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         }
         tableView.reloadData()
         spinner.stopAnimating()
+        viewModel!.refreshControll.endRefreshing()
     }
     
     func didUpdateData(model: [Articles]?, error: Error?) {
@@ -165,9 +192,10 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
 
 extension FFNewsPageViewController {
     private func setupConstraints(){
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(3)
             make.leading.trailing.equalToSuperview().inset(3)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }

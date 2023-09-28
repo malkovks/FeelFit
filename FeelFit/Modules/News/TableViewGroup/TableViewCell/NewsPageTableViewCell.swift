@@ -9,7 +9,10 @@ import UIKit
 
 protocol TableViewCellDelegate: AnyObject {
     func buttonDidTapped(sender: UITableViewCell,status: Bool)
+    func imageWasSelected(imageView: UIImageView?)
 }
+
+
 
 class NewsPageTableViewCell: UITableViewCell {
     
@@ -30,8 +33,6 @@ class NewsPageTableViewCell: UITableViewCell {
     }()
     
     let sourceLabel: UILabel = {
-//        let underline = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.thick.rawValue]
-        //подумать о подчеркивании ссылки для активного перехода или для копирования ссылки
         let label = UILabel()
          label.text = "Source"
         label.textColor = .systemBlue
@@ -92,6 +93,9 @@ class NewsPageTableViewCell: UITableViewCell {
         super.prepareForReuse()
         setupConstraints()
         newsAddFavouriteButton.addTarget(self, action: #selector(didTapButtonTapped), for: .touchUpInside)
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
+        newsImageView.isUserInteractionEnabled = true
+        newsImageView.addGestureRecognizer(gesture)
     }
     
     @objc private func didTapButtonTapped(sender: UIButton){
@@ -101,6 +105,12 @@ class NewsPageTableViewCell: UITableViewCell {
         let image = UIImage(systemName: imageName)
         newsAddFavouriteButton.setImage(image, for: .normal)
         delegate?.buttonDidTapped(sender: self, status: isAddedToFavourite)
+    }
+    
+    @objc private func didTapImageView(){
+        print("Open image")
+        let image = newsImageView.image
+        let imageView = UIImageView(image: image)
     }
     
     func configureCell(model: Articles?){
@@ -121,24 +131,10 @@ class NewsPageTableViewCell: UITableViewCell {
             newsImageView.image = nil
         }
     }
-    
-    
-
-//    override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//
-//        // Configure the view for the selected state
-//    }
-
 }
 
 extension NewsPageTableViewCell {
     private func setupConstraints(){
-        
-        
-        
-        contentView.addSubview(newsImageView)
-        
         let titleStackView = UIStackView(arrangedSubviews: [titleLabel,newsAddFavouriteButton])
         titleStackView.axis = .horizontal
         titleStackView.alignment = .center
@@ -163,6 +159,7 @@ extension NewsPageTableViewCell {
             make.height.equalToSuperview().dividedBy(4)
         }
         
+        contentView.addSubview(newsImageView)
         newsImageView.snp.makeConstraints { make in
             make.top.equalTo(secondaryStackView.snp.bottom).offset(3)
             make.bottom.leading.equalToSuperview().inset(3)
@@ -175,6 +172,5 @@ extension NewsPageTableViewCell {
             make.leading.equalTo(newsImageView.snp.trailing).offset(3)
             make.trailing.bottom.equalToSuperview().inset(3)
         }
-        
     }
 }
