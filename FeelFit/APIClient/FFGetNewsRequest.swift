@@ -9,6 +9,8 @@ import UIKit
 import Alamofire
 
 
+
+
 class FFGetNewsRequest {
     
     static var shared = FFGetNewsRequest()
@@ -17,7 +19,7 @@ class FFGetNewsRequest {
     private var request = "https://newsapi.org/v2/everything?q=fitness&pageSize=20&page=1&apiKey=726ada313f7a4371a04f04c875036854"
     
     //Функция работает ,данные возвращает
-    func getRequestResult(numberOfPage: Int = 1,requestType: RequestLoadingType = .fitness,completion: @escaping (Result<[Articles],Error>) -> ()){
+    func getRequestResult(numberOfPage: Int = 1,requestType: RequestLoadingType = .fitness,requestSortType: RequestSortType = .publishedAt,completion: @escaping (Result<[Articles],Error>) -> ()){
         let currentDate = Date()
         let calendar = Calendar.current
         let lastDay = calendar.date(byAdding: .day, value: -1, to: currentDate)!
@@ -27,8 +29,8 @@ class FFGetNewsRequest {
         let currentDayString = dateFormatter.string(from: currentDate)
         
         let requestType = requestType.rawValue
-        
-        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(lastDayString)&to\(currentDayString)&pageSize=20&page=\(numberOfPage)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
+
+        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(lastDayString)&to\(currentDayString)&pageSize=20&page=\(numberOfPage)&sortBy=\(requestSortType)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
         AF.request(url).responseJSON { response in
             if let data = response.data {
                 let decoder = JSONDecoder()
@@ -37,7 +39,6 @@ class FFGetNewsRequest {
                     completion(.success(model.articles))
                 } catch {
                     completion(.failure(error))
-                    print("Error parsing data")
                 }
             }else {
                 guard let error = response.error else { return }
@@ -46,3 +47,5 @@ class FFGetNewsRequest {
         }
     }
 }
+
+//"https://newsapi.org/v2/everything?q=fitness&from2023-09-28&to2023-09-29&pageSize=20&page=1&sortBy=publishedAt&apiKey=726ada313f7a4371a04f04c875036854"

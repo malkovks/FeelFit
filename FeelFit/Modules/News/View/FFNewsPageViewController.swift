@@ -8,11 +8,7 @@
 import UIKit
 import SnapKit
 
-enum RequestLoadingType: String {
-    case fitness = "fitness"
-    case health = "health"
-    case trainings = "gym"
-}
+
 
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
@@ -20,6 +16,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     private var delegateClass: FFNewsTableViewDelegate?
     private var dataSourceClass: FFNewsTableViewDataSource?
     
+    
+    private var typeRequest = RequestLoadingType.fitness
     var model: [Articles] = []
     //MARK: - UI elements
     
@@ -76,12 +74,12 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     //CALL NEWS API
     @objc private func didTapOpenMenu(){
-        viewModel!.requestData()
+        viewModel!.requestData(type: typeRequest)
     }
     
     @objc private func didTapLoadMore(){
         let pageNumber = model.count/20+1
-        viewModel!.uploadNewData(pageNumber: pageNumber)
+        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest)
     }
     
     @objc private func didTapRefreshData(){
@@ -91,12 +89,17 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     @objc private func didTapChangeSegment(){
         switch newsSegmentalController.selectedSegmentIndex {
         case 0:
-            
             viewModel!.requestData(type: .fitness)
+            viewModel.typeRequest = .fitness
+            typeRequest = .fitness
         case 1:
             viewModel!.requestData(type: .health)
+            viewModel.typeRequest = .health
+            typeRequest = .health
         case 2:
             viewModel!.requestData(type: .trainings)
+            viewModel.typeRequest = .trainings
+            typeRequest = .trainings
         default:
             break
         }
@@ -154,20 +157,20 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         spinner.startAnimating()
         viewModel!.refreshControll.beginRefreshing()
     }
-    
+    //доделать запрос чтобы он не добавлял по 20 новых запросов одинаково, удалял старые и добавлял новые
     func didLoadData(model: [Articles]?,error: Error?) {
-        if error != nil {
+        guard error == nil else {
             alertError(title: "Error parsing data", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
-        } else {
-            loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
-            let newModel = model ?? [Articles]()
-            self.model = newModel
-            dataSourceClass = FFNewsTableViewDataSource(with: self.model)
-            delegateClass = FFNewsTableViewDelegate(with: self,model: self.model)
-            tableView.dataSource = dataSourceClass
-            tableView.delegate = delegateClass
-            tableView.tableFooterView = loadDataButton
+            return
         }
+        loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
+        let newModel = model ?? [Articles]()
+        self.model += newModel
+        dataSourceClass = FFNewsTableViewDataSource(with: self.model)
+        delegateClass = FFNewsTableViewDelegate(with: self,model: self.model)
+        tableView.dataSource = dataSourceClass
+        tableView.delegate = delegateClass
+        tableView.tableFooterView = loadDataButton
         tableView.reloadData()
         spinner.stopAnimating()
         viewModel!.refreshControll.endRefreshing()

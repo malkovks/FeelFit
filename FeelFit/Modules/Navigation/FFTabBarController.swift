@@ -7,13 +7,7 @@
 
 import UIKit
 
-enum FFTabBarIndex: Int {
-    case news
-    case exercises
-    case trainingPlan
-    case health
-    case user
-}
+
 
 final class FFTabBarController: UITabBarController {
 

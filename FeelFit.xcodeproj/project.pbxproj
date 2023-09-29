@@ -23,7 +23,7 @@
 		0A4494FF2AB99FA40082C909 /* FFNewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494FE2AB99FA40082C909 /* FFNewsViewModel.swift */; };
 		0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44950F2ABA031B0082C909 /* SetupProtocol.swift */; };
 		0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495152ABA67CE0082C909 /* FFTabBarController.swift */; };
-		0A4495192ABA72A90082C909 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495182ABA72A90082C909 /* Resources.swift */; };
+		0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495182ABA72A90082C909 /* Resources+Enums.swift */; };
 		0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495282ABA79700082C909 /* FFExercisesViewController.swift */; };
 		0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */; };
 		0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */; };
@@ -49,7 +49,7 @@
 		0A4494FE2AB99FA40082C909 /* FFNewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsViewModel.swift; sourceTree = "<group>"; };
 		0A44950F2ABA031B0082C909 /* SetupProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupProtocol.swift; sourceTree = "<group>"; };
 		0A4495152ABA67CE0082C909 /* FFTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTabBarController.swift; sourceTree = "<group>"; };
-		0A4495182ABA72A90082C909 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
+		0A4495182ABA72A90082C909 /* Resources+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Resources+Enums.swift"; sourceTree = "<group>"; };
 		0A4495282ABA79700082C909 /* FFExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesViewController.swift; sourceTree = "<group>"; };
 		0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthViewController.swift; sourceTree = "<group>"; };
 		0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTRainingPlanViewController.swift; sourceTree = "<group>"; };
@@ -274,7 +274,7 @@
 		0A4495172ABA728F0082C909 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				0A4495182ABA72A90082C909 /* Resources.swift */,
+				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -482,7 +482,7 @@
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
-				0A4495192ABA72A90082C909 /* Resources.swift in Sources */,
+				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0A22BB292AC3053B004FD282 /* FFNewsTableViewDelegate.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsViewModel.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,

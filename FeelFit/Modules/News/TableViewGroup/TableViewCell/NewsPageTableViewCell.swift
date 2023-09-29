@@ -22,13 +22,26 @@ class NewsPageTableViewCell: UITableViewCell {
     
     private var isAddedToFavourite: Bool = false
     
+    //MARK: - UI elements
     let titleLabel: UILabel = {
        let label = UILabel()
         label.font = .systemFont(ofSize: UIFont.systemFontSize,weight: .semibold)
         label.textColor = FFResources.Colors.textColor
         label.textAlignment = .left
         label.text = "Title"
-        label.numberOfLines = 0
+        label.numberOfLines = 2
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        return label
+    }()
+    
+    let publishDateLabel: UILabel = {
+       let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .left
+        label.text = "Date"
+        label.numberOfLines = 1
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return label
     }()
     
@@ -80,24 +93,17 @@ class NewsPageTableViewCell: UITableViewCell {
         return button
     }()
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        titleLabel.text = nil
-        contentLabel.text = nil
-        sourceLabel.text = nil
-        authorLabel.text = nil
-        newsImageView.image = nil
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupConstraints()
-        newsAddFavouriteButton.addTarget(self, action: #selector(didTapButtonTapped), for: .touchUpInside)
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
-        newsImageView.isUserInteractionEnabled = true
-        newsImageView.addGestureRecognizer(gesture)
+        setupView()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Target methods
     @objc private func didTapButtonTapped(sender: UIButton){
         isAddedToFavourite.toggle()
         
@@ -106,11 +112,17 @@ class NewsPageTableViewCell: UITableViewCell {
         newsAddFavouriteButton.setImage(image, for: .normal)
         delegate?.buttonDidTapped(sender: self, status: isAddedToFavourite)
     }
-    
+    ///In progress
     @objc private func didTapImageView(){
-        print("Open image")
         let image = newsImageView.image
         let imageView = UIImageView(image: image)
+    }
+    //MARK: - Setup methods
+    private func setupView(){
+        newsAddFavouriteButton.addTarget(self, action: #selector(didTapButtonTapped), for: .touchUpInside)
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
+        newsImageView.isUserInteractionEnabled = true
+        newsImageView.addGestureRecognizer(gesture)
     }
     
     func configureCell(model: Articles?){
@@ -118,7 +130,7 @@ class NewsPageTableViewCell: UITableViewCell {
         contentLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
         authorLabel.text = "Author: " + (model?.author ?? "")
-        
+        publishDateLabel.text = "Published: " + (model?.publishedAt ?? "")
         if let image = model?.urlToImage {
             guard let url = URL(string: image) else { return }
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
@@ -128,35 +140,44 @@ class NewsPageTableViewCell: UITableViewCell {
                 }
             }.resume()
         } else {
-            newsImageView.image = nil
+            newsImageView.image = UIImage(systemName: "photo")
         }
     }
 }
-
+//MARK: - Constraints
 extension NewsPageTableViewCell {
     private func setupConstraints(){
-        let titleStackView = UIStackView(arrangedSubviews: [titleLabel,newsAddFavouriteButton])
-        titleStackView.axis = .horizontal
-        titleStackView.alignment = .center
-        titleStackView.distribution = .fillProportionally
+        let titleAndReleaseStackView = UIStackView(arrangedSubviews: [titleLabel,publishDateLabel])
+        titleAndReleaseStackView.axis = .vertical
+        titleAndReleaseStackView.alignment = .leading
+        titleAndReleaseStackView.distribution = .fill
         
         let secondaryStackView = UIStackView(arrangedSubviews: [sourceLabel,authorLabel])
         secondaryStackView.axis = .vertical
         secondaryStackView.alignment = .leading
         secondaryStackView.distribution = .fillProportionally
         
-        contentView.addSubview(titleStackView)
-        titleStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(3)
-            make.top.equalToSuperview().offset(3)
-            make.height.equalToSuperview().dividedBy(6)
+        contentView.addSubview(newsAddFavouriteButton)
+        newsAddFavouriteButton.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().offset(3)
+            make.width.height.equalToSuperview().dividedBy(7)
         }
+        
+        contentView.addSubview(titleAndReleaseStackView)
+        titleAndReleaseStackView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(3)
+            make.trailing.equalTo(newsAddFavouriteButton.snp.leading).offset(3)
+            make.top.equalToSuperview().offset(3)
+//            make.width.equalTo(contentView.frame.width*5/6)
+            make.height.equalToSuperview().dividedBy(3.5)
+        }
+        
         
         contentView.addSubview(secondaryStackView)
         secondaryStackView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(3)
-            make.top.equalTo(titleStackView.snp.bottom).offset(3)
-            make.height.equalToSuperview().dividedBy(4)
+            make.top.equalTo(titleAndReleaseStackView.snp.bottom).offset(3)
+            make.height.equalToSuperview().dividedBy(5.5)
         }
         
         contentView.addSubview(newsImageView)

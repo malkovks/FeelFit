@@ -24,3 +24,24 @@ enum FFResources {
         }
     }
 }
+
+enum RequestLoadingType: String {
+    case fitness = "fitness"
+    case health = "health"
+    case trainings = "gym"
+}
+
+
+enum RequestSortType: String {
+   case relevancy = "relevancy"
+   case popularity = "popularity"
+   case publishedAt = "publishedAt"
+}
+
+enum FFTabBarIndex: Int {
+    case news
+    case exercises
+    case trainingPlan
+    case health
+    case user
+}

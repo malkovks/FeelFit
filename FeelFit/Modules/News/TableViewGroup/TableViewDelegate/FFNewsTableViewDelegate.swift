@@ -33,10 +33,10 @@ class FFNewsTableViewDelegate: NSObject, UITableViewDelegate{
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == model.count - 1 {
-            let pageNumber = model.count/20
-            let viewModel = FFNewsPageViewModel()
-            viewModel.uploadNewData(pageNumber: pageNumber)
-        }
+//        if indexPath.row == model.count - 1 {
+//            let pageNumber = model.count/20
+//            let viewModel = FFNewsPageViewModel()
+//            viewModel.uploadNewData(pageNumber: pageNumber)
+//        }
     }
 }
