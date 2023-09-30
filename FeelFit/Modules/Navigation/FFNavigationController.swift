@@ -15,11 +15,18 @@ final class FFNavigationController: UINavigationController {
     }
     
     private func configure(){
-        view.backgroundColor = FFResources.Colors.tabBarBackgroundColor
-        navigationBar.isTranslucent = false
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = FFResources.Colors.tabBarBackgroundColor
+        appearance.titleTextAttributes = [.foregroundColor : FFResources.Colors.textColor, .font: FFResources.Fonts.didotFont(size: UIFont.systemFontSize)]
+        navigationBar.scrollEdgeAppearance = appearance
+        navigationBar.standardAppearance = appearance
+        navigationBar.compactAppearance = appearance
+        navigationBar.compactScrollEdgeAppearance = appearance
         
-        navigationBar.standardAppearance.titleTextAttributes = [.foregroundColor: FFResources.Colors.textColor,
-                                                                .font: FFResources.Fonts.didotFont(size: UIFont.systemFontSize)]
+        self.navigationBar.isTranslucent = false
+        
+        
         navigationBar.tintColor = FFResources.Colors.activeColor
         navigationBar.barTintColor = FFResources.Colors.tabBarBackgroundColor
     }

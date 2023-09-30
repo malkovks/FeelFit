@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-
+import Alamofire
 
 
 class FFNewsPageViewController: UIViewController,SetupViewController {
@@ -65,16 +65,19 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupTableView()
         DispatchQueue.main.asyncAfter(deadline: .now()+1){
             self.viewModel!.requestData()
+            print(self.model.count)
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+            print(self.model.count)
         }
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
         alertError(title: "Favourite View Controller", message: "This page in development", style: .alert, cancelTitle: "This is fine")
-    }
-    
-    //CALL NEWS API
-    @objc private func didTapOpenMenu(){
-        viewModel!.requestData(type: typeRequest)
     }
     
     @objc private func didTapLoadMore(){
@@ -83,31 +86,36 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapRefreshData(){
-        viewModel!.requestData()
+        loadingExactType(type: typeRequest)
     }
-    
+
     @objc private func didTapChangeSegment(){
         switch newsSegmentalController.selectedSegmentIndex {
         case 0:
-            viewModel!.requestData(type: .fitness)
-            viewModel.typeRequest = .fitness
-            typeRequest = .fitness
+            loadingExactType(type: .fitness)
         case 1:
-            viewModel!.requestData(type: .health)
-            viewModel.typeRequest = .health
-            typeRequest = .health
+            loadingExactType(type: .health)
         case 2:
-            viewModel!.requestData(type: .trainings)
-            viewModel.typeRequest = .trainings
-            typeRequest = .trainings
+            loadingExactType(type: .trainings)
         default:
             break
         }
     }
     
+    @objc private func didTapOpenNewsSettings(){
+        print("Opened settings")
+    }
+    
     //MARK: - Setup methods
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
+    }
+    
+    func loadingExactType(type: RequestLoadingType){
+        model = []
+        viewModel!.requestData(type: type)
+        viewModel.typeRequest = type
+        typeRequest = type
     }
     
     func setupNewViewModel(){
@@ -124,7 +132,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.maximumContentSizeCategory = .small
         title = "News"
-        addNavigationBarButton(at: .left, title: nil, imageName: "arrow.clockwise", action: #selector(didTapOpenMenu))
+        addNavigationBarButton(at: .left, title: nil, imageName: "gear", action: #selector(didTapOpenNewsSettings))
         addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite))
     }
     
@@ -160,9 +168,12 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
     //доделать запрос чтобы он не добавлял по 20 новых запросов одинаково, удалял старые и добавлял новые
     func didLoadData(model: [Articles]?,error: Error?) {
         guard error == nil else {
-            alertError(title: "Error parsing data", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
+            alertError(title: "Error!", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
+            spinner.stopAnimating()
+            viewModel!.refreshControll.endRefreshing()
             return
         }
+        
         loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
         let newModel = model ?? [Articles]()
         self.model += newModel
@@ -174,6 +185,7 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         tableView.reloadData()
         spinner.stopAnimating()
         viewModel!.refreshControll.endRefreshing()
+        print(self.model.count)
     }
     
     func didUpdateData(model: [Articles]?, error: Error?) {

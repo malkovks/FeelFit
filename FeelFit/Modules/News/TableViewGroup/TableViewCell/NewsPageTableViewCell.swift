@@ -126,11 +126,12 @@ class NewsPageTableViewCell: UITableViewCell {
     }
     
     func configureCell(model: Articles?){
+        
         titleLabel.text = model?.title ?? nil
         contentLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
         authorLabel.text = "Author: " + (model?.author ?? "")
-        publishDateLabel.text = "Published: " + (model?.publishedAt ?? "")
+        publishDateLabel.text = "Published: " + (model?.publishedAt.convertToStringData() ?? "")
         if let image = model?.urlToImage {
             guard let url = URL(string: image) else { return }
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
