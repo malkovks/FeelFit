@@ -17,7 +17,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     private var dataSourceClass: FFNewsTableViewDataSource?
     
     
-    private var typeRequest = RequestLoadingType.fitness
+    private var typeRequest = Request.RequestLoadingType.fitness
+    private var filterRequest = Request.RequestSortType.publishedAt
     var model: [Articles] = []
     //MARK: - UI elements
     
@@ -46,7 +47,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }()
     
     private let newsSegmentalController: UISegmentedControl = {
-       let controller = UISegmentedControl(items: ["Fitness","Health","Trainings"])
+        let controller = UISegmentedControl(items: ["Fitness","Health","Trainings"])
         controller.selectedSegmentIndex = 0
         controller.tintColor = FFResources.Colors.activeColor
         controller.selectedSegmentTintColor = FFResources.Colors.activeColor
@@ -81,41 +82,52 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapLoadMore(){
-        let pageNumber = model.count/20+1
+        var value = UserDefaults.standard.value(forKey: "pageNumberAPI") as! Int
+        let pageNumber = value + 1
+        UserDefaults.standard.setValue(pageNumber, forKey: "pageNumberAPI")
         viewModel!.requestData(pageNumber: pageNumber,type: typeRequest)
     }
     
     @objc private func didTapRefreshData(){
-        loadingExactType(type: typeRequest)
-    }
-
-    @objc private func didTapChangeSegment(){
-        switch newsSegmentalController.selectedSegmentIndex {
-        case 0:
-            loadingExactType(type: .fitness)
-        case 1:
-            loadingExactType(type: .health)
-        case 2:
-            loadingExactType(type: .trainings)
-        default:
-            break
-        }
+        loadingExactType(type: typeRequest,filter: filterRequest)
     }
     
-    @objc private func didTapOpenNewsSettings(){
-        print("Opened settings")
+    @objc private func didTapChangeSegment(){
+//        switch newsSegmentalController.selectedSegmentIndex {
+//        case 0:
+////            loadingExactType(type: .fitness)
+//        case 1:
+////            loadingExactType(type: .health)
+//        case 2:
+////            loadingExactType(type: .trainings)
+//        default:
+//            break
+//        }
     }
+    
+//    @objc private func didTapOpenNewsSettings(){
+//        callUIMenu()
+//    }
     
     //MARK: - Setup methods
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
+        UserDefaults.standard.setValue(1, forKey: "pageNumberAPI")
     }
     
-    func loadingExactType(type: RequestLoadingType){
-        model = []
-        viewModel!.requestData(type: type)
-        viewModel.typeRequest = type
-        typeRequest = type
+    func setupTableView(){
+        delegateClass = FFNewsTableViewDelegate(with: self,model: model)
+        dataSourceClass = FFNewsTableViewDataSource(with: model)
+        tableView.dataSource = dataSourceClass
+        tableView.delegate = delegateClass
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        tableView.automaticallyAdjustsScrollIndicatorInsets = false
+        
+        
+        tableView.tableHeaderView = newsSegmentalController
+        tableView.refreshControl = viewModel.refreshControll
+        viewModel.refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
+        newsSegmentalController.addTarget(self, action: #selector(didTapChangeSegment), for: .valueChanged)
     }
     
     func setupNewViewModel(){
@@ -132,23 +144,54 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.maximumContentSizeCategory = .small
         title = "News"
-        addNavigationBarButton(at: .left, title: nil, imageName: "gear", action: #selector(didTapOpenNewsSettings))
-        addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite))
+        addNavigationBarButton(at: .left, title: nil, imageName: "gear", action: nil, menu: callUIMenu())
+        addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
     
-    func setupTableView(){
-        delegateClass = FFNewsTableViewDelegate(with: self,model: model)
-        dataSourceClass = FFNewsTableViewDataSource(with: model)
-        tableView.dataSource = dataSourceClass
-        tableView.delegate = delegateClass
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        tableView.automaticallyAdjustsScrollIndicatorInsets = false
-        
-        
-        tableView.tableHeaderView = newsSegmentalController
-        tableView.refreshControl = viewModel.refreshControll
-        viewModel.refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
-        newsSegmentalController.addTarget(self, action: #selector(didTapChangeSegment), for: .valueChanged)
+    func callUIMenu() -> UIMenu {
+        let filterActions = [
+            UIAction(title: "Relevance") { [unowned self] _ in
+                self.filterRequest = .relevancy
+                loadingExactType(type: self.typeRequest, filter: self.filterRequest)
+            },
+            UIAction(title: "Popularity") { [unowned self] _ in
+                self.filterRequest = .popularity
+                loadingExactType(type: self.typeRequest, filter: self.filterRequest)
+            },
+            UIAction(title: "Published Date") { [unowned self] _ in
+                self.filterRequest = .publishedAt
+                loadingExactType(type: self.typeRequest, filter: self.filterRequest)
+            },
+        ]
+        let divider = UIMenu(title: "Filter",image: UIImage(systemName: "line.3.horizontal.decrease.circle"),options: .singleSelection,children: filterActions)
+        let requestActions = [ UIAction(title: "Health", handler: { [unowned self] _ in
+            self.typeRequest = .health
+        }),
+                               UIAction(title: "Fitness", handler: { [unowned self] _ in
+            self.typeRequest = .fitness
+        }),
+                               UIAction(title: "Gym", handler: { [unowned self] _ in
+            self.typeRequest = .gym
+        }),
+                               UIAction(title: "Training", handler: { [unowned self] _ in
+            self.typeRequest = .training
+        }),
+                               UIAction(title: "Sport", handler: { [unowned self] _ in
+            self.typeRequest = .sport
+        })]
+        let secondDivider = UIMenu(title: "Request",image: UIImage(systemName: "list.bullet"),options: .singleSelection,children: requestActions)
+        let items = [divider,secondDivider]
+        return UIMenu(title: "Filter section",children: items)
+    }
+    
+   
+    
+    func loadingExactType(type: Request.RequestLoadingType,filter: Request.RequestSortType){
+        model = []
+        viewModel!.requestData(type: type)
+        viewModel.typeRequest = type
+        viewModel.sortRequest = filter
+        typeRequest = type
     }
 }
 /// отвечает за нажатие строки пользователем и возвращает индекс
@@ -175,33 +218,36 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         }
         
         loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
-        let newModel = model ?? [Articles]()
+        
+        var newModel = [Articles]()
+        for m in model ?? [Articles]() {
+            if !m.source.name.elementsEqual("[Removed]") {
+                newModel.append(m)
+            }
+        }
+        
+        
         self.model += newModel
-        dataSourceClass = FFNewsTableViewDataSource(with: self.model)
-        delegateClass = FFNewsTableViewDelegate(with: self,model: self.model)
+        
+        let uniqueItems = self.model.uniqueArray()
+        DispatchQueue.main.async { [unowned self ] in
+            self.model = uniqueItems
+            self.reloadTableView(models: self.model)
+            self.spinner.stopAnimating()
+            self.viewModel!.refreshControll.endRefreshing()
+            print(self.model.count)
+        }
+    }
+    
+    func reloadTableView(models: [Articles]) {
+        dataSourceClass = FFNewsTableViewDataSource(with: models)
+        delegateClass = FFNewsTableViewDelegate(with: self,model: models)
         tableView.dataSource = dataSourceClass
         tableView.delegate = delegateClass
         tableView.tableFooterView = loadDataButton
         tableView.reloadData()
-        spinner.stopAnimating()
-        viewModel!.refreshControll.endRefreshing()
-        print(self.model.count)
     }
     
-    func didUpdateData(model: [Articles]?, error: Error?) {
-        if error != nil {
-            alertError(title: "Error parsing data", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
-        } else {
-            let newModel = model ?? [Articles]()
-            self.model += newModel
-            dataSourceClass = FFNewsTableViewDataSource(with: self.model)
-            delegateClass = FFNewsTableViewDelegate(with: self,model: self.model)
-            tableView.dataSource = dataSourceClass
-            tableView.delegate = delegateClass
-        }
-        tableView.reloadData()
-        spinner.stopAnimating()
-    }
 }
 
 
@@ -217,6 +263,27 @@ extension FFNewsPageViewController {
     }
 }
 
+//MARK: - Array extensions
+extension Array where Element: Hashable {
+    func uniqued() -> Array {
+        var buffer = Array()
+        var added = Set<Element>()
+        for e in self {
+            if !added.contains(e) {
+                buffer.append(e)
+                added.insert(e)
+            }
+        }
+        return buffer
+    }
+}
+
+public extension Array where Element: Hashable {
+    func uniqueArray() -> [Element] {
+        var seen = Set<Element>()
+        return filter{ seen.insert($0).inserted }
+    }
+}
 
 
 

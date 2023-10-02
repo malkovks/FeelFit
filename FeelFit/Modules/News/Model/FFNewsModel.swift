@@ -34,7 +34,17 @@ struct APIResponse: Codable {
     let articles: [Articles]
 }
 //структура с наследованием API пунктов новостей, которые там имеются
-struct Articles: Codable{
+struct Articles: Codable, Hashable {
+    static func == (lhs: Articles, rhs: Articles) -> Bool {
+        return lhs.title == rhs.title && lhs.source.name == rhs.source.name && lhs.publishedAt == rhs.publishedAt
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(title)
+        hasher.combine(source.name)
+        hasher.combine(publishedAt)
+    }
+    
     let source: Source
     let title: String
     let description: String?

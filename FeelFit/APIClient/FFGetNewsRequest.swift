@@ -16,7 +16,7 @@ class FFGetNewsRequest {
     static var shared = FFGetNewsRequest()
     
     //Функция работает ,данные возвращает
-    func getRequestResult(numberOfPage: Int = 1,requestType: RequestLoadingType = .fitness,requestSortType: RequestSortType = .publishedAt,completion: @escaping (Result<[Articles],Error>) -> ()){
+    func getRequestResult(numberOfPage: Int = 1,requestType: Request.RequestLoadingType = .fitness,requestSortType: Request.RequestSortType = .publishedAt,completion: @escaping (Result<[Articles],Error>) -> ()){
         
         let result = setupDates()
         let requestType = requestType.rawValue
@@ -29,8 +29,6 @@ class FFGetNewsRequest {
         request.cachePolicy = .returnCacheDataElseLoad
         request.timeoutInterval = 10
 
-        
-//        AF.request(url,method: .get,parameters: nil,encoding: JSONEncoding.default,headers: nil,requestModifier: { $0.timeoutInterval = 10 }).responseJSON { response in
         AF.request(request).responseJSON { response in
             if let data = response.data {
                 let decoder = JSONDecoder()

@@ -25,18 +25,24 @@ enum FFResources {
     }
 }
 
-enum RequestLoadingType: String {
-    case fitness = "fitness"
-    case health = "health"
-    case trainings = "gym"
+enum Request {
+    enum RequestLoadingType: String {
+        case fitness = "fitness"
+        case health = "health"
+        case gym = "gym"
+        case training = "training"
+        case sport = "sport"
+    }
+
+
+    enum RequestSortType: String {
+       case relevancy = "relevancy"
+       case popularity = "popularity"
+       case publishedAt = "publishedAt"
+    }
 }
 
 
-enum RequestSortType: String {
-   case relevancy = "relevancy"
-   case popularity = "popularity"
-   case publishedAt = "publishedAt"
-}
 
 enum FFTabBarIndex: Int {
     case news

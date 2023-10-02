@@ -11,13 +11,12 @@ import UIKit
 protocol FFNewsPageDelegate: AnyObject {
     func willLoadData()
     func didLoadData(model: [Articles]?,error: Error?)
-    func didUpdateData(model: [Articles]?,error: Error?)
 }
 
 ///VIewModel setup protocol
 protocol FFNewsViewModelType {
     var delegate: FFNewsPageDelegate? { get set }
-    func requestData(pageNumber: Int,type: RequestLoadingType)
+    func requestData(pageNumber: Int,type: Request.RequestLoadingType,filter: Request.RequestSortType)
 //    func uploadNewData(pageNumber: Int)
 }
 ///View model for FFNewsPageViewController
@@ -25,7 +24,8 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     
     weak var delegate: FFNewsPageDelegate?
     private var localModel = Array<Articles>()
-    var typeRequest: RequestLoadingType = .fitness
+    var typeRequest: Request.RequestLoadingType = .fitness
+    var sortRequest: Request.RequestSortType = .publishedAt
     
     var refreshControll: UIRefreshControl = {
        let refresh = UIRefreshControl()
@@ -35,12 +35,13 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     }()
     
     ///function for request data from API
-    func requestData(pageNumber: Int = 1,type: RequestLoadingType = .fitness) {
+    func requestData(pageNumber: Int = 1,type: Request.RequestLoadingType = .fitness,filter: Request.RequestSortType = .publishedAt) {
         typeRequest = type
         print(typeRequest)
+        print(pageNumber)
         delegate?.willLoadData()
         let request = FFGetNewsRequest.shared
-        request.getRequestResult(numberOfPage: pageNumber,requestType: type) { [weak self] result in
+        request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter) { [weak self] result in
             switch result{
             case .success(let data):
                 self?.delegate?.didLoadData(model: data, error: nil)
@@ -49,20 +50,4 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
             }
         }
     }
-    
-//    func uploadNewData(pageNumber: Int = 1){
-//        let type = typeRequest
-//        delegate?.willLoadData()
-//        let request = FFGetNewsRequest.shared
-//        request.getRequestResult(numberOfPage: pageNumber,requestType: type) { [weak self] result in
-//            switch result {
-//            case .success(let data):
-//                self?.delegate?.didUpdateData(model: data, error: nil)
-//            case .failure(let error):
-//                self?.delegate?.didUpdateData(model: nil, error: error)
-//            }
-//        }
-//    }
-    
-    
 }
