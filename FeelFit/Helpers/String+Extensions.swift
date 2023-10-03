@@ -9,12 +9,41 @@ import UIKit
 
 extension String {
     func convertToStringData() -> Self {
+        let currentLocale = Locale.current
+        var calendar = Calendar.current
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        dateFormatter.locale = currentLocale
+        dateFormatter.timeZone = calendar.timeZone
+
+        
+        
         let formattedString = self.replacingOccurrences(of: "T", with: "").replacingOccurrences(of: "Z", with: "")
         let comp = formattedString.components(separatedBy: ":")
         let hourAndMinute = comp[0..<2]
         var value = hourAndMinute.joined(separator: ":")
         value.insert(" ", at: value.index(value.startIndex, offsetBy: 10))
         
-        return value
+        let time = dateFormatter.date(from: value)
+
+        // Create Calendar object
+       
+
+        // Set time to parsed time
+        let timeComponents = calendar.dateComponents([.year,.month,.day,.hour, .minute], from: time!)
+
+        // Get current locale's time zone
+        let timeZone = TimeZone(identifier: "Europe/Moscow")!
+
+        // Set time zone to calendar
+        calendar.timeZone = timeZone
+        calendar.locale = currentLocale
+
+        // Get converted time in current locale's time zone
+        let convertedTime = calendar.date(from: timeComponents)!
+        let returnValue = dateFormatter.string(from: convertedTime)
+        
+        
+        return returnValue
     }
 }

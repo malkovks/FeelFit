@@ -14,7 +14,7 @@ protocol TableViewCellDelegate: AnyObject {
 
 
 
-class NewsPageTableViewCell: UITableViewCell {
+class FFNewsPageTableViewCell: UITableViewCell {
     
     weak var delegate: TableViewCellDelegate?
 
@@ -146,7 +146,7 @@ class NewsPageTableViewCell: UITableViewCell {
     }
 }
 //MARK: - Constraints
-extension NewsPageTableViewCell {
+extension FFNewsPageTableViewCell {
     private func setupConstraints(){
         let titleAndReleaseStackView = UIStackView(arrangedSubviews: [titleLabel,publishDateLabel])
         titleAndReleaseStackView.axis = .vertical

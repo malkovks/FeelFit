@@ -26,6 +26,7 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     private var localModel = Array<Articles>()
     var typeRequest: Request.RequestLoadingType = .fitness
     var sortRequest: Request.RequestSortType = .publishedAt
+    var localeRequest: String = String(Locale.preferredLanguages.first!.prefix(2))
     
     var refreshControll: UIRefreshControl = {
        let refresh = UIRefreshControl()
@@ -37,11 +38,11 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     ///function for request data from API
     func requestData(pageNumber: Int = 1,type: Request.RequestLoadingType = .fitness,filter: Request.RequestSortType = .publishedAt) {
         typeRequest = type
-        print(typeRequest)
-        print(pageNumber)
+        
+        
         delegate?.willLoadData()
         let request = FFGetNewsRequest.shared
-        request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter) { [weak self] result in
+        request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter,locale: localeRequest) { [weak self] result in
             switch result{
             case .success(let data):
                 self?.delegate?.didLoadData(model: data, error: nil)

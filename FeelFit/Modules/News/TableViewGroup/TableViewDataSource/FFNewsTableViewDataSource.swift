@@ -20,7 +20,7 @@ class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellD
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NewsPageTableViewCell.identifier, for: indexPath) as! NewsPageTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFNewsPageTableViewCell.identifier, for: indexPath) as! FFNewsPageTableViewCell
         let data = cellDataModel[indexPath.row]
         cell.configureCell(model: data)
         cell.delegate = self

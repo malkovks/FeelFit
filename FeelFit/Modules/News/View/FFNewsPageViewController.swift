@@ -17,8 +17,13 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     private var dataSourceClass: FFNewsTableViewDataSource?
     
     
+//    private var typeRequest = UserDefaults.standard.value(forKey: "typeRequest") as? Request.RequestLoadingType
+//    private var filterRequest = UserDefaults.standard.value(forKey: "filterRequest") as? Request.RequestSortType
+    
     private var typeRequest = Request.RequestLoadingType.fitness
-    private var filterRequest = Request.RequestSortType.publishedAt
+    private var sportTypeRequest = Request.RequestLoadingType.Sport.athletics
+    private var filterRequest = Request.RequestSortType.popularity
+    private var localeRequest = String(describing: Locale.preferredLanguages.first!.prefix(2))
     var model: [Articles] = []
     //MARK: - UI elements
     
@@ -30,7 +35,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     private let tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .plain)
-        table.register(NewsPageTableViewCell.self, forCellReuseIdentifier: NewsPageTableViewCell.identifier)
+        table.register(FFNewsPageTableViewCell.self, forCellReuseIdentifier: FFNewsPageTableViewCell.identifier)
         return table
     }()
     
@@ -46,15 +51,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         return button
     }()
     
-    private let newsSegmentalController: UISegmentedControl = {
-        let controller = UISegmentedControl(items: ["Fitness","Health","Trainings"])
-        controller.selectedSegmentIndex = 0
-        controller.tintColor = FFResources.Colors.activeColor
-        controller.selectedSegmentTintColor = FFResources.Colors.activeColor
-        controller.backgroundColor = FFResources.Colors.tabBarBackgroundColor
-        return controller
-    }()
-    
     //MARK: - View loading
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,14 +62,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupTableView()
         DispatchQueue.main.asyncAfter(deadline: .now()+1){
             self.viewModel!.requestData()
-            print(self.model.count)
-        }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-            print(self.model.count)
         }
     }
     //MARK: - Targets
@@ -89,25 +77,10 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapRefreshData(){
-        loadingExactType(type: typeRequest,filter: filterRequest)
+        print("Type request - \(typeRequest)\n Sort request - \(filterRequest)")
+        
+        loadingExactType(type: typeRequest,filter: filterRequest,locale: localeRequest)
     }
-    
-    @objc private func didTapChangeSegment(){
-//        switch newsSegmentalController.selectedSegmentIndex {
-//        case 0:
-////            loadingExactType(type: .fitness)
-//        case 1:
-////            loadingExactType(type: .health)
-//        case 2:
-////            loadingExactType(type: .trainings)
-//        default:
-//            break
-//        }
-    }
-    
-//    @objc private func didTapOpenNewsSettings(){
-//        callUIMenu()
-//    }
     
     //MARK: - Setup methods
     func setupView() {
@@ -123,11 +96,9 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.automaticallyAdjustsScrollIndicatorInsets = false
         
-        
-        tableView.tableHeaderView = newsSegmentalController
+
         tableView.refreshControl = viewModel.refreshControll
         viewModel.refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
-        newsSegmentalController.addTarget(self, action: #selector(didTapChangeSegment), for: .valueChanged)
     }
     
     func setupNewViewModel(){
@@ -147,20 +118,21 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         addNavigationBarButton(at: .left, title: nil, imageName: "gear", action: nil, menu: callUIMenu())
         addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
-    
+    //MARK: - ДОДЕЛАТЬ UIMenu
     func callUIMenu() -> UIMenu {
         let filterActions = [
-            UIAction(title: "Relevance") { [unowned self] _ in
+            UIAction(title: "Relevance") { _ in
+
                 self.filterRequest = .relevancy
-                loadingExactType(type: self.typeRequest, filter: self.filterRequest)
+
             },
             UIAction(title: "Popularity") { [unowned self] _ in
+
                 self.filterRequest = .popularity
-                loadingExactType(type: self.typeRequest, filter: self.filterRequest)
+
             },
             UIAction(title: "Published Date") { [unowned self] _ in
                 self.filterRequest = .publishedAt
-                loadingExactType(type: self.typeRequest, filter: self.filterRequest)
             },
         ]
         let divider = UIMenu(title: "Filter",image: UIImage(systemName: "line.3.horizontal.decrease.circle"),options: .singleSelection,children: filterActions)
@@ -176,21 +148,65 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
                                UIAction(title: "Training", handler: { [unowned self] _ in
             self.typeRequest = .training
         }),
-                               UIAction(title: "Sport", handler: { [unowned self] _ in
+                               UIAction(title: "Sport disciplines", handler: { [unowned self] _ in
             self.typeRequest = .sport
         })]
+        let itemsDisciples = [UIAction(title: "Football", handler: { [unowned self] _ in
+//                self.typeRequest = .Sport
+            self.sportTypeRequest = .football
+        }),
+                     UIAction(title: "Volleyball", handler: { [unowned self] _ in
+//                self.typeRequest = .Sport
+            self.sportTypeRequest = .volleyball
+        }),
+                     UIAction(title: "Golf", handler: { [unowned self] _ in
+//                self.typeRequest = .Sport
+            self.sportTypeRequest = .golf
+        }),
+                     UIAction(title: "Athletics", handler: { [unowned self] _ in
+//                self.typeRequest = .Sport
+            self.sportTypeRequest = .athletics
+        }),
+                     UIAction(title: "Weightlifting", handler: { [unowned self] _ in
+//                self.typeRequest = .Sport
+            self.sportTypeRequest = .weightlifting
+        }),
+                     UIAction(title: "Triathlon", handler: { [unowned self] _ in
+//                self.typeRequest = .Sport
+            self.sportTypeRequest = .triathlon
+        })]
+        let sportDivider = UIMenu(title: "Sport Disciples",options: .singleSelection,children: itemsDisciples)
+        
         let secondDivider = UIMenu(title: "Request",image: UIImage(systemName: "list.bullet"),options: .singleSelection,children: requestActions)
-        let items = [divider,secondDivider]
-        return UIMenu(title: "Filter section",children: items)
+        
+        let localeActions = [UIAction(title: "Everywhere", handler: { [unowned self] _ in
+            self.localeRequest = String(Locale.preferredLanguages.first!.prefix(2))
+        }),
+                             UIAction(title: "Russian", handler: { [unowned self] _ in
+            self.localeRequest = "ru"
+        })]
+        let thirdDivider = UIMenu(title: "Resources",image: UIImage(systemName: "character.bubble.fill"),options: .displayInline,children: localeActions)
+        var items = [divider,secondDivider,thirdDivider]
+        if typeRequest == .sport {
+            items.insert(sportDivider, at: 3)
+        } else {
+            if items.count == 4 {
+                items.remove(at: 3)
+            }
+        }
+        
+        
+        return UIMenu(title: "Filter news",children: items)
     }
     
    
     
-    func loadingExactType(type: Request.RequestLoadingType,filter: Request.RequestSortType){
+    func loadingExactType(type: Request.RequestLoadingType,filter: Request.RequestSortType,locale: String){
         model = []
         viewModel!.requestData(type: type)
         viewModel.typeRequest = type
         viewModel.sortRequest = filter
+        viewModel.localeRequest = locale
         typeRequest = type
     }
 }
@@ -235,7 +251,6 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             self.reloadTableView(models: self.model)
             self.spinner.stopAnimating()
             self.viewModel!.refreshControll.endRefreshing()
-            print(self.model.count)
         }
     }
     
@@ -264,19 +279,6 @@ extension FFNewsPageViewController {
 }
 
 //MARK: - Array extensions
-extension Array where Element: Hashable {
-    func uniqued() -> Array {
-        var buffer = Array()
-        var added = Set<Element>()
-        for e in self {
-            if !added.contains(e) {
-                buffer.append(e)
-                added.insert(e)
-            }
-        }
-        return buffer
-    }
-}
 
 public extension Array where Element: Hashable {
     func uniqueArray() -> [Element] {

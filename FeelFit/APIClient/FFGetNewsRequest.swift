@@ -16,12 +16,13 @@ class FFGetNewsRequest {
     static var shared = FFGetNewsRequest()
     
     //Функция работает ,данные возвращает
-    func getRequestResult(numberOfPage: Int = 1,requestType: Request.RequestLoadingType = .fitness,requestSortType: Request.RequestSortType = .publishedAt,completion: @escaping (Result<[Articles],Error>) -> ()){
+    func getRequestResult(numberOfPage: Int = 1,requestType: Request.RequestLoadingType = .fitness,requestSortType: Request.RequestSortType = .publishedAt,locale: String = String(Locale.preferredLanguages.first!.prefix(2)),completion: @escaping (Result<[Articles],Error>) -> ()){
         
         let result = setupDates()
         let requestType = requestType.rawValue
         
-        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(result.0)&to\(result.1)&pageSize=20&page=\(numberOfPage)&sortBy=\(requestSortType)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
+        
+        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(result.0)&to\(result.1)&pageSize=20&page=\(numberOfPage)&sortBy=\(requestSortType)&language=\(locale)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
         
         let cache = URLCache(memoryCapacity: 100*1024*1024, diskCapacity: 100*1024*1024)
         URLCache.shared = cache
