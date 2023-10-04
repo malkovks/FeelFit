@@ -79,10 +79,10 @@ class FFNewsPageTableViewCell: UITableViewCell {
         image.layer.cornerRadius = 12
         image.layer.masksToBounds = true
         image.clipsToBounds = true
-        image.backgroundColor = .systemIndigo
+        image.backgroundColor = .clear
         image.contentMode = .scaleAspectFill
         image.image = UIImage(systemName: "photo")
-        image.tintColor = FFResources.Colors.tabBarBackgroundColor
+        image.tintColor = FFResources.Colors.activeColor
         return image
     }()
     

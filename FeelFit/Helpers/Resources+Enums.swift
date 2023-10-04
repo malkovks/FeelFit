@@ -32,17 +32,7 @@ enum Request {
         case gym = "gym"
         case training = "training"
         case sport = "sport"
-        
-        enum Sport: String {
-            case football = "Football"
-            case volleyball = "Volleybal"
-            case golf = "Golf"
-            case athletics = "Athletics"
-            case weightlifting = "Weightlifting"
-            case triathlon = "Triathlon"
-        }
     }
-
 
     enum RequestSortType: String {
        case relevancy = "relevancy"

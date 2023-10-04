@@ -16,7 +16,7 @@ protocol FFNewsPageDelegate: AnyObject {
 ///VIewModel setup protocol
 protocol FFNewsViewModelType {
     var delegate: FFNewsPageDelegate? { get set }
-    func requestData(pageNumber: Int,type: Request.RequestLoadingType,filter: Request.RequestSortType)
+    func requestData(pageNumber: Int,type: String,filter: String)
 //    func uploadNewData(pageNumber: Int)
 }
 ///View model for FFNewsPageViewController
@@ -24,8 +24,8 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     
     weak var delegate: FFNewsPageDelegate?
     private var localModel = Array<Articles>()
-    var typeRequest: Request.RequestLoadingType = .fitness
-    var sortRequest: Request.RequestSortType = .publishedAt
+    var typeRequest: String = "fitness"
+    var sortRequest: String = "publishedAt"
     var localeRequest: String = String(Locale.preferredLanguages.first!.prefix(2))
     
     var refreshControll: UIRefreshControl = {
@@ -36,7 +36,7 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     }()
     
     ///function for request data from API
-    func requestData(pageNumber: Int = 1,type: Request.RequestLoadingType = .fitness,filter: Request.RequestSortType = .publishedAt) {
+    func requestData(pageNumber: Int = 1,type: String,filter: String) {
         typeRequest = type
         
         

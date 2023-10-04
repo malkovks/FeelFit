@@ -16,11 +16,9 @@ class FFGetNewsRequest {
     static var shared = FFGetNewsRequest()
     
     //Функция работает ,данные возвращает
-    func getRequestResult(numberOfPage: Int = 1,requestType: Request.RequestLoadingType = .fitness,requestSortType: Request.RequestSortType = .publishedAt,locale: String = String(Locale.preferredLanguages.first!.prefix(2)),completion: @escaping (Result<[Articles],Error>) -> ()){
+    func getRequestResult(numberOfPage: Int = 1,requestType: String,requestSortType: String,locale: String,completion: @escaping (Result<[Articles],Error>) -> ()){
         
         let result = setupDates()
-        let requestType = requestType.rawValue
-        
         
         guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(result.0)&to\(result.1)&pageSize=20&page=\(numberOfPage)&sortBy=\(requestSortType)&language=\(locale)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
         
@@ -46,6 +44,15 @@ class FFGetNewsRequest {
         }
     }
     
+    func getDataFromCache(model: Articles){
+        guard let text = model.url, let url = URL(string: text) else { return }
+        let request = URLRequest(url: url)
+        URLCache.shared.removeCachedResponse(for: request)
+        
+        let fileManager = FileManager.default
+        let filePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+    }
+    
     private func setupDates() -> (String,String) {
         let currentDate = Date()
         let calendar = Calendar.current
@@ -54,6 +61,8 @@ class FFGetNewsRequest {
         let currentDayString = Date().shortConvertString()
         return (lastDayString,currentDayString)
     }
+    
+    
 }
 
 //"https://newsapi.org/v2/everything?q=fitness&from2023-09-28&to2023-09-29&pageSize=20&page=1&sortBy=publishedAt&apiKey=726ada313f7a4371a04f04c875036854"

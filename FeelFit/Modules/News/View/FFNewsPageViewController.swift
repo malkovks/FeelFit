@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Alamofire
+import SafariServices
 
 
 class FFNewsPageViewController: UIViewController,SetupViewController {
@@ -16,14 +17,9 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     private var delegateClass: FFNewsTableViewDelegate?
     private var dataSourceClass: FFNewsTableViewDataSource?
     
-    
-//    private var typeRequest = UserDefaults.standard.value(forKey: "typeRequest") as? Request.RequestLoadingType
-//    private var filterRequest = UserDefaults.standard.value(forKey: "filterRequest") as? Request.RequestSortType
-    
-    private var typeRequest = Request.RequestLoadingType.fitness
-    private var sportTypeRequest = Request.RequestLoadingType.Sport.athletics
-    private var filterRequest = Request.RequestSortType.popularity
-    private var localeRequest = String(describing: Locale.preferredLanguages.first!.prefix(2))
+    private var typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
+    private var filterRequest = UserDefaults.standard.string(forKey: "filterRequest") ?? "publishedAt"
+    private var localeRequest = UserDefaults.standard.string(forKey: "localeRequest") ?? "en"
     var model: [Articles] = []
     //MARK: - UI elements
     
@@ -60,8 +56,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupSpinner()
         setupNewViewModel()
         setupTableView()
-        DispatchQueue.main.asyncAfter(deadline: .now()+1){
-            self.viewModel!.requestData()
+        DispatchQueue.main.asyncAfter(deadline: .now()+1){ [unowned self] in
+            self.viewModel!.requestData(type: self.typeRequest, filter: self.filterRequest)
         }
     }
     //MARK: - Targets
@@ -73,7 +69,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         var value = UserDefaults.standard.value(forKey: "pageNumberAPI") as! Int
         let pageNumber = value + 1
         UserDefaults.standard.setValue(pageNumber, forKey: "pageNumberAPI")
-        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest)
+        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest, filter: filterRequest)
     }
     
     @objc private func didTapRefreshData(){
@@ -122,88 +118,66 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     func callUIMenu() -> UIMenu {
         let filterActions = [
             UIAction(title: "Relevance") { _ in
-
-                self.filterRequest = .relevancy
-
+                self.filterRequest = Request.RequestSortType.relevancy.rawValue
+                UserDefaults.standard.setValue(Request.RequestSortType.relevancy.rawValue, forKey: "filterRequest")
             },
             UIAction(title: "Popularity") { [unowned self] _ in
 
-                self.filterRequest = .popularity
-
+                self.filterRequest = Request.RequestSortType.popularity.rawValue
+                UserDefaults.standard.setValue(Request.RequestSortType.popularity.rawValue, forKey: "filterRequest")
             },
             UIAction(title: "Published Date") { [unowned self] _ in
-                self.filterRequest = .publishedAt
+                self.filterRequest = Request.RequestSortType.publishedAt.rawValue
+                UserDefaults.standard.setValue(Request.RequestSortType.publishedAt.rawValue, forKey: "filterRequest")
             },
         ]
         let divider = UIMenu(title: "Filter",image: UIImage(systemName: "line.3.horizontal.decrease.circle"),options: .singleSelection,children: filterActions)
+        
         let requestActions = [ UIAction(title: "Health", handler: { [unowned self] _ in
-            self.typeRequest = .health
+            self.typeRequest = Request.RequestLoadingType.health.rawValue
+            UserDefaults.standard.setValue(Request.RequestLoadingType.health.rawValue, forKey: "typeRequest")
         }),
                                UIAction(title: "Fitness", handler: { [unowned self] _ in
-            self.typeRequest = .fitness
+            self.typeRequest = Request.RequestLoadingType.fitness.rawValue
+            UserDefaults.standard.setValue(Request.RequestLoadingType.fitness.rawValue, forKey: "typeRequest")
         }),
                                UIAction(title: "Gym", handler: { [unowned self] _ in
-            self.typeRequest = .gym
+            self.typeRequest = Request.RequestLoadingType.gym.rawValue
+            UserDefaults.standard.setValue(Request.RequestLoadingType.gym.rawValue, forKey: "typeRequest")
         }),
                                UIAction(title: "Training", handler: { [unowned self] _ in
-            self.typeRequest = .training
+            self.typeRequest = Request.RequestLoadingType.training.rawValue
+            UserDefaults.standard.setValue(Request.RequestLoadingType.training.rawValue, forKey: "typeRequest")
         }),
-                               UIAction(title: "Sport disciplines", handler: { [unowned self] _ in
-            self.typeRequest = .sport
+                               UIAction(title: "Sport", handler: { [unowned self] _ in
+            self.typeRequest = Request.RequestLoadingType.sport.rawValue
+            UserDefaults.standard.setValue(Request.RequestLoadingType.sport.rawValue, forKey: "typeRequest")
         })]
-        let itemsDisciples = [UIAction(title: "Football", handler: { [unowned self] _ in
-//                self.typeRequest = .Sport
-            self.sportTypeRequest = .football
-        }),
-                     UIAction(title: "Volleyball", handler: { [unowned self] _ in
-//                self.typeRequest = .Sport
-            self.sportTypeRequest = .volleyball
-        }),
-                     UIAction(title: "Golf", handler: { [unowned self] _ in
-//                self.typeRequest = .Sport
-            self.sportTypeRequest = .golf
-        }),
-                     UIAction(title: "Athletics", handler: { [unowned self] _ in
-//                self.typeRequest = .Sport
-            self.sportTypeRequest = .athletics
-        }),
-                     UIAction(title: "Weightlifting", handler: { [unowned self] _ in
-//                self.typeRequest = .Sport
-            self.sportTypeRequest = .weightlifting
-        }),
-                     UIAction(title: "Triathlon", handler: { [unowned self] _ in
-//                self.typeRequest = .Sport
-            self.sportTypeRequest = .triathlon
-        })]
-        let sportDivider = UIMenu(title: "Sport Disciples",options: .singleSelection,children: itemsDisciples)
         
         let secondDivider = UIMenu(title: "Request",image: UIImage(systemName: "list.bullet"),options: .singleSelection,children: requestActions)
         
+        //Доделать полный лист локализаций новостей
+//        let countries = ["ar","de","en","es","fr","it","nl","no","pt","ru","sv","zh"]
+//        let fullNameCountries = ["Argentina","Germany","Great Britain","Spain","France","Italy","Netherlands","Norway","Portugal","Russia","Sweden","Chech Republic"]
+        
         let localeActions = [UIAction(title: "Everywhere", handler: { [unowned self] _ in
             self.localeRequest = String(Locale.preferredLanguages.first!.prefix(2))
+            UserDefaults.standard.setValue(Locale.preferredLanguages.first!.prefix(2), forKey: "localeRequest")
         }),
-                             UIAction(title: "Russian", handler: { [unowned self] _ in
+                             UIAction(title: "Russian",attributes: .init(),state: .mixed, handler: { [unowned self] _ in
             self.localeRequest = "ru"
+            UserDefaults.standard.setValue("ru", forKey: "localeRequest")
         })]
-        let thirdDivider = UIMenu(title: "Resources",image: UIImage(systemName: "character.bubble.fill"),options: .displayInline,children: localeActions)
+        let thirdDivider = UIMenu(title: "Country Resources",image: UIImage(systemName: "character.bubble.fill"),options: .displayInline,children: localeActions)
         var items = [divider,secondDivider,thirdDivider]
-        if typeRequest == .sport {
-            items.insert(sportDivider, at: 3)
-        } else {
-            if items.count == 4 {
-                items.remove(at: 3)
-            }
-        }
-        
-        
         return UIMenu(title: "Filter news",children: items)
     }
     
    
     
-    func loadingExactType(type: Request.RequestLoadingType,filter: Request.RequestSortType,locale: String){
+    func loadingExactType(type: String,filter: String,locale: String){
         model = []
-        viewModel!.requestData(type: type)
+        viewModel!.requestData(type: type,filter: filter)
         viewModel.typeRequest = type
         viewModel.sortRequest = filter
         viewModel.localeRequest = locale
@@ -213,9 +187,25 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
 /// отвечает за нажатие строки пользователем и возвращает индекс
 extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
     
-    func selectedCell(indexPath: IndexPath) {
+    func selectedCell(indexPath: IndexPath,selectedCase: TableViewDelegateSignal?) {
+        switch selectedCase {
+            
+        case .addToFavourite:
+            print("Add to favourite")
+        case .copyLink:
+            print("Copy link")
+            UIPasteboard.general.string = model[indexPath.row].url
+        case .none:
+            print("Selected cell at \(indexPath.row)")
+            dump(model[indexPath.row])
+        case .some(.openImage):
+            print("Open image")
+        case .some(.openLink):
+            guard let text = model[indexPath.row].url, let url = URL(string: text) else { return }
+            let vc = SFSafariViewController(url: url)
+            present(vc, animated: true)
+        }
         
-        print("\(indexPath.row) - Index Selected")
     }
 }
 ///view model delegate

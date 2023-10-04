@@ -6,9 +6,17 @@
 //
 
 import UIKit
+import SafariServices
+
+enum TableViewDelegateSignal {
+    case copyLink
+    case openImage
+    case openLink
+    case addToFavourite
+}
 
 protocol FFNewsTableViewCellDelegate: AnyObject {
-    func selectedCell(indexPath: IndexPath)
+    func selectedCell(indexPath: IndexPath,selectedCase: TableViewDelegateSignal?)
 }
 
 class FFNewsTableViewDelegate: NSObject, UITableViewDelegate{
@@ -23,9 +31,7 @@ class FFNewsTableViewDelegate: NSObject, UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let model = model[indexPath.row]
-        dump(model)
-        delegate?.selectedCell(indexPath: indexPath)
+        delegate?.selectedCell(indexPath: indexPath, selectedCase: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -38,5 +44,27 @@ class FFNewsTableViewDelegate: NSObject, UITableViewDelegate{
 //            let viewModel = FFNewsPageViewModel()
 //            viewModel.uploadNewData(pageNumber: pageNumber)
 //        }
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil,
+                                          previewProvider: nil) { suggestAction in
+            let favouriteAction = UIAction(title: "Add To Favourite",image: UIImage(systemName: "heart")) { [unowned self] _ in
+                self.delegate?.selectedCell(indexPath: indexPath, selectedCase: .addToFavourite)
+            }
+            
+            let copyAction = UIAction(title: "Copy Link",image: UIImage(systemName: "square.and.pencil")) { [unowned self] _ in
+//                UIPasteboard.general.url = URL(string: self.model[indexPath.row].url!)
+                self.delegate?.selectedCell(indexPath: indexPath, selectedCase: .copyLink)
+            }
+            let openImageAction = UIAction(title: "Open Image",image: UIImage(systemName: "photo")) { [unowned self] _ in
+                self.delegate?.selectedCell(indexPath: indexPath, selectedCase: .openImage)
+            }
+            let openlinkAction = UIAction(title: "Open in Browser",image: UIImage(systemName: "safari")) { [unowned self] _ in
+                self.delegate?.selectedCell(indexPath: indexPath, selectedCase: .openLink)
+                
+            }
+            return UIMenu(title: "",children: [favouriteAction,openlinkAction,copyAction,openImageAction])
+        }
     }
 }
