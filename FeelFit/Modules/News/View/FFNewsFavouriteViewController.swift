@@ -8,16 +8,8 @@
 import UIKit
 import RealmSwift
 
-class FavouriteModel {
-    let model: Articles
-    let status: Bool
-    
-    init(model: Articles, status: Bool) {
-        self.model = model
-        self.status = status
-    }
-}
 
+///Class for displaying stored news which was added to favourite
 class FFNewsFavouriteViewController: UIViewController {
     
     var newsModels: Results<FFNewsModelRealm>!
@@ -74,6 +66,10 @@ extension FFNewsFavouriteViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        var newModel = newsModels[indexPath.row]
+        let convertedModel = Articles.convertRealmModel(model: newModel)
+        let vc = FFNewsPageDetailViewController(model: convertedModel)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

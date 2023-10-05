@@ -7,6 +7,7 @@
 
 import UIKit
 
+///Custom News Table View Data Source class for optimization code
 class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellDelegate {
   
     var cellDataModel = [Articles]()
@@ -27,10 +28,6 @@ class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellD
         return cell
     }
     
-    func imageWasSelected(imageView: UIImageView?) {
-        let vc = FFNewsImageViewController(imageView: imageView)
-    }
-    
     func buttonDidTapped(sender: UITableViewCell,indexPath: IndexPath,status: Bool) {
         let model = cellDataModel[indexPath.row]
         if status {
@@ -40,33 +37,4 @@ class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellD
         }
     }
     
-}
-
-
-///Test class for opening imageView by user
-class FFNewsImageViewController: UIViewController {
-    
-    var imageView: UIImageView?
-    
-    init(imageView: UIImageView? = UIImageView()) {
-        self.imageView = imageView
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let blurEffect = UIBlurEffect(style: .dark)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame = self.view.bounds
-        self.view.addSubview(blurView)
-        
-        imageView?.contentMode = .scaleAspectFit
-        imageView?.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
-        imageView?.center = self.view.center
-        self.view.addSubview(imageView ?? UIImageView(image: UIImage(systemName: "photo")))
-    }
 }

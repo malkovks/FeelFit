@@ -53,11 +53,16 @@ struct Articles: Codable, Hashable {
     let publishedAt: String
     let author: String?
     let content: String?
+    
+    static func convertRealmModel(model: FFNewsModelRealm) -> Articles{
+        let value = Articles(source: Source(name: model.newsSourceName), title: model.newsTitle, description: model.description, url: model.newsURL, urlToImage: model.newsImageURL, publishedAt: model.newsPublishedAt ?? "", author: model.newsAuthor, content: model.newsContent)
+        return value
+    }
 
 }
 //отдельная структура тк там идет несколько подпунктов, которые мы не берем
 struct Source: Codable{
-    let name: String
+    var name: String
 }
 
 //enum CodingKeys: String, CodingKey {

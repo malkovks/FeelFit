@@ -10,7 +10,7 @@ import SnapKit
 import Alamofire
 import SafariServices
 
-
+///NewsPageViewController which display table view with inheriting all data
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
     private var viewModel: FFNewsPageViewModel!
@@ -111,6 +111,33 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         addNavigationBarButton(at: .left, title: nil, imageName: "gear", action: nil, menu: callUIMenu())
         addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
+    
+    private func showFullSizeImage(url: String){
+        let vc = FFNewsImageView()
+        vc.isOpened = { opened in
+            if !opened {
+                self.view.alpha = 1.0
+            }
+        }
+        guard let url = URL(string: url) else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            let image = UIImage(data: data)
+            DispatchQueue.main.async {
+                vc.imageView.image = image
+            }
+        }.resume()
+        self.view.addSubview(vc)
+        vc.snp.makeConstraints { make in
+            make.centerY.equalToSuperview().offset(-20)
+            make.leading.trailing.equalToSuperview().inset(40)
+            make.height.equalToSuperview().dividedBy(1.5)
+        }
+        UIView.animate(withDuration: 0.5) {
+            self.view.alpha = 0.8
+            vc.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        }
+    }
     //MARK: - ДОДЕЛАТЬ UIMenu
     func callUIMenu() -> UIMenu {
         let filterActions = [
@@ -155,7 +182,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         
         //Доделать полный лист локализаций новостей
 //        let countries = ["ar","de","en","es","fr","it","nl","no","pt","ru","sv","zh"]
-//        let fullNameCountries = ["Argentina","Germany","Great Britain","Spain","France","Italy","Netherlands","Norway","Portugal","Russia","Sweden","Chech Republic"]
+//        let fullNameCountries = ["Argentina","Germany","Great Britain","Spain","France","Italy","Netherlands","Norway","Portugal","Russia","Sweden","Check Republic"]
         
         let localeActions = [UIAction(title: "Everywhere", handler: { [unowned self] _ in
             self.localeRequest = String(Locale.preferredLanguages.first!.prefix(2))
@@ -192,23 +219,27 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
 extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
     
     func selectedCell(indexPath: IndexPath,selectedCase: TableViewDelegateSignal?) {
+        let model = model[indexPath.row]
         switch selectedCase {
             
         case .addToFavourite:
-            print("Add to favourite")
+            FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
         case .copyLink:
-            UIPasteboard.general.string = model[indexPath.row].url
+            UIPasteboard.general.string = model.url
         case .none:
-            print("Selected cell at \(indexPath.row)")
+            let vc = FFNewsPageDetailViewController(model: model)
+            navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
-            print("Open image view")
+            showFullSizeImage(url: model.urlToImage ?? "")
         case .some(.openLink):
-            guard  let url = URL(string: model[indexPath.row].url) else { return }
+            guard  let url = URL(string: model.url) else { return }
             let vc = SFSafariViewController(url: url)
             present(vc, animated: true)
         }
-        
     }
+    
+    
 }
 ///view model delegate
 extension FFNewsPageViewController: FFNewsPageDelegate {

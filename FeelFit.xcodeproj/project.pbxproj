@@ -36,6 +36,8 @@
 		0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */; };
 		0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */; };
 		0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */; };
+		0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E12ACF77C400899CF6 /* FFNewsImageView.swift */; };
+		0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -68,6 +70,8 @@
 		0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewController.swift; sourceTree = "<group>"; };
 		0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsStoreManager.swift; sourceTree = "<group>"; };
 		0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModelRealm.swift; sourceTree = "<group>"; };
+		0ACEA9E12ACF77C400899CF6 /* FFNewsImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsImageView.swift; sourceTree = "<group>"; };
+		0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageDetailViewController.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -192,6 +196,7 @@
 				0A22BB2C2AC4566E004FD282 /* TableViewGroup */,
 				0A44950E2AB9FCC40082C909 /* ViewModel */,
 				0A44950D2AB9FCBD0082C909 /* View */,
+				0ACEA9E02ACF77AB00899CF6 /* SecondaryView */,
 				0A4495272ABA794E0082C909 /* Model */,
 			);
 			path = News;
@@ -273,6 +278,7 @@
 			children = (
 				0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */,
 				0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */,
+				0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -418,6 +424,14 @@
 			path = "Store Managers";
 			sourceTree = "<group>";
 		};
+		0ACEA9E02ACF77AB00899CF6 /* SecondaryView */ = {
+			isa = PBXGroup;
+			children = (
+				0ACEA9E12ACF77C400899CF6 /* FFNewsImageView.swift */,
+			);
+			path = SecondaryView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -500,6 +514,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
+				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
@@ -509,6 +524,7 @@
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
+				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,

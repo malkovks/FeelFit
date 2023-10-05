@@ -8,13 +8,12 @@
 import UIKit
 import RealmSwift
 
+///Protocol for controlling selected button in FFNewsPageTableViewCell
 protocol TableViewCellDelegate: AnyObject {
     func buttonDidTapped(sender: UITableViewCell,indexPath: IndexPath,status: Bool)
-    func imageWasSelected(imageView: UIImageView?)
 }
 
-
-
+///Custom tableView cell for FFNewsPageTableView
 class FFNewsPageTableViewCell: UITableViewCell {
     
     weak var delegate: TableViewCellDelegate?
@@ -70,14 +69,16 @@ class FFNewsPageTableViewCell: UITableViewCell {
     let contentLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.textAlignment = .justified
+        label.textAlignment = .natural
         label.textColor = FFResources.Colors.textColor
         label.font = .systemFont(ofSize: 14,weight: .thin)
          return label
     }()
     
     let newsImageView: UIImageView = {
+        
        let image = UIImageView()
+        image.isUserInteractionEnabled = true
         image.layer.cornerRadius = 12
         image.layer.masksToBounds = true
         image.clipsToBounds = true
@@ -120,8 +121,7 @@ class FFNewsPageTableViewCell: UITableViewCell {
     }
     ///In progress
     @objc private func didTapImageView(){
-        let image = newsImageView.image
-        let imageView = UIImageView(image: image)
+        
     }
     //MARK: - Setup methods
     private func setupView(){
@@ -129,12 +129,17 @@ class FFNewsPageTableViewCell: UITableViewCell {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
         newsImageView.isUserInteractionEnabled = true
         newsImageView.addGestureRecognizer(gesture)
-        contentView.layer.cornerRadius = 12
+        self.layer.cornerRadius = 12
     }
     
     private func filterModel(model: Articles, indexPath: IndexPath){
         let realm = try! Realm()
-        let object = realm.objects(FFNewsModelRealm.self).filter("newsURL = '\(model.url)'")
+        
+        let object = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@",model.title,model.publishedAt)
+        if object.first?.newsAddedFavouriteStatus == true {
+            newsAddFavouriteButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            isAddedToFavourite.toggle()
+        }
     }
     
     func configureCell(model: Articles?,indexPath: IndexPath){
@@ -142,8 +147,8 @@ class FFNewsPageTableViewCell: UITableViewCell {
         titleLabel.text = model?.title ?? nil
         contentLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
-        authorLabel.text = "Author: " + (model?.author ?? "")
         publishDateLabel.text = "Published: " + (model?.publishedAt.convertToStringData() ?? "")
+        
         if let image = model?.urlToImage {
             guard let url = URL(string: image) else { return }
             URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
@@ -155,20 +160,17 @@ class FFNewsPageTableViewCell: UITableViewCell {
         } else {
             newsImageView.image = UIImage(systemName: "photo")
         }
+        guard let model = model else { return }
+        self.filterModel(model: model, indexPath: indexPath)
     }
 }
 //MARK: - Constraints
 extension FFNewsPageTableViewCell {
     private func setupConstraints(){
-        let titleAndReleaseStackView = UIStackView(arrangedSubviews: [titleLabel,publishDateLabel])
+        let titleAndReleaseStackView = UIStackView(arrangedSubviews: [titleLabel,publishDateLabel,sourceLabel])
         titleAndReleaseStackView.axis = .vertical
         titleAndReleaseStackView.alignment = .leading
         titleAndReleaseStackView.distribution = .fill
-        
-        let secondaryStackView = UIStackView(arrangedSubviews: [sourceLabel])
-        secondaryStackView.axis = .vertical
-        secondaryStackView.alignment = .leading
-        secondaryStackView.distribution = .fillProportionally
         
         contentView.addSubview(newsAddFavouriteButton)
         newsAddFavouriteButton.snp.makeConstraints { make in
@@ -181,28 +183,20 @@ extension FFNewsPageTableViewCell {
             make.leading.equalToSuperview().inset(3)
             make.trailing.equalTo(newsAddFavouriteButton.snp.leading).offset(3)
             make.top.equalToSuperview().offset(3)
-//            make.width.equalTo(contentView.frame.width*5/6)
-            make.height.equalToSuperview().dividedBy(3.5)
+            make.height.equalToSuperview().dividedBy(2.5)
         }
-        
-        
-        contentView.addSubview(secondaryStackView)
-        secondaryStackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(3)
-            make.top.equalTo(titleAndReleaseStackView.snp.bottom).offset(3)
-            make.height.equalToSuperview().dividedBy(5.5)
-        }
+    
         
         contentView.addSubview(newsImageView)
         newsImageView.snp.makeConstraints { make in
-            make.top.equalTo(secondaryStackView.snp.bottom).offset(3)
+            make.top.equalTo(titleAndReleaseStackView.snp.bottom).offset(3)
             make.bottom.leading.equalToSuperview().inset(3)
-            make.width.equalToSuperview().dividedBy(4)
+            make.width.equalToSuperview().dividedBy(3.5)
         }
     
         contentView.addSubview(contentLabel)
         contentLabel.snp.makeConstraints { make in
-            make.top.equalTo(secondaryStackView.snp.bottom).offset(3)
+            make.top.equalTo(titleAndReleaseStackView.snp.bottom).offset(3)
             make.leading.equalTo(newsImageView.snp.trailing).offset(3)
             make.trailing.bottom.equalToSuperview().inset(3)
         }
