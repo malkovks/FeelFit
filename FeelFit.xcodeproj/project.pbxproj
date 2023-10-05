@@ -32,6 +32,10 @@
 		0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */; };
 		0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */; };
 		0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495382ABC43B70082C909 /* FFNewsModel.swift */; };
+		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
+		0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */; };
+		0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */; };
+		0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -60,6 +64,10 @@
 		0A4495322ABA8D9E0082C909 /* UIViewController+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+extension.swift"; sourceTree = "<group>"; };
 		0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetNewsRequest.swift; sourceTree = "<group>"; };
 		0A4495382ABC43B70082C909 /* FFNewsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModel.swift; sourceTree = "<group>"; };
+		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewController.swift; sourceTree = "<group>"; };
+		0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsStoreManager.swift; sourceTree = "<group>"; };
+		0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModelRealm.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -134,6 +142,7 @@
 			children = (
 				0A4495002AB9CFB40082C909 /* Modules */,
 				0A4495342ABC3F720082C909 /* APIClient */,
+				0ACEA9DB2ACF1B6E00899CF6 /* Store Managers */,
 				0A4495172ABA728F0082C909 /* Helpers */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
 				0A44950B2AB9FC260082C909 /* Managers */,
@@ -263,6 +272,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */,
+				0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -281,6 +291,7 @@
 				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
 				0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */,
 				0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */,
+				0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -377,6 +388,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4495382ABC43B70082C909 /* FFNewsModel.swift */,
+				0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -396,6 +408,14 @@
 				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		0ACEA9DB2ACF1B6E00899CF6 /* Store Managers */ = {
+			isa = PBXGroup;
+			children = (
+				0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */,
+			);
+			path = "Store Managers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -482,6 +502,7 @@
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
+				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
@@ -490,6 +511,7 @@
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
+				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
 				0A22BB292AC3053B004FD282 /* FFNewsTableViewDelegate.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsViewModel.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
@@ -497,9 +519,11 @@
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
+				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
 				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
+				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

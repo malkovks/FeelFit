@@ -45,7 +45,7 @@ class FFGetNewsRequest {
     }
     
     func getDataFromCache(model: Articles){
-        guard let text = model.url, let url = URL(string: text) else { return }
+        guard let url = URL(string: model.url) else { return }
         let request = URLRequest(url: url)
         URLCache.shared.removeCachedResponse(for: request)
         

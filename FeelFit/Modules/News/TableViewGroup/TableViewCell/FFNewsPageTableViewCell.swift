@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import RealmSwift
 
 protocol TableViewCellDelegate: AnyObject {
-    func buttonDidTapped(sender: UITableViewCell,status: Bool)
+    func buttonDidTapped(sender: UITableViewCell,indexPath: IndexPath,status: Bool)
     func imageWasSelected(imageView: UIImageView?)
 }
 
@@ -19,6 +20,7 @@ class FFNewsPageTableViewCell: UITableViewCell {
     weak var delegate: TableViewCellDelegate?
 
     static let identifier = "NewsPageTableViewCell"
+    
     
     private var isAddedToFavourite: Bool = false
     
@@ -99,6 +101,8 @@ class FFNewsPageTableViewCell: UITableViewCell {
         setupView()
     }
     
+    
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -106,11 +110,13 @@ class FFNewsPageTableViewCell: UITableViewCell {
     //MARK: - Target methods
     @objc private func didTapButtonTapped(sender: UIButton){
         isAddedToFavourite.toggle()
-        
+        print(newsAddFavouriteButton.tag)
+        let indexPath = IndexPath(row: newsAddFavouriteButton.tag, section: 0)
+        //Разобраться как передавать индекс строчки при нажатии на кнопку, чтобы затем можно было добавлять по индексу модель в избранное
         let imageName = isAddedToFavourite ? "heart.fill" : "heart"
         let image = UIImage(systemName: imageName)
         newsAddFavouriteButton.setImage(image, for: .normal)
-        delegate?.buttonDidTapped(sender: self, status: isAddedToFavourite)
+        delegate?.buttonDidTapped(sender: self, indexPath: indexPath, status: isAddedToFavourite)
     }
     ///In progress
     @objc private func didTapImageView(){
@@ -123,10 +129,16 @@ class FFNewsPageTableViewCell: UITableViewCell {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
         newsImageView.isUserInteractionEnabled = true
         newsImageView.addGestureRecognizer(gesture)
+        contentView.layer.cornerRadius = 12
     }
     
-    func configureCell(model: Articles?){
-        
+    private func filterModel(model: Articles, indexPath: IndexPath){
+        let realm = try! Realm()
+        let object = realm.objects(FFNewsModelRealm.self).filter("newsURL = '\(model.url)'")
+    }
+    
+    func configureCell(model: Articles?,indexPath: IndexPath){
+        newsAddFavouriteButton.tag = indexPath.row
         titleLabel.text = model?.title ?? nil
         contentLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
@@ -153,7 +165,7 @@ extension FFNewsPageTableViewCell {
         titleAndReleaseStackView.alignment = .leading
         titleAndReleaseStackView.distribution = .fill
         
-        let secondaryStackView = UIStackView(arrangedSubviews: [sourceLabel,authorLabel])
+        let secondaryStackView = UIStackView(arrangedSubviews: [sourceLabel])
         secondaryStackView.axis = .vertical
         secondaryStackView.alignment = .leading
         secondaryStackView.distribution = .fillProportionally

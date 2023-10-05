@@ -62,7 +62,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
-        alertError(title: "Favourite View Controller", message: "This page in development", style: .alert, cancelTitle: "This is fine")
+        let vc = FFNewsFavouriteViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func didTapLoadMore(){
@@ -73,8 +74,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapRefreshData(){
-        print("Type request - \(typeRequest)\n Sort request - \(filterRequest)")
-        
         loadingExactType(type: typeRequest,filter: filterRequest,locale: localeRequest)
     }
     
@@ -91,8 +90,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         tableView.delegate = delegateClass
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.automaticallyAdjustsScrollIndicatorInsets = false
-        
-
         tableView.refreshControl = viewModel.refreshControll
         viewModel.refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
     }
@@ -164,16 +161,23 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
             self.localeRequest = String(Locale.preferredLanguages.first!.prefix(2))
             UserDefaults.standard.setValue(Locale.preferredLanguages.first!.prefix(2), forKey: "localeRequest")
         }),
-                             UIAction(title: "Russian",attributes: .init(),state: .mixed, handler: { [unowned self] _ in
+                             UIAction(title: "Russian", handler: { [unowned self] _ in
             self.localeRequest = "ru"
             UserDefaults.standard.setValue("ru", forKey: "localeRequest")
         })]
         let thirdDivider = UIMenu(title: "Country Resources",image: UIImage(systemName: "character.bubble.fill"),options: .displayInline,children: localeActions)
-        var items = [divider,secondDivider,thirdDivider]
+        let items = [divider,secondDivider,thirdDivider]
         return UIMenu(title: "Filter news",children: items)
     }
     
-   
+    func reloadTableView(models: [Articles]) {
+        dataSourceClass = FFNewsTableViewDataSource(with: models)
+        delegateClass = FFNewsTableViewDelegate(with: self,model: models)
+        tableView.dataSource = dataSourceClass
+        tableView.delegate = delegateClass
+        tableView.tableFooterView = loadDataButton
+        tableView.reloadData()
+    }
     
     func loadingExactType(type: String,filter: String,locale: String){
         model = []
@@ -193,15 +197,13 @@ extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
         case .addToFavourite:
             print("Add to favourite")
         case .copyLink:
-            print("Copy link")
             UIPasteboard.general.string = model[indexPath.row].url
         case .none:
             print("Selected cell at \(indexPath.row)")
-            dump(model[indexPath.row])
         case .some(.openImage):
-            print("Open image")
+            print("Open image view")
         case .some(.openLink):
-            guard let text = model[indexPath.row].url, let url = URL(string: text) else { return }
+            guard  let url = URL(string: model[indexPath.row].url) else { return }
             let vc = SFSafariViewController(url: url)
             present(vc, animated: true)
         }
@@ -243,16 +245,6 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             self.viewModel!.refreshControll.endRefreshing()
         }
     }
-    
-    func reloadTableView(models: [Articles]) {
-        dataSourceClass = FFNewsTableViewDataSource(with: models)
-        delegateClass = FFNewsTableViewDelegate(with: self,model: models)
-        tableView.dataSource = dataSourceClass
-        tableView.delegate = delegateClass
-        tableView.tableFooterView = loadDataButton
-        tableView.reloadData()
-    }
-    
 }
 
 
@@ -265,15 +257,6 @@ extension FFNewsPageViewController {
             make.leading.trailing.equalToSuperview().inset(3)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
-    }
-}
-
-//MARK: - Array extensions
-
-public extension Array where Element: Hashable {
-    func uniqueArray() -> [Element] {
-        var seen = Set<Element>()
-        return filter{ seen.insert($0).inserted }
     }
 }
 

@@ -22,7 +22,7 @@ class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFNewsPageTableViewCell.identifier, for: indexPath) as! FFNewsPageTableViewCell
         let data = cellDataModel[indexPath.row]
-        cell.configureCell(model: data)
+        cell.configureCell(model: data,indexPath: indexPath)
         cell.delegate = self
         return cell
     }
@@ -31,11 +31,12 @@ class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellD
         let vc = FFNewsImageViewController(imageView: imageView)
     }
     
-    func buttonDidTapped(sender: UITableViewCell,status: Bool) {
+    func buttonDidTapped(sender: UITableViewCell,indexPath: IndexPath,status: Bool) {
+        let model = cellDataModel[indexPath.row]
         if status {
-            print("Added to favourite")
+            FFNewsStoreManager.shared.saveNewsModel(model: model, status: status)
         } else {
-            print("Removed from favourite")
+            FFNewsStoreManager.shared.deleteNewsModel(model: model, status: status)
         }
     }
     

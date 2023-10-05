@@ -37,9 +37,6 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     
     ///function for request data from API
     func requestData(pageNumber: Int = 1,type: String,filter: String) {
-        typeRequest = type
-        
-        
         delegate?.willLoadData()
         let request = FFGetNewsRequest.shared
         request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter,locale: localeRequest) { [weak self] result in
