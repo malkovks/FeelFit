@@ -21,12 +21,15 @@ class FFGetNewsRequest {
         let result = setupDates()
         
         guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(result.0)&to\(result.1)&pageSize=20&page=\(numberOfPage)&sortBy=\(requestSortType)&language=\(locale)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
+//        guard let url = URL(string: "https://newsapi.org/v2/everything?q=fitness&from2023-09-28&to2023-09-29&pageSize=20&page=1&sortBy=publishedAt&apiKey=726ada313f7a4371a04f04c875036854") else { return }
         
         let cache = URLCache(memoryCapacity: 100*1024*1024, diskCapacity: 100*1024*1024)
         URLCache.shared = cache
         var request = URLRequest(url: url)
-        request.cachePolicy = .returnCacheDataElseLoad
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.timeoutInterval = 10
+        
+        
 
         AF.request(request).responseJSON { response in
             if let data = response.data {
@@ -41,16 +44,7 @@ class FFGetNewsRequest {
                 guard let error = response.error else { return }
                 completion(.failure(error))
             }
-        }
-    }
-    
-    func getDataFromCache(model: Articles){
-        guard let url = URL(string: model.url) else { return }
-        let request = URLRequest(url: url)
-        URLCache.shared.removeCachedResponse(for: request)
-        
-        let fileManager = FileManager.default
-        let filePath = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)
+        }.resume()
     }
     
     private func setupDates() -> (String,String) {

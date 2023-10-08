@@ -67,7 +67,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapLoadMore(){
-        var value = UserDefaults.standard.value(forKey: "pageNumberAPI") as! Int
+        let value = UserDefaults.standard.value(forKey: "pageNumberAPI") as! Int
         let pageNumber = value + 1
         UserDefaults.standard.setValue(pageNumber, forKey: "pageNumberAPI")
         viewModel!.requestData(pageNumber: pageNumber,type: typeRequest, filter: filterRequest)
@@ -214,6 +214,17 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         viewModel.localeRequest = locale
         typeRequest = type
     }
+    
+    func shareNews(model: Articles){
+        let newsTitle = model.title
+        guard let newsURL = URL(string: model.url) else { return }
+        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
+        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
+        self.present(activityViewController, animated: true)
+    }
+    
 }
 /// отвечает за нажатие строки пользователем и возвращает индекс
 extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
@@ -221,7 +232,8 @@ extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
     func selectedCell(indexPath: IndexPath,selectedCase: TableViewDelegateSignal?) {
         let model = model[indexPath.row]
         switch selectedCase {
-            
+        case .shareNews :
+            shareNews(model: model)
         case .addToFavourite:
             FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
             tableView.reloadRows(at: [indexPath], with: .automatic)

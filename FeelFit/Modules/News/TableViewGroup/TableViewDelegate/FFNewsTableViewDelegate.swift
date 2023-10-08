@@ -13,6 +13,7 @@ enum TableViewDelegateSignal {
     case openImage
     case openLink
     case addToFavourite
+    case shareNews
 }
 
 ///Protocol used for tableViewDelegate when user long tap on cell and call contextMenu
@@ -53,9 +54,11 @@ class FFNewsTableViewDelegate: NSObject, UITableViewDelegate{
             }
             let openlinkAction = UIAction(title: "Open in Browser",image: UIImage(systemName: "safari")) { [unowned self] _ in
                 self.delegate?.selectedCell(indexPath: indexPath, selectedCase: .openLink)
-                
             }
-            return UIMenu(title: "",children: [favouriteAction,openlinkAction,copyAction,openImageAction])
+            let shareNewsAction = UIAction(title: "Share news",image: UIImage(systemName: "square.and.arrow.up")) { [unowned self] _ in
+                self.delegate?.selectedCell(indexPath: indexPath, selectedCase: .shareNews)
+            }
+            return UIMenu(title: "",children: [favouriteAction,openlinkAction,copyAction,openImageAction,shareNewsAction])
         }
     }
 }

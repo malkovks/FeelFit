@@ -66,7 +66,7 @@ extension FFNewsFavouriteViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        var newModel = newsModels[indexPath.row]
+        let newModel = newsModels[indexPath.row]
         let convertedModel = Articles.convertRealmModel(model: newModel)
         let vc = FFNewsPageDetailViewController(model: convertedModel)
         navigationController?.pushViewController(vc, animated: true)

@@ -20,7 +20,7 @@ class FFNewsStoreManager {
         let newsModel = FFNewsModelRealm()
         newsModel.newsAddedFavouriteStatus = status
         newsModel.newsAuthor = model.author ?? nil
-        newsModel.newsURL = model.url ?? "No URL"
+        newsModel.newsURL = model.url
         newsModel.newsTitle = model.title
         newsModel.newsContent = model.content ?? nil
         newsModel.newsDescription = model.description ?? nil
