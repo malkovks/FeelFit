@@ -111,7 +111,6 @@ class FFNewsPageTableViewCell: UITableViewCell {
     //MARK: - Target methods
     @objc private func didTapButtonTapped(sender: UIButton){
         isAddedToFavourite.toggle()
-        print(newsAddFavouriteButton.tag)
         let indexPath = IndexPath(row: newsAddFavouriteButton.tag, section: 0)
         //Разобраться как передавать индекс строчки при нажатии на кнопку, чтобы затем можно было добавлять по индексу модель в избранное
         let imageName = isAddedToFavourite ? "heart.fill" : "heart"
