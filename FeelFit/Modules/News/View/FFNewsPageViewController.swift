@@ -77,6 +77,11 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         loadingExactType(type: typeRequest,filter: filterRequest,locale: localeRequest)
     }
     
+    @objc private func didTapSetupRequest(){
+        let vc = FFNewsSetupRequestViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     //MARK: - Setup methods
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
@@ -108,8 +113,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.maximumContentSizeCategory = .small
         title = "News"
-        addNavigationBarButton(at: .left, title: nil, imageName: "gear", action: nil, menu: callUIMenu())
-        addNavigationBarButton(at: .right, title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: nil, imageName: "gear", action: #selector(didTapSetupRequest), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
     
     private func showFullSizeImage(url: String){
@@ -138,7 +143,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
             vc.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
         }
     }
-    //MARK: - ДОДЕЛАТЬ UIMenu
+    //MARK: - НЕ используется(позже удалить)
     func callUIMenu() -> UIMenu {
         let filterActions = [
             UIAction(title: "Relevance") { _ in

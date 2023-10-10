@@ -13,7 +13,7 @@ enum BarButtonPosition {
 }
 
 extension UIViewController {
-    func addNavigationBarButton(at position: BarButtonPosition,title: String?,imageName: String,action: Selector?,menu: UIMenu?){
+    func addNavigationBarButton(title: String?,imageName: String,action: Selector?,menu: UIMenu?) -> UIBarButtonItem {
         let image = UIImage(systemName: imageName)
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
@@ -27,26 +27,12 @@ extension UIViewController {
             
         }
         if let action = action {
-            switch position {
-                
-            case .left:
-                button.addTarget(self, action: action, for: .touchUpInside)
-                navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
-            case .right:
-                button.addTarget(self, action: action, for: .touchUpInside)
-                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
-            }
+            button.addTarget(self, action: action, for: .touchUpInside)
+            return UIBarButtonItem(customView: button)
         } else {
-            switch position {
-                
-            case .left:
-                button.menu = menu
-                navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
-            case .right:
-                button.menu = menu
-                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
-            }
+            button.menu = menu
+            return UIBarButtonItem(customView: button)
+            
         }
-        
     }
 }

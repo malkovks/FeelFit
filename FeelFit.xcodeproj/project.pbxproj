@@ -38,6 +38,7 @@
 		0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */; };
 		0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E12ACF77C400899CF6 /* FFNewsImageView.swift */; };
 		0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */; };
+		0ACEA9E62AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E52AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,7 @@
 		0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModelRealm.swift; sourceTree = "<group>"; };
 		0ACEA9E12ACF77C400899CF6 /* FFNewsImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsImageView.swift; sourceTree = "<group>"; };
 		0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageDetailViewController.swift; sourceTree = "<group>"; };
+		0ACEA9E52AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestViewController.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -279,6 +281,7 @@
 				0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */,
 				0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */,
 				0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */,
+				0ACEA9E52AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -528,6 +531,7 @@
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
+				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift in Sources */,
 				0A22BB292AC3053B004FD282 /* FFNewsTableViewDelegate.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsViewModel.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
