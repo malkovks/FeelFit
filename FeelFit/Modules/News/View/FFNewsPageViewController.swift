@@ -14,7 +14,7 @@ import SafariServices
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
     private var viewModel: FFNewsPageViewModel!
-    private var delegateClass: FFNewsTableViewDelegate?
+//    private var delegateClass: FFNewsTableViewDelegate?
     private var dataSourceClass: FFNewsTableViewDataSource?
     
     private var typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
@@ -47,6 +47,13 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         return button
     }()
     
+    private var refreshControll: UIRefreshControl = {
+       let refresh = UIRefreshControl()
+        refresh.attributedTitle = NSAttributedString(string: "Grab to refresh")
+        refresh.tintColor = FFResources.Colors.activeColor
+        return refresh
+    }()
+    
     //MARK: - View loading
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,7 +61,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupView()
         setupNavigationController()
         setupSpinner()
-        setupNewViewModel()
+        setupNewsPageViewModel()
         setupTableView()
         DispatchQueue.main.asyncAfter(deadline: .now()+1){ [unowned self] in
             self.viewModel!.requestData(type: self.typeRequest, filter: self.filterRequest)
@@ -89,19 +96,21 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     func setupTableView(){
-        delegateClass = FFNewsTableViewDelegate(with: self,model: model)
-        dataSourceClass = FFNewsTableViewDataSource(with: model)
-        tableView.dataSource = dataSourceClass
-        tableView.delegate = delegateClass
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.automaticallyAdjustsScrollIndicatorInsets = false
-        tableView.refreshControl = viewModel.refreshControll
-        viewModel.refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
+        tableView.refreshControl = refreshControll
+        refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
     }
     
-    func setupNewViewModel(){
-        viewModel = FFNewsPageViewModel()
+    func setupNewsPageViewModel(){
+        viewModel = FFNewsPageViewModel(localModel: model,viewController: self)
         viewModel.delegate = self
+//        viewModel.tableDelegate = self
+        dataSourceClass = FFNewsTableViewDataSource(with: model)
+//        delegateClass = FFNewsTableViewDelegate(with: self,model: model)
+        tableView.dataSource = dataSourceClass
+        tableView.delegate = self
+//        delegateClass?.viewModel.tableDelegate = self
     }
     
     func setupSpinner() {
@@ -141,6 +150,123 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         UIView.animate(withDuration: 0.5) {
             self.view.alpha = 0.8
             vc.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        }
+    }
+    
+    func reloadTableView(models: [Articles]) {
+        dataSourceClass = FFNewsTableViewDataSource(with: models)
+//        delegateClass = FFNewsTableViewDelegate(with: self,model: models)
+        tableView.dataSource = dataSourceClass
+        tableView.delegate = self
+        tableView.tableFooterView = loadDataButton
+        tableView.reloadData()
+    }
+    
+    func loadingExactType(type: String,filter: String,locale: String){
+        model = []
+        viewModel!.requestData(type: type,filter: filter)
+        viewModel.typeRequest = type
+        viewModel.sortRequest = filter
+        viewModel.localeRequest = locale
+        typeRequest = type
+    }
+    
+    func shareNews(model: Articles){
+        let newsTitle = model.title
+        guard let newsURL = URL(string: model.url) else { return }
+        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
+        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
+        self.present(activityViewController, animated: true)
+    }
+    
+}
+extension FFNewsPageViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        viewModel.didSelectRow(at: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return viewModel.contextMenuConfiguration(at: indexPath, point: point)
+    }
+    
+}
+
+/// отвечает за нажатие строки пользователем и возвращает индекс
+//extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
+//    
+//}
+///view model delegate
+extension FFNewsPageViewController: FFNewsPageDelegate {
+    func willLoadData() {
+        spinner.startAnimating()
+        refreshControll.beginRefreshing()
+    }
+    //доделать запрос чтобы он не добавлял по 20 новых запросов одинаково, удалял старые и добавлял новые
+    func didLoadData(model: [Articles]?,error: Error?) {
+        guard error == nil else {
+            alertError(title: "Error!", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
+            spinner.stopAnimating()
+            refreshControll.endRefreshing()
+            return
+        }
+        
+        loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
+        
+        var newModel = [Articles]()
+        for m in model ?? [Articles]() {
+            if !m.source.name.elementsEqual("[Removed]") {
+                newModel.append(m)
+            }
+        }
+        
+        
+        self.model += newModel
+        
+        let uniqueItems = self.model.uniqueArray()
+        DispatchQueue.main.async { [unowned self ] in
+            self.model = uniqueItems
+            self.reloadTableView(models: self.model)
+            self.spinner.stopAnimating()
+            self.refreshControll.endRefreshing()
+            viewModel = FFNewsPageViewModel(localModel: uniqueItems)
+        }
+    }
+    
+    func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: TableViewSelectedConfiguration?) {
+        print("Selected row \(indexPath.row)")
+        switch selectedCase {
+        case .shareNews :
+            shareNews(model: model)
+        case .addToFavourite:
+            FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        case .copyLink:
+            UIPasteboard.general.string = model.url
+        case .none:
+            let vc = FFNewsPageDetailViewController(model: model)
+            navigationController?.pushViewController(vc, animated: true)
+        case .some(.openImage):
+            showFullSizeImage(url: model.urlToImage ?? "")
+        case .some(.openLink):
+            guard  let url = URL(string: model.url) else { return }
+            let vc = SFSafariViewController(url: url)
+            present(vc, animated: true)
+        }
+    }
+}
+
+
+extension FFNewsPageViewController {
+    private func setupConstraints(){
+        
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(3)
+            make.leading.trailing.equalToSuperview().inset(3)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
     //MARK: - НЕ используется(позже удалить)
@@ -201,112 +327,9 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         let items = [divider,secondDivider,thirdDivider]
         return UIMenu(title: "Filter news",children: items)
     }
-    
-    func reloadTableView(models: [Articles]) {
-        dataSourceClass = FFNewsTableViewDataSource(with: models)
-        delegateClass = FFNewsTableViewDelegate(with: self,model: models)
-        tableView.dataSource = dataSourceClass
-        tableView.delegate = delegateClass
-        tableView.tableFooterView = loadDataButton
-        tableView.reloadData()
-    }
-    
-    func loadingExactType(type: String,filter: String,locale: String){
-        model = []
-        viewModel!.requestData(type: type,filter: filter)
-        viewModel.typeRequest = type
-        viewModel.sortRequest = filter
-        viewModel.localeRequest = locale
-        typeRequest = type
-    }
-    
-    func shareNews(model: Articles){
-        let newsTitle = model.title
-        guard let newsURL = URL(string: model.url) else { return }
-        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
-        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = self.view
-        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
-        self.present(activityViewController, animated: true)
-    }
-    
-}
-/// отвечает за нажатие строки пользователем и возвращает индекс
-extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
-    
-    func selectedCell(indexPath: IndexPath,selectedCase: TableViewDelegateSignal?) {
-        let model = model[indexPath.row]
-        switch selectedCase {
-        case .shareNews :
-            shareNews(model: model)
-        case .addToFavourite:
-            FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
-            tableView.reloadRows(at: [indexPath], with: .automatic)
-        case .copyLink:
-            UIPasteboard.general.string = model.url
-        case .none:
-            let vc = FFNewsPageDetailViewController(model: model)
-            navigationController?.pushViewController(vc, animated: true)
-        case .some(.openImage):
-            showFullSizeImage(url: model.urlToImage ?? "")
-        case .some(.openLink):
-            guard  let url = URL(string: model.url) else { return }
-            let vc = SFSafariViewController(url: url)
-            present(vc, animated: true)
-        }
-    }
-    
-    
-}
-///view model delegate
-extension FFNewsPageViewController: FFNewsPageDelegate {
-    func willLoadData() {
-        spinner.startAnimating()
-        viewModel!.refreshControll.beginRefreshing()
-    }
-    //доделать запрос чтобы он не добавлял по 20 новых запросов одинаково, удалял старые и добавлял новые
-    func didLoadData(model: [Articles]?,error: Error?) {
-        guard error == nil else {
-            alertError(title: "Error!", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
-            spinner.stopAnimating()
-            viewModel!.refreshControll.endRefreshing()
-            return
-        }
-        
-        loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
-        
-        var newModel = [Articles]()
-        for m in model ?? [Articles]() {
-            if !m.source.name.elementsEqual("[Removed]") {
-                newModel.append(m)
-            }
-        }
-        
-        
-        self.model += newModel
-        
-        let uniqueItems = self.model.uniqueArray()
-        DispatchQueue.main.async { [unowned self ] in
-            self.model = uniqueItems
-            self.reloadTableView(models: self.model)
-            self.spinner.stopAnimating()
-            self.viewModel!.refreshControll.endRefreshing()
-        }
-    }
 }
 
 
-extension FFNewsPageViewController {
-    private func setupConstraints(){
-        
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(3)
-            make.leading.trailing.equalToSuperview().inset(3)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-        }
-    }
-}
 
 
 
