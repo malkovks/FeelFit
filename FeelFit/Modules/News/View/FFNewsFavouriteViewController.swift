@@ -10,7 +10,8 @@ import RealmSwift
 
 
 ///Class for displaying stored news which was added to favourite
-class FFNewsFavouriteViewController: UIViewController {
+class FFNewsFavouriteViewController: UIViewController, Coordinating {
+    var coordinator: Coordinator?
     
     var newsModels: Results<FFNewsModelRealm>!
     var localRealm = try! Realm()

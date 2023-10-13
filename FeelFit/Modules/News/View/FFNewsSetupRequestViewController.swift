@@ -7,7 +7,8 @@
 
 import UIKit
 
-class FFNewsSetupRequestViewController: UIViewController {
+class FFNewsSetupRequestViewController: UIViewController, Coordinating {
+    var coordinator: Coordinator?
 
     override func viewDidLoad() {
         super.viewDidLoad()

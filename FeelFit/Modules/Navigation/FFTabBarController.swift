@@ -7,13 +7,11 @@
 
 import UIKit
 
-
-
 final class FFTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupControllerBar()
+//        setupControllerBar()
         configureTabBar()
         
     }
@@ -24,8 +22,6 @@ final class FFTabBarController: UITabBarController {
         tabBar.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         tabBar.layer.masksToBounds = true
     }
-    
-    
     
     private func tabBarSetup(vc: UIViewController, title: String, image: String,tag: Int) -> UINavigationController {
         let image = UIImage(systemName: image)

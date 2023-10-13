@@ -7,11 +7,12 @@
 
 import UIKit
 
+
 ///ViewModel delegate protocol
 protocol FFNewsPageDelegate: AnyObject {
     func willLoadData()
     func didLoadData(model: [Articles]?,error: Error?)
-    func selectedCell(indexPath: IndexPath,model: Articles,selectedCase: TableViewSelectedConfiguration?)
+    func selectedCell(indexPath: IndexPath,model: Articles,selectedCase: NewsTableViewSelectedConfiguration?)
 }
 
 ///ViewModel setup protocol
@@ -20,12 +21,12 @@ protocol FFNewsViewModelType {
     func requestData(pageNumber: Int,type: String,filter: String)
 }
 ///View model for FFNewsPageViewController
-final class FFNewsPageViewModel: FFNewsViewModelType {
+final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
+    var coordinator: Coordinator?
     
     var openController: ((IndexPath,Articles) -> Void)?
     
     weak var delegate: FFNewsPageDelegate?
-//    weak var tableDelegate: FFNewsTableViewCellDelegate?
     
     
     var typeRequest: String = "fitness"
@@ -43,32 +44,52 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
     
 //MARK: - TableView functions
     ///function of choosing row at tableView and returning choosing model
-    func didSelectRow(at indexPath: IndexPath){
-        let selectedModel = localModel[indexPath.row]
-        self.delegate?.selectedCell(indexPath: indexPath,model: selectedModel, selectedCase: .none)
+    func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: [Articles]? = nil){
+        let selectedModel = model![indexPath.row]
+        switch caseSetting {
+        case .shareNews :
+            shareNews(model: selectedModel)
+        case .addToFavourite:
+            FFNewsStoreManager.shared.saveNewsModel(model: selectedModel, status: true)
+            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: caseSetting)
+        case .copyLink:
+            UIPasteboard.general.string = selectedModel.url
+        case .rowSelected:
+            coordinator?.eventOccuredNewsModule(event: .tableViewDidSelect, model: selectedModel)
+        case .openImage:
+            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: caseSetting)
+        case .openLink:
+            guard  let url = URL(string: selectedModel.url) else { return }
+//            let vc = SFSafariViewController(url: url)
+//            present(vc, animated: true)
+            //        self.delegate?.selectedCell(indexPath: indexPath,model: selectedModel, selectedCase: .none)
+        }
     }
-    
-    func contextMenuConfiguration(at indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration {
-        let model = localModel[indexPath.row]
+    ///Конфигурация для таблицы при зажатии на строку
+    func contextMenuConfiguration(at indexPath: IndexPath, point: CGPoint,model: [Articles]) -> UIContextMenuConfiguration {
         return UIContextMenuConfiguration(identifier: nil,
                                           previewProvider: nil) { suggestAction in
             let favouriteAction = UIAction(title: "Add To Favourite",image: UIImage(systemName: "heart")) { [unowned self] _ in
-                self.delegate?.selectedCell(indexPath: indexPath,model: model, selectedCase: .addToFavourite)
+                self.didSelectRow(at: indexPath, caseSetting: .addToFavourite,model: model)
             }
             let copyAction = UIAction(title: "Copy Link",image: UIImage(systemName: "square.and.pencil")) { [unowned self] _ in
-                self.delegate?.selectedCell(indexPath: indexPath,model: model, selectedCase: .copyLink)
+                self.didSelectRow(at: indexPath, caseSetting: .copyLink,model: model)
             }
             let openImageAction = UIAction(title: "Open Image",image: UIImage(systemName: "photo")) { [unowned self] _ in
-                self.delegate?.selectedCell(indexPath: indexPath,model: model, selectedCase: .openImage)
+                self.didSelectRow(at: indexPath, caseSetting: .openImage,model: model)
             }
             let openlinkAction = UIAction(title: "Open in Browser",image: UIImage(systemName: "safari")) { [unowned self] _ in
-                self.delegate?.selectedCell(indexPath: indexPath,model: model, selectedCase: .openLink)
+                self.didSelectRow(at: indexPath, caseSetting: .openLink,model: model)
             }
             let shareNewsAction = UIAction(title: "Share news",image: UIImage(systemName: "square.and.arrow.up")) { [unowned self] _ in
-                self.delegate?.selectedCell(indexPath: indexPath,model: model, selectedCase: .shareNews)
+                self.didSelectRow(at: indexPath, caseSetting: .shareNews,model: model)
             }
             return UIMenu(title: "",children: [favouriteAction,openlinkAction,copyAction,openImageAction,shareNewsAction])
         }
+    }
+    
+    func heightForRowAt(view: UIView) -> CGFloat {
+        return view.frame.size.height/4
     }
     
     
@@ -85,5 +106,17 @@ final class FFNewsPageViewModel: FFNewsViewModelType {
                 self?.delegate?.didLoadData(model: nil, error: error)
             }
         }
+    }
+}
+//help methods
+extension FFNewsPageViewModel {
+    func shareNews(model: Articles){
+        let newsTitle = model.title
+        guard let newsURL = URL(string: model.url) else { return }
+        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
+        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+//        activityViewController.popoverPresentationController?.sourceView = self.view
+//        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
+//        self.present(activityViewController, animated: true)
     }
 }

@@ -11,9 +11,11 @@ import Alamofire
 import SafariServices
 
 ///NewsPageViewController which display table view with inheriting all data
-class FFNewsPageViewController: UIViewController,SetupViewController {
+class FFNewsPageViewController: UIViewController,SetupViewController, Coordinating {
+    ///Наработки с Coordinator
+    var coordinator: Coordinator?
     
-    private var viewModel: FFNewsPageViewModel!
+    var viewModel: FFNewsPageViewModel!
 //    private var delegateClass: FFNewsTableViewDelegate?
     private var dataSourceClass: FFNewsTableViewDataSource?
     
@@ -69,8 +71,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
-        let vc = FFNewsFavouriteViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        coordinator?.eventOccuredNewsModule(event: .openFavourite, model: nil)
     }
     
     @objc private func didTapLoadMore(){
@@ -85,8 +86,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapSetupRequest(){
-        let vc = FFNewsSetupRequestViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        coordinator?.eventOccuredNewsModule(event: .openNewsSettings, model: nil)
     }
     
     //MARK: - Setup methods
@@ -105,12 +105,9 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     func setupNewsPageViewModel(){
         viewModel = FFNewsPageViewModel(localModel: model,viewController: self)
         viewModel.delegate = self
-//        viewModel.tableDelegate = self
         dataSourceClass = FFNewsTableViewDataSource(with: model)
-//        delegateClass = FFNewsTableViewDelegate(with: self,model: model)
         tableView.dataSource = dataSourceClass
         tableView.delegate = self
-//        delegateClass?.viewModel.tableDelegate = self
     }
     
     func setupSpinner() {
@@ -155,7 +152,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     func reloadTableView(models: [Articles]) {
         dataSourceClass = FFNewsTableViewDataSource(with: models)
-//        delegateClass = FFNewsTableViewDelegate(with: self,model: models)
         tableView.dataSource = dataSourceClass
         tableView.delegate = self
         tableView.tableFooterView = loadDataButton
@@ -171,33 +167,37 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         typeRequest = type
     }
     
-    func shareNews(model: Articles){
-        let newsTitle = model.title
-        guard let newsURL = URL(string: model.url) else { return }
-        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
-        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = self.view
-        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
-        self.present(activityViewController, animated: true)
-    }
+//    func shareNews(model: Articles){
+//        let newsTitle = model.title
+//        guard let newsURL = URL(string: model.url) else { return }
+//        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
+//        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+//        activityViewController.popoverPresentationController?.sourceView = self.view
+//        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
+//        self.present(activityViewController, animated: true)
+//    }
     
 }
 extension FFNewsPageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.didSelectRow(at: indexPath)
+        viewModel.delegate = self
+        coordinator?.detailVC(model: model[indexPath.row])
+//        viewModel.didSelectRow(at: indexPath, caseSetting: .rowSelected,model: model)
+//        coordinator?.eventOccuredNewsModule(event: .tableViewDidSelect, model: self.model[indexPath.row])
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        return viewModel.contextMenuConfiguration(at: indexPath, point: point)
+        viewModel.delegate = self
+        return viewModel.contextMenuConfiguration(at: indexPath, point: point,model: model)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return viewModel.heightForRowAt(view: view)
     }
     
 }
 
-/// отвечает за нажатие строки пользователем и возвращает индекс
-//extension FFNewsPageViewController: FFNewsTableViewCellDelegate {
-//    
-//}
 ///view model delegate
 extension FFNewsPageViewController: FFNewsPageDelegate {
     func willLoadData() {
@@ -235,17 +235,18 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         }
     }
     
-    func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: TableViewSelectedConfiguration?) {
-        print("Selected row \(indexPath.row)")
+    func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?) {
+//        ДОБАВЛЕНО ВО VIEWMODEL
         switch selectedCase {
         case .shareNews :
-            shareNews(model: model)
+//            shareNews(model: model)
+            print("Share news")
         case .addToFavourite:
-            FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
+//            FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
             tableView.reloadRows(at: [indexPath], with: .automatic)
         case .copyLink:
             UIPasteboard.general.string = model.url
-        case .none:
+        case .rowSelected:
             let vc = FFNewsPageDetailViewController(model: model)
             navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
@@ -254,6 +255,8 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             guard  let url = URL(string: model.url) else { return }
             let vc = SFSafariViewController(url: url)
             present(vc, animated: true)
+        case .none:
+            break
         }
     }
 }

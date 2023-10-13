@@ -50,3 +50,12 @@ enum FFTabBarIndex: Int {
     case health
     case user
 }
+
+enum NewsTableViewSelectedConfiguration {
+    case copyLink
+    case openImage
+    case openLink
+    case addToFavourite
+    case shareNews
+    case rowSelected
+}

@@ -8,9 +8,8 @@
 import UIKit
 import SafariServices
 
-class FFNewsPageDetailViewController: UIViewController, SetupViewController {
-    
-    
+class FFNewsPageDetailViewController: UIViewController, SetupViewController, Coordinating {
+    var coordinator: Coordinator?
     
     let model: Articles
     let defaultImage: UIImage
@@ -205,4 +204,8 @@ extension FFNewsPageDetailViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(10)
         }
     }
+}
+
+#Preview {
+    FFNewsPageViewController()
 }
