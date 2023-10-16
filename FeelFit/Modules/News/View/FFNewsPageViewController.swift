@@ -9,11 +9,10 @@ import UIKit
 import SnapKit
 import Alamofire
 import SafariServices
+import SwiftUI
 
 ///NewsPageViewController which display table view with inheriting all data
-class FFNewsPageViewController: UIViewController,SetupViewController, Coordinating {
-    ///Наработки с Coordinator
-    var coordinator: Coordinator?
+class FFNewsPageViewController: UIViewController,SetupViewController {
     
     var viewModel: FFNewsPageViewModel!
 //    private var delegateClass: FFNewsTableViewDelegate?
@@ -71,7 +70,9 @@ class FFNewsPageViewController: UIViewController,SetupViewController, Coordinati
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
-        coordinator?.eventOccuredNewsModule(event: .openFavourite, model: nil)
+//        viewModel.openFavouriteView()
+        let vc = FFNewsFavouriteViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func didTapLoadMore(){
@@ -86,7 +87,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController, Coordinati
     }
     
     @objc private func didTapSetupRequest(){
-        coordinator?.eventOccuredNewsModule(event: .openNewsSettings, model: nil)
+        viewModel.openSettingRequest()
+        print("Selected left navigation button for sending signal to view model")
     }
     
     //MARK: - Setup methods
@@ -103,7 +105,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController, Coordinati
     }
     
     func setupNewsPageViewModel(){
-        viewModel = FFNewsPageViewModel(localModel: model,viewController: self)
+        viewModel = FFNewsPageViewModel()
         viewModel.delegate = self
         dataSourceClass = FFNewsTableViewDataSource(with: model)
         tableView.dataSource = dataSourceClass
@@ -182,9 +184,7 @@ extension FFNewsPageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         viewModel.delegate = self
-        coordinator?.detailVC(model: model[indexPath.row])
-//        viewModel.didSelectRow(at: indexPath, caseSetting: .rowSelected,model: model)
-//        coordinator?.eventOccuredNewsModule(event: .tableViewDidSelect, model: self.model[indexPath.row])
+        viewModel.didSelectRow(at: indexPath, caseSetting: .rowSelected,model: model)
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
@@ -231,7 +231,7 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             self.reloadTableView(models: self.model)
             self.spinner.stopAnimating()
             self.refreshControll.endRefreshing()
-            viewModel = FFNewsPageViewModel(localModel: uniqueItems)
+//            viewModel = FFNewsPageViewModel()
         }
     }
     
@@ -280,7 +280,7 @@ extension FFNewsPageViewController {
                 UserDefaults.standard.setValue(Request.RequestSortType.relevancy.rawValue, forKey: "filterRequest")
             },
             UIAction(title: "Popularity") { [unowned self] _ in
-
+                
                 self.filterRequest = Request.RequestSortType.popularity.rawValue
                 UserDefaults.standard.setValue(Request.RequestSortType.popularity.rawValue, forKey: "filterRequest")
             },
@@ -315,8 +315,8 @@ extension FFNewsPageViewController {
         let secondDivider = UIMenu(title: "Request",image: UIImage(systemName: "list.bullet"),options: .singleSelection,children: requestActions)
         
         //Доделать полный лист локализаций новостей
-//        let countries = ["ar","de","en","es","fr","it","nl","no","pt","ru","sv","zh"]
-//        let fullNameCountries = ["Argentina","Germany","Great Britain","Spain","France","Italy","Netherlands","Norway","Portugal","Russia","Sweden","Check Republic"]
+        //        let countries = ["ar","de","en","es","fr","it","nl","no","pt","ru","sv","zh"]
+        //        let fullNameCountries = ["Argentina","Germany","Great Britain","Spain","France","Italy","Netherlands","Norway","Portugal","Russia","Sweden","Check Republic"]
         
         let localeActions = [UIAction(title: "Everywhere", handler: { [unowned self] _ in
             self.localeRequest = String(Locale.preferredLanguages.first!.prefix(2))
@@ -330,6 +330,10 @@ extension FFNewsPageViewController {
         let items = [divider,secondDivider,thirdDivider]
         return UIMenu(title: "Filter news",children: items)
     }
+}
+#Preview {
+    let vc = FFNewsPageViewController()
+    return vc
 }
 
 

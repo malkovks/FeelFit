@@ -33,16 +33,16 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     var sortRequest: String = "publishedAt"
     var localeRequest: String = String(Locale.preferredLanguages.first!.prefix(2))
     
-    var localModel = Array<Articles>()
-    private var viewController: UIViewController?
-    
-    init(localModel: [Articles] = [Articles](),viewController: UIViewController = FFNewsPageViewController()){
-        self.viewController = viewController
-        self.localModel = localModel
-    }
     
     
 //MARK: - TableView functions
+    func openSettingRequest(){
+        print("Gets signal for opening Setting VC")
+        
+    }
+    func openFavouriteView(){
+        
+    }
     ///function of choosing row at tableView and returning choosing model
     func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: [Articles]? = nil){
         let selectedModel = model![indexPath.row]
@@ -55,7 +55,7 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         case .copyLink:
             UIPasteboard.general.string = selectedModel.url
         case .rowSelected:
-            coordinator?.eventOccuredNewsModule(event: .tableViewDidSelect, model: selectedModel)
+            coordinator?.eventOccurredNewsModule(event: .tableViewDidSelect, model: selectedModel)
         case .openImage:
             self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: caseSetting)
         case .openLink:

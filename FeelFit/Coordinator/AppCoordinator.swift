@@ -21,7 +21,6 @@ class AppCoordinator: Coordinator {
     
     func newsPageVC(){
         let vc = FFNewsPageViewController()
-        vc.coordinator = self
         vc.viewModel = FFNewsPageViewModel()
         vc.viewModel.coordinator = self
         navigationController?.pushViewController(vc, animated: false)
@@ -30,26 +29,24 @@ class AppCoordinator: Coordinator {
     func detailVC(model: Articles){
         let vc  = FFNewsPageDetailViewController(model: model)
         print("Check func")
-        vc.coordinator = self
         navigationController?.pushViewController(vc, animated: true)
     }
     
     
-    func eventOccuredNewsModule(event: NewsEvent, model: Articles? = nil) {
+    func eventOccurredNewsModule(event: NewsEvent, model: Articles? = nil) {
         
         switch event {
         case .tableViewDidSelect:
-            print("Selected row")
-            var vc: UIViewController & Coordinating = FFNewsPageDetailViewController(model: model!)
-            vc.coordinator = self
+            var vc = FFNewsPageDetailViewController(model: model!)
+            
             navigationController?.pushViewController(vc, animated: true)
         case .openFavourite:
             let vc = FFNewsFavouriteViewController()
-            vc.coordinator = self
+            
             navigationController?.pushViewController(vc, animated: true)
         case .openNewsSettings:
             let vc = FFNewsSetupRequestViewController()
-            vc.coordinator = self
+            
             navigationController?.pushViewController(vc, animated: true)
         case .openURL:
             guard let link = model?.url,let url = URL(string: link) else { return }

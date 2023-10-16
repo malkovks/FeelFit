@@ -7,18 +7,20 @@
 
 import UIKit
 
-class FFNewsSetupRequestViewController: UIViewController, Coordinating {
-    var coordinator: Coordinator?
+class FFNewsSetupRequestViewController: UIViewController {
+    var viewModel: FFNewsSettingViewModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+//        viewModel = FFNewsSettingViewModel()
         view.backgroundColor = FFResources.Colors.secondaryColor
         title = "Setup request"
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapNextView))
     }
     
 
-
+    @objc private func didTapNextView(){
+        
+    }
 
 }

@@ -8,8 +8,9 @@
 import UIKit
 import SafariServices
 
-class FFNewsPageDetailViewController: UIViewController, SetupViewController, Coordinating {
-    var coordinator: Coordinator?
+class FFNewsPageDetailViewController: UIViewController, SetupViewController {
+    
+    var viewModel: FFNewsDetailViewModel?
     
     let model: Articles
     let defaultImage: UIImage
@@ -102,6 +103,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController, Coo
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        viewModel = FFNewsDetailViewModel()
         addConstraints()
         setupView()
         setupNavigationController()

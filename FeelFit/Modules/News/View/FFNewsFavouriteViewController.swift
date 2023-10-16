@@ -10,11 +10,12 @@ import RealmSwift
 
 
 ///Class for displaying stored news which was added to favourite
-class FFNewsFavouriteViewController: UIViewController, Coordinating {
-    var coordinator: Coordinator?
+class FFNewsFavouriteViewController: UIViewController {
     
     var newsModels: Results<FFNewsModelRealm>!
     var localRealm = try! Realm()
+    
+    var viewModel: FFNewsFavouriteViewModel?
 
     let tableView: UITableView = {
         let table = UITableView()
@@ -24,17 +25,20 @@ class FFNewsFavouriteViewController: UIViewController, Coordinating {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        viewModel = FFNewsFavouriteViewModel()
         tableView.delegate = self
         tableView.dataSource = self
         setupConstraints()
         loadingNewsModel()
         title = "Favourites"
+        setupEmptyConfig()
     }
     
     private func loadingNewsModel(){
         let value = localRealm.objects(FFNewsModelRealm.self)
         newsModels = value
         tableView.reloadData()
+        
     }
     private func setupDeletingNews(tableView: UITableView,indexPath: IndexPath) -> UISwipeActionsConfiguration{
         let model = newsModels[indexPath.row]
@@ -49,6 +53,16 @@ class FFNewsFavouriteViewController: UIViewController, Coordinating {
         deleteInstance.image?.withTintColor(.systemBackground)
         let action = UISwipeActionsConfiguration(actions: [deleteInstance])
         return action
+    }
+    
+    private func setupEmptyConfig() {
+        if newsModels.isEmpty {
+            var config = UIContentUnavailableConfiguration.empty()
+            config.text = "No favourite news"
+            config.image = UIImage(systemName: "heart")
+            config.secondaryText = "Add any news by clicking on 'Heart' and it will display in this list"
+            contentUnavailableConfiguration = config
+        }
     }
 
 }
@@ -85,4 +99,8 @@ extension FFNewsFavouriteViewController{
             make.edges.equalToSuperview()
         }
     }
+}
+
+#Preview {
+    FFNewsFavouriteViewController()
 }

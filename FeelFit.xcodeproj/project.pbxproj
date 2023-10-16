@@ -40,6 +40,9 @@
 		0ACEA9E62AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E52AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift */; };
 		0ACEA9E92AD7EDBF00899CF6 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9E82AD7EDBF00899CF6 /* Coordinator.swift */; };
 		0ACEA9F12AD9734D00899CF6 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9F02AD9734D00899CF6 /* AppCoordinator.swift */; };
+		0ACEAA532ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEAA522ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift */; };
+		0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */; };
+		0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -76,6 +79,9 @@
 		0ACEA9E52AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestViewController.swift; sourceTree = "<group>"; };
 		0ACEA9E82AD7EDBF00899CF6 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		0ACEA9F02AD9734D00899CF6 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		0ACEAA522ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewModel.swift; sourceTree = "<group>"; };
+		0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSettingViewModel.swift; sourceTree = "<group>"; };
+		0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsDetailViewModel.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -292,6 +298,9 @@
 			isa = PBXGroup;
 			children = (
 				0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */,
+				0ACEAA522ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift */,
+				0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */,
+				0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -543,11 +552,13 @@
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
+				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
 				0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */,
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
+				0ACEAA532ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift in Sources */,
 				0ACEA9E92AD7EDBF00899CF6 /* Coordinator.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
@@ -555,6 +566,7 @@
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
 				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
+				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -624,7 +636,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -679,7 +691,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

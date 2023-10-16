@@ -22,7 +22,7 @@ protocol Coordinator {
     var tabbarController: FFTabBarController? { get set }
     
     func start()
-    func eventOccuredNewsModule(event: NewsEvent, model: Articles?)
+    func eventOccurredNewsModule(event: NewsEvent, model: Articles?)
     func detailVC(model: Articles)
 }
 
