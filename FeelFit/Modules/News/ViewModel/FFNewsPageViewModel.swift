@@ -36,16 +36,10 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     
     
 //MARK: - TableView functions
-    func openSettingRequest(){
-        print("Gets signal for opening Setting VC")
-        
-    }
-    func openFavouriteView(){
-        
-    }
     ///function of choosing row at tableView and returning choosing model
     func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: [Articles]? = nil){
-        let selectedModel = model![indexPath.row]
+        guard let model = model else { return }
+        let selectedModel = model[indexPath.row]
         switch caseSetting {
         case .shareNews :
             shareNews(model: selectedModel)
@@ -55,14 +49,11 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         case .copyLink:
             UIPasteboard.general.string = selectedModel.url
         case .rowSelected:
-            coordinator?.eventOccurredNewsModule(event: .tableViewDidSelect, model: selectedModel)
+            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .rowSelected)
         case .openImage:
-            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: caseSetting)
+            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .openImage)
         case .openLink:
-            guard  let url = URL(string: selectedModel.url) else { return }
-//            let vc = SFSafariViewController(url: url)
-//            present(vc, animated: true)
-            //        self.delegate?.selectedCell(indexPath: indexPath,model: selectedModel, selectedCase: .none)
+            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .openLink)
         }
     }
     ///Конфигурация для таблицы при зажатии на строку

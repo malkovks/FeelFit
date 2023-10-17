@@ -10,6 +10,8 @@
 		0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */; };
 		0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */; };
 		0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */; };
+		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
+		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
 		0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494C12AB821FD0082C909 /* SceneDelegate.swift */; };
 		0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */; };
@@ -51,6 +53,8 @@
 		0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertError+UIViewControllerExtensions.swift"; sourceTree = "<group>"; };
 		0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageTableViewCell.swift; sourceTree = "<group>"; };
 		0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsTableViewDataSource.swift; sourceTree = "<group>"; };
+		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
+		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4494BF2AB821FD0082C909 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A4494C12AB821FD0082C909 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -290,6 +294,7 @@
 				0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */,
 				0ACEA9E32ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift */,
 				0ACEA9E52AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift */,
+				0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -301,6 +306,7 @@
 				0ACEAA522ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift */,
 				0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */,
 				0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */,
+				0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -547,8 +553,10 @@
 				0ACEA9F12AD9734D00899CF6 /* AppCoordinator.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
+				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
+				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,

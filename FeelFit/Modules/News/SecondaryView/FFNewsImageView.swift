@@ -64,7 +64,7 @@ class FFNewsImageView: UIVisualEffectView {
     }
     
     private func setupVisualView(){
-        let style = UIBlurEffect.Style.systemChromeMaterialLight
+        let style = UIBlurEffect.Style.systemUltraThinMaterialLight
         let visualView = UIBlurEffect(style: style)
         self.effect = visualView
         self.clipsToBounds = true
@@ -73,27 +73,27 @@ class FFNewsImageView: UIVisualEffectView {
         self.layer.cornerRadius = 12
         
     }
-    
+//    #error("Сделать кнопку")
     private func setupConstraints(){
         contentView.addSubview(closeImageViewButton)
         closeImageViewButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15)
-            make.trailing.equalToSuperview().offset(-15)
+            make.top.equalToSuperview().offset(120)
+            make.trailing.equalToSuperview().offset(100)
             make.height.width.equalTo(25)
         }
         
         contentView.addSubview(shareImageViewButton)
-        shareImageViewButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(15)
-            make.trailing.equalTo(closeImageViewButton.snp.leading).offset(-15)
-            make.height.width.equalTo(25)
-        }
+//        shareImageViewButton.snp.makeConstraints { make in
+//            make.top.equalToSuperview().dividedBy(5)
+//            make.trailing.equalTo(closeImageViewButton.snp.leading).offset(-15)
+//            make.height.width.equalTo(25)
+//        }
         
         contentView.addSubview(imageView)
         imageView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(2)
+            make.height.equalToSuperview().dividedBy(1.5)
         }
     }
     

@@ -70,7 +70,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
-//        viewModel.openFavouriteView()
         let vc = FFNewsFavouriteViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -87,8 +86,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapSetupRequest(){
-        viewModel.openSettingRequest()
-        print("Selected left navigation button for sending signal to view model")
+        let vc = FFNewsSetupRequestViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     //MARK: - Setup methods
@@ -125,32 +124,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
     
-    private func showFullSizeImage(url: String){
-        let vc = FFNewsImageView()
-        vc.isOpened = { opened in
-            if !opened {
-                self.view.alpha = 1.0
-            }
-        }
-        guard let url = URL(string: url) else { return }
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                vc.imageView.image = image
-            }
-        }.resume()
-        self.view.addSubview(vc)
-        vc.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().offset(-20)
-            make.leading.trailing.equalToSuperview().inset(40)
-            make.height.equalToSuperview().dividedBy(1.5)
-        }
-        UIView.animate(withDuration: 0.5) {
-            self.view.alpha = 0.8
-            vc.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-        }
-    }
+
     
     func reloadTableView(models: [Articles]) {
         dataSourceClass = FFNewsTableViewDataSource(with: models)
@@ -231,7 +205,6 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             self.reloadTableView(models: self.model)
             self.spinner.stopAnimating()
             self.refreshControll.endRefreshing()
-//            viewModel = FFNewsPageViewModel()
         }
     }
     
@@ -250,7 +223,11 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             let vc = FFNewsPageDetailViewController(model: model)
             navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
-            showFullSizeImage(url: model.urlToImage ?? "")
+//            showFullSizeImage(url: model.urlToImage ?? "")
+            let vc = FFImageDetailsViewController()
+            vc.setupImageView(string: model.urlToImage ?? "")
+            vc.sheetPresentationController?.prefersGrabberVisible = true
+            present(vc, animated: true)
         case .some(.openLink):
             guard  let url = URL(string: model.url) else { return }
             let vc = SFSafariViewController(url: url)
@@ -271,64 +248,6 @@ extension FFNewsPageViewController {
             make.leading.trailing.equalToSuperview().inset(3)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
-    }
-    //MARK: - НЕ используется(позже удалить)
-    func callUIMenu() -> UIMenu {
-        let filterActions = [
-            UIAction(title: "Relevance") { _ in
-                self.filterRequest = Request.RequestSortType.relevancy.rawValue
-                UserDefaults.standard.setValue(Request.RequestSortType.relevancy.rawValue, forKey: "filterRequest")
-            },
-            UIAction(title: "Popularity") { [unowned self] _ in
-                
-                self.filterRequest = Request.RequestSortType.popularity.rawValue
-                UserDefaults.standard.setValue(Request.RequestSortType.popularity.rawValue, forKey: "filterRequest")
-            },
-            UIAction(title: "Published Date") { [unowned self] _ in
-                self.filterRequest = Request.RequestSortType.publishedAt.rawValue
-                UserDefaults.standard.setValue(Request.RequestSortType.publishedAt.rawValue, forKey: "filterRequest")
-            },
-        ]
-        let divider = UIMenu(title: "Filter",image: UIImage(systemName: "line.3.horizontal.decrease.circle"),options: .singleSelection,children: filterActions)
-        
-        let requestActions = [ UIAction(title: "Health", handler: { [unowned self] _ in
-            self.typeRequest = Request.RequestLoadingType.health.rawValue
-            UserDefaults.standard.setValue(Request.RequestLoadingType.health.rawValue, forKey: "typeRequest")
-        }),
-                               UIAction(title: "Fitness", handler: { [unowned self] _ in
-            self.typeRequest = Request.RequestLoadingType.fitness.rawValue
-            UserDefaults.standard.setValue(Request.RequestLoadingType.fitness.rawValue, forKey: "typeRequest")
-        }),
-                               UIAction(title: "Gym", handler: { [unowned self] _ in
-            self.typeRequest = Request.RequestLoadingType.gym.rawValue
-            UserDefaults.standard.setValue(Request.RequestLoadingType.gym.rawValue, forKey: "typeRequest")
-        }),
-                               UIAction(title: "Training", handler: { [unowned self] _ in
-            self.typeRequest = Request.RequestLoadingType.training.rawValue
-            UserDefaults.standard.setValue(Request.RequestLoadingType.training.rawValue, forKey: "typeRequest")
-        }),
-                               UIAction(title: "Sport", handler: { [unowned self] _ in
-            self.typeRequest = Request.RequestLoadingType.sport.rawValue
-            UserDefaults.standard.setValue(Request.RequestLoadingType.sport.rawValue, forKey: "typeRequest")
-        })]
-        
-        let secondDivider = UIMenu(title: "Request",image: UIImage(systemName: "list.bullet"),options: .singleSelection,children: requestActions)
-        
-        //Доделать полный лист локализаций новостей
-        //        let countries = ["ar","de","en","es","fr","it","nl","no","pt","ru","sv","zh"]
-        //        let fullNameCountries = ["Argentina","Germany","Great Britain","Spain","France","Italy","Netherlands","Norway","Portugal","Russia","Sweden","Check Republic"]
-        
-        let localeActions = [UIAction(title: "Everywhere", handler: { [unowned self] _ in
-            self.localeRequest = String(Locale.preferredLanguages.first!.prefix(2))
-            UserDefaults.standard.setValue(Locale.preferredLanguages.first!.prefix(2), forKey: "localeRequest")
-        }),
-                             UIAction(title: "Russian", handler: { [unowned self] _ in
-            self.localeRequest = "ru"
-            UserDefaults.standard.setValue("ru", forKey: "localeRequest")
-        })]
-        let thirdDivider = UIMenu(title: "Country Resources",image: UIImage(systemName: "character.bubble.fill"),options: .displayInline,children: localeActions)
-        let items = [divider,secondDivider,thirdDivider]
-        return UIMenu(title: "Filter news",children: items)
     }
 }
 #Preview {
