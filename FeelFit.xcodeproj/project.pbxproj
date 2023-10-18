@@ -304,8 +304,8 @@
 			children = (
 				0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */,
 				0ACEAA522ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift */,
-				0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */,
 				0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */,
+				0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */,
 				0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */,
 			);
 			path = ViewModel;

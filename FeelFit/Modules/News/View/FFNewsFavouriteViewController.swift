@@ -13,9 +13,8 @@ import RealmSwift
 class FFNewsFavouriteViewController: UIViewController {
     
     var newsModels: Results<FFNewsModelRealm>!
-    var localRealm = try! Realm()
     
-    var viewModel: FFNewsFavouriteViewModel?
+    var viewModel: FFNewsFavouriteViewModel!
 
     let tableView: UITableView = {
         let table = UITableView()
@@ -25,46 +24,31 @@ class FFNewsFavouriteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel = FFNewsFavouriteViewModel()
-        tableView.delegate = self
-        tableView.dataSource = self
         setupConstraints()
         loadingNewsModel()
+        setupTableView()
+        setupView()
+    }
+    
+    private func setupView(){
+        viewModel = FFNewsFavouriteViewModel()
         title = "Favourites"
-        setupEmptyConfig()
+        view.setNeedsDisplay()
+        contentUnavailableConfiguration = viewModel.isViewConfigurationAvailable(model: newsModels)
+    }
+    
+    private func setupTableView(){
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     private func loadingNewsModel(){
-        let value = localRealm.objects(FFNewsModelRealm.self)
-        newsModels = value
+//        newsModels = viewModel.loadData()
+        let realm = try! Realm()
+        let model = realm.objects(FFNewsModelRealm.self)
+        newsModels = model
         tableView.reloadData()
-        
     }
-    private func setupDeletingNews(tableView: UITableView,indexPath: IndexPath) -> UISwipeActionsConfiguration{
-        let model = newsModels[indexPath.row]
-        let deleteInstance = UIContextualAction(style: .destructive, title: "") { _, _, _ in
-            tableView.beginUpdates()
-            FFNewsStoreManager.shared.deleteNewsModelRealm(model: model)
-            tableView.deleteRows(at: [indexPath], with: .top)
-            tableView.endUpdates()
-        }
-        deleteInstance.backgroundColor = .systemRed
-        deleteInstance.image = UIImage(systemName: "trash.fill")
-        deleteInstance.image?.withTintColor(.systemBackground)
-        let action = UISwipeActionsConfiguration(actions: [deleteInstance])
-        return action
-    }
-    
-    private func setupEmptyConfig() {
-        if newsModels.isEmpty {
-            var config = UIContentUnavailableConfiguration.empty()
-            config.text = "No favourite news"
-            config.image = UIImage(systemName: "heart")
-            config.secondaryText = "Add any news by clicking on 'Heart' and it will display in this list"
-            contentUnavailableConfiguration = config
-        }
-    }
-
 }
 
 extension FFNewsFavouriteViewController: UITableViewDelegate, UITableViewDataSource {
@@ -74,6 +58,7 @@ extension FFNewsFavouriteViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "favouriteCell")
+        cell.accessoryType = .disclosureIndicator
         cell.textLabel?.text = newsModels[indexPath.row].newsTitle
         cell.detailTextLabel?.text = newsModels[indexPath.row].newsContent
         return cell
@@ -81,14 +66,14 @@ extension FFNewsFavouriteViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let newModel = newsModels[indexPath.row]
-        let convertedModel = Articles.convertRealmModel(model: newModel)
-        let vc = FFNewsPageDetailViewController(model: convertedModel)
+        let vc = viewModel.didSelectRow(at: indexPath, newsModels: newsModels)
         navigationController?.pushViewController(vc, animated: true)
+        
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        setupDeletingNews(tableView: tableView,indexPath: indexPath)
+        view.setNeedsDisplay()
+        return viewModel?.setupDeletingNews(tableView: tableView,indexPath: indexPath, newsModels: newsModels)
     }
 }
 

@@ -6,7 +6,14 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFNewsDetailViewModel: Coordinating {
     var coordinator: Coordinator?
+    
+    var realm = try! Realm()
+    
+    func changeNewsStatus(model: FFNewsModelRealm){
+        
+    }
 }

@@ -15,7 +15,6 @@ import SwiftUI
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
     var viewModel: FFNewsPageViewModel!
-//    private var delegateClass: FFNewsTableViewDelegate?
     private var dataSourceClass: FFNewsTableViewDataSource?
     
     private var typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
@@ -68,6 +67,10 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
             self.viewModel!.requestData(type: self.typeRequest, filter: self.filterRequest)
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.tableView.reloadData()
+    }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
         let vc = FFNewsFavouriteViewController()
@@ -82,7 +85,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapRefreshData(){
-        loadingExactType(type: typeRequest,filter: filterRequest,locale: localeRequest)
+        model = []
+        viewModel.refreshData(typeRequest: typeRequest, filterRequest: filterRequest, localeRequest: localeRequest)
     }
     
     @objc private func didTapSetupRequest(){
@@ -123,9 +127,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: nil, imageName: "gear", action: #selector(didTapSetupRequest), menu: nil)
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
-    
 
-    
     func reloadTableView(models: [Articles]) {
         dataSourceClass = FFNewsTableViewDataSource(with: models)
         tableView.dataSource = dataSourceClass
@@ -133,26 +135,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         tableView.tableFooterView = loadDataButton
         tableView.reloadData()
     }
-    
-    func loadingExactType(type: String,filter: String,locale: String){
-        model = []
-        viewModel!.requestData(type: type,filter: filter)
-        viewModel.typeRequest = type
-        viewModel.sortRequest = filter
-        viewModel.localeRequest = locale
-        typeRequest = type
-    }
-    
-//    func shareNews(model: Articles){
-//        let newsTitle = model.title
-//        guard let newsURL = URL(string: model.url) else { return }
-//        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
-//        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-//        activityViewController.popoverPresentationController?.sourceView = self.view
-//        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
-//        self.present(activityViewController, animated: true)
-//    }
-    
 }
 extension FFNewsPageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -196,7 +178,6 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             }
         }
         
-        
         self.model += newModel
         
         let uniqueItems = self.model.uniqueArray()
@@ -209,13 +190,11 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
     }
     
     func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?) {
-//        ДОБАВЛЕНО ВО VIEWMODEL
         switch selectedCase {
         case .shareNews :
-//            shareNews(model: model)
-            print("Share news")
+            let activityVC = viewModel.shareNews(view: self, model: model)
+            present(activityVC, animated: true)
         case .addToFavourite:
-//            FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
             tableView.reloadRows(at: [indexPath], with: .automatic)
         case .copyLink:
             UIPasteboard.general.string = model.url
@@ -223,13 +202,12 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             let vc = FFNewsPageDetailViewController(model: model)
             navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
-//            showFullSizeImage(url: model.urlToImage ?? "")
             let vc = FFImageDetailsViewController()
             vc.setupImageView(string: model.urlToImage ?? "")
             vc.sheetPresentationController?.prefersGrabberVisible = true
             present(vc, animated: true)
         case .some(.openLink):
-            guard  let url = URL(string: model.url) else { return }
+            guard let url = URL(string: model.url) else { return }
             let vc = SFSafariViewController(url: url)
             present(vc, animated: true)
         case .none:
@@ -241,7 +219,7 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
 
 extension FFNewsPageViewController {
     private func setupConstraints(){
-        
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(3)

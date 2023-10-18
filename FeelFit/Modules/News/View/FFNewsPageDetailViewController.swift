@@ -13,6 +13,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     var viewModel: FFNewsDetailViewModel?
     
     let model: Articles
+    var saveStatus: Bool = false
     let defaultImage: UIImage
     
     init(model: Articles, image: UIImage = UIImage(systemName: "photo")!) {
@@ -103,12 +104,11 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel = FFNewsDetailViewModel()
         addConstraints()
         setupView()
         setupNavigationController()
     }
-    
+    //MARK: - Targets
     @objc private func didTapPushedButton(){
         guard let url = URL(string: model.url) else { return }
         let vc = SFSafariViewController(url: url)
@@ -116,14 +116,17 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapAddFavourite(){
-        
+        if !saveStatus {
+            saveStatus.toggle()
+            FFNewsStoreManager.shared.saveNewsModel(model: model, status: saveStatus)
+        } else {
+            saveStatus.toggle()
+            FFNewsStoreManager.shared.deleteNewsModel(model: model, status: saveStatus)
+        }
     }
-    
-    @objc private func didTapDismiss(){
-        self.navigationController?.popViewController(animated: true)
-    }
-    
+    //MARK: - Setups
     func setupView() {
+        viewModel = FFNewsDetailViewModel()
         view.backgroundColor = FFResources.Colors.backgroundColor
         setupDetailNews()
         setupImage()
@@ -138,8 +141,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         button.setImage(UIImage(systemName: "link.circle"), for: .normal)
         button.tintColor = FFResources.Colors.activeColor
         
-        guard var description = model.description else { return }
-        print(description)
+        guard var description = model.content else { return }
         //Не работает корректно, доделать
         if description.suffix(3) == "..." {
             description += "\nContinued via link"
@@ -151,8 +153,6 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         newsAuthorLabel.text = "Author: \(author)"
         newsPublishedLabel.text = "Published: \(publishedAt)"
     }
-    
-    
     
     func setupImage(){
         guard let link = model.urlToImage, let url = URL(string: link) else { return }
@@ -166,10 +166,11 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
             }
         }.resume()
     }
-    
+    //сделать отображение сердца правильным
+    //настроить функцию проверки когда новость добавлена в избранное а когда нет
     func setupNavigationController() {
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: nil, imageName: "arrow.left", action: #selector(didTapDismiss), menu: nil)
-        navigationItem.rightBarButtonItem =  addNavigationBarButton(title: nil, imageName: "heart", action: #selector(didTapAddFavourite), menu: nil)
+        let image = saveStatus ? "heart.fill" : "heart"
+        navigationItem.rightBarButtonItem =  addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapAddFavourite), menu: nil)
     }
 }
 

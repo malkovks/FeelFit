@@ -20,21 +20,18 @@ protocol FFNewsViewModelType {
     var delegate: FFNewsPageDelegate? { get set }
     func requestData(pageNumber: Int,type: String,filter: String)
 }
+
 ///View model for FFNewsPageViewController
 final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
+    //delegate method for coordinator. Must be used when need to push or pop to view controller
     var coordinator: Coordinator?
-    
-    var openController: ((IndexPath,Articles) -> Void)?
     
     weak var delegate: FFNewsPageDelegate?
     
     
     var typeRequest: String = "fitness"
-    var sortRequest: String = "publishedAt"
+    var filterRequest: String = "publishedAt"
     var localeRequest: String = String(Locale.preferredLanguages.first!.prefix(2))
-    
-    
-    
 //MARK: - TableView functions
     ///function of choosing row at tableView and returning choosing model
     func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: [Articles]? = nil){
@@ -42,7 +39,7 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         let selectedModel = model[indexPath.row]
         switch caseSetting {
         case .shareNews :
-            shareNews(model: selectedModel)
+            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .shareNews)
         case .addToFavourite:
             FFNewsStoreManager.shared.saveNewsModel(model: selectedModel, status: true)
             self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: caseSetting)
@@ -83,6 +80,16 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         return view.frame.size.height/4
     }
     
+    func shareNews(view: UIViewController,model: Articles) -> UIActivityViewController {
+        let newsTitle = model.title
+        guard let newsURL = URL(string: model.url) else {
+            return UIActivityViewController(activityItems: [], applicationActivities: nil)
+        }
+        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
+        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
+        return activityViewController
+    }
     
     //MARK: - API Request
     ///function for request data from API
@@ -98,16 +105,14 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
             }
         }
     }
-}
-//help methods
-extension FFNewsPageViewModel {
-    func shareNews(model: Articles){
-        let newsTitle = model.title
-        guard let newsURL = URL(string: model.url) else { return }
-        let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
-        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-//        activityViewController.popoverPresentationController?.sourceView = self.view
-//        activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
-//        self.present(activityViewController, animated: true)
+    
+    func refreshData(typeRequest: String, filterRequest: String, localeRequest: String) {
+        self.typeRequest = typeRequest
+        self.filterRequest = filterRequest
+        self.localeRequest = localeRequest
+        requestData(type: typeRequest, filter: filterRequest)
+        UserDefaults.standard.setValue(typeRequest, forKey: "typeRequest")
+        UserDefaults.standard.setValue(filterRequest, forKey: "filterRequest")
+        UserDefaults.standard.setValue(localeRequest, forKey: "localeRequest")
     }
 }

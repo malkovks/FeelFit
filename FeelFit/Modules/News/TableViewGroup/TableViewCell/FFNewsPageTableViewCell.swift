@@ -112,22 +112,15 @@ class FFNewsPageTableViewCell: UITableViewCell {
     @objc private func didTapButtonTapped(sender: UIButton){
         isAddedToFavourite.toggle()
         let indexPath = IndexPath(row: newsAddFavouriteButton.tag, section: 0)
-        //Разобраться как передавать индекс строчки при нажатии на кнопку, чтобы затем можно было добавлять по индексу модель в избранное
+        
         let imageName = isAddedToFavourite ? "heart.fill" : "heart"
         let image = UIImage(systemName: imageName)
         newsAddFavouriteButton.setImage(image, for: .normal)
         delegate?.buttonDidTapped(sender: self, indexPath: indexPath, status: isAddedToFavourite)
     }
-    ///In progress
-    @objc private func didTapImageView(){
-        
-    }
     //MARK: - Setup methods
     private func setupView(){
         newsAddFavouriteButton.addTarget(self, action: #selector(didTapButtonTapped), for: .touchUpInside)
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
-        newsImageView.isUserInteractionEnabled = true
-        newsImageView.addGestureRecognizer(gesture)
         self.layer.cornerRadius = 12
     }
     
