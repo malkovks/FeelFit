@@ -13,6 +13,7 @@ import RealmSwift
 class FFNewsFavouriteViewController: UIViewController {
     
     var newsModels: Results<FFNewsModelRealm>!
+    var isValuesSaved: [Bool] = []
     
     var viewModel: FFNewsFavouriteViewModel!
 
@@ -20,6 +21,13 @@ class FFNewsFavouriteViewController: UIViewController {
         let table = UITableView()
         table.register(UITableViewCell.self, forCellReuseIdentifier: "favouriteCell")
         return table
+    }()
+    
+    let refreshController: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.attributedTitle = NSAttributedString(string: "Grab to refresh")
+        refresh.tintColor = FFResources.Colors.activeColor
+        return refresh
     }()
     
     override func viewDidLoad() {
@@ -30,11 +38,22 @@ class FFNewsFavouriteViewController: UIViewController {
         setupView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
+    @objc private func didTapRefreshData(){
+        loadingNewsModel()
+    }
+    
     private func setupView(){
+        
         viewModel = FFNewsFavouriteViewModel()
         title = "Favourites"
         view.setNeedsDisplay()
         contentUnavailableConfiguration = viewModel.isViewConfigurationAvailable(model: newsModels)
+        setupRefreshController()
     }
     
     private func setupTableView(){
@@ -43,11 +62,16 @@ class FFNewsFavouriteViewController: UIViewController {
     }
     
     private func loadingNewsModel(){
-//        newsModels = viewModel.loadData()
         let realm = try! Realm()
-        let model = realm.objects(FFNewsModelRealm.self)
-        newsModels = model
+        let models = realm.objects(FFNewsModelRealm.self)
+        newsModels = models
         tableView.reloadData()
+        refreshController.endRefreshing()
+    }
+    
+    private func setupRefreshController(){
+        tableView.addSubview(refreshController)
+        refreshController.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
     }
 }
 

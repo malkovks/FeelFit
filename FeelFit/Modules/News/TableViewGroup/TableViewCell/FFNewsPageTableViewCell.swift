@@ -128,8 +128,11 @@ class FFNewsPageTableViewCell: UITableViewCell {
         let realm = try! Realm()
         
         let object = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@",model.title,model.publishedAt)
-        if object.first?.newsAddedFavouriteStatus == true {
+        if !object.isEmpty {
             newsAddFavouriteButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            isAddedToFavourite.toggle()
+        } else {
+            newsAddFavouriteButton.setImage(UIImage(systemName: "heart"), for: .normal)
             isAddedToFavourite.toggle()
         }
     }

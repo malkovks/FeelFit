@@ -10,6 +10,18 @@ import UIKit
 class FFImageDetailsViewController: UIViewController, SetupViewController {
     
     var imageURL: URL?
+    var newsImage: UIImage
+    
+    init(newsImage: UIImage){
+        
+        self.newsImage = newsImage
+        imageView.image = newsImage
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let imageView: UIImageView = {
        let image = UIImageView(image: UIImage(systemName: "photo.fill"))
@@ -51,27 +63,12 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapShare(){
-        let message = "Check this awesome picture"
+        let message = "Check this picture"
         let link = imageURL
         let item = imageView.image!
-        let activityVC = UIActivityViewController(activityItems: [link!,item], applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: [message,link!,item], applicationActivities: nil)
         activityVC.excludedActivityTypes = [.print,.openInIBooks]
         present(activityVC, animated: true)
-    }
-    
-    func setupImageView(string: String){
-        guard let url = URL(string: string) else {
-            imageView.image = UIImage(systemName: "photo.fill")
-            return
-        }
-        imageURL = url
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                self.imageView.image = image
-            }
-        }.resume()
     }
     
     func setupView() {
@@ -119,8 +116,4 @@ extension FFImageDetailsViewController {
         }
         
     }
-}
-
-#Preview {
-    FFImageDetailsViewController()
 }

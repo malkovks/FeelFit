@@ -18,5 +18,4 @@ class FFNewsModelRealm : Object {
     @Persisted var newsAuthor: String?
     @Persisted var newsContent: String?
     @Persisted var newsAddedFavouriteStatus: Bool = false
-//    @Persisted var newsAddedFavouriteDate: Date = Date()
 }

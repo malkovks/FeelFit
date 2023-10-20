@@ -7,6 +7,7 @@
 
 import UIKit
 import SafariServices
+import RealmSwift
 
 class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
@@ -33,6 +34,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         image.layer.cornerRadius = 12
         image.layer.masksToBounds = true
         image.tintColor = FFResources.Colors.activeColor
+        image.isUserInteractionEnabled = true
         return image
     }()
     
@@ -119,17 +121,31 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         if !saveStatus {
             saveStatus.toggle()
             FFNewsStoreManager.shared.saveNewsModel(model: model, status: saveStatus)
+            navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
         } else {
             saveStatus.toggle()
             FFNewsStoreManager.shared.deleteNewsModel(model: model, status: saveStatus)
+            navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: "heart", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
         }
+    }
+    
+    @objc private func didTapImageView(){
+        let vc = FFImageDetailsViewController(newsImage: newsImageView.image ?? UIImage(systemName: "photo.fill")!)
+        present(vc, animated: true)
     }
     //MARK: - Setups
     func setupView() {
+        isNewsSavedInModel()
         viewModel = FFNewsDetailViewModel()
         view.backgroundColor = FFResources.Colors.backgroundColor
         setupDetailNews()
         setupImage()
+        setupImageView()
+    }
+    
+    func setupImageView(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
+        newsImageView.addGestureRecognizer(tapGesture)
     }
     
     func setupDetailNews(){
@@ -166,12 +182,18 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
             }
         }.resume()
     }
-    //сделать отображение сердца правильным
-    //настроить функцию проверки когда новость добавлена в избранное а когда нет
+    
     func setupNavigationController() {
         let image = saveStatus ? "heart.fill" : "heart"
         navigationItem.rightBarButtonItem =  addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapAddFavourite), menu: nil)
     }
+    
+    func isNewsSavedInModel(){
+        let realm = try! Realm()
+        let models = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@",model.title,model.publishedAt)
+        saveStatus = !models.isEmpty ? true : false
+    }
+
 }
 
 extension FFNewsPageDetailViewController {

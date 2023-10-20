@@ -139,6 +139,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
 extension FFNewsPageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let model = model[indexPath.row]
         viewModel.delegate = self
         viewModel.didSelectRow(at: indexPath, caseSetting: .rowSelected,model: model)
     }
@@ -189,21 +190,22 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
         }
     }
     
-    func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?) {
+    func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?,image: UIImage?) {
         switch selectedCase {
         case .shareNews :
             let activityVC = viewModel.shareNews(view: self, model: model)
             present(activityVC, animated: true)
         case .addToFavourite:
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+//            tableView.reloadRows(at: [indexPath], with: .automatic)
+            tableView.reloadData()
         case .copyLink:
             UIPasteboard.general.string = model.url
         case .rowSelected:
             let vc = FFNewsPageDetailViewController(model: model)
             navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
-            let vc = FFImageDetailsViewController()
-            vc.setupImageView(string: model.urlToImage ?? "")
+            guard let image = image else { return }
+            let vc = FFImageDetailsViewController(newsImage: image)
             vc.sheetPresentationController?.prefersGrabberVisible = true
             present(vc, animated: true)
         case .some(.openLink):

@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import RealmSwift
 
 
 ///ViewModel delegate protocol
 protocol FFNewsPageDelegate: AnyObject {
     func willLoadData()
     func didLoadData(model: [Articles]?,error: Error?)
-    func selectedCell(indexPath: IndexPath,model: Articles,selectedCase: NewsTableViewSelectedConfiguration?)
+    func selectedCell(indexPath: IndexPath,model: Articles,selectedCase: NewsTableViewSelectedConfiguration?,image: UIImage?)
 }
 
 ///ViewModel setup protocol
@@ -33,31 +34,67 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     var filterRequest: String = "publishedAt"
     var localeRequest: String = String(Locale.preferredLanguages.first!.prefix(2))
 //MARK: - TableView functions
+    func loadImageView(string: String,completion: @escaping ((UIImage) -> ()) ) {
+        guard let url = URL(string: string) else {
+            return
+        }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            let image = UIImage(data: data)
+            DispatchQueue.main.async {
+                let imageResult = image ?? UIImage(systemName: "photo.fill")!
+                completion(imageResult)
+            }
+        }.resume()
+    }
+    
+    private func loadRealmData(model: Articles) -> Bool {
+        let realm = try! Realm()
+        let filterObject = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@",model.title,model.publishedAt)
+        if filterObject.isEmpty {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    
     ///function of choosing row at tableView and returning choosing model
-    func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: [Articles]? = nil){
+    func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: Articles? = nil){
         guard let model = model else { return }
-        let selectedModel = model[indexPath.row]
         switch caseSetting {
         case .shareNews :
-            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .shareNews)
+            self.delegate?.selectedCell(indexPath: indexPath, model: model, selectedCase: .shareNews, image: nil)
         case .addToFavourite:
-            FFNewsStoreManager.shared.saveNewsModel(model: selectedModel, status: true)
-            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: caseSetting)
+            let status = loadRealmData(model: model)
+            if status {
+                FFNewsStoreManager.shared.saveNewsModel(model: model, status: true)
+            } else {
+                FFNewsStoreManager.shared.deleteNewsModel(model: model, status: true)
+            }
+            
+            self.delegate?.selectedCell(indexPath: indexPath, model: model, selectedCase: caseSetting, image: nil)
         case .copyLink:
-            UIPasteboard.general.string = selectedModel.url
+            UIPasteboard.general.string = model.url
         case .rowSelected:
-            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .rowSelected)
+            self.delegate?.selectedCell(indexPath: indexPath, model: model, selectedCase: .rowSelected,image: nil)
         case .openImage:
-            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .openImage)
+            loadImageView(string: model.urlToImage ?? "") {[weak self] image in
+                self?.delegate?.selectedCell(indexPath: indexPath, model: model, selectedCase: .openImage,image: image)
+            }
         case .openLink:
-            self.delegate?.selectedCell(indexPath: indexPath, model: selectedModel, selectedCase: .openLink)
+            self.delegate?.selectedCell(indexPath: indexPath, model: model, selectedCase: .openLink,image: nil)
         }
     }
     ///Конфигурация для таблицы при зажатии на строку
     func contextMenuConfiguration(at indexPath: IndexPath, point: CGPoint,model: [Articles]) -> UIContextMenuConfiguration {
+        let model = model[indexPath.row]
+        let status = loadRealmData(model: model)
+        let image = status ? "heart" : "heart.fill"
+        let title = status ? "Add to Favourite": "Remove from Favourite"
         return UIContextMenuConfiguration(identifier: nil,
                                           previewProvider: nil) { suggestAction in
-            let favouriteAction = UIAction(title: "Add To Favourite",image: UIImage(systemName: "heart")) { [unowned self] _ in
+            let favouriteAction = UIAction(title: title,image: UIImage(systemName: image)) { [unowned self] _ in
                 self.didSelectRow(at: indexPath, caseSetting: .addToFavourite,model: model)
             }
             let copyAction = UIAction(title: "Copy Link",image: UIImage(systemName: "square.and.pencil")) { [unowned self] _ in
