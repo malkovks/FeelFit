@@ -131,6 +131,7 @@
 		0A22BB2C2AC4566E004FD282 /* TableViewGroup */ = {
 			isa = PBXGroup;
 			children = (
+				0A9385302AE518B9004F97C9 /* TableViewHeaderView */,
 				0A1BEC722AC1D9E000914FD5 /* TableViewCell */,
 				0A22BB272AC30523004FD282 /* TableViewDataSource */,
 				0A22BB262AC3051B004FD282 /* TableViewDelegate */,
@@ -434,6 +435,13 @@
 				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		0A9385302AE518B9004F97C9 /* TableViewHeaderView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = TableViewHeaderView;
 			sourceTree = "<group>";
 		};
 		0ACEA9DB2ACF1B6E00899CF6 /* Store Managers */ = {

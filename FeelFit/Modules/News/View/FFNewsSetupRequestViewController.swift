@@ -8,37 +8,45 @@
 import UIKit
 import SnapKit
 
-class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
+class Section {
+    let title: String
+    let options: [String]
+    var isOpened: Bool = false
     
+    init(title: String, options: [String], isOpened: Bool = false) {
+        self.title = title
+        self.options = options
+        self.isOpened = isOpened
+    }
+}
+
+class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
+
+
+    let rows = [["Current","English"],["Gym","Fitness","Athletic","Running","Crossfit"],["By popular","By Time","Actuallity"]]
     
     var viewModel: FFNewsSettingViewModel?
     
     private let tableView: UITableView = {
-        let table = UITableView(frame: .zero, style: .grouped)
+        let table = UITableView(frame: .zero, style: .plain)
         table.register(UITableViewCell.self, forCellReuseIdentifier: "requestTable")
         return table
     }()
     
-    private let confirmButton: UIButton = {
-       let button = UIButton()
-        button.configuration = .tinted()
-        button.configuration?.title = "Save settings"
-        button.configuration?.image = UIImage(systemName: "gear")
-        button.configuration?.imagePlacement = .top
-        button.configuration?.imagePadding = 2
-        button.configuration?.baseBackgroundColor = FFResources.Colors.tabBarBackgroundColor
-        button.configuration?.baseForegroundColor = FFResources.Colors.activeColor
-        return button
-    }()
+    private var sections = [Section]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        sections = [
+            Section(title: "section 1", options: [1,2,3].compactMap({ return "Cell \($0)" })),
+            Section(title: "section 2", options: [1,2,3].compactMap({ return "Cell \($0)" })),
+            Section(title: "section 3", options: [1,2,3].compactMap({ return "Cell \($0)" })),
+        ]
         setupView()
         setupNavigationController()
         setupTableView()
         setupConstraints()
     }
-    
     
     func setupView() {
         viewModel = FFNewsSettingViewModel()
@@ -48,7 +56,6 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
     func setupTableView(){
         tableView.delegate = self
         tableView.dataSource = self
-//        tableView.backgroundColor = .clear
     }
     
     func setupNavigationController() {
@@ -59,42 +66,101 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
 extension FFNewsSetupRequestViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.row == 0 {
+            sections[indexPath.section].isOpened = !sections[indexPath.section].isOpened
+            tableView.reloadSections([indexPath.section], with: .automatic)
+        } else {
+            print("Chosed in cell some elements")
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 30
+        if indexPath.row == 0 {
+            return 50
+        } else {
+            return 200
+        }
     }
 }
 
 extension FFNewsSetupRequestViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "requestTable", for: indexPath)
+        if indexPath.row == 0 {
+            for subview in cell.subviews {
+                if subview is UIPickerView {
+                    subview.removeFromSuperview()
+                    cell.accessoryView = nil
+                }
+            }
+            cell.accessoryType = .disclosureIndicator
+            cell.textLabel?.text = sections[indexPath.section].title
+            return cell
+        } else {
+            cell.accessoryType = .none
+            let button = UIButton()
+            button.setImage(UIImage(systemName: "chevron.up"), for: .normal)
+            button.tintColor = .black
+            
+            let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 200))
+            pickerView.delegate = self
+            pickerView.dataSource = self
+            pickerView.tag = indexPath.section
+            
+            cell.accessoryView = button as UIView
+            cell.addSubview(pickerView)
+            return cell
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        let section = sections[section]
+        if section.isOpened {
+            return 2
+        } else {
+            return 1
+        }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        2
+        return sections.count
+    }
+}
+
+extension FFNewsSetupRequestViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "requestTable", for: indexPath)
-        cell.textLabel?.text = "Cell text label"
-        return cell
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        if pickerView.tag == 0 {
+            return rows[0].count
+        } else if pickerView.tag == 1 {
+            return rows[1].count
+        } else {
+            return rows[2].count
+        }
     }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        if pickerView.tag == 0 {
+            return rows[0][row]
+        } else if pickerView.tag == 1 {
+            return rows[1][row]
+        } else {
+            return rows[2][row]
+        }
+    }
+    
+    
 }
 
 extension FFNewsSetupRequestViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(60)
-        }
-        
-        view.addSubview(confirmButton)
-        confirmButton.snp.makeConstraints { make in
-            make.top.equalTo(tableView.snp.bottom).offset(2)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(50)
+            make.edges.equalToSuperview()
         }
     }
 }
@@ -158,7 +224,7 @@ extension FFNewsSetupRequestViewController {
         return UIMenu(title: "Filter news",children: items)
     }
 }
-
-#Preview {
-    FFNewsSetupRequestViewController()
-}
+//
+//#Preview {
+//    FFNewsSetupRequestViewController()
+//}
