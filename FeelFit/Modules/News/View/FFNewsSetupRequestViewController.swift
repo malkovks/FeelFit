@@ -6,23 +6,97 @@
 //
 
 import UIKit
+import SnapKit
 
-class FFNewsSetupRequestViewController: UIViewController {
+class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
+    
+    
     var viewModel: FFNewsSettingViewModel?
+    
+    private let tableView: UITableView = {
+        let table = UITableView(frame: .zero, style: .grouped)
+        table.register(UITableViewCell.self, forCellReuseIdentifier: "requestTable")
+        return table
+    }()
+    
+    private let confirmButton: UIButton = {
+       let button = UIButton()
+        button.configuration = .tinted()
+        button.configuration?.title = "Save settings"
+        button.configuration?.image = UIImage(systemName: "gear")
+        button.configuration?.imagePlacement = .top
+        button.configuration?.imagePadding = 2
+        button.configuration?.baseBackgroundColor = FFResources.Colors.tabBarBackgroundColor
+        button.configuration?.baseForegroundColor = FFResources.Colors.activeColor
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel = FFNewsSettingViewModel()
-        view.backgroundColor = FFResources.Colors.secondaryColor
-        title = "Setup request"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapNextView))
+        setupView()
+        setupNavigationController()
+        setupTableView()
+        setupConstraints()
     }
     
-
-    @objc private func didTapNextView(){
+    
+    func setupView() {
+        viewModel = FFNewsSettingViewModel()
         
     }
+    
+    func setupTableView(){
+        tableView.delegate = self
+        tableView.dataSource = self
+//        tableView.backgroundColor = .clear
+    }
+    
+    func setupNavigationController() {
+        title = "Setup request"
+    }
+}
 
+extension FFNewsSetupRequestViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 30
+    }
+}
+
+extension FFNewsSetupRequestViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "requestTable", for: indexPath)
+        cell.textLabel?.text = "Cell text label"
+        return cell
+    }
+}
+
+extension FFNewsSetupRequestViewController {
+    private func setupConstraints(){
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(60)
+        }
+        
+        view.addSubview(confirmButton)
+        confirmButton.snp.makeConstraints { make in
+            make.top.equalTo(tableView.snp.bottom).offset(2)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(50)
+        }
+    }
 }
 
 extension FFNewsSetupRequestViewController {
