@@ -10,20 +10,20 @@ import SnapKit
 
 class Section {
     let title: String
-    let options: [String]
     var isOpened: Bool = false
     
-    init(title: String, options: [String], isOpened: Bool = false) {
+    init(title: String, isOpened: Bool = false) {
         self.title = title
-        self.options = options
         self.isOpened = isOpened
     }
 }
 
+
+
 class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
 
 
-    let rows = [["Current","English"],["Gym","Fitness","Athletic","Running","Crossfit"],["By popular","By Time","Actuallity"]]
+    let rows = [["Current","English"],["Gym","Fitness","Athletic","Running","Crossfit","Health"],["By Popular","By Published Date","By Relevancy"]]
     
     var viewModel: FFNewsSettingViewModel?
     
@@ -38,9 +38,9 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         sections = [
-            Section(title: "section 1", options: [1,2,3].compactMap({ return "Cell \($0)" })),
-            Section(title: "section 2", options: [1,2,3].compactMap({ return "Cell \($0)" })),
-            Section(title: "section 3", options: [1,2,3].compactMap({ return "Cell \($0)" })),
+            Section(title: "Localization"),
+            Section(title: "Request Type"),
+            Section(title: "Sort Type")
         ]
         setupView()
         setupNavigationController()
@@ -69,8 +69,6 @@ extension FFNewsSetupRequestViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             sections[indexPath.section].isOpened = !sections[indexPath.section].isOpened
             tableView.reloadSections([indexPath.section], with: .automatic)
-        } else {
-            print("Chosed in cell some elements")
         }
         
     }
@@ -87,6 +85,7 @@ extension FFNewsSetupRequestViewController: UITableViewDelegate {
 extension FFNewsSetupRequestViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "requestTable", for: indexPath)
+        
         if indexPath.row == 0 {
             for subview in cell.subviews {
                 if subview is UIPickerView {
@@ -106,6 +105,7 @@ extension FFNewsSetupRequestViewController: UITableViewDataSource {
             let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 200))
             pickerView.delegate = self
             pickerView.dataSource = self
+
             pickerView.tag = indexPath.section
             
             cell.accessoryView = button as UIView
@@ -143,14 +143,24 @@ extension FFNewsSetupRequestViewController: UIPickerViewDelegate, UIPickerViewDa
         }
     }
     
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.contentMode = .scaleAspectFit
+        label.font = .systemFont(ofSize: 20,weight: .semibold)
+        label.numberOfLines = 1
         if pickerView.tag == 0 {
-            return rows[0][row]
+            label.text =  rows[0][row]
         } else if pickerView.tag == 1 {
-            return rows[1][row]
+            label.text =  rows[1][row]
         } else {
-            return rows[2][row]
+            label.text =  rows[2][row]
         }
+        return label
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        viewModel?.didSelectRow(pickerView, didSelectRow: row, inComponent: component, rows: rows)
     }
     
     

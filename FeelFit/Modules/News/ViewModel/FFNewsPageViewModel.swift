@@ -30,9 +30,9 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     weak var delegate: FFNewsPageDelegate?
     
     
-    var typeRequest: String = "fitness"
-    var filterRequest: String = "publishedAt"
-    var localeRequest: String = String(Locale.preferredLanguages.first!.prefix(2))
+    var typeRequest: String = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
+    var sortRequest: String = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
+    var localeRequest: String = UserDefaults.standard.string(forKey: "localeValue") ?? String(Locale.preferredLanguages.first!.prefix(2))
 //MARK: - TableView functions
     func loadImageView(string: String,completion: @escaping ((UIImage) -> ()) ) {
         guard let url = URL(string: string) else {
@@ -145,11 +145,11 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     
     func refreshData(typeRequest: String, filterRequest: String, localeRequest: String) {
         self.typeRequest = typeRequest
-        self.filterRequest = filterRequest
+        self.sortRequest = filterRequest
         self.localeRequest = localeRequest
         requestData(type: typeRequest, filter: filterRequest)
         UserDefaults.standard.setValue(typeRequest, forKey: "typeRequest")
-        UserDefaults.standard.setValue(filterRequest, forKey: "filterRequest")
+        UserDefaults.standard.setValue(filterRequest, forKey: "sortRequest")
         UserDefaults.standard.setValue(localeRequest, forKey: "localeRequest")
     }
 }

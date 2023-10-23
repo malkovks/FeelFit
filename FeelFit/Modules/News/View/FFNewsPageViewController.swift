@@ -18,7 +18,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     private var dataSourceClass: FFNewsTableViewDataSource?
     
     private var typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
-    private var filterRequest = UserDefaults.standard.string(forKey: "filterRequest") ?? "publishedAt"
+    private var sortRequest = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
     private var localeRequest = UserDefaults.standard.string(forKey: "localeRequest") ?? "en"
     var model: [Articles] = []
     //MARK: - UI elements
@@ -64,7 +64,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupNewsPageViewModel()
         setupTableView()
         DispatchQueue.main.asyncAfter(deadline: .now()+1){ [unowned self] in
-            self.viewModel!.requestData(type: self.typeRequest, filter: self.filterRequest)
+            self.viewModel!.requestData(type: self.typeRequest, filter: self.sortRequest)
         }
     }
     
@@ -81,12 +81,12 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         let value = UserDefaults.standard.value(forKey: "pageNumberAPI") as! Int
         let pageNumber = value + 1
         UserDefaults.standard.setValue(pageNumber, forKey: "pageNumberAPI")
-        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest, filter: filterRequest)
+        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest, filter: sortRequest)
     }
     
     @objc private func didTapRefreshData(){
         model = []
-        viewModel.refreshData(typeRequest: typeRequest, filterRequest: filterRequest, localeRequest: localeRequest)
+        viewModel.refreshData(typeRequest: typeRequest, filterRequest: sortRequest, localeRequest: localeRequest)
     }
     
     @objc private func didTapSetupRequest(){
