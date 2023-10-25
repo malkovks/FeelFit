@@ -19,7 +19,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     private var typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
     private var sortRequest = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
-    private var localeRequest = UserDefaults.standard.string(forKey: "localeRequest") ?? "en"
+    private var localeRequest = UserDefaults.standard.string(forKey: "localeValue") ?? "en"
     var model: [Articles] = []
     //MARK: - UI elements
     
@@ -70,6 +70,10 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.tableView.reloadData()
+        typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
+        sortRequest = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
+        localeRequest = UserDefaults.standard.string(forKey: "localeValue") ?? "en"
+        print(localeRequest)
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
@@ -230,10 +234,10 @@ extension FFNewsPageViewController {
         }
     }
 }
-#Preview {
-    let vc = FFNewsPageViewController()
-    return vc
-}
+//#Preview {
+//    let vc = FFNewsPageViewController()
+//    return vc
+//}
 
 
 

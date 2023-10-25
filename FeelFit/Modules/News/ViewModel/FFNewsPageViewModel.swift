@@ -150,6 +150,6 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         requestData(type: typeRequest, filter: filterRequest)
         UserDefaults.standard.setValue(typeRequest, forKey: "typeRequest")
         UserDefaults.standard.setValue(filterRequest, forKey: "sortRequest")
-        UserDefaults.standard.setValue(localeRequest, forKey: "localeRequest")
+        UserDefaults.standard.setValue(localeRequest, forKey: "localeValue")
     }
 }
