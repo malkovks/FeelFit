@@ -19,7 +19,7 @@ protocol FFNewsPageDelegate: AnyObject {
 ///ViewModel setup protocol
 protocol FFNewsViewModelType {
     var delegate: FFNewsPageDelegate? { get set }
-    func requestData(pageNumber: Int,type: String,filter: String)
+    func requestData(pageNumber: Int,type: String,filter: String,locale: String)
 }
 
 ///View model for FFNewsPageViewController
@@ -28,11 +28,7 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     var coordinator: Coordinator?
     
     weak var delegate: FFNewsPageDelegate?
-    
-    
-    var typeRequest: String = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
-    var sortRequest: String = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
-    var localeRequest: String = UserDefaults.standard.string(forKey: "localeValue") ?? String(Locale.preferredLanguages.first!.prefix(2))
+
 //MARK: - TableView functions
     func loadImageView(string: String,completion: @escaping ((UIImage) -> ()) ) {
         guard let url = URL(string: string) else {
@@ -130,10 +126,10 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     
     //MARK: - API Request
     ///function for request data from API
-    func requestData(pageNumber: Int = 1,type: String,filter: String) {
+    func requestData(pageNumber: Int = 1,type: String,filter: String,locale: String) {
         delegate?.willLoadData()
         let request = FFGetNewsRequest.shared
-        request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter,locale: localeRequest) { [weak self] result in
+        request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter,locale: locale) { [weak self] result in
             switch result{
             case .success(let data):
                 self?.delegate?.didLoadData(model: data, error: nil)
@@ -144,12 +140,9 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     }
     
     func refreshData(typeRequest: String, filterRequest: String, localeRequest: String) {
-        self.typeRequest = typeRequest
-        self.sortRequest = filterRequest
-        self.localeRequest = localeRequest
-        requestData(type: typeRequest, filter: filterRequest)
+        requestData(type: typeRequest, filter: filterRequest,locale: localeRequest)
         UserDefaults.standard.setValue(typeRequest, forKey: "typeRequest")
         UserDefaults.standard.setValue(filterRequest, forKey: "sortRequest")
-        UserDefaults.standard.setValue(localeRequest, forKey: "localeValue")
+        UserDefaults.standard.setValue(localeRequest, forKey: "localeRequest")
     }
 }

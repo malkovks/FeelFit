@@ -11,8 +11,10 @@ import UIKit
 class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellDelegate {
   
     var cellDataModel = [Articles]()
-    init(with cellDataModel: [Articles] = [Articles]()) {
+    var viewController: UIViewController
+    init(with cellDataModel: [Articles] = [Articles](), viewController: UIViewController) {
         self.cellDataModel = cellDataModel
+        self.viewController = viewController
         super.init()
     }
 
@@ -31,8 +33,10 @@ class FFNewsTableViewDataSource: NSObject, UITableViewDataSource, TableViewCellD
     func buttonDidTapped(sender: UITableViewCell,indexPath: IndexPath,status: Bool) {
         let model = cellDataModel[indexPath.row]
         if status {
+            viewController.viewAlertController(text: "Added to Favourite", startDuration: 0.5, timer: 1.5, controllerView: viewController.view)
             FFNewsStoreManager.shared.saveNewsModel(model: model, status: status)
         } else {
+            viewController.viewAlertController(text: "Removed from Favourite", startDuration: 0.5, timer: 1.5, controllerView: viewController.view)
             FFNewsStoreManager.shared.deleteNewsModel(model: model, status: status)
         }
     }

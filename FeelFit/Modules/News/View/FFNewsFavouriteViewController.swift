@@ -83,6 +83,7 @@ extension FFNewsFavouriteViewController: UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "favouriteCell")
         cell.accessoryType = .disclosureIndicator
+        cell.textLabel?.font = UIFont.headerFont()
         cell.textLabel?.text = newsModels[indexPath.row].newsTitle
         cell.detailTextLabel?.text = newsModels[indexPath.row].newsContent
         return cell
@@ -110,6 +111,6 @@ extension FFNewsFavouriteViewController{
     }
 }
 
-#Preview {
-    FFNewsFavouriteViewController()
-}
+//#Preview {
+//    FFNewsFavouriteViewController()
+//}

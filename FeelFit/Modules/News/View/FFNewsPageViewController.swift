@@ -15,11 +15,11 @@ import SwiftUI
 class FFNewsPageViewController: UIViewController,SetupViewController {
     
     var viewModel: FFNewsPageViewModel!
-    private var dataSourceClass: FFNewsTableViewDataSource?
+    private var dataSourceClass: FFNewsTableViewDataSource!
     
     private var typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
     private var sortRequest = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
-    private var localeRequest = UserDefaults.standard.string(forKey: "localeValue") ?? "en"
+    private var localeRequest = UserDefaults.standard.string(forKey: "localeRequest") ?? "en"
     var model: [Articles] = []
     //MARK: - UI elements
     
@@ -63,8 +63,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupSpinner()
         setupNewsPageViewModel()
         setupTableView()
-        DispatchQueue.main.asyncAfter(deadline: .now()+1){ [unowned self] in
-            self.viewModel!.requestData(type: self.typeRequest, filter: self.sortRequest)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.5){ [unowned self] in
+            self.viewModel!.requestData(type: self.typeRequest, filter: self.sortRequest,locale: self.localeRequest)
         }
     }
     
@@ -72,8 +72,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         self.tableView.reloadData()
         typeRequest = UserDefaults.standard.string(forKey: "typeRequest") ?? "fitness"
         sortRequest = UserDefaults.standard.string(forKey: "sortRequest") ?? "publishedAt"
-        localeRequest = UserDefaults.standard.string(forKey: "localeValue") ?? "en"
-        print(localeRequest)
+        localeRequest = UserDefaults.standard.string(forKey: "localeRequest") ?? "en"
     }
     //MARK: - Targets
     @objc private func didTapOpenFavourite(){
@@ -85,7 +84,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         let value = UserDefaults.standard.value(forKey: "pageNumberAPI") as! Int
         let pageNumber = value + 1
         UserDefaults.standard.setValue(pageNumber, forKey: "pageNumberAPI")
-        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest, filter: sortRequest)
+        viewModel!.requestData(pageNumber: pageNumber,type: typeRequest, filter: sortRequest,locale: localeRequest)
     }
     
     @objc private func didTapRefreshData(){
@@ -114,7 +113,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     func setupNewsPageViewModel(){
         viewModel = FFNewsPageViewModel()
         viewModel.delegate = self
-        dataSourceClass = FFNewsTableViewDataSource(with: model)
+        dataSourceClass = FFNewsTableViewDataSource(with: model,viewController: self)
         tableView.dataSource = dataSourceClass
         tableView.delegate = self
     }
@@ -133,7 +132,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
 
     func reloadTableView(models: [Articles]) {
-        dataSourceClass = FFNewsTableViewDataSource(with: models)
+        dataSourceClass = FFNewsTableViewDataSource(with: models,viewController: self)
         tableView.dataSource = dataSourceClass
         tableView.delegate = self
         tableView.tableFooterView = loadDataButton

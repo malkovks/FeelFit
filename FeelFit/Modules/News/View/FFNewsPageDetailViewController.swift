@@ -122,10 +122,12 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
             saveStatus.toggle()
             FFNewsStoreManager.shared.saveNewsModel(model: model, status: saveStatus)
             navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
+            viewAlertController(text: "Added to Favourite", startDuration: 0.5, timer: 1.5, controllerView: self.view)
         } else {
             saveStatus.toggle()
             FFNewsStoreManager.shared.deleteNewsModel(model: model, status: saveStatus)
             navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: "heart", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
+            viewAlertController(text: "Removed from Favourite", startDuration: 0.5, timer: 1.5, controllerView: self.view)
         }
     }
     
@@ -174,7 +176,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         guard let link = model.urlToImage, let url = URL(string: link) else { return }
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let data = data, error == nil else {
-                self?.newsImageView.image = self?.defaultImage
+//                self?.newsImageView.image = self?.defaultImage
                 return
             }
             DispatchQueue.main.async {
@@ -230,7 +232,7 @@ extension FFNewsPageDetailViewController {
         }
     }
 }
-
-#Preview {
-    FFNewsPageViewController()
-}
+//
+//#Preview {
+//    FFNewsPageViewController()
+//}

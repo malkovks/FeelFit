@@ -23,7 +23,8 @@ class Section {
 class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
 
 
-    var rows = [[String]]()
+    private var rows = [[String]]()
+    private var sections = [Section]()
     
     var viewModel: FFNewsSettingViewModel!
     
@@ -33,7 +34,7 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
         return table
     }()
     
-    private var sections = [Section]()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +49,7 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
         setupConstraints()
     }
     
+    //MARK: - Setup methods
     func setupView() {
         viewModel = FFNewsSettingViewModel()
         rows = viewModel.setupRowModel()
@@ -63,25 +65,18 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
     }
 }
 
+//MARK: - TableViewDelegate
 extension FFNewsSetupRequestViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 {
-            sections[indexPath.section].isOpened = !sections[indexPath.section].isOpened
-            tableView.reloadSections([indexPath.section], with: .automatic)
-        }
+        viewModel.tableView(tableView, didSelectRowAt: indexPath, sections: sections)
         
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == 0 {
-            return 50
-        } else {
-            return 200
-        }
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
 }
-
+//MARK: - tableView data source
 extension FFNewsSetupRequestViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFNewsSetupRequestTableViewCell.identifier, for: indexPath) as! FFNewsSetupRequestTableViewCell
@@ -124,36 +119,18 @@ extension FFNewsSetupRequestViewController: UITableViewDataSource {
         return sections.count
     }
 }
-
+//MARK: - Picker delegate & datasource
 extension FFNewsSetupRequestViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if pickerView.tag == 0 {
-            return rows[0].count
-        } else if pickerView.tag == 1 {
-            return rows[1].count
-        } else {
-            return rows[2].count
-        }
+        viewModel.pickerView(pickerView, numberOfRowsInComponent: component, rows: rows)
     }
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.contentMode = .scaleAspectFit
-        label.font = .systemFont(ofSize: 20,weight: .semibold)
-        label.numberOfLines = 1
-        if pickerView.tag == 0 {
-            label.text =  rows[0][row]
-        } else if pickerView.tag == 1 {
-            label.text =  rows[1][row]
-        } else {
-            label.text =  rows[2][row]
-        }
-        return label
+        viewModel.pickerView(pickerView, viewForRow: row, forComponent: component, reusing: view, rows: rows)
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
@@ -162,7 +139,7 @@ extension FFNewsSetupRequestViewController: UIPickerViewDelegate, UIPickerViewDa
     
     
 }
-
+//MARK: - Constraints setups
 extension FFNewsSetupRequestViewController {
     private func setupConstraints(){
         view.addSubview(tableView)

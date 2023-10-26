@@ -29,7 +29,7 @@ class FFGetNewsRequest {
         let type = checkSortType(type: requestSortType)
         let result = setupDates()
         
-        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(result.0)&to\(result.1)&pageSize=20&page=\(numberOfPage)&sortBy=\(type)&language=en&apiKey=726ada313f7a4371a04f04c875036854") else { return }
+        guard let url = URL(string: "https://newsapi.org/v2/everything?q=\(requestType)&from\(result.0)&to\(result.1)&pageSize=20&page=\(numberOfPage)&sortBy=\(type)&language=\(locale)&apiKey=726ada313f7a4371a04f04c875036854") else { return }
 //        guard let url = URL(string: "https://newsapi.org/v2/everything?q=fitness&from2023-09-28&to2023-09-29&pageSize=20&page=1&sortBy=publishedAt&apiKey=726ada313f7a4371a04f04c875036854") else { return }
         
         let cache = URLCache(memoryCapacity: 100*1024*1024, diskCapacity: 100*1024*1024)
