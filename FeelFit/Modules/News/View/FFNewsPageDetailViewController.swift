@@ -8,6 +8,7 @@
 import UIKit
 import SafariServices
 import RealmSwift
+import Alamofire
 
 class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
@@ -30,7 +31,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
     private let newsImageView: UIImageView = {
         let image = UIImageView()
-        image.contentMode = .scaleAspectFill
+        image.contentMode = .scaleAspectFit
         image.layer.cornerRadius = 12
         image.layer.masksToBounds = true
         image.tintColor = FFResources.Colors.activeColor
@@ -132,8 +133,15 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapImageView(){
-        let vc = FFImageDetailsViewController(newsImage: newsImageView.image ?? UIImage(systemName: "photo.fill")!)
+        let vc = FFImageDetailsViewController(newsImage: newsImageView.image ?? UIImage(systemName: "photo.fill")!, imageURL: model.urlToImage ?? "")
         present(vc, animated: true)
+    }
+    
+    @objc private func didTapShare(){
+        let title = model.title
+        let url = model.url
+        let activityVC = UIActivityViewController(activityItems: [title,url], applicationActivities: .none)
+        present(activityVC, animated: true)
     }
     //MARK: - Setups
     func setupView() {
@@ -143,6 +151,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         setupDetailNews()
         setupImage()
         setupImageView()
+        setupNewsSourceButton()
     }
     
     func setupImageView(){
@@ -150,39 +159,69 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         newsImageView.addGestureRecognizer(tapGesture)
     }
     
-    func setupDetailNews(){
+    func setupNewsSourceButton(){
         newsSourceButton.setTitle(model.source.name, for: .normal)
-        newsSourceButton.addTarget(self, action: #selector(didTapPushedButton), for: .touchUpInside)
+//        newsSourceButton.addTarget(self, action: #selector(didTapPushedButton), for: .touchUpInside)
+        var menu: [UIAction] {
+            return [
+                UIAction(title: "Share",image: UIImage(systemName: "square.and.arrow.up"), handler: { _ in
+                    self.didTapShare()
+                }),
+                UIAction(title: "Copy news link",image: UIImage(systemName: "link"), handler: { _ in
+                    UIPasteboard.general.string = self.model.url
+                }),
+                UIAction(title: "Add to Favourite",image: UIImage(systemName: "heart"), handler: { _ in
+                    FFNewsStoreManager.shared.saveNewsModel(model: self.model, status: true)
+                }),
+                UIAction(title: "Open news",image: UIImage(systemName: "safari"), handler: { _ in
+                    self.didTapPushedButton()
+                })
+                ]
+        }
+        
+        var displayMenu: UIMenu {
+            return UIMenu(title: "Actions",image: UIImage(systemName: "gear")!,children: menu)
+        }
+        newsSourceButton.menu = displayMenu
+        newsSourceButton.showsMenuAsPrimaryAction = true
+        
+        
+    }
+    
+    func setupDetailNews(){
+        
+        
+        
+        
         let author = String(describing: model.author ?? "")
         let publishedAt = String(describing: model.publishedAt.convertToStringData())
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "link.circle"), for: .normal)
-        button.tintColor = FFResources.Colors.activeColor
         
         guard var description = model.content else { return }
         //Не работает корректно, доделать
-        if description.suffix(3) == "..." {
+        if description.suffix(1) == "]" {
             description += "\nContinued via link"
         }
         
         newsTextView.text = description
-        newsTextView.inputAccessoryView = button as UIView
         newsTitleLabel.text = model.title
         newsAuthorLabel.text = "Author: \(author)"
         newsPublishedLabel.text = "Published: \(publishedAt)"
     }
     
     func setupImage(){
-        guard let link = model.urlToImage, let url = URL(string: link) else { return }
-        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let data = data, error == nil else {
-//                self?.newsImageView.image = self?.defaultImage
-                return
+        guard let imageUrl = model.urlToImage else {
+            newsImageView.image = UIImage(systemName: "photo")
+            return
+        }
+        AF.request(imageUrl,method: .get).response { [unowned self] response in
+            switch response.result {
+            case .success(let imageData):
+                let image = UIImage(data: imageData ?? Data(),scale: 1)
+                self.newsImageView.image = image
+            case .failure(_):
+                self.newsImageView.image = UIImage(systemName: "photo")
             }
-            DispatchQueue.main.async {
-                self?.newsImageView.image = UIImage(data: data)
-            }
-        }.resume()
+        }
     }
     
     func setupNavigationController() {

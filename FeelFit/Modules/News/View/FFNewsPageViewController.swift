@@ -43,7 +43,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         button.setTitle("Load more news", for: .normal)
         button.backgroundColor = FFResources.Colors.activeColor
         button.tintColor = FFResources.Colors.textColor
-        button.addTarget(self, action: #selector(didTapLoadMore), for: .touchUpInside)
         return button
     }()
     
@@ -101,6 +100,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
         UserDefaults.standard.setValue(1, forKey: "pageNumberAPI")
+        loadDataButton.addTarget(self, action: #selector(didTapLoadMore), for: .touchUpInside)
     }
     
     func setupTableView(){
@@ -208,7 +208,7 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
             guard let image = image else { return }
-            let vc = FFImageDetailsViewController(newsImage: image)
+            let vc = FFImageDetailsViewController(newsImage: image, imageURL: model.urlToImage ?? "")
             vc.sheetPresentationController?.prefersGrabberVisible = true
             present(vc, animated: true)
         case .some(.openLink):

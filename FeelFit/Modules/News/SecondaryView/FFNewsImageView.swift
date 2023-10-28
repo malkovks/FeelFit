@@ -54,14 +54,7 @@ class FFNewsImageView: UIVisualEffectView {
             self.isOpened?(false)
         }
     }
-    
-    @objc private func didTapShareImageView(sender: UIButton){
-        var items = [Any]()
-        items.append(imageView.image)
-        let activityView = UIActivityViewController.init(activityItems: items, applicationActivities: nil)
-//        present
-        
-    }
+
     
     private func setupVisualView(){
         let style = UIBlurEffect.Style.systemUltraThinMaterialLight

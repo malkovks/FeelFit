@@ -148,7 +148,3 @@ extension FFNewsSetupRequestViewController {
         }
     }
 }
-//
-//#Preview {
-//    FFNewsSetupRequestViewController()
-//}

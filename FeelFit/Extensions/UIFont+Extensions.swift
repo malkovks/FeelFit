@@ -15,7 +15,6 @@ extension UIFont {
     /// - Parameter size: font size
     /// - Returns: return setups font value
     static func headerFont(size: CGFloat = 20) -> UIFont {
-        let weight = UIFont.Weight.medium
         var font = UIFont()
         font = UIFont(name: fontName, size: size)!
         return font

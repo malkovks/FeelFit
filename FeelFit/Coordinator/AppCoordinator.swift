@@ -37,8 +37,7 @@ class AppCoordinator: Coordinator {
         
         switch event {
         case .tableViewDidSelect:
-            var vc = FFNewsPageDetailViewController(model: model!)
-            
+            let vc = FFNewsPageDetailViewController(model: model!)
             navigationController?.pushViewController(vc, animated: true)
         case .openFavourite:
             let vc = FFNewsFavouriteViewController()

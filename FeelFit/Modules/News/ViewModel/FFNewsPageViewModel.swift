@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import Alamofire
 
 
 ///ViewModel delegate protocol
@@ -34,14 +35,16 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         guard let url = URL(string: string) else {
             return
         }
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
-                let imageResult = image ?? UIImage(systemName: "photo.fill")!
-                completion(imageResult)
+        
+        AF.request(url,method: .get).response { response in
+            switch response.result {
+            case .success(let imageData):
+                let image = UIImage(data: imageData ?? Data(),scale: 1) ?? UIImage(systemName: "photo")!
+                completion(image)
+            case .failure(_):
+                completion(UIImage(systemName: "photo")!)
             }
-        }.resume()
+        }
     }
     
     private func loadRealmData(model: Articles) -> Bool {

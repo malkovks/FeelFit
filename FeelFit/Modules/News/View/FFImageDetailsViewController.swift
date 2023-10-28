@@ -12,8 +12,8 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     var imageURL: URL?
     var newsImage: UIImage
     
-    init(newsImage: UIImage){
-        
+    init(newsImage: UIImage,imageURL: String){
+        self.imageURL = URL(string: imageURL)
         self.newsImage = newsImage
         imageView.image = newsImage
         super.init(nibName: nil, bundle: nil)
@@ -64,9 +64,9 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     
     @objc private func didTapShare(){
         let message = "Check this picture"
-        let link = imageURL
+        guard let link = imageURL else { return }
         let item = imageView.image!
-        let activityVC = UIActivityViewController(activityItems: [message,link!,item], applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: [message,link,item], applicationActivities: nil)
         activityVC.excludedActivityTypes = [.print,.openInIBooks]
         present(activityVC, animated: true)
     }

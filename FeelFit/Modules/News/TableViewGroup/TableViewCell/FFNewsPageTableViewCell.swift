@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 import RealmSwift
 
 ///Protocol for controlling selected button in FFNewsPageTableViewCell
@@ -137,6 +138,8 @@ class FFNewsPageTableViewCell: UITableViewCell {
         }
     }
     
+
+    
     func configureCell(model: Articles?,indexPath: IndexPath){
         newsAddFavouriteButton.tag = indexPath.row
         titleLabel.text = model?.title ?? nil
@@ -144,18 +147,20 @@ class FFNewsPageTableViewCell: UITableViewCell {
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
         publishDateLabel.text = "Published: " + (model?.publishedAt.convertToStringData() ?? "")
         
-        if let image = model?.urlToImage {
-            guard let url = URL(string: image) else { return }
-            URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-                guard let data = data, error == nil else { return }
-                DispatchQueue.main.async {
-                    self?.newsImageView.image = UIImage(data: data)
-                }
-            }.resume()
-        } else {
+        guard let model = model,
+              let imageUrl = model.urlToImage else {
             newsImageView.image = UIImage(systemName: "photo")
+            return
         }
-        guard let model = model else { return }
+        AF.request(imageUrl,method: .get).response { [unowned self] response in
+            switch response.result {
+            case .success(let imageData):
+                let image = UIImage(data: imageData ?? Data(),scale: 1)
+                self.newsImageView.image = image
+            case .failure(_):
+                self.newsImageView.image = UIImage(systemName: "photo")
+            }
+        }
         self.filterModel(model: model, indexPath: indexPath)
     }
 }

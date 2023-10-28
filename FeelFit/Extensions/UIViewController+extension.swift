@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 enum BarButtonPosition {
     case left
@@ -53,17 +54,18 @@ extension UIViewController {
             if !opened {
                 self.navigationController?.setNavigationBarHidden(false, animated: true)
                 self.tabBarController?.tabBar.isHidden = false
-                //            self.view.alpha = 1.0
             }
         }
         guard let url = URL(string: url) else { return }
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            let image = UIImage(data: data)
-            DispatchQueue.main.async {
+        AF.request(url,method: .get).response { response in
+            switch response.result {
+            case .success(let imageData):
+                let image = UIImage(data: imageData ?? Data(),scale: 1)
                 vc.imageView.image = image
+            case .failure(_):
+                vc.imageView.image = UIImage(systemName: "photo")
             }
-        }.resume()
+        }
         self.view.addSubview(vc)
         vc.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -72,7 +74,6 @@ extension UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         UIView.animate(withDuration: 0.5) {
-//            self.view.alpha = 0.8
             self.navigationController?.setNavigationBarHidden(true, animated: true)
             self.tabBarController?.tabBar.isHidden = true
             vc.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
