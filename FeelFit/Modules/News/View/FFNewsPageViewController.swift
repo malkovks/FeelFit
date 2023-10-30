@@ -196,10 +196,8 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
     func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?,image: UIImage?) {
         switch selectedCase {
         case .shareNews :
-            let activityVC = viewModel.shareNews(view: self, model: model)
-            present(activityVC, animated: true)
+            viewModel.shareNews(view: self, model: model)
         case .addToFavourite:
-//            tableView.reloadRows(at: [indexPath], with: .automatic)
             tableView.reloadData()
         case .copyLink:
             UIPasteboard.general.string = model.url
@@ -207,14 +205,9 @@ extension FFNewsPageViewController: FFNewsPageDelegate {
             let vc = FFNewsPageDetailViewController(model: model)
             navigationController?.pushViewController(vc, animated: true)
         case .some(.openImage):
-            guard let image = image else { return }
-            let vc = FFImageDetailsViewController(newsImage: image, imageURL: model.urlToImage ?? "")
-            vc.sheetPresentationController?.prefersGrabberVisible = true
-            present(vc, animated: true)
+            viewModel.openDetailViewController(view: self, image: image, url: model.urlToImage)
         case .some(.openLink):
-            guard let url = URL(string: model.url) else { return }
-            let vc = SFSafariViewController(url: url)
-            present(vc, animated: true)
+            viewModel.openLinkSafariViewController(view: self, url: model.url)
         case .none:
             break
         }

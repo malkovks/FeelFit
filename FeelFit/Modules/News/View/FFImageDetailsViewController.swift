@@ -9,6 +9,8 @@ import UIKit
 
 class FFImageDetailsViewController: UIViewController, SetupViewController {
     
+    var viewModel: FFImageDetailsViewModel!
+    
     var imageURL: URL?
     var newsImage: UIImage
     
@@ -59,19 +61,16 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapDismiss(){
-        self.dismiss(animated: true)
+        viewModel.dismissViewController(viewController: self)
     }
     
     @objc private func didTapShare(){
-        let message = "Check this picture"
-        guard let link = imageURL else { return }
-        let item = imageView.image!
-        let activityVC = UIActivityViewController(activityItems: [message,link,item], applicationActivities: nil)
-        activityVC.excludedActivityTypes = [.print,.openInIBooks]
-        present(activityVC, animated: true)
+        viewModel.shareImageView(viewController: self, url: imageURL, title: "Check this picture", image: imageView.image!)
     }
     
     func setupView() {
+        viewModel = FFImageDetailsViewModel()
+        
         view.backgroundColor = UIColor.clear
         view.clipsToBounds = true
         view.layer.borderColor = FFResources.Colors.tabBarBackgroundColor.cgColor

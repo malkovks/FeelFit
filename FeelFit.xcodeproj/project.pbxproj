@@ -10,8 +10,10 @@
 		0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */; };
 		0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */; };
 		0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */; };
+		0A2347AE2AEFEF21002C161C /* FFExercisesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347AD2AEFEF21002C161C /* FFExercisesViewModel.swift */; };
+		0A2347B02AEFEFD5002C161C /* FFGetExerciseRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347AF2AEFEFD5002C161C /* FFGetExerciseRequest.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
-		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */; };
+		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
 		0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494C12AB821FD0082C909 /* SceneDelegate.swift */; };
 		0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */; };
@@ -56,8 +58,10 @@
 		0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertError+UIViewControllerExtensions.swift"; sourceTree = "<group>"; };
 		0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageTableViewCell.swift; sourceTree = "<group>"; };
 		0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsTableViewDataSource.swift; sourceTree = "<group>"; };
+		0A2347AD2AEFEF21002C161C /* FFExercisesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesViewModel.swift; sourceTree = "<group>"; };
+		0A2347AF2AEFEFD5002C161C /* FFGetExerciseRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExerciseRequest.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
-		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailViewModel.swift; sourceTree = "<group>"; };
+		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4494BF2AB821FD0082C909 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A4494C12AB821FD0082C909 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -316,7 +320,7 @@
 				0ACEAA522ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift */,
 				0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */,
 				0ACEAA542ADD754C00899CF6 /* FFNewsSettingViewModel.swift */,
-				0A3FC2E32ADF0B8A00E35739 /* FFImageDetailViewModel.swift */,
+				0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -350,6 +354,7 @@
 		0A44951C2ABA78EF0082C909 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				0A2347AD2AEFEF21002C161C /* FFExercisesViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -433,6 +438,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */,
+				0A2347AF2AEFEFD5002C161C /* FFGetExerciseRequest.swift */,
 			);
 			path = APIClient;
 			sourceTree = "<group>";
@@ -563,6 +569,7 @@
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
+				0A2347B02AEFEFD5002C161C /* FFGetExerciseRequest.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */,
@@ -570,7 +577,7 @@
 				0ACEA9F12AD9734D00899CF6 /* AppCoordinator.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
-				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailViewModel.swift in Sources */,
+				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
@@ -585,6 +592,7 @@
 				0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */,
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
 				0ACEAA532ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift in Sources */,
+				0A2347AE2AEFEF21002C161C /* FFExercisesViewModel.swift in Sources */,
 				0ACEA9E92AD7EDBF00899CF6 /* Coordinator.swift in Sources */,
 				0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,

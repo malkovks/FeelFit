@@ -9,21 +9,21 @@ import UIKit
 
 class FFExercisesViewController: UIViewController, SetupViewController {
     
-    
+    var viewModel: FFExercisesViewModel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        title = "Exercises"
-        view.backgroundColor = .systemGray2
+        setupView()
+        setupNavigationController()
     }
     
     func setupView() {
-    
+        viewModel = FFExercisesViewModel()
+        view.backgroundColor = .systemGray2
     }
     
     func setupNavigationController() {
-        
+        title = "Exercises"
     }
     
     

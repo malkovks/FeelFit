@@ -113,9 +113,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     }
     //MARK: - Targets
     @objc private func didTapPushedButton(){
-        guard let url = URL(string: model.url) else { return }
-        let vc = SFSafariViewController(url: url)
-        present(vc, animated: true)
+        viewModel?.openLinkSafariViewController(view: self, url: model.url)
     }
     
     @objc private func didTapAddFavourite(){
@@ -133,15 +131,11 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapImageView(){
-        let vc = FFImageDetailsViewController(newsImage: newsImageView.image ?? UIImage(systemName: "photo.fill")!, imageURL: model.urlToImage ?? "")
-        present(vc, animated: true)
+        viewModel?.openImageView(viewController: self, imageView: newsImageView, urlImage: model.urlToImage)
     }
     
     @objc private func didTapShare(){
-        let title = model.title
-        let url = model.url
-        let activityVC = UIActivityViewController(activityItems: [title,url], applicationActivities: .none)
-        present(activityVC, animated: true)
+        viewModel?.shareNews(view: self, model: model)
     }
     //MARK: - Setups
     func setupView() {
@@ -161,37 +155,12 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
     func setupNewsSourceButton(){
         newsSourceButton.setTitle(model.source.name, for: .normal)
-//        newsSourceButton.addTarget(self, action: #selector(didTapPushedButton), for: .touchUpInside)
-        var menu: [UIAction] {
-            return [
-                UIAction(title: "Share",image: UIImage(systemName: "square.and.arrow.up"), handler: { _ in
-                    self.didTapShare()
-                }),
-                UIAction(title: "Copy news link",image: UIImage(systemName: "link"), handler: { _ in
-                    UIPasteboard.general.string = self.model.url
-                }),
-                UIAction(title: "Add to Favourite",image: UIImage(systemName: "heart"), handler: { _ in
-                    FFNewsStoreManager.shared.saveNewsModel(model: self.model, status: true)
-                }),
-                UIAction(title: "Open news",image: UIImage(systemName: "safari"), handler: { _ in
-                    self.didTapPushedButton()
-                })
-                ]
-        }
-        
-        var displayMenu: UIMenu {
-            return UIMenu(title: "Actions",image: UIImage(systemName: "gear")!,children: menu)
-        }
-        newsSourceButton.menu = displayMenu
+        newsSourceButton.menu = viewModel?.setupNewsSourceButton(viewController: self, model: model)
         newsSourceButton.showsMenuAsPrimaryAction = true
-        
-        
+
     }
     
     func setupDetailNews(){
-        
-        
-        
         
         let author = String(describing: model.author ?? "")
         let publishedAt = String(describing: model.publishedAt.convertToStringData())

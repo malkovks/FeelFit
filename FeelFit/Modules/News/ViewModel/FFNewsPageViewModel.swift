@@ -8,7 +8,7 @@
 import UIKit
 import RealmSwift
 import Alamofire
-
+import SafariServices
 
 ///ViewModel delegate protocol
 protocol FFNewsPageDelegate: AnyObject {
@@ -116,15 +116,27 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         return view.frame.size.height/4
     }
     
-    func shareNews(view: UIViewController,model: Articles) -> UIActivityViewController {
+    func shareNews(view: UIViewController,model: Articles){
         let newsTitle = model.title
         guard let newsURL = URL(string: model.url) else {
-            return UIActivityViewController(activityItems: [], applicationActivities: nil)
+            return
         }
         let shareItems: [AnyObject] = [newsURL as AnyObject, newsTitle as AnyObject]
         let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
         activityViewController.excludedActivityTypes = [.markupAsPDF,.assignToContact,.sharePlay]
-        return activityViewController
+        view.present(activityViewController, animated: true)
+    }
+    
+    func openDetailViewController(view viewController: UIViewController,image: UIImage?,url: String?){
+        guard let image = image else { return }
+        let vc = FFImageDetailsViewController(newsImage: image, imageURL: url ?? "")
+        viewController.present(vc, animated: true)
+    }
+    
+    func openLinkSafariViewController(view viewController: UIViewController,url: String){
+        guard let url = URL(string: url) else { return }
+        let vc = SFSafariViewController(url: url)
+        viewController.present(vc, animated: true)
     }
     
     //MARK: - API Request
