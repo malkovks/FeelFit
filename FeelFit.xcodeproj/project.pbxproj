@@ -12,6 +12,9 @@
 		0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */; };
 		0A2347AE2AEFEF21002C161C /* FFExercisesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347AD2AEFEF21002C161C /* FFExercisesViewModel.swift */; };
 		0A2347B02AEFEFD5002C161C /* FFGetExerciseRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347AF2AEFEFD5002C161C /* FFGetExerciseRequest.swift */; };
+		0A2347B22AF0F965002C161C /* FFExercisesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B12AF0F965002C161C /* FFExercisesModel.swift */; };
+		0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B42AF10BA8002C161C /* FFExercisesCollectionViewCell.swift */; };
+		0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
@@ -60,6 +63,9 @@
 		0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsTableViewDataSource.swift; sourceTree = "<group>"; };
 		0A2347AD2AEFEF21002C161C /* FFExercisesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesViewModel.swift; sourceTree = "<group>"; };
 		0A2347AF2AEFEFD5002C161C /* FFGetExerciseRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExerciseRequest.swift; sourceTree = "<group>"; };
+		0A2347B12AF0F965002C161C /* FFExercisesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesModel.swift; sourceTree = "<group>"; };
+		0A2347B42AF10BA8002C161C /* FFExercisesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesCollectionViewCell.swift; sourceTree = "<group>"; };
+		0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesMuscleGroupViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,6 +156,14 @@
 			path = TableViewGroup;
 			sourceTree = "<group>";
 		};
+		0A2347B32AF10B78002C161C /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				0A2347B42AF10BA8002C161C /* FFExercisesCollectionViewCell.swift */,
+			);
+			path = CollectionView;
+			sourceTree = "<group>";
+		};
 		0A4494B32AB821FD0082C909 = {
 			isa = PBXGroup;
 			children = (
@@ -231,6 +245,7 @@
 		0A4495042AB9D0F30082C909 /* Exercises */ = {
 			isa = PBXGroup;
 			children = (
+				0A2347B32AF10B78002C161C /* CollectionView */,
 				0A44951C2ABA78EF0082C909 /* ViewModel */,
 				0A44951B2ABA78EA0082C909 /* View */,
 				0A44951A2ABA78E30082C909 /* Model */,
@@ -339,6 +354,7 @@
 		0A44951A2ABA78E30082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0A2347B12AF0F965002C161C /* FFExercisesModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -347,6 +363,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4495282ABA79700082C909 /* FFExercisesViewController.swift */,
+				0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -571,6 +588,7 @@
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0A2347B02AEFEFD5002C161C /* FFGetExerciseRequest.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
+				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
@@ -585,6 +603,7 @@
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
+				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,
 				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
@@ -598,6 +617,7 @@
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
+				0A2347B22AF0F965002C161C /* FFExercisesModel.swift in Sources */,
 				0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,

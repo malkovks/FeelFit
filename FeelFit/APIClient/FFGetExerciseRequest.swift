@@ -9,9 +9,13 @@ import UIKit
 import Alamofire
 
 class FFGetExerciseRequest {
-    func getRequest(){
-        var urlString = "https://api.api-ninjas.com/v1/exercises?muscle="
-        let muscle = "biceps".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    
+    
+    static let shared = FFGetExerciseRequest()
+    
+    func getRequest(muscleName: String,completion: @escaping (Result<[Exercises],Error>) -> ()){
+        let urlString = "https://api.api-ninjas.com/v1/exercises?muscle="
+        let muscle = muscleName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         let url = URL(string: urlString + muscle!)!
         var request = URLRequest(url: url)
         request.setValue("xs3hoaaW5heLkn3TKH1MHg==rUST8PMzwyx2K9vE", forHTTPHeaderField: "X-Api-Key")
@@ -21,9 +25,13 @@ class FFGetExerciseRequest {
         let cache = URLCache(memoryCapacity: 100*1024, diskCapacity: 100*1024)
         URLCache.shared = cache
         
-        AF.request(request)
-            .validate()
-//            .responseDecodable(of: <#T##Decodable.Protocol#>, completionHandler: <#T##(DataResponse<Decodable, AFError>) -> Void#>)
-        
+        AF.request(request).validate().responseDecodable(of: [Exercises].self) { response in
+            switch response.result {
+            case .success(let exercises):
+                completion(.success(exercises))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }.resume()
     }
 }
