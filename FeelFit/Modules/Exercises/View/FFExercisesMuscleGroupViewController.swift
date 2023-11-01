@@ -57,10 +57,11 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        var cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         let exercise = muscleExercises[indexPath.row]
         cell.textLabel?.text = exercise.name
-        cell.detailTextLabel?.text = exercise.instructions
+        cell.detailTextLabel?.text = "Difficult - " + exercise.difficulty
+        cell.accessoryType = .disclosureIndicator
         cell.contentView.layer.cornerRadius = 12
         cell.contentView.layer.masksToBounds = true
         return cell
@@ -68,7 +69,16 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
 }
 
 extension FFExercisesMuscleGroupViewController: UITableViewDelegate {
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return view.frame.size.height/2
+//    }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let exercise = muscleExercises[indexPath.row]
+        let vc = FFExerciseDescriptionViewController(exercise: exercise)
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 

@@ -23,6 +23,9 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .center
         label.numberOfLines = 1
         label.textColor = FFResources.Colors.activeColor
+        label.backgroundColor = FFResources.Colors.tabBarBackgroundColor
+        label.layer.cornerRadius = 12
+        label.layer.masksToBounds = true
         return label
     }()
     
@@ -40,7 +43,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         
         muscleImageView.addSubview(muscleTitleLabel)
         muscleTitleLabel.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview().inset(2)
+            make.leading.trailing.bottom.equalToSuperview().inset(5)
             make.height.equalTo(contentView.frame.size.height/4)
         }
     }
@@ -51,7 +54,8 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         backgroundColor = .systemIndigo
     }
     
-    func configureCell(text: String){
+    func configureCell(text: String?){
+        guard let text = text else { return }
         muscleTitleLabel.text = text
     }
     

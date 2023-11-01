@@ -10,23 +10,25 @@ import UIKit
 class FFExercisesViewController: UIViewController, SetupViewController {
     
     var viewModel: FFExercisesViewModel!
-    
-    var muscleGroupsName = ["abdominals",
-                     "abductors",
-                     "adductors",
-                     "biceps",
-                     "calves",
-                     "chest",
-                     "forearms",
-                     "glutes",
-                     "hamstrings",
-                     "lats",
-                     "lower_back",
-                     "middle_back",
-                     "neck",
-                     "quadriceps",
-                     "traps",
-                     "triceps"]
+
+    var muscleDictionary = [
+        "abdominals" : "Abdominals",
+        "abductors" : "Abductors",
+        "adductors" : "Adductors",
+        "biceps" : "Biceps",
+        "calves" : "Calves",
+        "chest" : "Chest",
+        "forearms" : "Forearms",
+        "glutes" : "Glutes",
+        "hamstrings" : "Hamstrings",
+        "lats" : "Lats",
+        "lower_back" : "Lower back",
+        "middle_back" : "Middle back",
+        "neck" : "Neck",
+        "quadriceps" : "Quadriceps",
+        "traps" : "Traps",
+        "triceps" : "Triceps"
+    ]
     
     private var collectionView: UICollectionView!
 
@@ -36,20 +38,11 @@ class FFExercisesViewController: UIViewController, SetupViewController {
         setupNavigationController()
         setupCollectionView()
         setupConstraints()
-//        FFGetExerciseRequest.shared.getRequest { result in
-//            switch result {
-//                
-//            case .success(let data):
-//                print(data[2])
-//            case .failure(let error):
-//                print(error)
-//            }
-//        }
     }
     
     func setupView() {
         viewModel = FFExercisesViewModel()
-        view.backgroundColor = .systemGray2
+        view.backgroundColor = .secondarySystemBackground
     }
     
     func setupNavigationController() {
@@ -64,7 +57,7 @@ class FFExercisesViewController: UIViewController, SetupViewController {
         collectionView.register(FFExercisesCollectionViewCell.self, forCellWithReuseIdentifier: FFExercisesCollectionViewCell.identifier)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .systemFill
+        collectionView.backgroundColor = .clear
         collectionView.contentInsetAdjustmentBehavior = .automatic
         collectionView.allowsMultipleSelection = true
     }
@@ -72,13 +65,14 @@ class FFExercisesViewController: UIViewController, SetupViewController {
 
 extension FFExercisesViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        muscleGroupsName.count
+        muscleDictionary.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFExercisesCollectionViewCell.identifier, for: indexPath) as! FFExercisesCollectionViewCell
-        let name = muscleGroupsName[indexPath.row]
-        cell.configureCell(text: name)
+        let key = Array(muscleDictionary.keys.sorted())[indexPath.row]
+        let value = muscleDictionary[key]
+        cell.configureCell(text: value)
         return cell
     }
     
@@ -95,7 +89,7 @@ extension FFExercisesViewController: UICollectionViewDelegateFlowLayout{
 
 extension FFExercisesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let name = muscleGroupsName[indexPath.row]
+        let name = Array(muscleDictionary.keys.sorted())[indexPath.row]
         let vc = FFExercisesMuscleGroupViewController()
         vc.loadData(name: name)
         navigationController?.pushViewController(vc, animated: true)

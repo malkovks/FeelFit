@@ -15,6 +15,16 @@
 		0A2347B22AF0F965002C161C /* FFExercisesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B12AF0F965002C161C /* FFExercisesModel.swift */; };
 		0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B42AF10BA8002C161C /* FFExercisesCollectionViewCell.swift */; };
 		0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */; };
+		0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B92AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift */; };
+		0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */; };
+		0A2347BF2AF256F8002C161C /* YouTubeiOSPlayerHelper in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347BE2AF256F8002C161C /* YouTubeiOSPlayerHelper */; };
+		0A2347C22AF25A44002C161C /* Discovery in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C12AF25A44002C161C /* Discovery */; };
+		0A2347C42AF25A44002C161C /* GoogleAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C32AF25A44002C161C /* GoogleAPIRuntime */; };
+		0A2347C72AF25B3C002C161C /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C62AF25B3C002C161C /* GoogleAPIClientForRESTCore */; };
+		0A2347C92AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C82AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS */; };
+		0A2347CB2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */; };
+		0A2347CD2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */; };
+		0A2347CF2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
@@ -66,6 +76,8 @@
 		0A2347B12AF0F965002C161C /* FFExercisesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesModel.swift; sourceTree = "<group>"; };
 		0A2347B42AF10BA8002C161C /* FFExercisesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesCollectionViewCell.swift; sourceTree = "<group>"; };
 		0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesMuscleGroupViewController.swift; sourceTree = "<group>"; };
+		0A2347B92AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesMuscleTableViewCell.swift; sourceTree = "<group>"; };
+		0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,8 +125,16 @@
 			files = (
 				0A4494DD2AB82ED80082C909 /* RealmSwift in Frameworks */,
 				0A4494DB2AB82ED80082C909 /* Realm in Frameworks */,
+				0A2347C92AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS in Frameworks */,
 				0A4494D52AB82AB70082C909 /* SnapKit in Frameworks */,
+				0A2347CD2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway in Frameworks */,
 				0A4494D82AB82B330082C909 /* Alamofire in Frameworks */,
+				0A2347BF2AF256F8002C161C /* YouTubeiOSPlayerHelper in Frameworks */,
+				0A2347CF2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport in Frameworks */,
+				0A2347C42AF25A44002C161C /* GoogleAPIRuntime in Frameworks */,
+				0A2347CB2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */,
+				0A2347C72AF25B3C002C161C /* GoogleAPIClientForRESTCore in Frameworks */,
+				0A2347C22AF25A44002C161C /* Discovery in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +182,14 @@
 				0A2347B42AF10BA8002C161C /* FFExercisesCollectionViewCell.swift */,
 			);
 			path = CollectionView;
+			sourceTree = "<group>";
+		};
+		0A2347B82AF24B1A002C161C /* TableView */ = {
+			isa = PBXGroup;
+			children = (
+				0A2347B92AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift */,
+			);
+			path = TableView;
 			sourceTree = "<group>";
 		};
 		0A4494B32AB821FD0082C909 = {
@@ -245,6 +273,7 @@
 		0A4495042AB9D0F30082C909 /* Exercises */ = {
 			isa = PBXGroup;
 			children = (
+				0A2347B82AF24B1A002C161C /* TableView */,
 				0A2347B32AF10B78002C161C /* CollectionView */,
 				0A44951C2ABA78EF0082C909 /* ViewModel */,
 				0A44951B2ABA78EA0082C909 /* View */,
@@ -364,6 +393,7 @@
 			children = (
 				0A4495282ABA79700082C909 /* FFExercisesViewController.swift */,
 				0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */,
+				0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -522,6 +552,14 @@
 				0A4494D72AB82B330082C909 /* Alamofire */,
 				0A4494DA2AB82ED80082C909 /* Realm */,
 				0A4494DC2AB82ED80082C909 /* RealmSwift */,
+				0A2347BE2AF256F8002C161C /* YouTubeiOSPlayerHelper */,
+				0A2347C12AF25A44002C161C /* Discovery */,
+				0A2347C32AF25A44002C161C /* GoogleAPIRuntime */,
+				0A2347C62AF25B3C002C161C /* GoogleAPIClientForRESTCore */,
+				0A2347C82AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS */,
+				0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */,
+				0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */,
+				0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */,
 			);
 			productName = FeelFit;
 			productReference = 0A4494BC2AB821FD0082C909 /* FeelFit.app */;
@@ -555,6 +593,9 @@
 				0A4494D32AB82AB70082C909 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				0A4494D62AB82B330082C909 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				0A4494D92AB82ED80082C909 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */,
+				0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */,
+				0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
 			);
 			productRefGroup = 0A4494BD2AB821FD0082C909 /* Products */;
 			projectDirPath = "";
@@ -605,8 +646,10 @@
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
 				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,
 				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,
+				0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSetupRequestViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
+				0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
 				0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */,
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
@@ -837,6 +880,30 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/youtube/youtube-ios-player-helper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+		0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleapis/google-api-swift-client";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		0A4494D32AB82AB70082C909 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -864,6 +931,46 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0A2347BE2AF256F8002C161C /* YouTubeiOSPlayerHelper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */;
+			productName = YouTubeiOSPlayerHelper;
+		};
+		0A2347C12AF25A44002C161C /* Discovery */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */;
+			productName = Discovery;
+		};
+		0A2347C32AF25A44002C161C /* GoogleAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */;
+			productName = GoogleAPIRuntime;
+		};
+		0A2347C62AF25B3C002C161C /* GoogleAPIClientForRESTCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForRESTCore;
+		};
+		0A2347C82AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_ACMEDNS;
+		};
+		0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_AIPlatformNotebooks;
+		};
+		0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_APIGateway;
+		};
+		0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_AbusiveExperienceReport;
+		};
 		0A4494D42AB82AB70082C909 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0A4494D32AB82AB70082C909 /* XCRemoteSwiftPackageReference "SnapKit" */;
