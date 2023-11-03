@@ -25,6 +25,8 @@
 		0A2347CB2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */; };
 		0A2347CD2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */; };
 		0A2347CF2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */; };
+		0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347D02AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift */; };
+		0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
@@ -78,6 +80,8 @@
 		0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesMuscleGroupViewController.swift; sourceTree = "<group>"; };
 		0A2347B92AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExercisesMuscleTableViewCell.swift; sourceTree = "<group>"; };
 		0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewController.swift; sourceTree = "<group>"; };
+		0A2347D02AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseMuscleGroupViewModel.swift; sourceTree = "<group>"; };
+		0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewModel.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -402,6 +406,8 @@
 			isa = PBXGroup;
 			children = (
 				0A2347AD2AEFEF21002C161C /* FFExercisesViewModel.swift */,
+				0A2347D02AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift */,
+				0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -626,6 +632,7 @@
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
+				0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0A2347B02AEFEFD5002C161C /* FFGetExerciseRequest.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
@@ -640,6 +647,7 @@
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
+				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,

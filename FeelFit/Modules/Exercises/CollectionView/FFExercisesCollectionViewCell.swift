@@ -8,7 +8,31 @@
 import UIKit
 
 class FFExercisesCollectionViewCell: UICollectionViewCell {
+    
+    
+    
     static let identifier = "ExerciseCell"
+    
+    var muscleDictionary = [
+        "abdominals" : "Abdominals",
+        "abductors" : "Abductors",
+        "adductors" : "Adductors",
+        "biceps" : "Biceps",
+        "calves" : "Calves",
+        "chest" : "Chest",
+        "forearms" : "Forearms",
+        "glutes" : "Glutes",
+        "hamstrings" : "Hamstrings",
+        "lats" : "Lats",
+        "lower_back" : "Lower back",
+        "middle_back" : "Middle back",
+        "neck" : "Neck",
+        "oblique" : "Obliques",
+        "quadriceps" : "Quadriceps",
+        "shoulders" : "Shoulders",
+        "traps" : "Traps",
+        "triceps" : "Triceps"
+    ]
     
     private let muscleImageView: UIImageView = {
        let image = UIImageView(image: UIImage(named: "biceps"))
@@ -17,7 +41,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         return image
     }()
     
-    private let muscleTitleLabel: UILabel = {
+    let muscleTitleLabel: UILabel = {
        let label = UILabel()
         label.font = .headerFont()
         label.textAlignment = .center
@@ -44,7 +68,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         muscleImageView.addSubview(muscleTitleLabel)
         muscleTitleLabel.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview().inset(5)
-            make.height.equalTo(contentView.frame.size.height/4)
+            make.height.equalTo(contentView.frame.size.height/6)
         }
     }
     
@@ -54,9 +78,11 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         backgroundColor = .systemIndigo
     }
     
-    func configureCell(text: String?){
-        guard let text = text else { return }
-        muscleTitleLabel.text = text
+    func configureCell(indexPath: IndexPath){
+        let key = Array(muscleDictionary.keys.sorted())[indexPath.row]
+        let value = muscleDictionary[key]
+        muscleTitleLabel.text = value
+        muscleImageView.image = UIImage(named: key)
     }
     
     required init?(coder: NSCoder) {

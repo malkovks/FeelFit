@@ -11,15 +11,15 @@ import Alamofire
 import SafariServices
 
 ///ViewModel delegate protocol
-protocol FFNewsPageDelegate: AnyObject {
+protocol FFGetRequestDelegate: AnyObject {
     func willLoadData()
-    func didLoadData(model: [Articles]?,error: Error?)
+    func didLoadData(model: Result<[Articles],Error>)
     func selectedCell(indexPath: IndexPath,model: Articles,selectedCase: NewsTableViewSelectedConfiguration?,image: UIImage?)
 }
 
 ///ViewModel setup protocol
 protocol FFNewsViewModelType {
-    var delegate: FFNewsPageDelegate? { get set }
+    var delegate: FFGetRequestDelegate? { get set }
     func requestData(pageNumber: Int,type: String,filter: String,locale: String)
 }
 
@@ -28,7 +28,7 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
     //delegate method for coordinator. Must be used when need to push or pop to view controller
     var coordinator: Coordinator?
     
-    weak var delegate: FFNewsPageDelegate?
+    weak var delegate: FFGetRequestDelegate?
 
 //MARK: - TableView functions
     func loadImageView(string: String,completion: @escaping ((UIImage) -> ()) ) {
@@ -146,10 +146,10 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         let request = FFGetNewsRequest.shared
         request.getRequestResult(numberOfPage: pageNumber,requestType: type,requestSortType: filter,locale: locale) { [weak self] result in
             switch result{
-            case .success(let data):
-                self?.delegate?.didLoadData(model: data, error: nil)
+            case .success(let model):
+                self?.delegate?.didLoadData(model: .success(model))
             case .failure(let error):
-                self?.delegate?.didLoadData(model: nil, error: error)
+                self?.delegate?.didLoadData(model: .failure(error))
             }
         }
     }

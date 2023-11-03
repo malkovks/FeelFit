@@ -9,32 +9,44 @@ import UIKit
 
 class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController {
     
+    var viewModel: FFExerciseMuscleGroupViewModel!
+    
     var muscleExercises = [Exercises]()
+    var muscleGroupName: String
+    
+    init(muscleGroupName: String){
+        self.muscleGroupName = muscleGroupName
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private var tableView: UITableView!
-
+    
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.color = FFResources.Colors.activeColor
+        return spinner
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
+        
         setupNavigationController()
         setupTableView()
         setupConstraints()
+        setupView()
     }
     
-    func loadData(name: String){
-        FFGetExerciseRequest.shared.getRequest(muscleName: name) { result in
-            switch result {
-            case .success(let success):
-                self.muscleExercises = success
-                self.tableView.reloadData()
-            case .failure(let failure):
-                print(failure)
-            }
-        }
-    }
+    
     
     func setupView() {
         view.backgroundColor = .lightGray
+        viewModel = FFExerciseMuscleGroupViewModel()
+        viewModel.delegate = self
+        viewModel.loadData(name: muscleGroupName)
     }
     
     func setupNavigationController() {
@@ -48,7 +60,29 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         tableView.dataSource = self
         tableView.backgroundColor = .secondarySystemBackground
     }
+    
+    
+}
 
+extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
+    func viewWillLoadData() {
+        spinner.startAnimating()
+    }
+    
+    func viewDidLoadData(result: Result<[Exercises], Error>) {
+        switch result {
+        case .success(let model):
+            self.muscleExercises = model
+            self.tableView.reloadData()
+        case .failure(let error):
+            alertError(title: "Error",message: error.localizedDescription)
+        }
+        spinner.stopAnimating()
+    }
+    
+    
+    
+    
 }
 
 extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
@@ -57,7 +91,7 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         let exercise = muscleExercises[indexPath.row]
         cell.textLabel?.text = exercise.name
         cell.detailTextLabel?.text = "Difficult - " + exercise.difficulty
@@ -69,15 +103,9 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
 }
 
 extension FFExercisesMuscleGroupViewController: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return view.frame.size.height/2
-//    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let exercise = muscleExercises[indexPath.row]
-        let vc = FFExerciseDescriptionViewController(exercise: exercise)
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.didSelectRowAt(tableView, indexPath: indexPath, viewController: self, model: muscleExercises)
     }
 }
 
@@ -88,5 +116,7 @@ extension FFExercisesMuscleGroupViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        view.addSubview(spinner)
+        spinner.center = view.center
     }
 }

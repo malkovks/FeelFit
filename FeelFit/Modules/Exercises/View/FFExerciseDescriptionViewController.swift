@@ -25,7 +25,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         let label = UILabel()
         label.font = .headerFont(size: 24)
         label.textColor = FFResources.Colors.textColor
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.textAlignment = .left
         label.layer.cornerRadius = 12
         label.layer.masksToBounds = true
@@ -90,27 +90,55 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         return textView
     }()
     
+    var labelStackView = UIStackView()
+    var userElementsStackView = UIStackView()
+    
     var exerciseDesctiptionPlayerView: YTPlayerView!
+    let scrollView = UIScrollView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupStackView()
         setupView()
         setupNavigationController()
         setupConstraints()
         configureView()
+        scrollView.frame = view.bounds
+//        scrollView.contentSize = CGSize(width: view.frame.size.width, height: view.frame.size.height*2)
+        
     }
     
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         exerciseDesctiptionPlayerView = YTPlayerView()
         exerciseDesctiptionPlayerView.delegate = self
-        
         exerciseDesctiptionPlayerView.load(withVideoId: "z0eulElSJK0")
+        exerciseDesctiptionPlayerView.layer.cornerRadius = 12
+        exerciseDesctiptionPlayerView.layer.masksToBounds = true
     }
     
     func setupNavigationController() {
         title = "Description"
+        descriptionTextView.delegate = self
+    }
+    
+    func setupStackView(){
+        labelStackView = UIStackView(arrangedSubviews: [nameExerciseLabel, typeExerciseLabel, muscleExerciseLabel, equipmentExerciseLabel, difficultExerciseLabel])
+        labelStackView.axis = .vertical
+        labelStackView.distribution = .fillEqually
+        labelStackView.spacing = 2
+        labelStackView.alignment = .leading
+        labelStackView.backgroundColor = .systemRed
+        
+        userElementsStackView = UIStackView(arrangedSubviews: [labelStackView, descriptionTextView])
+        userElementsStackView.axis = .vertical
+        userElementsStackView.distribution = .fillEqually
+        userElementsStackView.spacing = 10
+        userElementsStackView.alignment = .leading
+        descriptionTextView.backgroundColor = .systemGreen
+        userElementsStackView.backgroundColor = .systemBlue
+        
+        
     }
     
     func configureView(){
@@ -124,6 +152,13 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
 
 }
 
+extension FFExerciseDescriptionViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+//        let contentSize = userElementsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+//        scrollView.contentSize = contentSize
+    }
+}
+
 extension FFExerciseDescriptionViewController: YTPlayerViewDelegate {
     func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
 //        exerciseDesctiptionPlayerView.playVideo()
@@ -133,30 +168,38 @@ extension FFExerciseDescriptionViewController: YTPlayerViewDelegate {
 
 extension FFExerciseDescriptionViewController {
     private func setupConstraints(){
-        let stackView = UIStackView(arrangedSubviews: [nameExerciseLabel, typeExerciseLabel, muscleExerciseLabel, equipmentExerciseLabel, difficultExerciseLabel])
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.spacing = 2
-        stackView.alignment = .leading
-        view.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
+        
+        
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalTo(view.frame.size.width)
+            make.height.equalTo(1200)
+        }
+        
+        scrollView.addSubview(labelStackView)
+        labelStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().dividedBy(4)
+            make.height.equalToSuperview().dividedBy(3)
         }
         
-        view.addSubview(descriptionTextView)
+        scrollView.addSubview(descriptionTextView)
         descriptionTextView.snp.makeConstraints { make in
-            make.top.equalTo(stackView.snp.bottom).offset(5)
+            make.top.equalTo(labelStackView.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().dividedBy(4)
+            make.height.equalToSuperview().dividedBy(3)
         }
         
-        view.addSubview(exerciseDesctiptionPlayerView)
+        scrollView.addSubview(exerciseDesctiptionPlayerView)
         exerciseDesctiptionPlayerView.snp.makeConstraints { make in
-            make.top.equalTo(descriptionTextView.snp.bottom).offset(10)
+            make.top.equalTo(descriptionTextView.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(10)
+            make.height.equalToSuperview().dividedBy(3)
         }
     }
+}
+
+#Preview {
+    FFExercisesViewController()
 }

@@ -159,38 +159,37 @@ extension FFNewsPageViewController: UITableViewDelegate {
 }
 
 ///view model delegate
-extension FFNewsPageViewController: FFNewsPageDelegate {
+extension FFNewsPageViewController: FFGetRequestDelegate {
     func willLoadData() {
         spinner.startAnimating()
         refreshControll.beginRefreshing()
     }
     //доделать запрос чтобы он не добавлял по 20 новых запросов одинаково, удалял старые и добавлял новые
-    func didLoadData(model: [Articles]?,error: Error?) {
-        guard error == nil else {
-            alertError(title: "Error!", message: error?.localizedDescription, style: .alert, cancelTitle: "OK")
+    func didLoadData(model: Result<[Articles],Error>) {
+        switch model {
+        case .success(let model):
+            loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
+            var newModel = [Articles]()
+            for m in model {
+                if !m.source.name.elementsEqual("[Removed]") {
+                    newModel.append(m)
+                }
+            }
+            self.model += newModel
+            
+            let uniqueItems = self.model.uniqueArray()
+            DispatchQueue.main.async { [unowned self ] in
+                self.model = uniqueItems
+                self.reloadTableView(models: self.model)
+                self.spinner.stopAnimating()
+                self.refreshControll.endRefreshing()
+            }
+            
+        case .failure(let failure):
+            alertError(title: "Error!", message: failure.localizedDescription, style: .alert, cancelTitle: "OK")
             spinner.stopAnimating()
             refreshControll.endRefreshing()
-            return
-        }
-        
-        loadDataButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width/2, height: 45)
-        
-        var newModel = [Articles]()
-        for m in model ?? [Articles]() {
-            if !m.source.name.elementsEqual("[Removed]") {
-                newModel.append(m)
-            }
-        }
-        
-        self.model += newModel
-        
-        let uniqueItems = self.model.uniqueArray()
-        DispatchQueue.main.async { [unowned self ] in
-            self.model = uniqueItems
-            self.reloadTableView(models: self.model)
-            self.spinner.stopAnimating()
-            self.refreshControll.endRefreshing()
-        }
+        }  
     }
     
     func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?,image: UIImage?) {
