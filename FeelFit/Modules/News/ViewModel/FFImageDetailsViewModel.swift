@@ -11,7 +11,6 @@ class FFImageDetailsViewModel: Coordinating {
     var coordinator: Coordinator?
     
     func shareImageView(viewController: UIViewController,url: URL?,title: String, image: UIImage){
-        let view = viewController.view
         let message = title
         let image = image
         guard let link = url else { return }

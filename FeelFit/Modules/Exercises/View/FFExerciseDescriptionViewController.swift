@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import YouTubeiOSPlayerHelper
+import SafariServices
 
 class FFExerciseDescriptionViewController: UIViewController, SetupViewController {
     
@@ -25,7 +25,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         let label = UILabel()
         label.font = .headerFont(size: 24)
         label.textColor = FFResources.Colors.textColor
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.textAlignment = .left
         label.layer.cornerRadius = 12
         label.layer.masksToBounds = true
@@ -81,64 +81,73 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     }()
     
     let descriptionTextView: UITextView = {
-       let textView = UITextView()
+        let textView = UITextView(frame: .zero)
         textView.layer.cornerRadius = 12
         textView.textColor = FFResources.Colors.textColor
         textView.isEditable = false
         textView.allowsEditingTextAttributes = true
-        textView.backgroundColor = .systemRed
+        textView.backgroundColor = .clear
+        textView.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return textView
     }()
     
     var labelStackView = UIStackView()
-    var userElementsStackView = UIStackView()
     
-    var exerciseDesctiptionPlayerView: YTPlayerView!
-    let scrollView = UIScrollView()
+    let youtubeSegueButton: UIButton = {
+       let button = UIButton()
+        button.configuration = .tinted()
+        button.configuration?.title = "Watch Video Instructions"
+        button.configuration?.image = UIImage(systemName: "play.rectangle.fill")
+        button.configuration?.imagePadding = 2
+        button.configuration?.imagePlacement = .leading
+        button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
+        button.configuration?.baseForegroundColor = FFResources.Colors.activeColor
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupStackView()
         setupView()
         setupNavigationController()
-        setupConstraints()
         configureView()
-        scrollView.frame = view.bounds
-//        scrollView.contentSize = CGSize(width: view.frame.size.width, height: view.frame.size.height*2)
+        setupConstraints()
         
+    }
+    
+    @objc private func didTapOpenSafari(){
+        let url = "https://www.youtube.com/results?search_query="
+        let request = exercise.name
+        let modifiedRequest = exercise.name.replacingOccurrences(of: " ", with: "+")
+        guard let completeURL = URL(string: url+modifiedRequest) else { return }
+        openYoutubeApp(with: completeURL)
+    }
+    
+    func openYoutubeApp(with url: URL){
+        if UIApplication.shared.canOpenURL(url){
+            UIApplication.shared.open(url)
+        } else {
+            let vc = SFSafariViewController(url: url)
+            present(vc, animated: true)
+        }
     }
     
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
-        exerciseDesctiptionPlayerView = YTPlayerView()
-        exerciseDesctiptionPlayerView.delegate = self
-        exerciseDesctiptionPlayerView.load(withVideoId: "z0eulElSJK0")
-        exerciseDesctiptionPlayerView.layer.cornerRadius = 12
-        exerciseDesctiptionPlayerView.layer.masksToBounds = true
+        youtubeSegueButton.addTarget(self, action: #selector(didTapOpenSafari), for: .touchUpInside)
     }
     
     func setupNavigationController() {
         title = "Description"
-        descriptionTextView.delegate = self
     }
     
     func setupStackView(){
         labelStackView = UIStackView(arrangedSubviews: [nameExerciseLabel, typeExerciseLabel, muscleExerciseLabel, equipmentExerciseLabel, difficultExerciseLabel])
         labelStackView.axis = .vertical
-        labelStackView.distribution = .fillEqually
+        labelStackView.distribution = .fillProportionally
         labelStackView.spacing = 2
-        labelStackView.alignment = .leading
-        labelStackView.backgroundColor = .systemRed
-        
-        userElementsStackView = UIStackView(arrangedSubviews: [labelStackView, descriptionTextView])
-        userElementsStackView.axis = .vertical
-        userElementsStackView.distribution = .fillEqually
-        userElementsStackView.spacing = 10
-        userElementsStackView.alignment = .leading
-        descriptionTextView.backgroundColor = .systemGreen
-        userElementsStackView.backgroundColor = .systemBlue
-        
-        
+        labelStackView.alignment = .fill
+        labelStackView.backgroundColor = .clear
     }
     
     func configureView(){
@@ -152,50 +161,29 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
 
 }
 
-extension FFExerciseDescriptionViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-//        let contentSize = userElementsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//        scrollView.contentSize = contentSize
-    }
-}
-
-extension FFExerciseDescriptionViewController: YTPlayerViewDelegate {
-    func playerViewDidBecomeReady(_ playerView: YTPlayerView) {
-//        exerciseDesctiptionPlayerView.playVideo()
-    }
-
-}
-
 extension FFExerciseDescriptionViewController {
     private func setupConstraints(){
-        
-        
-        view.addSubview(scrollView)
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalTo(view.frame.size.width)
-            make.height.equalTo(1200)
-        }
-        
-        scrollView.addSubview(labelStackView)
+    
+        view.addSubview(labelStackView)
         labelStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().dividedBy(3)
+            make.top.leading.trailing.equalToSuperview().inset(5)
+            make.height.equalToSuperview().dividedBy(4)
         }
         
-        scrollView.addSubview(descriptionTextView)
+        let sizeThatFits = descriptionTextView.sizeThatFits(CGSize(width: view.frame.width, height: CGFloat(MAXFLOAT)))
+        
+        view.addSubview(descriptionTextView)
         descriptionTextView.snp.makeConstraints { make in
-            make.top.equalTo(labelStackView.snp.bottom).offset(5)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().dividedBy(3)
+            make.top.equalTo(labelStackView.snp.bottom)
+            make.leading.trailing.equalToSuperview().inset(5)
+            make.height.equalTo(sizeThatFits)
         }
         
-        scrollView.addSubview(exerciseDesctiptionPlayerView)
-        exerciseDesctiptionPlayerView.snp.makeConstraints { make in
-            make.top.equalTo(descriptionTextView.snp.bottom).offset(5)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().dividedBy(3)
+        view.addSubview(youtubeSegueButton)
+        youtubeSegueButton.snp.makeConstraints { make in
+            make.top.equalTo(descriptionTextView.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(30)
+            make.height.equalToSuperview().dividedBy(16)
         }
     }
 }
