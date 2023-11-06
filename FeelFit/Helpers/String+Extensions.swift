@@ -8,6 +8,10 @@
 import UIKit
 
 extension String {
+    func formatArrayText(of: String = "_",with: String = " ") -> Self {
+        return self.replacingOccurrences(of: of, with: with).capitalized
+    }
+    
     func convertToStringData() -> Self {
         let currentLocale = Locale.current
         var calendar = Calendar.current

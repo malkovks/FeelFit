@@ -8,15 +8,25 @@
 import UIKit
 import Alamofire
 
+enum FFExerciseSearchType: String{
+    case muscle = "muscle"
+    case type = "type"
+    case name = "name"
+    case equipment = "equipment"
+    case difficult = "difficult"
+}
+
 class FFGetExerciseRequest {
     
     
     static let shared = FFGetExerciseRequest()
     
-    func getRequest(muscleName: String,completion: @escaping (Result<[Exercises],Error>) -> ()){
-        let urlString = "https://api.api-ninjas.com/v1/exercises?muscle="
-        let muscle = muscleName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        let url = URL(string: urlString + muscle!)!
+    func getRequest(searchValue: String,searchType: FFExerciseSearchType = .muscle,completion: @escaping (Result<[Exercises],Error>) -> ()){
+        let urlString = "https://api.api-ninjas.com/v1/exercises?\(searchType.rawValue)="
+        guard let value = searchValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            return
+        }
+        let url = URL(string: urlString + value)!
         var request = URLRequest(url: url)
         request.setValue("xs3hoaaW5heLkn3TKH1MHg==rUST8PMzwyx2K9vE", forHTTPHeaderField: "X-Api-Key")
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData

@@ -151,11 +151,11 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     }
     
     func configureView(){
-        nameExerciseLabel.text = "Name: " + exercise.name
-        typeExerciseLabel.text = "Type: " + exercise.type
-        muscleExerciseLabel.text = "Muscle group: " + exercise.muscle
-        difficultExerciseLabel.text = "Difficult: " + exercise.difficulty
-        equipmentExerciseLabel.text = "Equipment: " + exercise.equipment
+        nameExerciseLabel.text = "Name: " + exercise.name.formatArrayText()
+        typeExerciseLabel.text = "Type: " + exercise.type.formatArrayText()
+        muscleExerciseLabel.text = "Muscle group: " + exercise.muscle.formatArrayText()
+        difficultExerciseLabel.text = "Difficult: " + exercise.difficulty.formatArrayText()
+        equipmentExerciseLabel.text = "Equipment: " + exercise.equipment.formatArrayText()
         descriptionTextView.text = exercise.instructions
     }
 
@@ -176,7 +176,7 @@ extension FFExerciseDescriptionViewController {
         descriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(labelStackView.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(5)
-            make.height.equalTo(sizeThatFits)
+            make.height.equalTo(sizeThatFits).multipliedBy(0.6)
         }
         
         view.addSubview(youtubeSegueButton)
@@ -186,8 +186,4 @@ extension FFExerciseDescriptionViewController {
             make.height.equalToSuperview().dividedBy(16)
         }
     }
-}
-
-#Preview {
-    FFExercisesViewController()
 }

@@ -12,8 +12,9 @@ class FFExercisesViewModel {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath, viewController: UIViewController) {
         let cell = collectionView.cellForItem(at: indexPath) as! FFExercisesCollectionViewCell
-        let name = cell.muscleTitleLabel.text ?? ""
-        let vc = FFExercisesMuscleGroupViewController(muscleGroupName: name)
+        let key = Array(cell.muscleDictionary.keys.sorted())[indexPath.row]
+        let keyValue = String(describing: key)
+        let vc = FFExercisesMuscleGroupViewController(muscleGroupName: keyValue)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -18,7 +18,7 @@ class FFExerciseMuscleGroupViewModel {
     
     func loadData(name: String){
         delegate?.viewWillLoadData()
-        FFGetExerciseRequest.shared.getRequest(muscleName: name) { result in
+        FFGetExerciseRequest.shared.getRequest(searchValue: name, searchType: .muscle) { result in
             switch result {
             case .success(let success):
                 self.delegate?.viewDidLoadData(result: .success(success))
@@ -27,10 +27,11 @@ class FFExerciseMuscleGroupViewModel {
             }
         }
     }
+
     
-    func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [Exercises]) {
+    func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [[Exercises]]) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let exercise = model[indexPath.row]
+        let exercise = model[indexPath.section][indexPath.row]
         let vc = FFExerciseDescriptionViewController(exercise: exercise)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }

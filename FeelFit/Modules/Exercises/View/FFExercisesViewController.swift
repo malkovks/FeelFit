@@ -10,25 +10,6 @@ import UIKit
 class FFExercisesViewController: UIViewController, SetupViewController {
     
     var viewModel: FFExercisesViewModel!
-
-//    var muscleDictionary = [
-//        "abdominals" : "Abdominals",
-//        "abductors" : "Abductors",
-//        "adductors" : "Adductors",
-//        "biceps" : "Biceps",
-//        "calves" : "Calves",
-//        "chest" : "Chest",
-//        "forearms" : "Forearms",
-//        "glutes" : "Glutes",
-//        "hamstrings" : "Hamstrings",
-//        "lats" : "Lats",
-//        "lower_back" : "Lower back",
-//        "middle_back" : "Middle back",
-//        "neck" : "Neck",
-//        "quadriceps" : "Quadriceps",
-//        "traps" : "Traps",
-//        "triceps" : "Triceps"
-//    ]
     
     private var collectionView: UICollectionView!
 

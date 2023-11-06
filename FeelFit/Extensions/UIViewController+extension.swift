@@ -40,8 +40,7 @@ extension UIViewController {
             return UIBarButtonItem(customView: button)
         } else {
             button.menu = menu
-            return UIBarButtonItem(customView: button)
-            
+            return UIBarButtonItem(customView: button)   
         }
     }
     
