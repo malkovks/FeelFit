@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
@@ -13,8 +14,35 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         super.viewDidLoad()
         setupView()
         setupNavigationController()
+//        SetupExerciseLoadingRequest.shared.testDataloading()
+        SetupExerciseLoadingRequest.shared.getData(muscle: .cardiovascularSystem) { result in
+            switch result {
+            case .success(let success):
+                print(success.first)
+            case .failure(let failure):
+                self.alertError(title: failure.localizedDescription)
+            }
+        }
+//        setupImageView(url: "https://v2.exercisedb.io/image/y3WHHbcz25vOu6")
         
+    }
+    
+    func setupImageView(url: String){
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 12
+        imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
+        imageView.addInteraction(UIContextMenuInteraction(delegate: self))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(3)
+            make.width.equalToSuperview().inset(10)
+        }
         
+        guard let url = URL(string: url) else { return }
+        let options: KingfisherOptionsInfo = [.processor(DefaultImageProcessor.default),.cacheOriginalImage,.transition(.fade(0.2))]
+        imageView.kf.setImage(with: url,options: options)
     }
     
     func setupView() {
@@ -33,4 +61,17 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
     
 
+}
+
+extension FFTRainingPlanViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let share = UIAction(title: "Share") { _ in
+                print("Share image")
+            }
+            return UIMenu(children: [share])
+        }
+    }
+    
+    
 }

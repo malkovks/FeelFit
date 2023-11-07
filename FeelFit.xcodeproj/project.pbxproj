@@ -31,6 +31,9 @@
 		0A2347DB2AF92058002C161C /* FFPlansWorkoutModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347DA2AF92058002C161C /* FFPlansWorkoutModel.swift */; };
 		0A2347DD2AF9211A002C161C /* FFPlansCustomPlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347DC2AF9211A002C161C /* FFPlansCustomPlanModel.swift */; };
 		0A2347DF2AF92ACF002C161C /* TestModelWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347DE2AF92ACF002C161C /* TestModelWorkout.swift */; };
+		0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347E12AF9B2C1002C161C /* Kingfisher */; };
+		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
+		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
@@ -90,6 +93,8 @@
 		0A2347DA2AF92058002C161C /* FFPlansWorkoutModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlansWorkoutModel.swift; sourceTree = "<group>"; };
 		0A2347DC2AF9211A002C161C /* FFPlansCustomPlanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlansCustomPlanModel.swift; sourceTree = "<group>"; };
 		0A2347DE2AF92ACF002C161C /* TestModelWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModelWorkout.swift; sourceTree = "<group>"; };
+		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
+		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +148,7 @@
 				0A4494D82AB82B330082C909 /* Alamofire in Frameworks */,
 				0A2347BF2AF256F8002C161C /* YouTubeiOSPlayerHelper in Frameworks */,
 				0A2347CF2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport in Frameworks */,
+				0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */,
 				0A2347C42AF25A44002C161C /* GoogleAPIRuntime in Frameworks */,
 				0A2347CB2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */,
 				0A2347C72AF25B3C002C161C /* GoogleAPIClientForRESTCore in Frameworks */,
@@ -202,6 +208,14 @@
 				0A2347B92AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift */,
 			);
 			path = TableView;
+			sourceTree = "<group>";
+		};
+		0A2347E32AF9BC7E002C161C /* TestAPI */ = {
+			isa = PBXGroup;
+			children = (
+				0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */,
+			);
+			path = TestAPI;
 			sourceTree = "<group>";
 		};
 		0A4494B32AB821FD0082C909 = {
@@ -396,6 +410,7 @@
 			isa = PBXGroup;
 			children = (
 				0A2347B12AF0F965002C161C /* FFExercisesModel.swift */,
+				0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -501,6 +516,7 @@
 		0A4495342ABC3F720082C909 /* APIClient */ = {
 			isa = PBXGroup;
 			children = (
+				0A2347E32AF9BC7E002C161C /* TestAPI */,
 				0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */,
 				0A2347AF2AEFEFD5002C161C /* FFGetExerciseRequest.swift */,
 				0A2347D82AF91091002C161C /* FFGetPlanExerciseRequest.swift */,
@@ -578,6 +594,7 @@
 				0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */,
 				0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */,
 				0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */,
+				0A2347E12AF9B2C1002C161C /* Kingfisher */,
 			);
 			productName = FeelFit;
 			productReference = 0A4494BC2AB821FD0082C909 /* FeelFit.app */;
@@ -614,6 +631,7 @@
 				0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */,
 				0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */,
 				0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
+				0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 0A4494BD2AB821FD0082C909 /* Products */;
 			projectDirPath = "";
@@ -681,6 +699,8 @@
 				0A2347AE2AEFEF21002C161C /* FFExercisesViewModel.swift in Sources */,
 				0ACEA9E92AD7EDBF00899CF6 /* Coordinator.swift in Sources */,
 				0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */,
+				0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */,
+				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
@@ -928,6 +948,14 @@
 				kind = branch;
 			};
 		};
+		0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.10.0;
+			};
+		};
 		0A4494D32AB82AB70082C909 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -994,6 +1022,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
 			productName = GoogleAPIClientForREST_AbusiveExperienceReport;
+		};
+		0A2347E12AF9B2C1002C161C /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		0A4494D42AB82AB70082C909 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

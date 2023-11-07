@@ -75,7 +75,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
     private func setupContentView(){
         layer.cornerRadius = 12
         layer.masksToBounds = true
-        backgroundColor = .systemIndigo
+        backgroundColor = FFResources.Colors.activeColor
     }
     
     func configureCell(indexPath: IndexPath){

@@ -126,8 +126,8 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let type = sortedExercises[section].first?.type
-        let fixedType = type?.formatArrayText() ?? ""
-        return "Exercise type: " + fixedType
+        let fixedType = (type?.formatArrayText() ?? "") 
+        return fixedType
     }
 }
 
