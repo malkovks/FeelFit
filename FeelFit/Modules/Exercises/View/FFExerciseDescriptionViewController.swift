@@ -7,12 +7,14 @@
 
 import UIKit
 import SafariServices
+import Kingfisher
+import Alamofire
 
 class FFExerciseDescriptionViewController: UIViewController, SetupViewController {
     
-    let exercise: Exercises
+    let exercise: Exercise
     
-    init(exercise: Exercises) {
+    init(exercise: Exercise) {
         self.exercise = exercise
         super.init(nibName: nil, bundle: nil)
     }
@@ -33,7 +35,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         return label
     }()
     
-    let typeExerciseLabel: UILabel = {
+    let secondaryMusclesLabel: UILabel = {
         let label = UILabel()
         label.font = .detailLabelFont()
         label.textColor = FFResources.Colors.textColor
@@ -91,6 +93,21 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         return textView
     }()
     
+    let exerciseImageView: UIImageView = {
+       let image = UIImageView()
+        image.contentMode = .scaleToFill
+        image.layer.cornerRadius = 12
+        image.layer.masksToBounds = true
+        image.backgroundColor = FFResources.Colors.activeColor
+        return image
+    }()
+    
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.color = FFResources.Colors.activeColor
+        return spinner
+    }()
+    
     var labelStackView = UIStackView()
     
     let youtubeSegueButton: UIButton = {
@@ -111,14 +128,14 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         setupView()
         setupNavigationController()
         configureView()
+        configureGifImageView()
         setupConstraints()
         
     }
     
     @objc private func didTapOpenSafari(){
         let url = "https://www.youtube.com/results?search_query="
-        let request = exercise.name
-        let modifiedRequest = exercise.name.replacingOccurrences(of: " ", with: "+")
+        let modifiedRequest = exercise.exerciseName.replacingOccurrences(of: " ", with: "+")
         guard let completeURL = URL(string: url+modifiedRequest) else { return }
         openYoutubeApp(with: completeURL)
     }
@@ -142,7 +159,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     }
     
     func setupStackView(){
-        labelStackView = UIStackView(arrangedSubviews: [nameExerciseLabel, typeExerciseLabel, muscleExerciseLabel, equipmentExerciseLabel, difficultExerciseLabel])
+        labelStackView = UIStackView(arrangedSubviews: [nameExerciseLabel, muscleExerciseLabel, secondaryMusclesLabel, equipmentExerciseLabel, difficultExerciseLabel])
         labelStackView.axis = .vertical
         labelStackView.distribution = .fillProportionally
         labelStackView.spacing = 2
@@ -151,12 +168,25 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     }
     
     func configureView(){
-        nameExerciseLabel.text = "Name: " + exercise.name.formatArrayText()
-        typeExerciseLabel.text = "Type: " + exercise.type.formatArrayText()
+        var numberCount = 1
+        
+        nameExerciseLabel.text = "Name: " + exercise.exerciseName.formatArrayText()
+        secondaryMusclesLabel.text = "Secondary Muscles: " + exercise.secondaryMuscles.joined(separator: ", ").formatArrayText()
         muscleExerciseLabel.text = "Muscle group: " + exercise.muscle.formatArrayText()
-        difficultExerciseLabel.text = "Difficult: " + exercise.difficulty.formatArrayText()
+        difficultExerciseLabel.text = "Body Part: " + exercise.bodyPart.formatArrayText()
         equipmentExerciseLabel.text = "Equipment: " + exercise.equipment.formatArrayText()
-        descriptionTextView.text = exercise.instructions
+        descriptionTextView.text = exercise.instructions.joined(separator: " ")
+    }
+    
+    func configureGifImageView(){
+        exerciseImageView.addSubview(spinner)
+        spinner.center = exerciseImageView.center
+        spinner.startAnimating()
+        guard let imageURL = URL(string: exercise.imageLink) else { return }
+        exerciseImageView.kf.setImage(with: imageURL)
+        DispatchQueue.main.async {
+            self.spinner.stopAnimating()
+        }
     }
 
 }
@@ -164,6 +194,9 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
 extension FFExerciseDescriptionViewController {
     private func setupConstraints(){
     
+        let squareForm = view.frame.size.width/1.5
+        
+        
         view.addSubview(labelStackView)
         labelStackView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(5)
@@ -176,12 +209,19 @@ extension FFExerciseDescriptionViewController {
         descriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(labelStackView.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(5)
-            make.height.equalTo(sizeThatFits).multipliedBy(0.6)
+            make.height.equalTo(sizeThatFits).multipliedBy(0.4)
+        }
+        
+        view.addSubview(exerciseImageView)
+        exerciseImageView.snp.makeConstraints { make in
+            make.top.equalTo(descriptionTextView.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+            make.height.width.equalTo(squareForm)
         }
         
         view.addSubview(youtubeSegueButton)
         youtubeSegueButton.snp.makeConstraints { make in
-            make.top.equalTo(descriptionTextView.snp.bottom).offset(10)
+            make.top.equalTo(exerciseImageView.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(30)
             make.height.equalToSuperview().dividedBy(16)
         }

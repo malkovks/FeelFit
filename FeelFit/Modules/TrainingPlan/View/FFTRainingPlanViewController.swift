@@ -14,17 +14,6 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         super.viewDidLoad()
         setupView()
         setupNavigationController()
-//        SetupExerciseLoadingRequest.shared.testDataloading()
-        SetupExerciseLoadingRequest.shared.getData(muscle: .cardiovascularSystem) { result in
-            switch result {
-            case .success(let success):
-                print(success.first)
-            case .failure(let failure):
-                self.alertError(title: failure.localizedDescription)
-            }
-        }
-//        setupImageView(url: "https://v2.exercisedb.io/image/y3WHHbcz25vOu6")
-        
     }
     
     func setupImageView(url: String){

@@ -14,29 +14,31 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
     static let identifier = "ExerciseCell"
     
     var muscleDictionary = [
-        "abdominals" : "Abdominals",
+        "abs" : "Abdominals",
         "abductors" : "Abductors",
         "adductors" : "Adductors",
         "biceps" : "Biceps",
         "calves" : "Calves",
-        "chest" : "Chest",
+        "cardiovascular_system" : "Circulatory System",
+        "delts" : "Delts",
         "forearms" : "Forearms",
         "glutes" : "Glutes",
         "hamstrings" : "Hamstrings",
         "lats" : "Lats",
-        "lower_back" : "Lower back",
-        "middle_back" : "Middle back",
+        "pectorals" : "Pectorals",
         "neck" : "Neck",
         "oblique" : "Obliques",
-        "quadriceps" : "Quadriceps",
-        "shoulders" : "Shoulders",
+        "quads" : "Quadriceps",
+        "serratus_anterior" : "Serratus Anterior",
+        "spine" : "Spine",
         "traps" : "Traps",
-        "triceps" : "Triceps"
+        "triceps" : "Triceps",
+        "upper_back" : "Upper Back"
     ]
     
     private let muscleImageView: UIImageView = {
        let image = UIImageView(image: UIImage(named: "biceps"))
-        image.backgroundColor = .systemFill
+        image.backgroundColor = FFResources.Colors.activeColor
         image.contentMode = .scaleAspectFill
         return image
     }()
@@ -45,6 +47,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
        let label = UILabel()
         label.font = .headerFont()
         label.textAlignment = .center
+        label.contentMode = .scaleAspectFit
         label.numberOfLines = 1
         label.textColor = FFResources.Colors.activeColor
         label.backgroundColor = FFResources.Colors.tabBarBackgroundColor

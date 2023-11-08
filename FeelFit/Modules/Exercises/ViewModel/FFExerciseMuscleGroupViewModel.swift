@@ -9,7 +9,7 @@ import UIKit
 
 protocol FFExerciseProtocol: AnyObject {
     func viewWillLoadData()
-    func viewDidLoadData(result: Result<[Exercises],Error>)
+    func viewDidLoadData(result: Result<[Exercise],Error>)
 }
 
 class FFExerciseMuscleGroupViewModel {
@@ -18,20 +18,21 @@ class FFExerciseMuscleGroupViewModel {
     
     func loadData(name: String){
         delegate?.viewWillLoadData()
-        FFGetExerciseRequest.shared.getRequest(searchValue: name, searchType: .muscle) { result in
+        FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name) { result in
             switch result {
-            case .success(let success):
-                self.delegate?.viewDidLoadData(result: .success(success))
-            case .failure(let failure):
-                self.delegate?.viewDidLoadData(result: .failure(failure))
+                
+            case .success(let data):
+                self.delegate?.viewDidLoadData(result: .success(data))
+            case .failure(let error):
+                self.delegate?.viewDidLoadData(result: .failure(error))
             }
         }
     }
 
     
-    func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [[Exercises]]) {
+    func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [Exercise]) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let exercise = model[indexPath.section][indexPath.row]
+        let exercise = model[indexPath.row]
         let vc = FFExerciseDescriptionViewController(exercise: exercise)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }

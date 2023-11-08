@@ -10,7 +10,7 @@ import Alamofire
 
 
 
-enum ExerciseMuscles: String {
+enum ExerciseMusclesType: String {
     case abductors = "abductors"
     case abs = "abs"
     case adductors = "adductors"
@@ -22,7 +22,6 @@ enum ExerciseMuscles: String {
     case glutes = "glutes"
     case hamstrings = "hamstrings"
     case lats = "lats"
-    case levatorScapulae = "levator_scapulae"
     case pectorals = "pectorals"
     case quads = "quads"
     case serratusAnterior = "serratus_anterior"
@@ -32,22 +31,21 @@ enum ExerciseMuscles: String {
     case upperBack = "upper_back"
 }
 
-class SetupExerciseLoadingRequest {
-    static let shared = SetupExerciseLoadingRequest()
+class FFGetExercisesDataBase {
+    static let shared = FFGetExercisesDataBase()
     
-    func getData(muscle: ExerciseMuscles,completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
+    func getMuscleDatabase(muscle: String,limit number: String = "16",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         let headers = [
             "X-RapidAPI-Key": "993d6b8eacmshf5233f92ac39081p16b3f7jsnc30a9fca4475",
             "X-RapidAPI-Host": "exercisedb.p.rapidapi.com"
         ]
         var valueRequest = String()
-        if muscle.rawValue.contains("_") {
-            valueRequest = muscle.rawValue.replacingOccurrences(of: "_", with: "%20")
+        if muscle.contains("_") {
+            valueRequest = muscle.replacingOccurrences(of: "_", with: "%20")
         } else {
-            valueRequest = muscle.rawValue
+            valueRequest = muscle
         }
-        print(valueRequest)
-        guard let url = URL(string: "https://exercisedb.p.rapidapi.com/exercises/target/\(valueRequest)?limit=10") else { return }
+        guard let url = URL(string: "https://exercisedb.p.rapidapi.com/exercises/target/\(valueRequest)?limit=\(number)") else { return }
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10.0)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
@@ -60,8 +58,6 @@ class SetupExerciseLoadingRequest {
                 completionHandler(.failure(failure))
             }
         }.resume()
-        
-        
     }
 }
 
