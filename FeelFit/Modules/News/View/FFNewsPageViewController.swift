@@ -48,7 +48,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     
     private var refreshControll: UIRefreshControl = {
        let refresh = UIRefreshControl()
-        refresh.attributedTitle = NSAttributedString(string: "Grab to refresh")
         refresh.tintColor = FFResources.Colors.activeColor
         return refresh
     }()

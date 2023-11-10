@@ -23,6 +23,11 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         fatalError("init(coder:) has not been implemented")
     }
     
+    private var refreshController: UIRefreshControl = {
+       let refresh = UIRefreshControl()
+        refresh.tintColor = FFResources.Colors.activeColor
+        return refresh
+    }()
     private var tableView: UITableView!
     
     private let spinner: UIActivityIndicatorView = {
@@ -37,6 +42,10 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         setupTableView()
         setupConstraints()
         setupView()
+    }
+    
+    @objc private func didTapRefreshPage(){
+        viewModel.loadData(name: muscleGroupName)
     }
     
     
@@ -54,11 +63,13 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
     
     func setupTableView(){
         tableView = UITableView(frame: .zero, style: .plain)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(FFExercisesMuscleTableViewCell.self, forCellReuseIdentifier: FFExercisesMuscleTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .secondarySystemBackground
         tableView.tableFooterView = nil
+        tableView.refreshControl = refreshController
+        refreshController.addTarget(self, action: #selector(didTapRefreshPage), for: .valueChanged)
     }
     
     
@@ -77,6 +88,7 @@ extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
         case .failure(let error):
             alertError(title: "Error",message: error.localizedDescription)
         }
+        refreshController.endRefreshing()
         spinner.stopAnimating()
     }
     
@@ -89,13 +101,10 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFExercisesMuscleTableViewCell.identifier, for: indexPath) as! FFExercisesMuscleTableViewCell
         let exercise = muscleExercises[indexPath.row]
-        cell.textLabel?.text = exercise.exerciseName.capitalized
-        cell.detailTextLabel?.text = "Equipment - " + exercise.equipment.formatArrayText()
-        cell.accessoryType = .disclosureIndicator
-        cell.contentView.layer.cornerRadius = 12
-        cell.contentView.layer.masksToBounds = true
+        cell.indexPath = indexPath
+        cell.configureView(keyName: muscleGroupName, exercise: exercise,indexPath: indexPath)
         return cell
     }
 }

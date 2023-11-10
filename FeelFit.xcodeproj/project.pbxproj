@@ -15,14 +15,6 @@
 		0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */; };
 		0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347B92AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift */; };
 		0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */; };
-		0A2347BF2AF256F8002C161C /* YouTubeiOSPlayerHelper in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347BE2AF256F8002C161C /* YouTubeiOSPlayerHelper */; };
-		0A2347C22AF25A44002C161C /* Discovery in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C12AF25A44002C161C /* Discovery */; };
-		0A2347C42AF25A44002C161C /* GoogleAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C32AF25A44002C161C /* GoogleAPIRuntime */; };
-		0A2347C72AF25B3C002C161C /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C62AF25B3C002C161C /* GoogleAPIClientForRESTCore */; };
-		0A2347C92AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347C82AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS */; };
-		0A2347CB2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */; };
-		0A2347CD2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */; };
-		0A2347CF2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */; };
 		0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347D02AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift */; };
 		0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */; };
 		0A2347D92AF91091002C161C /* FFGetPlanExerciseRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347D82AF91091002C161C /* FFGetPlanExerciseRequest.swift */; };
@@ -72,6 +64,7 @@
 		0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
+		0AFC89522AFD13DE005ADC17 /* FFCreateProgramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89512AFD13DE005ADC17 /* FFCreateProgramViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -129,6 +122,7 @@
 		0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsDetailViewModel.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		0AFC89512AFD13DE005ADC17 /* FFCreateProgramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateProgramViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,17 +132,9 @@
 			files = (
 				0A4494DD2AB82ED80082C909 /* RealmSwift in Frameworks */,
 				0A4494DB2AB82ED80082C909 /* Realm in Frameworks */,
-				0A2347C92AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS in Frameworks */,
 				0A4494D52AB82AB70082C909 /* SnapKit in Frameworks */,
-				0A2347CD2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway in Frameworks */,
 				0A4494D82AB82B330082C909 /* Alamofire in Frameworks */,
-				0A2347BF2AF256F8002C161C /* YouTubeiOSPlayerHelper in Frameworks */,
-				0A2347CF2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport in Frameworks */,
 				0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */,
-				0A2347C42AF25A44002C161C /* GoogleAPIRuntime in Frameworks */,
-				0A2347CB2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */,
-				0A2347C72AF25B3C002C161C /* GoogleAPIClientForRESTCore in Frameworks */,
-				0A2347C22AF25A44002C161C /* Discovery in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +490,7 @@
 			isa = PBXGroup;
 			children = (
 				0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */,
+				0AFC89512AFD13DE005ADC17 /* FFCreateProgramViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -596,14 +583,6 @@
 				0A4494D72AB82B330082C909 /* Alamofire */,
 				0A4494DA2AB82ED80082C909 /* Realm */,
 				0A4494DC2AB82ED80082C909 /* RealmSwift */,
-				0A2347BE2AF256F8002C161C /* YouTubeiOSPlayerHelper */,
-				0A2347C12AF25A44002C161C /* Discovery */,
-				0A2347C32AF25A44002C161C /* GoogleAPIRuntime */,
-				0A2347C62AF25B3C002C161C /* GoogleAPIClientForRESTCore */,
-				0A2347C82AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS */,
-				0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */,
-				0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */,
-				0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */,
 				0A2347E12AF9B2C1002C161C /* Kingfisher */,
 			);
 			productName = FeelFit;
@@ -638,9 +617,6 @@
 				0A4494D32AB82AB70082C909 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				0A4494D62AB82B330082C909 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				0A4494D92AB82ED80082C909 /* XCRemoteSwiftPackageReference "realm-swift" */,
-				0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */,
-				0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */,
-				0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
 				0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 0A4494BD2AB821FD0082C909 /* Products */;
@@ -712,6 +688,7 @@
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
+				0AFC89522AFD13DE005ADC17 /* FFCreateProgramViewController.swift in Sources */,
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
 				0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
@@ -932,30 +909,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/youtube/youtube-ios-player-helper.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.4;
-			};
-		};
-		0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googleapis/google-api-swift-client";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -991,46 +944,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0A2347BE2AF256F8002C161C /* YouTubeiOSPlayerHelper */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347BD2AF256F8002C161C /* XCRemoteSwiftPackageReference "youtube-ios-player-helper" */;
-			productName = YouTubeiOSPlayerHelper;
-		};
-		0A2347C12AF25A44002C161C /* Discovery */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */;
-			productName = Discovery;
-		};
-		0A2347C32AF25A44002C161C /* GoogleAPIRuntime */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C02AF25A44002C161C /* XCRemoteSwiftPackageReference "google-api-swift-client" */;
-			productName = GoogleAPIRuntime;
-		};
-		0A2347C62AF25B3C002C161C /* GoogleAPIClientForRESTCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
-			productName = GoogleAPIClientForRESTCore;
-		};
-		0A2347C82AF25B3C002C161C /* GoogleAPIClientForREST_ACMEDNS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
-			productName = GoogleAPIClientForREST_ACMEDNS;
-		};
-		0A2347CA2AF25B3C002C161C /* GoogleAPIClientForREST_AIPlatformNotebooks */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
-			productName = GoogleAPIClientForREST_AIPlatformNotebooks;
-		};
-		0A2347CC2AF25B3C002C161C /* GoogleAPIClientForREST_APIGateway */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
-			productName = GoogleAPIClientForREST_APIGateway;
-		};
-		0A2347CE2AF25B3C002C161C /* GoogleAPIClientForREST_AbusiveExperienceReport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0A2347C52AF25B3C002C161C /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
-			productName = GoogleAPIClientForREST_AbusiveExperienceReport;
-		};
 		0A2347E12AF9B2C1002C161C /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */;

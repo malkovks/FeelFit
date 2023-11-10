@@ -12,6 +12,8 @@ import Alamofire
 
 class FFExerciseDescriptionViewController: UIViewController, SetupViewController {
     
+    var viewModel: FFExerciseDescriptionViewModel!
+    
     let exercise: Exercise
     
     init(exercise: Exercise) {
@@ -93,18 +95,18 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         return textView
     }()
     
-    let exerciseImageView: UIImageView = {
+    var exerciseImageView: UIImageView = {
        let image = UIImageView()
         image.contentMode = .scaleToFill
         image.layer.cornerRadius = 12
         image.layer.masksToBounds = true
-        image.backgroundColor = FFResources.Colors.activeColor
+        image.backgroundColor = .clear
         return image
     }()
     
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .medium)
-        spinner.color = FFResources.Colors.activeColor
+        spinner.color = FFResources.Colors.textColor
         return spinner
     }()
     
@@ -126,32 +128,29 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         super.viewDidLoad()
         setupStackView()
         setupView()
+        setupViewModel()
         setupNavigationController()
         configureView()
-        configureGifImageView()
         setupConstraints()
+        
         
     }
     
     @objc private func didTapOpenSafari(){
-        let url = "https://www.youtube.com/results?search_query="
-        let modifiedRequest = exercise.exerciseName.replacingOccurrences(of: " ", with: "+")
-        guard let completeURL = URL(string: url+modifiedRequest) else { return }
-        openYoutubeApp(with: completeURL)
-    }
-    
-    func openYoutubeApp(with url: URL){
-        if UIApplication.shared.canOpenURL(url){
-            UIApplication.shared.open(url)
-        } else {
-            let vc = SFSafariViewController(url: url)
-            present(vc, animated: true)
-        }
+        viewModel.openSafari(exercise: exercise)
     }
     
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         youtubeSegueButton.addTarget(self, action: #selector(didTapOpenSafari), for: .touchUpInside)
+    }
+    
+    func setupViewModel(){
+        viewModel = FFExerciseDescriptionViewModel(viewController: self)
+        viewModel.loadingImageView(exercise: exercise) { [weak self] imageView in
+            guard let self = self else { return }
+            self.exerciseImageView.image = imageView.image
+        }
     }
     
     func setupNavigationController() {
@@ -168,8 +167,6 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     }
     
     func configureView(){
-        var numberCount = 1
-        
         nameExerciseLabel.text = "Name: " + exercise.exerciseName.formatArrayText()
         secondaryMusclesLabel.text = "Secondary Muscles: " + exercise.secondaryMuscles.joined(separator: ", ").formatArrayText()
         muscleExerciseLabel.text = "Muscle group: " + exercise.muscle.formatArrayText()
@@ -177,26 +174,11 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         equipmentExerciseLabel.text = "Equipment: " + exercise.equipment.formatArrayText()
         descriptionTextView.text = exercise.instructions.joined(separator: " ")
     }
-    
-    func configureGifImageView(){
-        exerciseImageView.addSubview(spinner)
-        spinner.center = exerciseImageView.center
-        spinner.startAnimating()
-        guard let imageURL = URL(string: exercise.imageLink) else { return }
-        exerciseImageView.kf.setImage(with: imageURL)
-        DispatchQueue.main.async {
-            self.spinner.stopAnimating()
-        }
-    }
-
 }
 
 extension FFExerciseDescriptionViewController {
-    private func setupConstraints(){
     
-        let squareForm = view.frame.size.width/1.5
-        
-        
+    private func setupConstraints(){
         view.addSubview(labelStackView)
         labelStackView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(5)
@@ -216,7 +198,7 @@ extension FFExerciseDescriptionViewController {
         exerciseImageView.snp.makeConstraints { make in
             make.top.equalTo(descriptionTextView.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
-            make.height.width.equalTo(squareForm)
+            make.height.width.equalTo(view.frame.size.width/1.5)
         }
         
         view.addSubview(youtubeSegueButton)

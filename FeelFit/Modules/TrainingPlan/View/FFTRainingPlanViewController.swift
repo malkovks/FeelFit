@@ -16,6 +16,11 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupNavigationController()
     }
     
+    @objc private func didTapCreateProgram(){
+        let vc = FFCreateProgramViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func setupImageView(url: String){
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 12
@@ -35,6 +40,10 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
     
     func setupView() {
+        
+        let button = UIButton(type: .custom)
+        button.setTitle("Add Training", for: .normal)
+
         view.backgroundColor = .systemGray4
         var config = UIContentUnavailableConfiguration.empty()
         config.text = "No planned trainings"
@@ -42,11 +51,17 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         config.image = UIImage(systemName: "rectangle")
         config.button = .tinted()
         config.buttonProperties.role = .primary
+
         contentUnavailableConfiguration = config
+        
+        
     }
     
     func setupNavigationController() {
-        title = "Plan"
+        title = "Train Plan"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "rectangle.badge.plus", action: #selector(didTapCreateProgram), menu: nil)
     }
     
 
