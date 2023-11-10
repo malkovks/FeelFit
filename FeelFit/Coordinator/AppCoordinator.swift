@@ -44,7 +44,7 @@ class AppCoordinator: Coordinator {
             
             navigationController?.pushViewController(vc, animated: true)
         case .openNewsSettings:
-            let vc = FFNewsSetupRequestViewController()
+            let vc = FFNewsSettingViewController()
             
             navigationController?.pushViewController(vc, animated: true)
         case .openURL:

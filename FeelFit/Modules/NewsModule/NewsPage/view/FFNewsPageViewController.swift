@@ -91,7 +91,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     }
     
     @objc private func didTapSetupRequest(){
-        let vc = FFNewsSetupRequestViewController()
+        let vc = FFNewsSettingViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -1,5 +1,5 @@
 //
-//  FFNewsSetupRequestViewController.swift
+//  FFNewsSettingViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 10.10.2023.
@@ -20,7 +20,7 @@ class Section {
 
 
 
-class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
+class FFNewsSettingViewController: UIViewController, SetupViewController {
 
 
     private var rows = [[String]]()
@@ -66,7 +66,7 @@ class FFNewsSetupRequestViewController: UIViewController, SetupViewController {
 }
 
 //MARK: - TableViewDelegate
-extension FFNewsSetupRequestViewController: UITableViewDelegate {
+extension FFNewsSettingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.tableView(tableView, didSelectRowAt: indexPath, sections: sections)
         
@@ -77,7 +77,7 @@ extension FFNewsSetupRequestViewController: UITableViewDelegate {
     }
 }
 //MARK: - tableView data source
-extension FFNewsSetupRequestViewController: UITableViewDataSource {
+extension FFNewsSettingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFNewsSetupRequestTableViewCell.identifier, for: indexPath) as! FFNewsSetupRequestTableViewCell
         let valueStatus = viewModel?.valueSettings()[indexPath.section]
@@ -120,7 +120,7 @@ extension FFNewsSetupRequestViewController: UITableViewDataSource {
     }
 }
 //MARK: - Picker delegate & datasource
-extension FFNewsSetupRequestViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension FFNewsSettingViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -140,7 +140,7 @@ extension FFNewsSetupRequestViewController: UIPickerViewDelegate, UIPickerViewDa
     
 }
 //MARK: - Constraints setups
-extension FFNewsSetupRequestViewController {
+extension FFNewsSettingViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in

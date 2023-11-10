@@ -143,6 +143,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         youtubeSegueButton.addTarget(self, action: #selector(didTapOpenSafari), for: .touchUpInside)
+        exerciseImageView.addInteraction(UIContextMenuInteraction(delegate: self))
     }
     
     func setupViewModel(){
@@ -174,6 +175,22 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         equipmentExerciseLabel.text = "Equipment: " + exercise.equipment.formatArrayText()
         descriptionTextView.text = exercise.instructions.joined(separator: " ")
     }
+}
+
+extension FFExerciseDescriptionViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let share = UIAction(title: "Share") { _ in
+                print("Share image")
+            }
+            let openImage = UIAction(title: "Open Image") { _ in
+                print("Open image")
+            }
+            return UIMenu(children: [share,openImage])
+        }
+    }
+    
+    
 }
 
 extension FFExerciseDescriptionViewController {
