@@ -22,7 +22,7 @@ class FFExercisesViewController: UIViewController, SetupViewController {
     }
     
     func setupView() {
-        viewModel = FFExercisesViewModel()
+        viewModel = FFExercisesViewModel(viewController: self)
         view.backgroundColor = .secondarySystemBackground
     }
     
@@ -60,13 +60,13 @@ extension FFExercisesViewController: UICollectionViewDataSource {
 
 extension FFExercisesViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        viewModel.collectionView(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath,viewController: self)
+        viewModel.collectionView(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath)
     }
 }
 
 extension FFExercisesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        viewModel.collectionView(collectionView, didSelectItemAt: indexPath, viewController: self)
+        viewModel.collectionView(collectionView, didSelectItemAt: indexPath)
     }
 }
 

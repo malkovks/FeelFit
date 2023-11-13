@@ -46,6 +46,8 @@
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
+		0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */; };
+		0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */; };
 		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
 		0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */; };
 		0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */; };
@@ -101,6 +103,8 @@
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanViewModel.swift; sourceTree = "<group>"; };
+		0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateProgramViewModel.swift; sourceTree = "<group>"; };
 		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewController.swift; sourceTree = "<group>"; };
 		0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsStoreManager.swift; sourceTree = "<group>"; };
@@ -308,10 +312,10 @@
 		0A4495062AB9D1330082C909 /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
+				0A91519E2B02567E00FE5E41 /* CollectionView */,
 				0A4495262ABA79440082C909 /* ViewModel */,
 				0A4495252ABA79400082C909 /* View */,
 				0A4495242ABA793C0082C909 /* Model */,
-				0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */,
 			);
 			path = TrainingPlan;
 			sourceTree = "<group>";
@@ -470,6 +474,8 @@
 		0A4495262ABA79440082C909 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */,
+				0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -499,6 +505,14 @@
 				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		0A91519E2B02567E00FE5E41 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */,
+			);
+			path = CollectionView;
 			sourceTree = "<group>";
 		};
 		0A9385302AE518B9004F97C9 /* TableViewHeaderView */ = {
@@ -739,6 +753,7 @@
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,
+				0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
@@ -759,6 +774,7 @@
 				0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSettingViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
+				0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */,
 				0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
 				0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */,

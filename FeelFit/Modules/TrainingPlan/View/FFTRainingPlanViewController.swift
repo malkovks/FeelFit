@@ -21,13 +21,16 @@ struct TrainingPlan {
 
 class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
+    var viewModel: FFTrainingPlanViewModel!
+    
     var trainingPlans = Array<TrainingPlan>()
     
     var collectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupMockTest()
+        
+        setupViewModel()
         setupView()
         setupCollectionView()
         setupNavigationController()
@@ -43,22 +46,21 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         
         view.backgroundColor = .systemBackground
         if trainingPlans.isEmpty {
-            contentUnavailableConfiguration = configurationView()
+            contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
+                self.didTapCreateProgram()
+            })
         }
     }
     
-    func setupMockTest(){
-        trainingPlans.append(TrainingPlan(firstName: "Run", secondName: "Interval", detailTraining: "Running with bycicle by pulse ", plannedDate: Date(), durationMinutes: 60, location: "Outside", exercises: [Exercise(bodyPart: "Legs", equipment: "shoes", imageLink: "someLink", exerciseID: "01", exerciseName: "100x10", muscle: "quads,calves", secondaryMuscles: ["some secondary"], instructions: ["Some text"])]))
-        trainingPlans.append(TrainingPlan(firstName: "Run", secondName: "Interval", detailTraining: "Running with bycicle by pulse ", plannedDate: Date(), durationMinutes: 60, location: "Outside", exercises: [Exercise(bodyPart: "Legs", equipment: "shoes", imageLink: "someLink", exerciseID: "01", exerciseName: "100x10", muscle: "quads,calves", secondaryMuscles: ["some secondary"], instructions: ["Some text"])]))
-        trainingPlans.append(TrainingPlan(firstName: "Run", secondName: "Interval", detailTraining: "Running with bycicle by pulse ", plannedDate: Date(), durationMinutes: 60, location: "Outside", exercises: [Exercise(bodyPart: "Legs", equipment: "shoes", imageLink: "someLink", exerciseID: "01", exerciseName: "100x10", muscle: "quads,calves", secondaryMuscles: ["some secondary"], instructions: ["Some text"])]))
-        trainingPlans.append(TrainingPlan(firstName: "Run", secondName: "Interval", detailTraining: "Running with bycicle by pulse ", plannedDate: Date(), durationMinutes: 60, location: "Outside", exercises: [Exercise(bodyPart: "Legs", equipment: "shoes", imageLink: "someLink", exerciseID: "01", exerciseName: "100x10", muscle: "quads,calves", secondaryMuscles: ["some secondary"], instructions: ["Some text"])]))
-        trainingPlans.append(TrainingPlan(firstName: "Run", secondName: "Interval", detailTraining: "Running with bycicle by pulse ", plannedDate: Date(), durationMinutes: 60, location: "Outside", exercises: [Exercise(bodyPart: "Legs", equipment: "shoes", imageLink: "someLink", exerciseID: "01", exerciseName: "100x10", muscle: "quads,calves", secondaryMuscles: ["some secondary"], instructions: ["Some text"])]))
+    func setupViewModel() {
+        viewModel = FFTrainingPlanViewModel(viewController: self)
+        trainingPlans = viewModel.setupMockTest()
     }
     
     func setupCollectionView(){
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 2
+        layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 2
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(FFTrainingPlanCollectionViewCell.self, forCellWithReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier)
@@ -67,24 +69,6 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         collectionView.backgroundColor = .clear
         collectionView.contentInsetAdjustmentBehavior = .automatic
         collectionView.allowsMultipleSelection = true
-    }
-    
-    func configurationView() -> UIContentUnavailableConfiguration{
-        var config = UIContentUnavailableConfiguration.empty()
-        config.text = "No planned trainings"
-        config.secondaryText = "Add new training plan to list"
-        config.image = UIImage(systemName: "rectangle")
-        config.button = .tinted()
-        config.button.image = UIImage(systemName: "plus")
-        config.button.title = "Add new training plan"
-        config.button.imagePlacement = .top
-        config.button.imagePadding = 2
-        config.button.baseBackgroundColor = FFResources.Colors.activeColor
-        config.button.baseForegroundColor = FFResources.Colors.activeColor
-        config.buttonProperties.primaryAction = UIAction(handler: { _ in
-            self.didTapCreateProgram()
-        })
-        return config
     }
     
     func setupNavigationController() {
