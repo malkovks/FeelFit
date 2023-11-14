@@ -19,8 +19,8 @@ enum FFResources {
     }
     
     enum Fonts {
-        static func didotFont(size: CGFloat) -> UIFont {
-            return UIFont(name: "Didot", size: size) ?? UIFont()
+        static func futuraFont(size: CGFloat) -> UIFont {
+            return UIFont(name: "Futura", size: size) ?? UIFont()
         }
     }
 }

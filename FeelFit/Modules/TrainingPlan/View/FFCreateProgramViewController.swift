@@ -7,38 +7,27 @@
 
 import UIKit
 
-struct TrainingSetup {
-    let basic: BasicSettings
-    let warmUp: WarmUpSettings
-    let mainTrainPart: MainTrainingPart
-    let hitch: HitchSettings
-}
 
-struct BasicSettings {
-    
-}
 
-struct WarmUpSettings {
-    
-}
-
-struct MainTrainingPart {
-    
-}
-
-struct HitchSettings {
-    
-}
 
 class FFCreateProgramViewController: UIViewController, SetupViewController {
     
     var viewModel: FFCreateProgramViewModel!
     
-    var tableViewTextSetup = [
-        "Basic Settings" :["Duration","Location","Type Training"],//тип тренировки - силовые, кардио, круговые, растяжка
-        "Warm Up": ["Duration","Type of Warming Up"],//Тип разминки - бег, скакалка, упражнения на разные мышцы, упражнения на гибкость
-        "Main Part Of Workout" : ["Approaches","Repeats","Exercise"],//здесь надо добавить в хедер кнопку добавления еще одной секции в случае если пользователь захочет добавить упражнения
-        "Hitch" : ["Duration","Cool Down Type"]
+    var textData = [
+        ["Name Of Workout"],
+        ["Duration","Location","Type","Training Date"],
+        ["Duration","Type"],
+        ["Approaches","Repeats","Exercise"],
+        ["Duration","Cool Down Type"]
+    ]
+    
+    var titleHeaderViewString: [String] = [
+        "",
+        "Basic Settings"
+        ,"Warm Up"
+        ,"Exercise №1"
+        ,"Hitch"
     ]
     
     var tableView: UITableView!
@@ -47,8 +36,9 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
         super.viewDidLoad()
 
         setupView()
-        setupTableView()
         setupViewModel()
+        setupTableView()
+        
         setupNavigationController()
         setupConstraints()
     }
@@ -58,7 +48,7 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
     }
     
     func setupView() {
-        view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = .systemBackground
     }
     
     func setupNavigationController() {
@@ -68,72 +58,90 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
     }
     
     func setupTableView(){
-        tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellID")
+        tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.register(FFCreateTableViewCell.self, forCellReuseIdentifier: FFCreateTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.bounces = false
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         tableView.sectionIndexColor = .orange
-        tableView.layer.cornerRadius = 12
+        tableView.tableFooterView = nil
     }
 }
 
 extension FFCreateProgramViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return tableViewTextSetup.count
+        return textData.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        let sectionIndex = tableViewTextSetup.index(tableViewTextSetup.startIndex, offsetBy: section)
-//        let key = tableViewTextSetup.keys[sectionIndex]
-//        return tableViewTextSetup[key]?.count ?? 0
-        let key = Array(tableViewTextSetup.keys.sorted())[section]
-        let values = tableViewTextSetup[key]?.sorted(by: { $0 < $1 }) ?? []
-        return values.count
+        return textData[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID", for: indexPath)
-//        let index = tableViewTextSetup.index(tableViewTextSetup.startIndex, offsetBy: indexPath.section)
-//        let key = tableViewTextSetup.keys[index]
-//        let value = tableViewTextSetup[key]
-        let key = Array(tableViewTextSetup.keys.sorted())[indexPath.section]
-        let values = tableViewTextSetup[key]?.sorted(by: { $0 < $1 }) ?? []
-    
-        cell.layer.cornerRadius = 12
-        cell.layer.borderColor = UIColor.black.cgColor
-        cell.layer.borderWidth = 2
-        cell.backgroundColor = .systemGreen
-//        cell.textLabel?.text = value?[indexPath.row]
-        cell.textLabel?.text = values[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFCreateTableViewCell.identifier, for: indexPath) as! FFCreateTableViewCell
+        cell.configureTableViewCell(tableView: tableView, indexPath: indexPath, text: textData)
+        
+        
         return cell
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        let sectionIndex = tableViewTextSetup.index(tableViewTextSetup.startIndex, offsetBy: section)
-//        let value = tableViewTextSetup.keys[sectionIndex]
-        let sortedKeys = tableViewTextSetup.keys.sorted(by: { $0 < $1 })
-        return sortedKeys[section]
+    //Header
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let numberOfSections = tableView.numberOfSections
+        print(numberOfSections)
+        let view = FFCreateHeaderView()
+        let text = titleHeaderViewString[section]
+        view.delegate = self
+        view.configureHeaderView(section: section,numberOfSections: numberOfSections,text: text)
+        return view
     }
     
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        "footer of \(section + 1) number"
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
 }
 
 extension FFCreateProgramViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        viewModel.tableView(tableView, estimatedHeightForRowAt: indexPath)
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.tableView(tableView, didSelectRowAt: indexPath)
+    }
+}
+
+extension FFCreateProgramViewController: AddSectionProtocol {
+    
+    
+    func addSection() {
+        let index = textData.count
+        
+        titleHeaderViewString.insert("Exercise №\(index-2)", at: index-1)
+        textData.insert(textData[2], at: index-1)
+        tableView.insertSections(IndexSet(integer: index-1), with: .top)
+        tableView.reloadData()
+    }
+    
+    func removeSection() {
+        let index = textData.count - 2
+        textData.remove(at: index)
+        titleHeaderViewString.remove(at: index)
+        tableView.deleteSections(IndexSet(integer: index), with: .bottom)
+        tableView.reloadData()
+        
+    }
+    
+    
 }
 
 extension FFCreateProgramViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(3)
+            make.edges.equalToSuperview()
         }
     }
 }

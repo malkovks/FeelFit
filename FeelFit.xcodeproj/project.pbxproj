@@ -48,6 +48,9 @@
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
 		0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */; };
 		0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */; };
+		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
+		0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */; };
+		0A9151A72B03BE1A00FE5E41 /* FFCreatePlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */; };
 		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
 		0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */; };
 		0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */; };
@@ -105,6 +108,9 @@
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanViewModel.swift; sourceTree = "<group>"; };
 		0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateProgramViewModel.swift; sourceTree = "<group>"; };
+		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
+		0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateHeaderView.swift; sourceTree = "<group>"; };
+		0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreatePlanModel.swift; sourceTree = "<group>"; };
 		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewController.swift; sourceTree = "<group>"; };
 		0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsStoreManager.swift; sourceTree = "<group>"; };
@@ -312,6 +318,7 @@
 		0A4495062AB9D1330082C909 /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
+				0A91519F2B0379F900FE5E41 /* TableView */,
 				0A91519E2B02567E00FE5E41 /* CollectionView */,
 				0A4495262ABA79440082C909 /* ViewModel */,
 				0A4495252ABA79400082C909 /* View */,
@@ -458,6 +465,7 @@
 		0A4495242ABA793C0082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -513,6 +521,31 @@
 				0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */,
 			);
 			path = CollectionView;
+			sourceTree = "<group>";
+		};
+		0A91519F2B0379F900FE5E41 /* TableView */ = {
+			isa = PBXGroup;
+			children = (
+				0A9151A32B037A8F00FE5E41 /* TableViewHeader */,
+				0A9151A22B037A8700FE5E41 /* TableViewCell */,
+			);
+			path = TableView;
+			sourceTree = "<group>";
+		};
+		0A9151A22B037A8700FE5E41 /* TableViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */,
+			);
+			path = TableViewCell;
+			sourceTree = "<group>";
+		};
+		0A9151A32B037A8F00FE5E41 /* TableViewHeader */ = {
+			isa = PBXGroup;
+			children = (
+				0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */,
+			);
+			path = TableViewHeader;
 			sourceTree = "<group>";
 		};
 		0A9385302AE518B9004F97C9 /* TableViewHeaderView */ = {
@@ -752,6 +785,7 @@
 				0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
+				0A9151A72B03BE1A00FE5E41 /* FFCreatePlanModel.swift in Sources */,
 				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,
 				0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
@@ -773,6 +807,7 @@
 				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,
 				0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSettingViewController.swift in Sources */,
+				0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
 				0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */,
 				0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */,
@@ -792,6 +827,7 @@
 				0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */,
+				0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */,
 				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
 				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,

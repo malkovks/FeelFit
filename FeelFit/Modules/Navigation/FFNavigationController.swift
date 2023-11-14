@@ -18,7 +18,7 @@ final class FFNavigationController: UINavigationController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = FFResources.Colors.tabBarBackgroundColor
-        appearance.titleTextAttributes = [.foregroundColor : FFResources.Colors.textColor, .font: FFResources.Fonts.didotFont(size: UIFont.systemFontSize)]
+        appearance.titleTextAttributes = [.foregroundColor : FFResources.Colors.textColor, .font: FFResources.Fonts.futuraFont(size: UIFont.systemFontSize)]
         navigationBar.scrollEdgeAppearance = appearance
         navigationBar.standardAppearance = appearance
         navigationBar.compactAppearance = appearance

@@ -9,7 +9,7 @@ import UIKit
 
 extension UIFont {
     
-    static var fontName = "Thonburi"
+    static var fontName = "Futura"
     
     /// Font setup for header or main text
     /// - Parameter size: font size
