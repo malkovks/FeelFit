@@ -39,7 +39,9 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     @objc private func didTapCreateProgram(){
         let vc = FFCreateProgramViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        let nav = FFNavigationController(rootViewController: vc)
+        nav.isNavigationBarHidden = false
+        present(nav, animated: true)
     }
     
     func setupView() {
@@ -122,8 +124,4 @@ extension FFTRainingPlanViewController {
             make.edges.equalToSuperview().inset(5)
         }
     }
-}
-
-#Preview  {
-    FFTRainingPlanViewController()
 }

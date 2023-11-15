@@ -100,12 +100,16 @@ extension FFCreateProgramViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
     }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
 }
 
 extension FFCreateProgramViewController: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        viewModel.tableView(tableView, estimatedHeightForRowAt: indexPath)
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -119,7 +123,7 @@ extension FFCreateProgramViewController: AddSectionProtocol {
     func addSection() {
         let index = textData.count
         
-        titleHeaderViewString.insert("Exercise №\(index-2)", at: index-1)
+        titleHeaderViewString.insert("Exercise №\(index-3)", at: index-1)
         textData.insert(textData[2], at: index-1)
         tableView.insertSections(IndexSet(integer: index-1), with: .top)
         tableView.reloadData()
