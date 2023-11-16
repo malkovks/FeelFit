@@ -57,6 +57,22 @@ final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
         }
     }
     
+    func setupConfig(action: @escaping () -> ()) -> UIContentUnavailableConfiguration {
+        var config = UIContentUnavailableConfiguration.empty()
+        config.text = "Press to load data"
+        config.image = UIImage(systemName: "newspaper")
+        config.button = .tinted()
+        config.button.image = UIImage(systemName: "arrow.clockwise.square")
+        config.button.title = "Refresh"
+        config.button.imagePlacement = .top
+        config.button.imagePadding = 2
+        config.button.baseBackgroundColor = FFResources.Colors.activeColor
+        config.button.baseForegroundColor = FFResources.Colors.activeColor
+        config.buttonProperties.primaryAction = UIAction(handler: { _ in
+            action()
+        })
+        return config
+    }
     
     ///function of choosing row at tableView and returning choosing model
     func didSelectRow(at indexPath: IndexPath, caseSetting: NewsTableViewSelectedConfiguration, model: Articles? = nil){

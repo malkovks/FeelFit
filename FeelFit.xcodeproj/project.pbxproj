@@ -65,6 +65,9 @@
 		0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
+		0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */; };
+		0AE0F4F72B06159E00874C0B /* FFFavouriteExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */; };
+		0AE0F4F92B0619E600874C0B /* FFFavouriteExercisesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */; };
 		0AFC89522AFD13DE005ADC17 /* FFCreateProgramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89512AFD13DE005ADC17 /* FFCreateProgramViewController.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
@@ -125,6 +128,9 @@
 		0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsDetailViewModel.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseStoreManager.swift; sourceTree = "<group>"; };
+		0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExercisesViewController.swift; sourceTree = "<group>"; };
+		0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExercisesModel.swift; sourceTree = "<group>"; };
 		0AFC89512AFD13DE005ADC17 /* FFCreateProgramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateProgramViewController.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -394,6 +400,7 @@
 			isa = PBXGroup;
 			children = (
 				0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */,
+				0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -404,6 +411,7 @@
 				0A4495282ABA79700082C909 /* FFExercisesViewController.swift */,
 				0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */,
 				0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */,
+				0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -559,6 +567,7 @@
 			isa = PBXGroup;
 			children = (
 				0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */,
+				0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */,
 			);
 			path = "Store Managers";
 			sourceTree = "<group>";
@@ -786,6 +795,7 @@
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A9151A72B03BE1A00FE5E41 /* FFCreatePlanModel.swift in Sources */,
+				0AE0F4F92B0619E600874C0B /* FFFavouriteExercisesModel.swift in Sources */,
 				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,
 				0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
@@ -806,6 +816,7 @@
 				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,
 				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,
 				0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */,
+				0AE0F4F72B06159E00874C0B /* FFFavouriteExercisesViewController.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSettingViewController.swift in Sources */,
 				0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
@@ -830,6 +841,7 @@
 				0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */,
 				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
 				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
+				0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);

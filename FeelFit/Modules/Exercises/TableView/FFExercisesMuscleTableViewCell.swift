@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFExercisesMuscleTableViewCell: UITableViewCell {
     
@@ -14,7 +15,12 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
     
     static let identifier = "FFExercisesMuscleTableViewCell"
     
-    var statuses = [true,false,false,true,false,true,false,false,true,false,true,false,false,true,false,true,false,false,true,false]
+    var exercise: Exercise!
+    
+    private let realm = try! Realm()
+    private let storeManager = FFFavouriteExerciseStoreManager.shared
+    
+    var status: Bool!
     
     private let detailLabel: UILabel = {
        let label = UILabel()
@@ -37,14 +43,14 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
     }
     
     @objc private func didTapOnImage(){
-        print("Image print at \(indexPath.row) Status is \(statuses[indexPath.row])")
-        let status = statuses[self.indexPath.row]
+        dump(exercise)
+        status.toggle()
         if status {
             self.imageView?.image = UIImage(systemName: "heart.fill")
-            statuses[indexPath.row].toggle()
+            storeManager.saveExercise(exercise: exercise)
         } else {
             self.imageView?.image = UIImage(systemName: "heart")
-            statuses[indexPath.row].toggle()
+            storeManager.deleteExerciseWith(model: exercise)
         }
     }
     
@@ -78,16 +84,27 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
     }
     
     func configureView(keyName: String, exercise: Exercise,indexPath: IndexPath){
+        checkModelStatus(model: exercise)
+        status = false
+        self.exercise = exercise
         self.textLabel?.text = exercise.exerciseName.capitalized
         self.detailTextLabel?.text = "Equipment - " + exercise.equipment.formatArrayText()
         self.imageView?.tintColor = FFResources.Colors.activeColor
         self.imageView?.tag = indexPath.row
-        if statuses[indexPath.row] {
+        if status {
             self.imageView?.image = UIImage(systemName: "heart.fill")
         } else {
             self.imageView?.image = UIImage(systemName: "heart")
         }
-        
+    }
+    
+    private func checkModelStatus(model: Exercise){
+        let object = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",model.exerciseID)
+        if !object.isEmpty {
+            status = true
+        } else {
+            status = false
+        }
     }
     
 }

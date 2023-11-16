@@ -24,6 +24,11 @@ class FFExercisesViewController: UIViewController, SetupViewController {
         }
     }
     
+    @objc private func didTapOpenFavourite(){
+        let vc = FFFavouriteExercisesViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     
     func setupView() {
         viewModel = FFExercisesViewModel(viewController: self)
@@ -32,6 +37,7 @@ class FFExercisesViewController: UIViewController, SetupViewController {
     
     func setupNavigationController() {
         title = "Exercises"
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
     
     func setupCollectionView(){

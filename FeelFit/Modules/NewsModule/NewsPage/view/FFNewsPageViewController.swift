@@ -55,17 +55,14 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     //MARK: - View loading
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupConstraints()
         setupView()
-        setupNavigationController()
-        setupSpinner()
         setupNewsPageViewModel()
-        setupTableView()
-        let vc = UIFontPickerViewController()
-        present(vc, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.5){ [unowned self] in
-            self.viewModel!.requestData(type: self.typeRequest, filter: self.sortRequest,locale: self.localeRequest)
-        }
+        setupNavigationController()
+        contentUnavailableConfiguration = viewModel.setupConfig(action: { [unowned self] in
+            self.didLoadView()
+            self.contentUnavailableConfiguration = nil
+        })
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -78,6 +75,17 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     @objc private func didTapOpenFavourite(){
         let vc = FFNewsFavouriteViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didLoadView(){
+        setupConstraints()
+        setupSpinner()
+        setupTableView()
+        let vc = UIFontPickerViewController()
+        present(vc, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.5){ [unowned self] in
+            self.viewModel!.requestData(type: self.typeRequest, filter: self.sortRequest,locale: self.localeRequest)
+        }
     }
     
     @objc private func didTapLoadMore(){
