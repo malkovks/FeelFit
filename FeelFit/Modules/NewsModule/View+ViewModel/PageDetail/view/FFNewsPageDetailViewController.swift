@@ -161,12 +161,10 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     }
     
     func setupDetailNews(){
-        
         let author = String(describing: model.author ?? "")
         let publishedAt = String(describing: model.publishedAt.convertToStringData())
-        
         guard var description = model.content else { return }
-        //Не работает корректно, доделать
+        
         if description.suffix(1) == "]" {
             description += "\nContinued via link"
         }
@@ -200,7 +198,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
     func isNewsSavedInModel(){
         let realm = try! Realm()
-        let models = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@",model.title,model.publishedAt)
+        let models = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@", model.title, model.publishedAt)
         saveStatus = !models.isEmpty ? true : false
     }
 

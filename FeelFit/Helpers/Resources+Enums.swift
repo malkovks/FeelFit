@@ -34,6 +34,10 @@ enum FFResources {
             return UIFont(name: "Futura", size: size) ?? UIFont()
         }
     }
+    
+    enum Errors: Error {
+        case tryingSaveDuplicate
+    }
 }
 
 enum Request {

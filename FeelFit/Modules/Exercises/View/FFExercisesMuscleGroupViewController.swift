@@ -71,7 +71,7 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         tableView.refreshControl = refreshController
         refreshController.addTarget(self, action: #selector(didTapRefreshPage), for: .valueChanged)
     }
-    
+ 
     
 }
 
@@ -105,11 +105,16 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
         let exercise = muscleExercises[indexPath.row]
         cell.indexPath = indexPath
         cell.configureView(keyName: muscleGroupName, exercise: exercise,indexPath: indexPath)
+        
         return cell
     }
 }
 
 extension FFExercisesMuscleGroupViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 55
+    }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
@@ -133,5 +138,18 @@ extension FFExercisesMuscleGroupViewController {
         }
         view.addSubview(spinner)
         spinner.center = view.center
+    }
+}
+
+extension FFExercisesMuscleGroupViewController {
+    func mockModelTest() -> [Exercise] {
+        let model = [
+            Exercise(bodyPart: "Biceps", equipment: "barbell", imageLink: "", exerciseID: "9999", exerciseName: "The ExerciseDB gives you access to over 1300 exercises with individual exercise data and animated de", muscle: "biceps", secondaryMuscles: [""], instructions: [""]),
+            Exercise(bodyPart: "Biceps", equipment: "barbell", imageLink: "", exerciseID: "0001", exerciseName: "Pull Up", muscle: "biceps", secondaryMuscles: [""], instructions: [""]),
+            Exercise(bodyPart: "Biceps", equipment: "barbell", imageLink: "", exerciseID: "1234", exerciseName: "Pull Up", muscle: "biceps", secondaryMuscles: [""], instructions: [""]),
+            Exercise(bodyPart: "Biceps", equipment: "barbell", imageLink: "", exerciseID: "0021", exerciseName: "Pull Up", muscle: "biceps", secondaryMuscles: [""], instructions: [""]),
+            Exercise(bodyPart: "Biceps", equipment: "barbell", imageLink: "", exerciseID: "0301", exerciseName: "Pull Up", muscle: "biceps", secondaryMuscles: [""], instructions: [""]),
+        ]
+        return model
     }
 }

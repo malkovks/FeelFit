@@ -15,7 +15,7 @@ class FFFavouriteExerciseStoreManager {
     
     private init() {}
     
-    func saveExercise(exercise: Exercise?){
+    func saveExercise(exercise: Exercise?) throws{
         let model = FFExerciseModelRealm()
         let instructions = exercise?.instructions.joined(separator: " ")
         let secondaryMuscles = exercise?.secondaryMuscles.joined(separator: ", ")
@@ -27,15 +27,23 @@ class FFFavouriteExerciseStoreManager {
         model.exerciseMuscle = exercise?.muscle ?? "No data available"
         model.exerciseSecondaryMuscles = secondaryMuscles ?? "No data available"
         model.exerciseInstructions = instructions ?? "No instructions"
-        DispatchQueue.main.async { [unowned self] in
-            try! self.realm.write({
-                self.realm.add(model)
-                print("Save")
-            })
+        
+        
+        let existingID = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",exercise?.exerciseID).first
+        
+        if existingID != nil {
+            throw FFResources.Errors.tryingSaveDuplicate
+        } else {
+            DispatchQueue.main.async { [unowned self] in
+                try! self.realm.write({
+                    self.realm.add(model)
+                    print("Save")
+                })
+            }
         }
         
+        
     }
-    
     func deleteExerciseWith(model: Exercise){
         let id = String(describing: model.exerciseID)
         let deleteModel = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",id)
@@ -48,7 +56,8 @@ class FFFavouriteExerciseStoreManager {
     }
     
     func clearExerciseWith(realmModel: FFExerciseModelRealm){
-        let deleteModel = realm.objects(FFExerciseModelRealm.self).filter("exerciseID = \(realmModel.exerciseID)")
+        let id = String(describing: realmModel.exerciseID)
+        let deleteModel = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",id )
         DispatchQueue.main.async { [unowned self] in
             try! self.realm.write({
                 self.realm.delete(deleteModel)

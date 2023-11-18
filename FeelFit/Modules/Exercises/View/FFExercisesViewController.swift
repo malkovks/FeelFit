@@ -44,6 +44,7 @@ class FFExercisesViewController: UIViewController, SetupViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(FFExercisesCollectionViewCell.self, forCellWithReuseIdentifier: FFExercisesCollectionViewCell.identifier)
         collectionView.delegate = self

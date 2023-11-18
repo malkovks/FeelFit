@@ -9,8 +9,11 @@ import UIKit
 import SafariServices
 import Kingfisher
 import Alamofire
+import RealmSwift
 
 class FFExerciseDescriptionViewController: UIViewController, SetupViewController {
+    
+    private var saveStatus: Bool = false
     
     var viewModel: FFExerciseDescriptionViewModel!
     
@@ -132,14 +135,28 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         setupNavigationController()
         configureView()
         setupConstraints()
-        
-        
+        loadingExerciseData()
+        setupNavigationController()
     }
-    
+    //MARK: - Target methods
     @objc private func didTapOpenSafari(){
         viewModel.openSafari(exercise: exercise)
     }
     
+    @objc private func didTapChangeSaveStatus(){
+        saveStatus.toggle()
+        if saveStatus {
+            try! FFFavouriteExerciseStoreManager.shared.saveExercise(exercise: exercise)
+        } else {
+            FFFavouriteExerciseStoreManager.shared.deleteExerciseWith(model: exercise)
+        }
+        let image = saveStatus ? "heart.fill" : "heart"
+        let text = saveStatus ? "Added to Favourite" : "Removed from Favourite"
+        navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapChangeSaveStatus), menu: nil), animated: true)
+        viewAlertController(text: text, startDuration: 0.5, timer: 1.5, controllerView: self.view)
+    }
+    
+    //MARK: - Setup View
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         youtubeSegueButton.addTarget(self, action: #selector(didTapOpenSafari), for: .touchUpInside)
@@ -156,6 +173,8 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     
     func setupNavigationController() {
         title = "Description"
+        let image = saveStatus ? "heart.fill" : "heart"
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapChangeSaveStatus), menu: nil)
     }
     
     func setupStackView(){
@@ -174,6 +193,12 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         difficultExerciseLabel.text = "Body Part: " + exercise.bodyPart.formatArrayText()
         equipmentExerciseLabel.text = "Equipment: " + exercise.equipment.formatArrayText()
         descriptionTextView.text = exercise.instructions.joined(separator: " ")
+    }
+    
+    func loadingExerciseData(){
+        let realm = try! Realm()
+        let models = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",exercise.exerciseID)
+        saveStatus = !models.isEmpty ? true : false
     }
 }
 

@@ -288,12 +288,8 @@
 			isa = PBXGroup;
 			children = (
 				0A4495272ABA794E0082C909 /* Model */,
-				0AFC895C2AFEC930005ADC17 /* NewsSetting */,
-				0AFC89592AFEC87C005ADC17 /* PageDetail */,
-				0AFC89562AFEC849005ADC17 /* FavouritePage */,
-				0AFC89532AFEC813005ADC17 /* NewsPage */,
+				0A69AF342B08B4810013FB1B /* View+ViewModel */,
 				0A22BB2C2AC4566E004FD282 /* TableView Custom Classes */,
-				0A44950D2AB9FCBD0082C909 /* ImageDetails */,
 				0ACEA9E02ACF77AB00899CF6 /* SecondaryView+UIView */,
 			);
 			path = NewsModule;
@@ -521,6 +517,18 @@
 				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		0A69AF342B08B4810013FB1B /* View+ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				0AFC895C2AFEC930005ADC17 /* NewsSetting */,
+				0AFC89592AFEC87C005ADC17 /* PageDetail */,
+				0AFC89562AFEC849005ADC17 /* FavouritePage */,
+				0AFC89532AFEC813005ADC17 /* NewsPage */,
+				0A44950D2AB9FCBD0082C909 /* ImageDetails */,
+			);
+			path = "View+ViewModel";
 			sourceTree = "<group>";
 		};
 		0A91519E2B02567E00FE5E41 /* CollectionView */ = {

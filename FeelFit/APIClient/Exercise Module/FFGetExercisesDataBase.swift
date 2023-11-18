@@ -34,7 +34,7 @@ enum ExerciseMusclesType: String {
 class FFGetExercisesDataBase {
     static let shared = FFGetExercisesDataBase()
     
-    func getMuscleDatabase(muscle: String,limit number: String = "16",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
+    func getMuscleDatabase(muscle: String,limit number: String = "50",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         let headers = [
             "X-RapidAPI-Key": "993d6b8eacmshf5233f92ac39081p16b3f7jsnc30a9fca4475",
             "X-RapidAPI-Host": "exercisedb.p.rapidapi.com"
