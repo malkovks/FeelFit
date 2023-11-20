@@ -17,6 +17,7 @@ protocol ButtonMenuPressed: AnyObject {
 
 class FFCreateProgramViewModel {
     
+    
     weak var delegate: ButtonMenuPressed?
     
     let viewController: UIViewController
@@ -104,15 +105,27 @@ class FFCreateProgramViewModel {
     }
     
     
-    
+    @objc private func didTapPress(sender: IndexPath){
+        print(sender.row)
+    }
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        
+        
+        
+//        var menu = trainingTypeMenu(indexPath)
+//        var menuController = UIMenuController.shared
+//        
+//        var menuItems: [UIMenuItem] {
+//            return [UIMenuItem(title: "Action 1", action: #selector(didTapPress)),
+//                    UIMenuItem(title: "Action 2", action: #selector(didTapPress))]
+//        }
+//        menuController.menuItems = menuItems
+//        menuController.showMenu(from: cell.contentView, rect: cell.bounds)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
-    
 }

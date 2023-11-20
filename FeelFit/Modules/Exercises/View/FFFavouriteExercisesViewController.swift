@@ -10,6 +10,8 @@ import RealmSwift
 
 class FFFavouriteExercisesViewController: UIViewController, SetupViewController {
     
+    private var viewModel: FFFavouriteExerciseViewModel!
+    
     private var tableView: UITableView!
     
     private var model: Results<FFExerciseModelRealm>!
@@ -22,12 +24,26 @@ class FFFavouriteExercisesViewController: UIViewController, SetupViewController 
         loadExercisesData()
         setupView()
         setupTableView()
+        setupViewModel()
         setupNavigationController()
         setupConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadExercisesData()
+        DispatchQueue.main.async { [unowned self] in
+            self.tableView.reloadData()
+        }
+        
+    }
+    
     func setupView() {
         view.backgroundColor = FFResources.Colors.darkPurple
+    }
+    
+    func setupViewModel(){
+        viewModel = FFFavouriteExerciseViewModel(viewController: self)
     }
     
     func setupNavigationController() {
@@ -47,12 +63,6 @@ class FFFavouriteExercisesViewController: UIViewController, SetupViewController 
             let muscle = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@", m.exerciseMuscle)
             sortedModel[m.exerciseMuscle] = Array(muscle)
         }
-    }
-    
-    func clearData(){
-        sortedModel.removeAll()
-        loadExercisesData()
-        tableView.reloadData()
     }
 }
 
@@ -80,23 +90,15 @@ extension FFFavouriteExercisesViewController: UITableViewDataSource {
         cell.textLabel?.text = data?.exerciseName
         return cell
     }
-    
-    
 }
 
 extension FFFavouriteExercisesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let key = Array(sortedModel.keys.sorted())[indexPath.section]
-        let values = sortedModel[key]
-        let value = values![indexPath.row]
-        let model = Exercise(bodyPart: value.exerciseBodyPart, equipment: value.exerciseEquipment, imageLink: value.exerciseImageLink, exerciseID: value.exerciseID, exerciseName: value.exerciseName, muscle: value.exerciseMuscle, secondaryMuscles: [value.exerciseSecondaryMuscles], instructions: [value.exerciseInstructions])
-        let vc = FFExerciseDescriptionViewController(exercise: model)
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.tableView(tableView, didSelectRowAt: indexPath, sortedModel: sortedModel)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
+        return viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -106,9 +108,14 @@ extension FFFavouriteExercisesViewController: UITableViewDelegate {
         let deleteInstance = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, _ in
             tableView.beginUpdates()
             FFFavouriteExerciseStoreManager.shared.clearExerciseWith(realmModel: value)
-//            self?.clearData()
+            self?.sortedModel[key]?.remove(at: indexPath.row)
+            if let updatedArray = self?.sortedModel[key] {
+                self?.sortedModel[key] = updatedArray
+            } else {
+                self?.sortedModel.removeValue(forKey: key)
+            }
+
             tableView.deleteRows(at: [indexPath], with: .top)
-            
             tableView.endUpdates()
         }
         deleteInstance.backgroundColor = UIColor.systemRed

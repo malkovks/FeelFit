@@ -46,7 +46,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     func setupView() {
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         if trainingPlans.isEmpty {
             contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
                 self.didTapCreateProgram()

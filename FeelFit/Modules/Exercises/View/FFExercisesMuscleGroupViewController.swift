@@ -105,7 +105,6 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
         let exercise = muscleExercises[indexPath.row]
         cell.indexPath = indexPath
         cell.configureView(keyName: muscleGroupName, exercise: exercise,indexPath: indexPath)
-        
         return cell
     }
 }

@@ -22,6 +22,13 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
         ["Duration","Cool Down Type"]
     ]
     
+    var detailTextData = [[""],
+                          ["Duration not selected","Location Not selected","Type Not selected","Training Not selected"],
+                          ["Not selected","Not selected"],
+                          ["Not selected","Not selected","Not Selected"],
+                          ["Not selected","Not selected"]
+                        ]
+    
     var titleHeaderViewString: [String] = [
         "",
         "Basic Settings"
@@ -80,9 +87,7 @@ extension FFCreateProgramViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFCreateTableViewCell.identifier, for: indexPath) as! FFCreateTableViewCell
-        cell.configureTableViewCell(tableView: tableView, indexPath: indexPath, text: textData)
-        
-        
+        cell.configureTableViewCell(tableView: tableView, indexPath: indexPath, text: textData, actionLabel: detailTextData)
         return cell
     }
     
@@ -113,9 +118,45 @@ extension FFCreateProgramViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.tableView(tableView, didSelectRowAt: indexPath)
+//        viewModel.tableView(tableView, didSelectRowAt: indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
+        let cell = tableView.cellForRow(at: indexPath) as! FFCreateTableViewCell
+//        var editMenuInteraction = UIEditMenuInteraction(delegate: self)
+//        tableView.addInteraction(editMenuInteraction)
+        
+        
+        
+        
     }
+    
 }
+
+
+//extension FFCreateProgramViewController: UIEditMenuInteractionDelegate {
+//    func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
+//        return locationTypeMenu()
+////        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+////            actions.forEach { action in
+////                action.title = "Title 1"
+////                action.image = UIImage(systemName: "photo")
+////            }
+////        }
+//    }
+//    
+//    private func locationTypeMenu() -> UIMenu{
+//        var actions: [UIAction] {
+//            [UIAction(title: "Outside", handler: { _ in
+//                print("outside")
+//            }),
+//             UIAction(title: "Inside", handler: { _ in
+//                print("inside")
+//            })
+//            ]
+//        }
+//        var menu = UIMenu(children: actions)
+//        return menu
+//    }
+//}
 
 extension FFCreateProgramViewController: AddSectionProtocol {
     

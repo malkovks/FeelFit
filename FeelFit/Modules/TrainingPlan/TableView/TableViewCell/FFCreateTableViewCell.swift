@@ -7,29 +7,19 @@
 
 import UIKit
 
-class FFCreateTableViewCell: UITableViewCell {
+class FFCreateTableViewCell: UITableViewCell, UIEditMenuInteractionDelegate {
     
     var viewModel: FFCreateProgramViewModel!
     
     static let identifier = "FFCreateTableViewCell"
     
-    private let selectorButton: UIButton = {
-        let button = UIButton()
-        let config = UIImage.SymbolConfiguration(pointSize: 16,weight: .thin)
-
-        button.semanticContentAttribute = .forceRightToLeft
-        button.configuration?.imagePlacement = .trailing
-        button.configuration = .borderedProminent()
-        button.showsMenuAsPrimaryAction = true
-        button.contentMode = .right
-        button.configuration?.image = UIImage(systemName: "chevron.up.chevron.down")
-        button.configuration?.imagePlacement = .trailing
-        button.configuration?.titleAlignment = .trailing
-        button.configuration?.title = ""
-        button.configuration?.imagePadding = 2
-        button.configuration?.baseBackgroundColor = .clear
-        button.configuration?.baseForegroundColor = FFResources.Colors.detailTextColor
-        return button
+    private let actionMenuLabel: UILabel = {
+       let label = UILabel()
+        label.textColor = FFResources.Colors.detailTextColor
+        label.font = UIFont.detailLabelFont(size: 14)
+        label.backgroundColor = .clear
+        label.textAlignment = .right
+        return label
     }()
     
     private let nameTextField: UITextField = {
@@ -47,8 +37,44 @@ class FFCreateTableViewCell: UITableViewCell {
         setupCell()
         setupConstraints()
         setupViewModel()
+        setupContentView()
+//        setupInteraction()
     }
     
+    func attributedTextForDetailLabel(string: String) -> NSAttributedString{
+        let image = NSTextAttachment()
+        image.image = UIImage(systemName: "chevron.up.chevron.down")
+        let imageString = NSAttributedString(attachment: image)
+        
+        let textString = NSAttributedString(string: string)
+        
+        let combination = NSMutableAttributedString()
+        combination.append(textString)
+        combination.append(NSAttributedString(string: " "))
+        combination.append(imageString)
+        return combination
+    }
+    
+    func setupContentView(){
+        
+        self.textLabel?.font = UIFont.textLabelFont()
+    }
+    /*
+    func setupInteraction(){
+        self.addInteraction(UIEditMenuInteraction(delegate: self))
+    }
+    
+    func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
+        
+        let action = UIAction(title: "Action 1",image: UIImage(systemName: "circle")) { _ in
+            print("Action 1")
+        }
+        let action2 = UIAction(title: "Action 2",image: UIImage(systemName: "trash")) { _ in
+            print("Action 2")
+        }
+        var menu = UIMenu(title: "Editor", children: [action,action2])
+        return menu
+    }*/
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -62,36 +88,39 @@ class FFCreateTableViewCell: UITableViewCell {
     private func setupViewModel(){
         viewModel = FFCreateProgramViewModel(viewController: FFCreateProgramViewController())
         viewModel.delegate = self
-        
+    }
+    
+    func configureSelectionCell(tableView: UITableView,indexPath: IndexPath){
         
     }
     
-    func configureTableViewCell(tableView: UITableView,indexPath: IndexPath,text: [[String]]) {
-        self.textLabel?.text = text[indexPath.section][indexPath.row]
+    func configureTableViewCell(tableView: UITableView,indexPath: IndexPath,text: [[String]],actionLabel string: [[String]]) {
+        let text = text[indexPath.section][indexPath.row]
+        let detailText = string[indexPath.section][indexPath.row]
+        actionMenuLabel.attributedText = attributedTextForDetailLabel(string: detailText)
+        self.textLabel?.text = text
         switch indexPath {
         case [0,0]:
             self.textLabel?.text = nil
-            selectorButton.isHidden = true
+            self.actionMenuLabel.isHidden = true
             nameTextField.isHidden = false
         case [1,0]:
-            selectorButton.configuration?.title = "None"
-            selectorButton.menu = viewModel.chosenMenuType(.duration,indexPath)
+            print("Index [1,0")
+            self.actionMenuLabel.isHidden = false
         case [1,1]:
-            selectorButton.configuration?.title = "Outside"
-            selectorButton.menu = viewModel.chosenMenuType(.location, indexPath)
+            print("Index [1,1")
+            self.actionMenuLabel.isHidden = false
         case [1,2]:
-            selectorButton.configuration?.title = "Cardio"
-            selectorButton.menu = viewModel.chosenMenuType(.trainingType, indexPath)
+            print("Index [1,2")
+            self.actionMenuLabel.isHidden = false
         default:
-            break
+            nameTextField.isHidden = true
         }
     }
 }
 extension FFCreateTableViewCell: ButtonMenuPressed {
     func menuDidSelected(text: String,_ indexPath: IndexPath) {
         switch indexPath {
-        case [1,0]:
-            selectorButton.configuration?.title = text
         default:
             break
         }
@@ -105,10 +134,10 @@ extension FFCreateTableViewCell {
             make.edges.equalToSuperview()
         }
         
-        contentView.addSubview(selectorButton)
-        selectorButton.snp.makeConstraints { make in
+        contentView.addSubview(actionMenuLabel)
+        actionMenuLabel.snp.makeConstraints { make in
             make.top.trailing.bottom.equalToSuperview().inset(2)
-            make.width.equalToSuperview().multipliedBy(0.5)
+            make.width.equalToSuperview().multipliedBy(0.4)
         }
     }
 }
