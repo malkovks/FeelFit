@@ -13,9 +13,6 @@ protocol AddSectionProtocol: AnyObject {
 }
 
 class FFCreateHeaderView: UIView {
-
-    
-    
     
     weak var delegate: AddSectionProtocol?
     

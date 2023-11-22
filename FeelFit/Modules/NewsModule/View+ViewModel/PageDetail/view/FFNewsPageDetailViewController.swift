@@ -120,12 +120,12 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
         if !saveStatus {
             saveStatus.toggle()
             FFNewsStoreManager.shared.saveNewsModel(model: model, status: saveStatus)
-            navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
+            navigationItem.setRightBarButton(addNavigationBarButton(title: "", imageName: "heart.fill", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
             viewAlertController(text: "Added to Favourite", startDuration: 0.5, timer: 1.5, controllerView: self.view)
         } else {
             saveStatus.toggle()
             FFNewsStoreManager.shared.deleteNewsModel(model: model, status: saveStatus)
-            navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: "heart", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
+            navigationItem.setRightBarButton(addNavigationBarButton(title: "", imageName: "heart", action: #selector(self.didTapAddFavourite), menu: nil), animated: true)
             viewAlertController(text: "Removed from Favourite", startDuration: 0.5, timer: 1.5, controllerView: self.view)
         }
     }
@@ -193,7 +193,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
     func setupNavigationController() {
         let image = saveStatus ? "heart.fill" : "heart"
-        navigationItem.rightBarButtonItem =  addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapAddFavourite), menu: nil)
+        navigationItem.rightBarButtonItem =  addNavigationBarButton(title: "", imageName: image, action: #selector(didTapAddFavourite), menu: nil)
     }
     
     func isNewsSavedInModel(){

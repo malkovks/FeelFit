@@ -34,9 +34,12 @@ enum ExerciseMusclesType: String {
 class FFGetExercisesDataBase {
     static let shared = FFGetExercisesDataBase()
     
-    func getMuscleDatabase(muscle: String,limit number: String = "50",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
+//e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306
+//993d6b8eacmshf5233f92ac39081p16b3f7jsnc30a9fca4475 - закончился лимит
+    
+    func getMuscleDatabase(muscle: String,limit number: String = "10",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         let headers = [
-            "X-RapidAPI-Key": "993d6b8eacmshf5233f92ac39081p16b3f7jsnc30a9fca4475",
+            "X-RapidAPI-Key": "e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306",
             "X-RapidAPI-Host": "exercisedb.p.rapidapi.com"
         ]
         var valueRequest = String()
@@ -45,14 +48,22 @@ class FFGetExercisesDataBase {
         } else {
             valueRequest = muscle
         }
+        
+        let cache = URLCache(memoryCapacity: 100*1024*1024, diskCapacity: 100*1024*1024)
+        URLCache.shared = cache
         guard let url = URL(string: "https://exercisedb.p.rapidapi.com/exercises/target/\(valueRequest)?limit=\(number)") else { return }
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10.0)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
         AF.request(request).validate().responseDecodable(of: [Exercise].self) { response in
+            guard let urlRequest = response.request else { print("url request unavailable") ;return }
+            guard let data = response.data else { print("data unavailable"); return}
+            guard let responseRequest = response.response else { print("response request"); return}
             switch response.result {
             case .success(let success):
+                let cacheResponse = CachedURLResponse(response: responseRequest, data: data)
+                URLCache.shared.storeCachedResponse(cacheResponse, for: urlRequest)
                 completionHandler(.success(success))
             case .failure(let failure):
                 completionHandler(.failure(failure))

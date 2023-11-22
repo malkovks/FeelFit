@@ -86,8 +86,8 @@ extension FFFavouriteExercisesViewController: UITableViewDataSource {
         let key = Array(sortedModel.keys.sorted())[indexPath.section]
         let value = sortedModel[key]
         let data = value?[indexPath.row]
-        
-        cell.textLabel?.text = data?.exerciseName
+        let name = data?.exerciseName.capitalized
+        cell.textLabel?.text = name
         return cell
     }
 }

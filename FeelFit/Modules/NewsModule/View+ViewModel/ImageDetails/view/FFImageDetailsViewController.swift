@@ -82,7 +82,7 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     }
  
     func setupNavigationController() {
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "xmark", action: #selector(didTapDismiss), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "xmark", action: #selector(didTapDismiss), menu: nil)
     }
 
 }

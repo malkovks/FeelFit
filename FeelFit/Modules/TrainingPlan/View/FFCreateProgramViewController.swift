@@ -23,7 +23,7 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
     ]
     
     var detailTextData = [[""],
-                          ["Duration not selected","Location Not selected","Type Not selected","Training Not selected"],
+                          ["Duration","Location","Type","Training"],
                           ["Not selected","Not selected"],
                           ["Not selected","Not selected","Not Selected"],
                           ["Not selected","Not selected"]
@@ -36,6 +36,15 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
         ,"Exercise №1"
         ,"Hitch"
     ]
+    
+    private let closeFooterButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Save", for: .normal)
+        button.layer.cornerRadius = 14
+        button.tintColor = FFResources.Colors.activeColor
+        button.backgroundColor = .secondarySystemBackground
+        return button
+    }()
     
     var tableView: UITableView!
     
@@ -50,12 +59,17 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
         setupConstraints()
     }
     
+    @objc private func buttonTapped(){
+        self.dismiss(animated: true)
+    }
+    
     func setupViewModel(){
         viewModel = FFCreateProgramViewModel(viewController: self)
     }
     
     func setupView() {
         view.backgroundColor = .systemBackground
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Save", imageName: "", action: #selector(buttonTapped), menu: nil)
     }
     
     func setupNavigationController() {
@@ -73,10 +87,13 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
         tableView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         tableView.sectionIndexColor = .orange
         tableView.tableFooterView = nil
+        closeFooterButton.addTarget(self, action: #selector(buttonTapped), for: .primaryActionTriggered)
     }
 }
 
 extension FFCreateProgramViewController: UITableViewDataSource {
+    
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return textData.count
     }
@@ -94,7 +111,6 @@ extension FFCreateProgramViewController: UITableViewDataSource {
     //Header
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let numberOfSections = tableView.numberOfSections
-        print(numberOfSections)
         let view = FFCreateHeaderView()
         let text = titleHeaderViewString[section]
         view.delegate = self
@@ -107,7 +123,28 @@ extension FFCreateProgramViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if section == tableView.numberOfSections - 1{
+            return 55
+        }
         return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == tableView.numberOfSections - 1 {
+            closeFooterButton.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 38)
+            return closeFooterButton
+        } else {
+            return nil
+        }
+        
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+        if section == tableView.numberOfSections - 1 {
+            return 50
+        } else {
+            return 0
+        }
     }
 }
 
@@ -118,61 +155,36 @@ extension FFCreateProgramViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        viewModel.tableView(tableView, didSelectRowAt: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath) as! FFCreateTableViewCell
-//        var editMenuInteraction = UIEditMenuInteraction(delegate: self)
-//        tableView.addInteraction(editMenuInteraction)
-        
-        
-        
-        
+        let text = textData[indexPath.section][indexPath.row]
+        let vc = FFCellSelectionViewController(titleText: text)
+        let navVC = FFNavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .formSheet
+        navVC.sheetPresentationController?.detents = [.medium()]
+        navVC.sheetPresentationController?.prefersGrabberVisible = true
+        navVC.isNavigationBarHidden = false
+        present(navVC, animated: true)
     }
-    
 }
-
-
-//extension FFCreateProgramViewController: UIEditMenuInteractionDelegate {
-//    func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
-//        return locationTypeMenu()
-////        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
-////            actions.forEach { action in
-////                action.title = "Title 1"
-////                action.image = UIImage(systemName: "photo")
-////            }
-////        }
-//    }
-//    
-//    private func locationTypeMenu() -> UIMenu{
-//        var actions: [UIAction] {
-//            [UIAction(title: "Outside", handler: { _ in
-//                print("outside")
-//            }),
-//             UIAction(title: "Inside", handler: { _ in
-//                print("inside")
-//            })
-//            ]
-//        }
-//        var menu = UIMenu(children: actions)
-//        return menu
-//    }
-//}
 
 extension FFCreateProgramViewController: AddSectionProtocol {
     
     
     func addSection() {
         let index = textData.count
-        
+        let indexDetailData = detailTextData.count
+        detailTextData.insert(detailTextData[3], at: indexDetailData-1)
         titleHeaderViewString.insert("Exercise №\(index-3)", at: index-1)
-        textData.insert(textData[2], at: index-1)
+        textData.insert(textData[3], at: index-1)
         tableView.insertSections(IndexSet(integer: index-1), with: .top)
         tableView.reloadData()
     }
     
     func removeSection() {
         let index = textData.count - 2
+        let indexDetailData = detailTextData.count - 2
         textData.remove(at: index)
+        detailTextData.remove(at: indexDetailData)
         titleHeaderViewString.remove(at: index)
         tableView.deleteSections(IndexSet(integer: index), with: .bottom)
         tableView.reloadData()

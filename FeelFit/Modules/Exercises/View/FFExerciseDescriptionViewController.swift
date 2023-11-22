@@ -152,7 +152,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         }
         let image = saveStatus ? "heart.fill" : "heart"
         let text = saveStatus ? "Added to Favourite" : "Removed from Favourite"
-        navigationItem.setRightBarButton(addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapChangeSaveStatus), menu: nil), animated: true)
+        navigationItem.setRightBarButton(addNavigationBarButton(title: "", imageName: image, action: #selector(didTapChangeSaveStatus), menu: nil), animated: true)
         viewAlertController(text: text, startDuration: 0.5, timer: 1.5, controllerView: self.view)
     }
     
@@ -174,7 +174,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     func setupNavigationController() {
         title = "Description"
         let image = saveStatus ? "heart.fill" : "heart"
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: image, action: #selector(didTapChangeSaveStatus), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: image, action: #selector(didTapChangeSaveStatus), menu: nil)
     }
     
     func setupStackView(){

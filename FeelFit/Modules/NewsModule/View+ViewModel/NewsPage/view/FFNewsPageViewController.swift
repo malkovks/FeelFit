@@ -136,8 +136,8 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationController?.navigationBar.maximumContentSizeCategory = .small
         title = "News"
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: nil, imageName: "gear", action: #selector(didTapSetupRequest), menu: nil)
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "gear", action: #selector(didTapSetupRequest), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
 
     func reloadTableView(models: [Articles]) {

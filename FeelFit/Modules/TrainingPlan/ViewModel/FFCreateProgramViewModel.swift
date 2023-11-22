@@ -66,7 +66,7 @@ class FFCreateProgramViewModel {
             })
             ]
         }
-        var menu = UIMenu(children: actions)
+        let menu = UIMenu(children: actions)
         return menu
     }
     
@@ -111,18 +111,6 @@ class FFCreateProgramViewModel {
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        
-        
-//        var menu = trainingTypeMenu(indexPath)
-//        var menuController = UIMenuController.shared
-//        
-//        var menuItems: [UIMenuItem] {
-//            return [UIMenuItem(title: "Action 1", action: #selector(didTapPress)),
-//                    UIMenuItem(title: "Action 2", action: #selector(didTapPress))]
-//        }
-//        menuController.menuItems = menuItems
-//        menuController.showMenu(from: cell.contentView, rect: cell.bounds)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -37,7 +37,7 @@ class FFExercisesViewController: UIViewController, SetupViewController {
     
     func setupNavigationController() {
         title = "Exercises"
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
     }
     
     func setupCollectionView(){

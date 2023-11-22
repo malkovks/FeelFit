@@ -35,11 +35,24 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupCollectionView()
         setupNavigationController()
         setupConstraints()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapPush))
     }
     
     @objc private func didTapCreateProgram(){
         let vc = FFCreateProgramViewController()
         let nav = FFNavigationController(rootViewController: vc)
+        nav.isNavigationBarHidden = false
+        present(nav, animated: true)
+    }
+    
+    @objc private func didTapPush(){
+        let vc = FFCellSelectionViewController(titleText: "text")
+        let nav = FFNavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .formSheet
+        nav.sheetPresentationController?.detents = [.medium(),.custom(resolver: { context in
+            return 200
+        })]
+        nav.sheetPresentationController?.prefersGrabberVisible = true
         nav.isNavigationBarHidden = false
         present(nav, animated: true)
     }
@@ -77,7 +90,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         title = "Train Plan"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: nil, imageName: "rectangle.badge.plus", action: #selector(didTapCreateProgram), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "rectangle.badge.plus", action: #selector(didTapCreateProgram), menu: nil)
     }
 }
 
@@ -110,7 +123,7 @@ extension FFTRainingPlanViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let share = UIAction(title: "Share") { _ in
-                print("Share image")
+                
             }
             return UIMenu(children: [share])
         }
