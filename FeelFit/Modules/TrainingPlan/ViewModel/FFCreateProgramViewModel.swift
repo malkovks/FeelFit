@@ -20,14 +20,35 @@ class FFCreateProgramViewModel {
     
     weak var delegate: ButtonMenuPressed?
     
+    var textData = [
+        ["Name Of Workout"],
+        ["Duration","Location","Type","Training Date"],
+        ["Duration","Type"],
+        ["Approaches","Repeats","Exercise"],
+        ["Duration","Cool Down Type"]
+    ]
+    
+    var detailTextData = [[""],
+                          ["Duration","Location","Type","Training"],
+                          ["Not selected","Not selected"],
+                          ["Not selected","Not selected","Not Selected"],
+                          ["Not selected","Not selected"]
+                        ]
+    
+    var titleHeaderViewString: [String] = [
+        "",
+        "Basic Settings"
+        ,"Warm Up"
+        ,"Exercise №1"
+        ,"Hitch"
+    ]
+    
     let viewController: UIViewController
+    let tableView: UITableView
     
-    init(viewController: UIViewController) {
+    init(viewController: UIViewController, tableView: UITableView) {
         self.viewController = viewController
-    }
-    
-    func setupSectionsValue() {
-        
+        self.tableView = tableView
     }
     
     func chosenMenuType(_ type: ButtonTypeMenu,_ indexPath: IndexPath) -> UIMenu {
@@ -109,11 +130,83 @@ class FFCreateProgramViewModel {
         print(sender.row)
     }
     
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    //MARK: - TableViewData Source
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFCreateTableViewCell.identifier, for: indexPath) as! FFCreateTableViewCell
+        cell.configureTableViewCell(tableView: tableView, indexPath: indexPath, text: textData, actionLabel: detailTextData)
+        return cell
     }
     
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
+    //TableViewDelegate
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let text = textData[indexPath.section][indexPath.row]
+        let vc = FFCellSelectionViewController(titleText: text)
+        let navVC = FFNavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .formSheet
+        navVC.sheetPresentationController?.detents = [.medium()]
+        navVC.sheetPresentationController?.prefersGrabberVisible = true
+        navVC.isNavigationBarHidden = false
+        viewController.present(navVC, animated: true)
+    }
+    //MARK: - Did select & height for row
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+    //Footer
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if section == tableView.numberOfSections - 1{
+            return 55
+        }
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int,button: UIButton) -> UIView? {
+        if section == tableView.numberOfSections - 1 {
+            button.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 38)
+            return button
+        } else {
+            return nil
+        }
+    }
+    //MARK: - Header
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let numberOfSections = tableView.numberOfSections
+        let view = FFCreateHeaderView()
+        let text = titleHeaderViewString[section]
+        view.delegate = self
+        view.configureHeaderView(section: section,numberOfSections: numberOfSections,text: text)
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
+    }
+}
+
+extension FFCreateProgramViewModel: AddSectionProtocol {
+    func addSection() {
+        let index = textData.count
+        let indexDetailData = detailTextData.count
+        detailTextData.insert(detailTextData[3], at: indexDetailData-1)
+        titleHeaderViewString.insert("Exercise №\(index-3)", at: index-1)
+        textData.insert(textData[3], at: index-1)
+        tableView.insertSections(IndexSet(integer: index-1), with: .right)
+        UIView.animate(withDuration: 1) { [unowned self] in 
+            tableView.reloadData()
+        }
+        
+    }
+    
+    func removeSection() {
+        let index = textData.count - 2
+        let indexDetailData = detailTextData.count - 2
+        textData.remove(at: index)
+        detailTextData.remove(at: indexDetailData)
+        titleHeaderViewString.remove(at: index)
+        tableView.deleteSections(IndexSet(integer: index), with: .right)
+        UIView.animate(withDuration: 1) { [unowned self] in
+            tableView.reloadData()
+        }
     }
 }
