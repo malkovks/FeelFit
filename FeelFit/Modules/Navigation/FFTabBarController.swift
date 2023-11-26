@@ -18,9 +18,11 @@ final class FFTabBarController: UITabBarController {
     
     private func configureTabBar(){
         tabBar.tintColor = FFResources.Colors.activeColor
-        tabBar.barTintColor = FFResources.Colors.tabBarBackgroundColor
-        tabBar.backgroundColor = FFResources.Colors.tabBarBackgroundColor
+        tabBar.barTintColor = .systemBackground
+        tabBar.backgroundColor = .systemBackground
         tabBar.layer.masksToBounds = true
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = FFResources.Colors.textColor.cgColor
     }
     
     private func tabBarSetup(vc: UIViewController, title: String, image: String,tag: Int) -> UINavigationController {

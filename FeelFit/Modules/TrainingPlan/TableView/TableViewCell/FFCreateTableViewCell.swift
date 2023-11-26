@@ -55,6 +55,7 @@ class FFCreateTableViewCell: UITableViewCell, UIEditMenuInteractionDelegate {
     
     //MARK: - Initialized methods
     func configureTableViewCell(tableView: UITableView,indexPath: IndexPath,text: [[String]],actionLabel string: [[String]]) {
+//        configureAccessoryButton(indexPath: indexPath)
         let text = text[indexPath.section][indexPath.row]
         let detailText = string[indexPath.section][indexPath.row]
         actionMenuLabel.attributedText = attributedTextForDetailLabel(string: detailText)
@@ -68,6 +69,18 @@ class FFCreateTableViewCell: UITableViewCell, UIEditMenuInteractionDelegate {
             nameTextField.isHidden = true
             self.actionMenuLabel.isHidden = false
             break
+        }
+    }
+    
+    func configureAccessoryButton(indexPath: IndexPath){
+        if indexPath.section != 0 {
+            let button = UIButton()
+            button.setImage(UIImage(systemName: "chevron.up.chevron.down"), for: .normal)
+            button.frame = CGRect(x: 0, y: 0, width: 50, height: 25)
+            button.tintColor  = .systemRed
+//            button.menu = trainingTypeMenu(indexPath)
+            button.showsMenuAsPrimaryAction = true
+            self.accessoryView = button
         }
     }
     

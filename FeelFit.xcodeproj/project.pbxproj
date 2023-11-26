@@ -54,6 +54,7 @@
 		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
 		0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */; };
 		0A9151A72B03BE1A00FE5E41 /* FFCreatePlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */; };
+		0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */; };
 		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
 		0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */; };
 		0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */; };
@@ -120,6 +121,7 @@
 		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
 		0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateHeaderView.swift; sourceTree = "<group>"; };
 		0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreatePlanModel.swift; sourceTree = "<group>"; };
+		0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTrainProgramViewController.swift; sourceTree = "<group>"; };
 		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewController.swift; sourceTree = "<group>"; };
 		0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsStoreManager.swift; sourceTree = "<group>"; };
@@ -487,6 +489,7 @@
 				0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */,
 				0AFC89512AFD13DE005ADC17 /* FFCreateProgramViewController.swift */,
 				0A69AF3A2B0DDD7A0013FB1B /* FFCellSelectionViewController.swift */,
+				0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -837,6 +840,7 @@
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,
+				0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
 				0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */,

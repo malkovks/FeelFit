@@ -35,26 +35,16 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupCollectionView()
         setupNavigationController()
         setupConstraints()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapPush))
     }
     
+//    @objc private func didTapCreateProgram(){
+//        let vc = FFCreateProgramViewController()
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
+
     @objc private func didTapCreateProgram(){
-        let vc = FFCreateProgramViewController()
-        let nav = FFNavigationController(rootViewController: vc)
-        nav.isNavigationBarHidden = false
-        present(nav, animated: true)
-    }
-    
-    @objc private func didTapPush(){
-        let vc = FFCellSelectionViewController(titleText: "text")
-        let nav = FFNavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .formSheet
-        nav.sheetPresentationController?.detents = [.medium(),.custom(resolver: { context in
-            return 200
-        })]
-        nav.sheetPresentationController?.prefersGrabberVisible = true
-        nav.isNavigationBarHidden = false
-        present(nav, animated: true)
+        let vc = FFCreateTrainProgramViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func setupView() {

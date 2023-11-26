@@ -68,11 +68,36 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
         tableView.tableFooterView = nil
         closeFooterButton.addTarget(self, action: #selector(buttonTapped), for: .primaryActionTriggered)
     }
+    
+    func alertController(title: String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        let picker = UIDatePicker()
+        picker.date = .now
+        picker.preferredDatePickerStyle = .inline
+        picker.datePickerMode = .date
+//        picker.dataSource = self
+//        picker.delegate = self
+        alert.view.addSubview(picker)
+
+        alert.view.snp.makeConstraints { make in
+            make.height.equalTo(500)
+        }
+        
+        picker.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(40)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(260)
+        }
+        
+        let saveAction = UIAlertAction(title: "Save", style: .default)
+        let cancel = UIAlertAction(title: "Cancel", style: .destructive)
+        alert.addAction(saveAction)
+        alert.addAction(cancel)
+        present(alert, animated: true)
+    }
 }
 
 extension FFCreateProgramViewController: UITableViewDataSource {
-    
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return viewModel.textData.count
     }
@@ -89,7 +114,12 @@ extension FFCreateProgramViewController: UITableViewDataSource {
 extension FFCreateProgramViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.tableView(tableView, didSelectRowAt: indexPath)
+        alertController(title: "\(indexPath.section)", message: "\(indexPath.row)")
+//        let alert = UIAlertController(title: "Some controller", message: "Some message", preferredStyle: .actionSheet)
+//        alert.addAction(UIAlertAction(title: "Ok", style: .default))
+//        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive))
+//        present(alert, animated: true)
+//        viewModel.tableView(tableView, didSelectRowAt: indexPath)
         
     }
     
