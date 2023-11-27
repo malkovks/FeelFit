@@ -16,11 +16,11 @@ class FFExercisesViewController: UIViewController, SetupViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        setupNavigationController()
         contentUnavailableConfiguration = viewModel.setupConfiguration { [unowned self] in
-            self.setupNavigationController()
-            self.setupCollectionView()
-            self.setupConstraints()
-            self.contentUnavailableConfiguration = nil
+            setupCollectionView()
+            setupConstraints()
+            contentUnavailableConfiguration = nil
         }
     }
     

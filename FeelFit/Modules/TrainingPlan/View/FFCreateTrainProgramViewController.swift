@@ -29,10 +29,11 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     private let noteTrainingPlanTextView: UITextView = {
         let textView = UITextView(frame: .zero)
-        textView.font = UIFont.detailLabelFont()
+        textView.font = UIFont.textLabelFont(size: 20)
+        textView.textAlignment = .justified
         textView.textColor = FFResources.Colors.textColor
         textView.layer.cornerRadius = 8
-        textView.allowsEditingTextAttributes = true
+        textView.allowsEditingTextAttributes = false
         textView.allowsKeyboardScrolling = true
         textView.setContentHuggingPriority( .defaultHigh, for: .vertical)
         textView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
@@ -54,16 +55,19 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     private let trainingTypeButton: UIButton = {
        let button = UIButton()
+        button.titleLabel?.font = UIFont.detailLabelFont()
         button.configuration = .borderedTinted()
         button.configuration?.title = "Choose Training Type"
         button.configuration?.image = UIImage(systemName: "figure.highintensity.intervaltraining")
         button.configuration?.imagePadding = 2
         button.configuration?.imagePlacement = .leading
         button.configuration?.baseBackgroundColor = FFResources.Colors.darkPurple
-        button.configuration?.baseForegroundColor = FFResources.Colors.textColor
+        button.configuration?.baseForegroundColor = FFResources.Colors.darkPurple
         button.showsMenuAsPrimaryAction = true
         return button
     }()
+    
+    private var textViewToolBar: UIToolbar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,8 +75,99 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         setupNavigationController()
         setupConstraints()
         setupButtons()
+        setupTextViewInsets()
+        dismissKeyboardBySwipe()
+        setupToolBar()
+    }
+    //MARK: - Target methods
+    @objc private func didTapSwipeKeyboard(){
+        view.endEditing(true)
+    }
+    
+    @objc private func didTapBoldText(){
+        let currentAttributes = noteTrainingPlanTextView.typingAttributes
+        let range = noteTrainingPlanTextView.selectedRange
+        
+        let attributes = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
+        attributes.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: NSRange(location: 0, length: attributes.length))
+        
+        if let font = currentAttributes[NSAttributedString.Key.font] as? UIFont,
+           font.fontDescriptor.symbolicTraits.contains(.traitBold) {
+            let originFont = UIFont.textLabelFont(size: 20)
+            let newAttributes = [NSAttributedString.Key.font: originFont]
+            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
+            attributedString.addAttributes(newAttributes, range: range)
+        } else {
+            attributes.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: range)
+            noteTrainingPlanTextView.attributedText = attributes
+        }
+    }
+    
+    @objc private func didTapItalicText(){
+        let currentAttributes = noteTrainingPlanTextView.typingAttributes
+        let range = noteTrainingPlanTextView.selectedRange
+        
+        let attributes = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
+        attributes.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: NSRange(location: 0, length: attributes.length))
+        
+        if let font = currentAttributes[NSAttributedString.Key.font] as? UIFont,
+           font.fontDescriptor.symbolicTraits.contains(.traitItalic) {
+            let originFont = UIFont.textLabelFont(size: 20)
+            let newAttributes = [NSAttributedString.Key.font: originFont]
+            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
+            attributedString.addAttributes(newAttributes, range: range)
+        } else {
+            attributes.addAttribute(.font, value: UIFont.italicSystemFont(ofSize: 20), range: range)
+            noteTrainingPlanTextView.attributedText = attributes
+        }
+    }
+    
+    @objc private func didTapUnderlineText(){
+        let currentAttributes = noteTrainingPlanTextView.typingAttributes
+        let range = noteTrainingPlanTextView.selectedRange
+        if let underlineStyle = currentAttributes[NSAttributedString.Key.underlineStyle] as? NSUnderlineStyle,
+           underlineStyle == .single {
+            let newAttributes = [NSAttributedString.Key.underlineStyle: 0]
+            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
+            attributedString.addAttributes(newAttributes, range: range )
+            noteTrainingPlanTextView.attributedText = attributedString
+        } else {
+            let newAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
+            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
+            attributedString.addAttributes(newAttributes, range: range)
+            noteTrainingPlanTextView.attributedText = attributedString
+            
+        }
     }
 
+    //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
+    func setupToolBar(){
+        textViewToolBar = UIToolbar(frame: .zero)
+        textViewToolBar.sizeToFit()
+        textViewToolBar.tintColor = FFResources.Colors.activeColor
+        let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .done, target: self, action: #selector(didTapBoldText))
+        let italicText = UIBarButtonItem(image: UIImage(systemName: "italic"),style: .done, target: self, action: #selector(didTapItalicText))
+        let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .done, target: self, action: #selector(didTapUnderlineText))
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(didTapSwipeKeyboard))
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        textViewToolBar.setItems([boldText, space, italicText, space, underlineText, space, doneButton], animated: true)
+        noteTrainingPlanTextView.inputAccessoryView = textViewToolBar
+        
+    }
+    
+    func setupTextViewInsets(){
+        let style = NSMutableParagraphStyle()
+        style.firstLineHeadIndent = 20
+        let attributes = [NSAttributedString.Key.paragraphStyle: style]
+        let string = NSAttributedString(string: "", attributes: attributes)
+        noteTrainingPlanTextView.attributedText = string
+    }
+    
+    func dismissKeyboardBySwipe(){
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(didTapSwipeKeyboard))
+        swipe.direction = .down
+        view.addGestureRecognizer(swipe)
+    }
     
     func setLocationMenu() -> UIMenu {
         var actions: [UIAction] {
@@ -86,7 +181,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
             })]
         }
         
-        let menu = UIMenu(title: "Choose location of your training",children: actions)
+        let menu = UIMenu(title: "Choose location of your training",image: UIImage(systemName: "location"),children: actions)
         return menu
     }
     
@@ -110,7 +205,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
             })]
         }
         
-        let menu = UIMenu(title: "Choose Type of your training",children: actions)
+        let menu = UIMenu(title: "Choose Type of your training",image: UIImage(systemName: "figure.highintensity.intervaltraining"),children: actions)
         return menu
     }
     
@@ -122,8 +217,9 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
 
     func setupView() {
+        trainingPlanTextField.becomeFirstResponder()
 //        setupGradient()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = FFResources.Colors.backgroundColor
     }
     
     func setupButtons(){
@@ -152,25 +248,22 @@ extension FFCreateTrainProgramViewController {
         view.addSubview(trainingPlanTextField)
         trainingPlanTextField.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(15)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalToSuperview().multipliedBy(0.05)
         }
         
         view.addSubview(noteTrainingPlanTextView)
         noteTrainingPlanTextView.snp.makeConstraints { make in
             make.top.equalTo(trainingPlanTextField.snp.bottom).offset(5)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalToSuperview().multipliedBy(0.65)
         }
         
         view.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.top.equalTo(noteTrainingPlanTextView.snp.bottom).offset(5)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9)
-            make.height.equalToSuperview().multipliedBy(0.1)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-15)
         }
     }
 }

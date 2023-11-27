@@ -9,6 +9,14 @@ import UIKit
 
 extension UIFont {
     
+    var isBold: Bool {
+        return fontDescriptor.symbolicTraits.contains(.traitBold)
+    }
+    
+    var isItalic: Bool {
+        return fontDescriptor.symbolicTraits.contains(.traitItalic)
+    }
+    
     static var fontName = "Futura"
     
     /// Font setup for header or main text
