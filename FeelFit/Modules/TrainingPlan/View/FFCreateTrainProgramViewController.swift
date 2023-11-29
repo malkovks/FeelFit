@@ -7,29 +7,44 @@
 
 import UIKit
 
+struct CreateTrainProgram {
+    var name: String
+    var note: String
+    var type: String
+    var location: String
+}
+
 
 class FFCreateTrainProgramViewController: UIViewController, SetupViewController {
     
-    var trainPlanData = ["","","",""]
+    var trainPlanData: CreateTrainProgram?
     
     private let trainingPlanTextField: UITextField = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
         let field = UITextField(frame: .zero)
+        field.returnKeyType = .continue
+        field.enablesReturnKeyAutomatically = true
+        field.tintColor = .blue
         field.font = UIFont.textLabelFont()
         field.placeholder = "Enter the name of training"
         field.leftView = view
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
-        field.layer.cornerRadius = 15
-        field.borderStyle = .roundedRect
+        field.layer.cornerRadius = 8
+        field.layer.borderWidth = 0.2
+        field.layer.borderColor = FFResources.Colors.textColor.cgColor
+        field.layer.masksToBounds = true
+//        field.borderStyle = .roundedRect
         field.textColor = FFResources.Colors.textColor
         field.backgroundColor = FFResources.Colors.tabBarBackgroundColor
+        field.translatesAutoresizingMaskIntoConstraints = false
         return field
     }()
     
     private let noteTrainingPlanTextView: UITextView = {
         let textView = UITextView(frame: .zero)
         textView.font = UIFont.textLabelFont(size: 20)
+        textView.returnKeyType = .next
         textView.textAlignment = .justified
         textView.textColor = FFResources.Colors.textColor
         textView.layer.cornerRadius = 8
@@ -37,6 +52,10 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         textView.allowsKeyboardScrolling = true
         textView.setContentHuggingPriority( .defaultHigh, for: .vertical)
         textView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
+        textView.layer.borderColor = FFResources.Colors.textColor.cgColor
+        textView.layer.borderWidth = 0.2
+        textView.layer.masksToBounds = true
+        textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
 
@@ -50,6 +69,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
         button.configuration?.baseForegroundColor = FFResources.Colors.textColor
         button.showsMenuAsPrimaryAction = true
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -64,6 +84,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         button.configuration?.baseBackgroundColor = FFResources.Colors.darkPurple
         button.configuration?.baseForegroundColor = FFResources.Colors.darkPurple
         button.showsMenuAsPrimaryAction = true
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -75,9 +96,12 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         setupNavigationController()
         setupConstraints()
         setupButtons()
-        setupTextViewInsets()
+//        setupTextViewInsets()
         dismissKeyboardBySwipe()
         setupToolBar()
+        setupDelegates()
+        
+        
     }
     //MARK: - Target methods
     @objc private func didTapSwipeKeyboard(){
@@ -125,22 +149,42 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     @objc private func didTapUnderlineText(){
         let currentAttributes = noteTrainingPlanTextView.typingAttributes
         let range = noteTrainingPlanTextView.selectedRange
+        let symbolsCount = noteTrainingPlanTextView.offset(from: noteTrainingPlanTextView.beginningOfDocument, to: noteTrainingPlanTextView.selectedTextRange!.start)
+        let unselectedRange = NSMakeRange(symbolsCount, 0)
         if let underlineStyle = currentAttributes[NSAttributedString.Key.underlineStyle] as? NSUnderlineStyle,
            underlineStyle == .single {
             let newAttributes = [NSAttributedString.Key.underlineStyle: 0]
             let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
             attributedString.addAttributes(newAttributes, range: range )
+            attributedString.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: range)
             noteTrainingPlanTextView.attributedText = attributedString
         } else {
             let newAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
             let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
             attributedString.addAttributes(newAttributes, range: range)
+            attributedString.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: unselectedRange)
             noteTrainingPlanTextView.attributedText = attributedString
-            
         }
+    }
+    
+    @objc private func didTapContinue(){
+        let vc = FFAddExerciseViewController(trainProgram: trainPlanData)
+        dump(trainPlanData)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didTapQuestion(){
+        
     }
 
     //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
+//    func checkPlanDataIsEmpty(){
+//        let data = trainPlanData
+//        if data?.name.isEmpty && data?.note.isEmpty && data?.type.isEmpty && data?.location.isEmpty {
+//            alertError(title: "Error!", message: "Fill the fields and choose type and location")
+//        }
+//    }
+    
     func setupToolBar(){
         textViewToolBar = UIToolbar(frame: .zero)
         textViewToolBar.sizeToFit()
@@ -169,15 +213,15 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         view.addGestureRecognizer(swipe)
     }
     
-    func setLocationMenu() -> UIMenu {
+    private func setLocationMenu() -> UIMenu {
         var actions: [UIAction] {
             [UIAction(title: "Inside", handler: { [unowned self] _ in
-                trainPlanData[2] = "Inside"
-                locationButton.configuration?.title = trainPlanData[2]
+                trainPlanData?.location = "Inside"
+                locationButton.configuration?.title = trainPlanData?.location
             }),
              UIAction(title: "Outside", handler: { [unowned self] _ in
-                trainPlanData[2] = "Outside"
-                locationButton.configuration?.title = trainPlanData[2]
+                trainPlanData?.location = "Outside"
+                locationButton.configuration?.title = trainPlanData?.location
             })]
         }
         
@@ -188,25 +232,29 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     private func setTrainingTypeMenu() -> UIMenu {
         var actions: [UIAction] {
             [UIAction(title: "Cardio", handler: { [unowned self] _ in
-                trainPlanData[3] = "Inside"
-                trainingTypeButton.configuration?.title = trainPlanData[3]
+                trainPlanData?.type = "Cardio"
+                trainingTypeButton.configuration?.title = trainPlanData?.type
             }),
              UIAction(title: "Strength", handler: { [unowned self] _ in
-                trainPlanData[3] = "Strength"
-                trainingTypeButton.configuration?.title = trainPlanData[3]
+                trainPlanData?.type = "Strength"
+                trainingTypeButton.configuration?.title = trainPlanData?.type
             }),
              UIAction(title: "Endurance", handler: { [unowned self] _ in
-                trainPlanData[3] = "Endurance"
-                trainingTypeButton.configuration?.title = trainPlanData[3]
+                trainPlanData?.type = "Endurance"
+                trainingTypeButton.configuration?.title = trainPlanData?.type
             }),
              UIAction(title: "Flexibility", handler: { [unowned self] _ in
-                trainPlanData[3] = "Flexibility"
-                trainingTypeButton.configuration?.title = trainPlanData[3]
+                trainPlanData?.type = "Flexibility"
+                trainingTypeButton.configuration?.title = "Flexibility"
             })]
         }
         
         let menu = UIMenu(title: "Choose Type of your training",image: UIImage(systemName: "figure.highintensity.intervaltraining"),children: actions)
         return menu
+    }
+    
+    func setupDelegates(){
+        trainingPlanTextField.delegate = self
     }
     
     func setupGradient(){
@@ -230,10 +278,25 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     func setupNavigationController() {
         title = "Create program"
         navigationItem.largeTitleDisplayMode = .never
+        let infoButton = UIBarButtonItem(image: UIImage(systemName: "questionmark.circle"), style: .done, target: self, action: #selector(didTapQuestion))
+        let continueButton = addNavigationBarButton(title: "Create", imageName: "" , action: #selector(didTapContinue), menu: nil)
+        navigationItem.rightBarButtonItems = [continueButton, infoButton]
     }
     
-    func addToolBar(){
-        let toolBar = UIToolbar()
+
+}
+
+extension FFCreateTrainProgramViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let text = trainingPlanTextField.text,
+           !text.isEmpty {
+            trainPlanData?.name = text
+            trainingPlanTextField.resignFirstResponder()
+            noteTrainingPlanTextView.becomeFirstResponder()
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -244,6 +307,7 @@ extension FFCreateTrainProgramViewController {
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         stackView.spacing = 5
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(trainingPlanTextField)
         trainingPlanTextField.snp.makeConstraints { make in

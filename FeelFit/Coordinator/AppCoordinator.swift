@@ -63,7 +63,7 @@ class AppCoordinator: Coordinator {
     
     private func setupControllerBar(){
         let news = tabBarSetup(vc: FFNewsPageViewController(), title: "News", image: "newspaper",tag: FFTabBarIndex.news.rawValue)
-        let exercises = tabBarSetup(vc: FFExercisesViewController(), title: "Exercises", image: "figure.strengthtraining.traditional",tag: FFTabBarIndex.exercises.rawValue)
+        let exercises = tabBarSetup(vc: FFMusclesGroupViewController(), title: "Exercises", image: "figure.strengthtraining.traditional",tag: FFTabBarIndex.exercises.rawValue)
         let health = tabBarSetup(vc: FFHealthViewController(), title: "Health", image: "heart.text.square",tag: FFTabBarIndex.health.rawValue)
         let plan = tabBarSetup(vc: FFTRainingPlanViewController(), title: "Plan", image: "checkmark.diamond",tag: FFTabBarIndex.trainingPlan.rawValue)
         let profile = tabBarSetup(vc: FFProfileViewController(), title: "My Profile", image: "person.fill",tag: FFTabBarIndex.user.rawValue)

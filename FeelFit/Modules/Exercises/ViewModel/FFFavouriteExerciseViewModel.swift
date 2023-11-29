@@ -19,7 +19,7 @@ class FFFavouriteExerciseViewModel {
         
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath,sortedModel: [String: [FFExerciseModelRealm]]) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath,sortedModel: [String: [FFFavouriteExerciseRealmModel]]) {
         tableView.deselectRow(at: indexPath, animated: true)
         let key = Array(sortedModel.keys.sorted())[indexPath.section]
         let values = sortedModel[key]
@@ -33,7 +33,7 @@ class FFFavouriteExerciseViewModel {
         return 75
     }
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath, sortedModel: [String: [FFExerciseModelRealm]]) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath, sortedModel: [String: [FFFavouriteExerciseRealmModel]]) -> UISwipeActionsConfiguration? {
         var sortedModel = sortedModel
         let key = Array(sortedModel.keys.sorted())[indexPath.section]
         let values = sortedModel[key]

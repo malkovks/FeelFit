@@ -197,7 +197,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     
     func loadingExerciseData(){
         let realm = try! Realm()
-        let models = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",exercise.exerciseID)
+        let models = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",exercise.exerciseID)
         saveStatus = !models.isEmpty ? true : false
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import RealmSwift
 
 
 
@@ -37,6 +38,8 @@ class FFGetExercisesDataBase {
 //e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306
 //993d6b8eacmshf5233f92ac39081p16b3f7jsnc30a9fca4475 - закончился лимит
     
+    let realm = try! Realm()
+    
     func getMuscleDatabase(muscle: String,limit number: String = "10",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         let headers = [
             "X-RapidAPI-Key": "e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306",
@@ -56,12 +59,13 @@ class FFGetExercisesDataBase {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        AF.request(request).validate().responseDecodable(of: [Exercise].self) { response in
+        AF.request(request).validate().responseDecodable(of: [Exercise].self) { [weak self] response in
             guard let urlRequest = response.request else { print("url request unavailable") ;return }
             guard let data = response.data else { print("data unavailable"); return}
             guard let responseRequest = response.response else { print("response request"); return}
             switch response.result {
             case .success(let success):
+                self?.saveDataToRealm(model: success)
                 let cacheResponse = CachedURLResponse(response: responseRequest, data: data)
                 URLCache.shared.storeCachedResponse(cacheResponse, for: urlRequest)
                 completionHandler(.success(success))
@@ -69,6 +73,23 @@ class FFGetExercisesDataBase {
                 completionHandler(.failure(failure))
             }
         }.resume()
+    }
+    func saveDataToRealm(model: [Exercise]){
+        let exerciseObjects = model.map { data -> FFExerciseModelRealm in
+            let exercise = FFExerciseModelRealm()
+            exercise.exerciseID = data.exerciseID
+            exercise.exerciseBodyPart = data.bodyPart
+            exercise.exerciseEquipment = data.equipment
+            exercise.exerciseImageLink = data.imageLink
+            exercise.exerciseName = data.exerciseName
+            exercise.exerciseMuscle = data.muscle
+            exercise.exerciseSecondaryMuscles = data.secondaryMuscles.joined(separator: ", ")
+            exercise.exerciseInstructions = data.instructions.joined(separator: ". ")
+            return exercise
+        }
+        try! realm.write({
+            realm.add(exerciseObjects)
+        })
     }
 }
 

@@ -14,8 +14,8 @@ class FFFavouriteExercisesViewController: UIViewController, SetupViewController 
     
     private var tableView: UITableView!
     
-    private var model: Results<FFExerciseModelRealm>!
-    private var sortedModel = [String: [FFExerciseModelRealm]]()
+    private var model: Results<FFFavouriteExerciseRealmModel>!
+    private var sortedModel = [String: [FFFavouriteExerciseRealmModel]]()
     
     private let realm = try! Realm()
     
@@ -58,9 +58,9 @@ class FFFavouriteExercisesViewController: UIViewController, SetupViewController 
     }
     
     func loadExercisesData(){
-        model = realm.objects(FFExerciseModelRealm.self)
+        model = realm.objects(FFFavouriteExerciseRealmModel.self)
         for m in model {
-            let muscle = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@", m.exerciseMuscle)
+            let muscle = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseMuscle == %@", m.exerciseMuscle)
             sortedModel[m.exerciseMuscle] = Array(muscle)
         }
     }

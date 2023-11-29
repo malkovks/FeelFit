@@ -1,5 +1,5 @@
 //
-//  FFExercisesViewController.swift
+//  FFMusclesGroupViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 20.09.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FFExercisesViewController: UIViewController, SetupViewController {
+class FFMusclesGroupViewController: UIViewController, SetupViewController {
     
     var viewModel: FFExercisesViewModel!
     
@@ -55,7 +55,7 @@ class FFExercisesViewController: UIViewController, SetupViewController {
     }
 }
 
-extension FFExercisesViewController: UICollectionViewDataSource {
+extension FFMusclesGroupViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return FFExercisesCollectionViewCell().muscleDictionary.count
     }
@@ -69,19 +69,19 @@ extension FFExercisesViewController: UICollectionViewDataSource {
     
 }
 
-extension FFExercisesViewController: UICollectionViewDelegateFlowLayout{
+extension FFMusclesGroupViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         viewModel.collectionView(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath)
     }
 }
 
-extension FFExercisesViewController: UICollectionViewDelegate {
+extension FFMusclesGroupViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         viewModel.collectionView(collectionView, didSelectItemAt: indexPath)
     }
 }
 
-extension FFExercisesViewController {
+extension FFMusclesGroupViewController {
     private func setupConstraints(){
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in

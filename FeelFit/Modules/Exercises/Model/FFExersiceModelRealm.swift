@@ -1,14 +1,14 @@
 //
-//  FFFavouriteExercisesModel.swift
+//  FFExersiceModelRealm.swift
 //  FeelFit
 //
-//  Created by Константин Малков on 16.11.2023.
+//  Created by Константин Малков on 29.11.2023.
 //
 
 import UIKit
 import RealmSwift
 
-class FFFavouriteExerciseRealmModel: Object {
+class FFExerciseModelRealm: Object {
     @Persisted var exerciseBodyPart: String
     @Persisted var exerciseEquipment: String
     @Persisted var exerciseImageLink: String
@@ -18,4 +18,3 @@ class FFFavouriteExerciseRealmModel: Object {
     @Persisted var exerciseSecondaryMuscles: String
     @Persisted var exerciseInstructions: String
 }
-

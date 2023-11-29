@@ -127,7 +127,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
     }
     
     private func checkModelStatus(model: Exercise){
-        let object = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",model.exerciseID)
+        let object = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",model.exerciseID)
         status = !object.isEmpty ? true : false
     }
     
