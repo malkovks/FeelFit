@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFExercisesCollectionViewCell: UICollectionViewCell {
     
-    
+    private let realm = try! Realm()
     
     static let identifier = "ExerciseCell"
     
@@ -86,6 +87,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         let value = muscleDictionary[key]
         muscleTitleLabel.text = value
         muscleImageView.image = UIImage(named: key)
+        FFExerciseStoreManager.shared.checkDuplicates(key)
     }
     
     required init?(coder: NSCoder) {

@@ -45,7 +45,7 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
     }
     
     @objc private func didTapRefreshPage(){
-        viewModel.loadData(name: muscleGroupName)
+        viewModel.checkAvailableData(loadName: muscleGroupName)
     }
     
     
@@ -53,7 +53,7 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         view.backgroundColor = .lightGray
         viewModel = FFExerciseMuscleGroupViewModel()
         viewModel.delegate = self
-        viewModel.loadData(name: muscleGroupName)
+        viewModel.checkAvailableData(loadName: muscleGroupName)
     }
     
     func setupNavigationController() {

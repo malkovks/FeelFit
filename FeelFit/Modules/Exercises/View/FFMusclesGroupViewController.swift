@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFMusclesGroupViewController: UIViewController, SetupViewController {
     
-    var viewModel: FFExercisesViewModel!
+    var viewModel: FFMuscleGroupViewModel!
     
     private var collectionView: UICollectionView!
 
@@ -17,6 +18,10 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
         super.viewDidLoad()
         setupView()
         setupNavigationController()
+        
+        let realm = try! Realm()
+        print(realm.configuration.fileURL!)
+        
         contentUnavailableConfiguration = viewModel.setupConfiguration { [unowned self] in
             setupCollectionView()
             setupConstraints()
@@ -29,15 +34,19 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    @objc private func didTapDelete(){
+        viewModel.clearModelByName()
+    }
     
     func setupView() {
-        viewModel = FFExercisesViewModel(viewController: self)
+        viewModel = FFMuscleGroupViewModel(viewController: self)
         view.backgroundColor = .secondarySystemBackground
     }
     
     func setupNavigationController() {
         title = "Exercises"
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "trash", action: #selector(didTapDelete), menu: nil)
     }
     
     func setupCollectionView(){

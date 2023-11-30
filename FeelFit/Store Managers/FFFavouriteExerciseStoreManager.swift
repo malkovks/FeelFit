@@ -28,8 +28,8 @@ class FFFavouriteExerciseStoreManager {
         model.exerciseSecondaryMuscles = secondaryMuscles ?? "No data available"
         model.exerciseInstructions = instructions ?? "No instructions"
         
-        
-        let existingID = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",exercise?.exerciseID).first
+        let id = String(describing: exercise?.exerciseID)
+        let existingID = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",id).first
         
         if existingID != nil {
             throw FFResources.Errors.tryingSaveDuplicate
@@ -37,7 +37,6 @@ class FFFavouriteExerciseStoreManager {
             DispatchQueue.main.async { [unowned self] in
                 try! self.realm.write({
                     self.realm.add(model)
-                    print("Save")
                 })
             }
         }
@@ -50,7 +49,6 @@ class FFFavouriteExerciseStoreManager {
         DispatchQueue.main.async { [unowned self] in
             try! self.realm.write({
                 self.realm.delete(deleteModel)
-                print("Delete")
             })
         }
     }

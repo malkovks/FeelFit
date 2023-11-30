@@ -1,13 +1,16 @@
 //
-//  FFExercisesViewModel.swift
+//  FFMuscleGroupViewModel.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 30.10.2023.
 //
 
 import UIKit
+import RealmSwift
 
-class FFExercisesViewModel {
+class FFMuscleGroupViewModel {
+    
+    private let realm = try! Realm()
     
     let viewController: UIViewController
     
@@ -35,8 +38,11 @@ class FFExercisesViewModel {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! FFExercisesCollectionViewCell
-        let key = Array(cell.muscleDictionary.keys.sorted())[indexPath.row]
-        let keyValue = String(describing: key)
+        let key: String = Array(cell.muscleDictionary.keys.sorted())[indexPath.row]
+        
+        let keyValue: String = key.replacingOccurrences(of: "_", with: "%20")
+        
+        print(keyValue)
         let vc = FFExercisesMuscleGroupViewController(muscleGroupName: keyValue)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
@@ -45,5 +51,13 @@ class FFExercisesViewModel {
         let width = collectionView.bounds.width / 2 - 10
         let height = CGFloat(viewController.view.frame.size.height/4)
         return CGSize(width: width, height: height)
+    }
+    
+    func clearModelByName(){
+        let value = realm.objects(FFExerciseModelRealm.self)
+        try! realm.write({
+            realm.delete(value)
+            print("Data was deleted")
+        })
     }
 }

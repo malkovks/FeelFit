@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 protocol FFExerciseProtocol: AnyObject {
     func viewWillLoadData()
@@ -14,14 +15,15 @@ protocol FFExerciseProtocol: AnyObject {
 
 class FFExerciseMuscleGroupViewModel {
     
+    private let realm = try! Realm()
+    
     weak var delegate: FFExerciseProtocol?
     
     func loadData(name: String){
-        delegate?.viewWillLoadData()
         FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name) { result in
             switch result {
-                
             case .success(let data):
+                FFExerciseStoreManager.shared.saveLoadData(model: data)
                 self.delegate?.viewDidLoadData(result: .success(data))
             case .failure(let error):
                 self.delegate?.viewDidLoadData(result: .failure(error))
@@ -29,6 +31,19 @@ class FFExerciseMuscleGroupViewModel {
         }
     }
 
+    func checkAvailableData(loadName: String){
+        delegate?.viewWillLoadData()
+        let formattedKey = loadName.replacingOccurrences(of: "%20", with: " ")
+        let value = FFExerciseStoreManager.shared.loadConvertedData(formattedKey)
+        if value.count > 0 {
+            self.delegate?.viewDidLoadData(result: .success(value))
+        } else if value.count == 0 {
+            loadData(name: loadName)
+        } else {
+            let error = NSError()
+            self.delegate?.viewDidLoadData(result: .failure(error))
+        }
+    }
     
     func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [Exercise]) {
         tableView.deselectRow(at: indexPath, animated: true)

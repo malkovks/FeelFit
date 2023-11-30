@@ -40,7 +40,7 @@ class FFGetExercisesDataBase {
     
     let realm = try! Realm()
     
-    func getMuscleDatabase(muscle: String,limit number: String = "10",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
+    func getMuscleDatabase(muscle: String,limit number: String = "20",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         let headers = [
             "X-RapidAPI-Key": "e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306",
             "X-RapidAPI-Host": "exercisedb.p.rapidapi.com"
@@ -59,13 +59,12 @@ class FFGetExercisesDataBase {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        AF.request(request).validate().responseDecodable(of: [Exercise].self) { [weak self] response in
-            guard let urlRequest = response.request else { print("url request unavailable") ;return }
-            guard let data = response.data else { print("data unavailable"); return}
-            guard let responseRequest = response.response else { print("response request"); return}
+        AF.request(request).validate().responseDecodable(of: [Exercise].self) { response in
+            guard let urlRequest = response.request else { return }
+            guard let data = response.data else { return }
+            guard let responseRequest = response.response else { return }
             switch response.result {
             case .success(let success):
-                self?.saveDataToRealm(model: success)
                 let cacheResponse = CachedURLResponse(response: responseRequest, data: data)
                 URLCache.shared.storeCachedResponse(cacheResponse, for: urlRequest)
                 completionHandler(.success(success))
@@ -73,23 +72,6 @@ class FFGetExercisesDataBase {
                 completionHandler(.failure(failure))
             }
         }.resume()
-    }
-    func saveDataToRealm(model: [Exercise]){
-        let exerciseObjects = model.map { data -> FFExerciseModelRealm in
-            let exercise = FFExerciseModelRealm()
-            exercise.exerciseID = data.exerciseID
-            exercise.exerciseBodyPart = data.bodyPart
-            exercise.exerciseEquipment = data.equipment
-            exercise.exerciseImageLink = data.imageLink
-            exercise.exerciseName = data.exerciseName
-            exercise.exerciseMuscle = data.muscle
-            exercise.exerciseSecondaryMuscles = data.secondaryMuscles.joined(separator: ", ")
-            exercise.exerciseInstructions = data.instructions.joined(separator: ". ")
-            return exercise
-        }
-        try! realm.write({
-            realm.add(exerciseObjects)
-        })
     }
 }
 

@@ -17,7 +17,7 @@ struct CreateTrainProgram {
 
 class FFCreateTrainProgramViewController: UIViewController, SetupViewController {
     
-    var trainPlanData: CreateTrainProgram?
+    var trainPlanData = CreateTrainProgram(name: "", note: "", type: "", location: "")
     
     private let trainingPlanTextField: UITextField = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
@@ -168,9 +168,19 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     
     @objc private func didTapContinue(){
+        guard let firstText = trainingPlanTextField.text,
+              let secondText = noteTrainingPlanTextView.text,
+              let location = locationButton.configuration?.title,
+              let type = trainingTypeButton.configuration?.title
+        else {
+            viewAlertController(text: "Fill in all the fields", startDuration: 0.5, timer: 1.5, controllerView: self.view)
+            return
+        }
+        trainPlanData.name = firstText
+        trainPlanData.note = secondText
         let vc = FFAddExerciseViewController(trainProgram: trainPlanData)
-        dump(trainPlanData)
         navigationController?.pushViewController(vc, animated: true)
+        dump(trainPlanData)
     }
     
     @objc private func didTapQuestion(){
@@ -215,16 +225,15 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     private func setLocationMenu() -> UIMenu {
         var actions: [UIAction] {
-            [UIAction(title: "Inside", handler: { [unowned self] _ in
-                trainPlanData?.location = "Inside"
-                locationButton.configuration?.title = trainPlanData?.location
+            [UIAction(title: "Indoor", handler: { [unowned self] _ in
+                trainPlanData.location = "Indoor"
+                locationButton.configuration?.title = "Indoor"
             }),
-             UIAction(title: "Outside", handler: { [unowned self] _ in
-                trainPlanData?.location = "Outside"
-                locationButton.configuration?.title = trainPlanData?.location
+             UIAction(title: "Outdoor", handler: { [unowned self] _ in
+                trainPlanData.location = "Outdoor"
+                locationButton.configuration?.title = "Outdoor"
             })]
         }
-        
         let menu = UIMenu(title: "Choose location of your training",image: UIImage(systemName: "location"),children: actions)
         return menu
     }
@@ -232,20 +241,29 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     private func setTrainingTypeMenu() -> UIMenu {
         var actions: [UIAction] {
             [UIAction(title: "Cardio", handler: { [unowned self] _ in
-                trainPlanData?.type = "Cardio"
-                trainingTypeButton.configuration?.title = trainPlanData?.type
+                trainPlanData.type = "Cardio"
+                DispatchQueue.main.async {
+                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
+                }
             }),
              UIAction(title: "Strength", handler: { [unowned self] _ in
-                trainPlanData?.type = "Strength"
-                trainingTypeButton.configuration?.title = trainPlanData?.type
+                trainPlanData.type = "Strength"
+                DispatchQueue.main.async {
+                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
+                }
             }),
              UIAction(title: "Endurance", handler: { [unowned self] _ in
-                trainPlanData?.type = "Endurance"
-                trainingTypeButton.configuration?.title = trainPlanData?.type
+                trainPlanData.type = "Endurance"
+                DispatchQueue.main.async {
+                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
+                }
             }),
              UIAction(title: "Flexibility", handler: { [unowned self] _ in
-                trainPlanData?.type = "Flexibility"
-                trainingTypeButton.configuration?.title = "Flexibility"
+                trainPlanData.type = "Flexibility"
+                DispatchQueue.main.async {
+                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
+                }
+                
             })]
         }
         
@@ -290,7 +308,7 @@ extension FFCreateTrainProgramViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let text = trainingPlanTextField.text,
            !text.isEmpty {
-            trainPlanData?.name = text
+            trainPlanData.name = text
             trainingPlanTextField.resignFirstResponder()
             noteTrainingPlanTextView.becomeFirstResponder()
             return true
