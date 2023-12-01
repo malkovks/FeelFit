@@ -15,7 +15,10 @@ struct CreateTrainProgram {
 }
 
 
+/// Class which create base information about future training
 class FFCreateTrainProgramViewController: UIViewController, SetupViewController {
+    
+    private var viewModel: FFCreateTrainProgramViewModel!
     
     var trainPlanData = CreateTrainProgram(name: "", note: "", type: "", location: "")
     
@@ -34,7 +37,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         field.layer.borderWidth = 0.2
         field.layer.borderColor = FFResources.Colors.textColor.cgColor
         field.layer.masksToBounds = true
-//        field.borderStyle = .roundedRect
         field.textColor = FFResources.Colors.textColor
         field.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -48,6 +50,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         textView.textAlignment = .justified
         textView.textColor = FFResources.Colors.textColor
         textView.layer.cornerRadius = 8
+        textView.textContainer.lineBreakMode = .byWordWrapping
         textView.allowsEditingTextAttributes = false
         textView.allowsKeyboardScrolling = true
         textView.setContentHuggingPriority( .defaultHigh, for: .vertical)
@@ -92,11 +95,12 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         setupView()
         setupNavigationController()
         setupConstraints()
         setupButtons()
-//        setupTextViewInsets()
+        setupTextViewInsets()
         dismissKeyboardBySwipe()
         setupToolBar()
         setupDelegates()
@@ -109,69 +113,20 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     
     @objc private func didTapBoldText(){
-        let currentAttributes = noteTrainingPlanTextView.typingAttributes
-        let range = noteTrainingPlanTextView.selectedRange
-        
-        let attributes = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
-        attributes.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: NSRange(location: 0, length: attributes.length))
-        
-        if let font = currentAttributes[NSAttributedString.Key.font] as? UIFont,
-           font.fontDescriptor.symbolicTraits.contains(.traitBold) {
-            let originFont = UIFont.textLabelFont(size: 20)
-            let newAttributes = [NSAttributedString.Key.font: originFont]
-            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
-            attributedString.addAttributes(newAttributes, range: range)
-        } else {
-            attributes.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: range)
-            noteTrainingPlanTextView.attributedText = attributes
-        }
+        noteTrainingPlanTextView.attributedText = viewModel.setupBoldText(textView: noteTrainingPlanTextView)
     }
     
     @objc private func didTapItalicText(){
-        let currentAttributes = noteTrainingPlanTextView.typingAttributes
-        let range = noteTrainingPlanTextView.selectedRange
-        
-        let attributes = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
-        attributes.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: NSRange(location: 0, length: attributes.length))
-        
-        if let font = currentAttributes[NSAttributedString.Key.font] as? UIFont,
-           font.fontDescriptor.symbolicTraits.contains(.traitItalic) {
-            let originFont = UIFont.textLabelFont(size: 20)
-            let newAttributes = [NSAttributedString.Key.font: originFont]
-            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
-            attributedString.addAttributes(newAttributes, range: range)
-        } else {
-            attributes.addAttribute(.font, value: UIFont.italicSystemFont(ofSize: 20), range: range)
-            noteTrainingPlanTextView.attributedText = attributes
-        }
+        noteTrainingPlanTextView.attributedText = viewModel.setupItalicText(textView: noteTrainingPlanTextView)
     }
     
     @objc private func didTapUnderlineText(){
-        let currentAttributes = noteTrainingPlanTextView.typingAttributes
-        let range = noteTrainingPlanTextView.selectedRange
-        let symbolsCount = noteTrainingPlanTextView.offset(from: noteTrainingPlanTextView.beginningOfDocument, to: noteTrainingPlanTextView.selectedTextRange!.start)
-        let unselectedRange = NSMakeRange(symbolsCount, 0)
-        if let underlineStyle = currentAttributes[NSAttributedString.Key.underlineStyle] as? NSUnderlineStyle,
-           underlineStyle == .single {
-            let newAttributes = [NSAttributedString.Key.underlineStyle: 0]
-            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
-            attributedString.addAttributes(newAttributes, range: range )
-            attributedString.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: range)
-            noteTrainingPlanTextView.attributedText = attributedString
-        } else {
-            let newAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
-            let attributedString = NSMutableAttributedString(string: noteTrainingPlanTextView.text)
-            attributedString.addAttributes(newAttributes, range: range)
-            attributedString.addAttribute(.font, value: UIFont.textLabelFont(size: 20), range: unselectedRange)
-            noteTrainingPlanTextView.attributedText = attributedString
-        }
+        noteTrainingPlanTextView.attributedText = viewModel.setupUnderlineText(textView: noteTrainingPlanTextView)
     }
     
     @objc private func didTapContinue(){
-        guard let firstText = trainingPlanTextField.text,
-              let secondText = noteTrainingPlanTextView.text,
-              let location = locationButton.configuration?.title,
-              let type = trainingTypeButton.configuration?.title
+        guard let firstText = trainingPlanTextField.text, firstText != "",
+              let secondText = noteTrainingPlanTextView.text, secondText != ""
         else {
             viewAlertController(text: "Fill in all the fields", startDuration: 0.5, timer: 1.5, controllerView: self.view)
             return
@@ -180,7 +135,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         trainPlanData.note = secondText
         let vc = FFAddExerciseViewController(trainProgram: trainPlanData)
         navigationController?.pushViewController(vc, animated: true)
-        dump(trainPlanData)
     }
     
     @objc private func didTapQuestion(){
@@ -188,12 +142,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
 
     //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
-//    func checkPlanDataIsEmpty(){
-//        let data = trainPlanData
-//        if data?.name.isEmpty && data?.note.isEmpty && data?.type.isEmpty && data?.location.isEmpty {
-//            alertError(title: "Error!", message: "Fill the fields and choose type and location")
-//        }
-//    }
     
     func setupToolBar(){
         textViewToolBar = UIToolbar(frame: .zero)
@@ -206,14 +154,17 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         textViewToolBar.setItems([boldText, space, italicText, space, underlineText, space, doneButton], animated: true)
         noteTrainingPlanTextView.inputAccessoryView = textViewToolBar
-        
+    }
+    
+    func setupViewModel(){
+        viewModel = FFCreateTrainProgramViewModel()
     }
     
     func setupTextViewInsets(){
         let style = NSMutableParagraphStyle()
         style.firstLineHeadIndent = 20
         let attributes = [NSAttributedString.Key.paragraphStyle: style]
-        let string = NSAttributedString(string: "", attributes: attributes)
+        let string = NSAttributedString(string: noteTrainingPlanTextView.text, attributes: attributes)
         noteTrainingPlanTextView.attributedText = string
     }
     
@@ -221,54 +172,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(didTapSwipeKeyboard))
         swipe.direction = .down
         view.addGestureRecognizer(swipe)
-    }
-    
-    private func setLocationMenu() -> UIMenu {
-        var actions: [UIAction] {
-            [UIAction(title: "Indoor", handler: { [unowned self] _ in
-                trainPlanData.location = "Indoor"
-                locationButton.configuration?.title = "Indoor"
-            }),
-             UIAction(title: "Outdoor", handler: { [unowned self] _ in
-                trainPlanData.location = "Outdoor"
-                locationButton.configuration?.title = "Outdoor"
-            })]
-        }
-        let menu = UIMenu(title: "Choose location of your training",image: UIImage(systemName: "location"),children: actions)
-        return menu
-    }
-    
-    private func setTrainingTypeMenu() -> UIMenu {
-        var actions: [UIAction] {
-            [UIAction(title: "Cardio", handler: { [unowned self] _ in
-                trainPlanData.type = "Cardio"
-                DispatchQueue.main.async {
-                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
-                }
-            }),
-             UIAction(title: "Strength", handler: { [unowned self] _ in
-                trainPlanData.type = "Strength"
-                DispatchQueue.main.async {
-                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
-                }
-            }),
-             UIAction(title: "Endurance", handler: { [unowned self] _ in
-                trainPlanData.type = "Endurance"
-                DispatchQueue.main.async {
-                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
-                }
-            }),
-             UIAction(title: "Flexibility", handler: { [unowned self] _ in
-                trainPlanData.type = "Flexibility"
-                DispatchQueue.main.async {
-                    self.trainingTypeButton.configuration?.title = self.trainPlanData.type
-                }
-                
-            })]
-        }
-        
-        let menu = UIMenu(title: "Choose Type of your training",image: UIImage(systemName: "figure.highintensity.intervaltraining"),children: actions)
-        return menu
     }
     
     func setupDelegates(){
@@ -289,16 +192,22 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     
     func setupButtons(){
-        locationButton.menu = setLocationMenu()
-        trainingTypeButton.menu = setTrainingTypeMenu()
+        locationButton.menu = viewModel.setLocationMenu(handler: { [unowned self] location in
+            trainPlanData.location = location
+            locationButton.configuration?.title = location
+        })
+        trainingTypeButton.menu = viewModel.setTrainingTypeMenu(handler: { [unowned self] type in
+            trainPlanData.type = type
+            trainingTypeButton.configuration?.title = type
+            
+        })
     }
     
     func setupNavigationController() {
         title = "Create program"
         navigationItem.largeTitleDisplayMode = .never
-        let infoButton = UIBarButtonItem(image: UIImage(systemName: "questionmark.circle"), style: .done, target: self, action: #selector(didTapQuestion))
         let continueButton = addNavigationBarButton(title: "Create", imageName: "" , action: #selector(didTapContinue), menu: nil)
-        navigationItem.rightBarButtonItems = [continueButton, infoButton]
+        navigationItem.rightBarButtonItem = continueButton
     }
     
 

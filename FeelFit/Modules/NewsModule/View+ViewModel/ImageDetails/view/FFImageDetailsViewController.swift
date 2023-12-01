@@ -55,6 +55,7 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         setupView()
         setupNavigationController()
         setupConstraints()
@@ -68,8 +69,12 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
         viewModel.shareImageView(viewController: self, url: imageURL, title: "Check this picture", image: imageView.image!)
     }
     
-    func setupView() {
+    func setupViewModel() {
         viewModel = FFImageDetailsViewModel()
+    }
+    
+    func setupView() {
+
         
         view.backgroundColor = UIColor.clear
         view.clipsToBounds = true

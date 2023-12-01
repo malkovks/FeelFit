@@ -10,6 +10,8 @@ import UIKit
 class FFProfileViewController: UIViewController, SetupViewController {
     
     
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +25,10 @@ class FFProfileViewController: UIViewController, SetupViewController {
     }
     
     func setupNavigationController() {
+        
+    }
+    
+    func setupViewModel() {
         
     }
 

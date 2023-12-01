@@ -12,7 +12,7 @@ import Alamofire
 
 class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
-    var viewModel: FFNewsDetailViewModel?
+    var viewModel: FFNewsDetailViewModel!
     
     let model: Articles
     var saveStatus: Bool = false
@@ -140,12 +140,16 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     //MARK: - Setups
     func setupView() {
         isNewsSavedInModel()
-        viewModel = FFNewsDetailViewModel()
+        setupViewModel()
         view.backgroundColor = FFResources.Colors.backgroundColor
         setupDetailNews()
         setupImage()
         setupImageView()
         setupNewsSourceButton()
+    }
+    
+    func setupViewModel() {
+        viewModel = FFNewsDetailViewModel()
     }
     
     func setupImageView(){

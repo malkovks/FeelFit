@@ -38,6 +38,7 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         setupNavigationController()
         setupTableView()
         setupConstraints()
@@ -48,12 +49,15 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         viewModel.checkAvailableData(loadName: muscleGroupName)
     }
     
-    
-    func setupView() {
-        view.backgroundColor = .lightGray
+    func setupViewModel() {
         viewModel = FFExerciseMuscleGroupViewModel()
         viewModel.delegate = self
         viewModel.checkAvailableData(loadName: muscleGroupName)
+    }
+    
+    func setupView() {
+        view.backgroundColor = .lightGray
+        
     }
     
     func setupNavigationController() {

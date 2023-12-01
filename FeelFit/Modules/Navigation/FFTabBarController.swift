@@ -23,6 +23,9 @@ final class FFTabBarController: UITabBarController {
         tabBar.layer.masksToBounds = true
         tabBar.layer.borderWidth = 0.5
         tabBar.layer.borderColor = FFResources.Colors.textColor.cgColor
+        let height = tabBar.frame.size.height/2
+        tabBar.frame.size.height = height
+        tabBar.frame.origin.y = tabBar.frame.size.height - height
     }
     
     private func tabBarSetup(vc: UIViewController, title: String, image: String,tag: Int) -> UINavigationController {

@@ -19,6 +19,8 @@ struct TrainingPlan {
 //    let warmUp: WarmUpExercises
 }
 
+
+/// Main view controller which displaying planned if they have trainings. If not - user can create them
 class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     var viewModel: FFTrainingPlanViewModel!

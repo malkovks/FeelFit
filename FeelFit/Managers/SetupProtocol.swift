@@ -10,4 +10,5 @@ import Foundation
 protocol SetupViewController{
     func setupView()
     func setupNavigationController()
+    func setupViewModel()
 }

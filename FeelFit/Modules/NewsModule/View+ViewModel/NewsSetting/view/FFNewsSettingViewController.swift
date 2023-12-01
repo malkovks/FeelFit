@@ -38,6 +38,7 @@ class FFNewsSettingViewController: UIViewController, SetupViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         sections = [
             Section(title: "Localization"),
             Section(title: "Request Type"),
@@ -51,8 +52,12 @@ class FFNewsSettingViewController: UIViewController, SetupViewController {
     
     //MARK: - Setup methods
     func setupView() {
-        viewModel = FFNewsSettingViewModel()
+        
         rows = viewModel.setupRowModel()
+    }
+    
+    func setupViewModel() {
+        viewModel = FFNewsSettingViewModel()
     }
     
     func setupTableView(){

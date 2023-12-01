@@ -56,7 +56,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        setupNewsPageViewModel()
+        setupViewModel()
         setupNavigationController()
         contentUnavailableConfiguration = viewModel.setupConfig(action: { [unowned self] in
             self.didLoadView()
@@ -119,7 +119,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         refreshControll.addTarget(self, action: #selector(didTapRefreshData), for: .valueChanged)
     }
     
-    func setupNewsPageViewModel(){
+    func setupViewModel(){
         viewModel = FFNewsPageViewModel()
         viewModel.delegate = self
         dataSourceClass = FFNewsTableViewDataSource(with: model,viewController: self)

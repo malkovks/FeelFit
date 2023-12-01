@@ -12,6 +12,8 @@ import UIKit
 
 class FFCreateProgramViewController: UIViewController, SetupViewController {
     
+    
+    
     var viewModel: FFCreateProgramViewModel!
     
     
@@ -29,7 +31,7 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupViewModel()
         setupView()
         setupTableViewAndViewModel()
         
@@ -41,6 +43,10 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
     
     @objc private func buttonTapped(){
         self.dismiss(animated: true)
+    }
+    
+    func setupViewModel() {
+        viewModel = FFCreateProgramViewModel(viewController: self, tableView: tableView)
     }
     
     func setupView() {
@@ -57,7 +63,7 @@ class FFCreateProgramViewController: UIViewController, SetupViewController {
     func setupTableViewAndViewModel(){
         tableView = UITableView(frame: .zero, style: .insetGrouped)
         
-        viewModel = FFCreateProgramViewModel(viewController: self, tableView: tableView)
+       
         
         tableView.register(FFCreateTableViewCell.self, forCellReuseIdentifier: FFCreateTableViewCell.identifier)
         tableView.delegate = self

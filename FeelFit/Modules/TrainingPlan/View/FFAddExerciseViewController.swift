@@ -7,7 +7,13 @@
 
 import UIKit
 
+
+/// Class for adding exercises to created base program plan
 class FFAddExerciseViewController: UIViewController, SetupViewController {
+    
+    
+    
+    private var viewModel: FFAddExerciseViewModel!
     
     private let trainProgram: CreateTrainProgram?
     private let exercises = [Exercise]()
@@ -26,11 +32,11 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        setupViewModel()
         setupNavigationController()
         setupTableView()
         if exercises.isEmpty {
-            contentUnavailableConfiguration =  configureUnavailableContent { [unowned self] in
-                setupTableView()
+            contentUnavailableConfiguration =  viewModel.configureView { [unowned self] in
                 didTapAddExercise()
             }
         } else {
@@ -39,8 +45,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapAddExercise(){
-        let vc = FFMusclesGroupViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.addExercise()
     }
     
     func configureUnavailableContent(action: @escaping () -> ()) -> UIContentUnavailableConfiguration {
@@ -57,6 +62,10 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
             action()
         })
         return config
+    }
+    
+    func setupViewModel() {
+        viewModel = FFAddExerciseViewModel(viewController: self)
     }
     
     func setupTableView(){
@@ -79,7 +88,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
 
 extension FFAddExerciseViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return exercises.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,7 +101,7 @@ extension FFAddExerciseViewController: UITableViewDataSource {
 
 extension FFAddExerciseViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        55
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

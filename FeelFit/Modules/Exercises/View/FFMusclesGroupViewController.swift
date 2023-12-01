@@ -10,12 +10,15 @@ import RealmSwift
 
 class FFMusclesGroupViewController: UIViewController, SetupViewController {
     
+    
+    
     var viewModel: FFMuscleGroupViewModel!
     
     private var collectionView: UICollectionView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         setupView()
         setupNavigationController()
         
@@ -39,14 +42,16 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
     }
     
     func setupView() {
-        viewModel = FFMuscleGroupViewModel(viewController: self)
         view.backgroundColor = .secondarySystemBackground
+    }
+    
+    func setupViewModel() {
+        viewModel = FFMuscleGroupViewModel(viewController: self)
     }
     
     func setupNavigationController() {
         title = "Exercises"
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "heart.fill", action: #selector(didTapOpenFavourite), menu: nil)
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "trash", action: #selector(didTapDelete), menu: nil)
     }
     
     func setupCollectionView(){
