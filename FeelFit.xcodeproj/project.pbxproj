@@ -48,6 +48,10 @@
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
+		0A7278AA2B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */; };
+		0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */; };
+		0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */; };
+		0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */; };
 		0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */; };
 		0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */; };
 		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
@@ -121,6 +125,10 @@
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewCell.swift; sourceTree = "<group>"; };
+		0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewDataSource.swift; sourceTree = "<group>"; };
+		0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanExercisesViewController.swift; sourceTree = "<group>"; };
+		0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanExercisesViewModel.swift; sourceTree = "<group>"; };
 		0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanViewModel.swift; sourceTree = "<group>"; };
 		0A91519C2B02520F00FE5E41 /* FFCreateProgramViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateProgramViewModel.swift; sourceTree = "<group>"; };
 		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
@@ -505,6 +513,7 @@
 				0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */,
 				0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */,
 				0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */,
+				0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -516,6 +525,7 @@
 				0ABDEB062B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift */,
 				0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */,
 				0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */,
+				0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -567,6 +577,14 @@
 			path = TableViewFooter;
 			sourceTree = "<group>";
 		};
+		0A7278AD2B1DFAEA0055EECD /* TableViewDataSource */ = {
+			isa = PBXGroup;
+			children = (
+				0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */,
+			);
+			path = TableViewDataSource;
+			sourceTree = "<group>";
+		};
 		0A91519E2B02567E00FE5E41 /* CollectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -578,6 +596,7 @@
 		0A91519F2B0379F900FE5E41 /* TableView */ = {
 			isa = PBXGroup;
 			children = (
+				0A7278AD2B1DFAEA0055EECD /* TableViewDataSource */,
 				0A69AF372B0DD55D0013FB1B /* TableViewFooter */,
 				0A9151A32B037A8F00FE5E41 /* TableViewHeader */,
 				0A9151A22B037A8700FE5E41 /* TableViewCell */,
@@ -589,6 +608,7 @@
 			isa = PBXGroup;
 			children = (
 				0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */,
+				0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */,
 			);
 			path = TableViewCell;
 			sourceTree = "<group>";
@@ -847,9 +867,11 @@
 				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,
 				0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */,
 				0A91519D2B02520F00FE5E41 /* FFCreateProgramViewModel.swift in Sources */,
+				0A7278AA2B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift in Sources */,
 				0A4495332ABA8D9E0082C909 /* UIViewController+extension.swift in Sources */,
 				0ABDEB012B174E1300BDDAFE /* FFExersiceModelRealm.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFMusclesGroupViewController.swift in Sources */,
+				0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
@@ -857,6 +879,7 @@
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
+				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
@@ -866,6 +889,7 @@
 				0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
+				0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */,
 				0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */,
 				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,
 				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,

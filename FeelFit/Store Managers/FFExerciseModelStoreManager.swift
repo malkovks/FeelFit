@@ -33,8 +33,8 @@ class FFExerciseStoreManager {
         })
     }
     
-    func loadConvertedData(_ filterName: String) -> [Exercise] {
-        let value = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@", filterName)
+    func loadMusclesData(_ filterName: String,filter: String = "exerciseMuscle") -> [Exercise] {
+        let value = realm.objects(FFExerciseModelRealm.self).filter("\(filter) == %@", filterName)
         let valueArray: [Exercise] = value.map { data -> Exercise in
             let exercise = Exercise(bodyPart: data.exerciseBodyPart,
                                     equipment: data.exerciseEquipment,
@@ -60,10 +60,7 @@ class FFExerciseStoreManager {
                 duplicatesCount += 1
             }
         }
-        print("Duplicates for key:\(filterName) -- + \(duplicatesCount)")
-//        try! realm.write({
-//            realm.delete(values)
-//        })
+        print("Duplicates for key:\(filterName) -- \(duplicatesCount)")
         
         for exercise in uniqueValue {
             try! realm.write({

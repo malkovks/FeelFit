@@ -19,8 +19,9 @@ class FFExerciseMuscleGroupViewModel {
     
     weak var delegate: FFExerciseProtocol?
     
-    func loadData(name: String){
-        FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name) { result in
+    func loadData(name: String,filter: String = "exerciseMuscle"){
+        delegate?.viewWillLoadData()
+        FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name,filter: filter) { result in
             switch result {
             case .success(let data):
                 FFExerciseStoreManager.shared.saveLoadData(model: data)
@@ -34,7 +35,7 @@ class FFExerciseMuscleGroupViewModel {
     func checkAvailableData(loadName: String){
         delegate?.viewWillLoadData()
         let formattedKey = loadName.replacingOccurrences(of: "%20", with: " ")
-        let value = FFExerciseStoreManager.shared.loadConvertedData(formattedKey)
+        let value = FFExerciseStoreManager.shared.loadMusclesData(formattedKey)
         if value.count > 0 {
             self.delegate?.viewDidLoadData(result: .success(value))
         } else if value.count == 0 {

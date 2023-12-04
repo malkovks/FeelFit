@@ -10,13 +10,19 @@ import UIKit
 class FFMuscleGroupSelectionViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFMuscleGroupSelectionViewModel!
+    private var dataSource: FFMuscleGroupTableViewDataSource!
     
     private var tableView: UITableView!
     private let segment: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["Body Part","Muscles"])
+        let control = UISegmentedControl(items: ["Muscles","Body Part"])
         control.selectedSegmentIndex = 0
         control.tintColor = FFResources.Colors.activeColor
+        control.selectedSegmentTintColor = FFResources.Colors.activeColor
         control.backgroundColor = .systemBackground
+        control.layer.cornerRadius = 8
+        control.layer.borderColor = FFResources.Colors.textColor.cgColor
+        control.layer.borderWidth = 0.5
+        control.layer.masksToBounds = true
         return control
     }()
     
@@ -43,6 +49,16 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
         "upper_back" : "Upper Back"
     ]
     
+    var bodyPartDictionary = [
+        "back" : "Back",
+        "cardio" : "Cardio",
+        "chest" : "Chest",
+        "lower_arms" : "Lower arms",
+        "lower_legs" : "Lower legs",
+        "neck" : "Neck",
+        "shoulders" : "Shoulders"
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -52,18 +68,35 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
         setupConstraints()
     }
     
+    @objc private func didTapSegmentalControl(sender: UISegmentedControl){
+        let value = viewModel.settingSegmentController(segment: sender, firstData: muscleDictionary, secondData: bodyPartDictionary)
+        setupTableViewDataSource(value)
+    }
+    
+    //MARK: - Setup view controller
+    func setupTableViewDataSource(_ data: [String: String]){
+        dataSource = FFMuscleGroupTableViewDataSource(data: data, viewController: self)
+        tableView.dataSource = dataSource
+        tableView.reloadData()
+    }
+    
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
+        segment.addTarget(self, action: #selector(didTapSegmentalControl), for: .valueChanged)
     }
     
     func setupTableView(){
-        tableView = UITableView(frame: .zero,style: .insetGrouped)
+        
+        dataSource = FFMuscleGroupTableViewDataSource(data: muscleDictionary, viewController: self)
+        tableView = UITableView(frame: .zero,style: .grouped)
+        
         tableView.tableFooterView = nil
         tableView.sectionFooterHeight = 0
+        
         tableView.tableHeaderView = segment
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "muscleGroupID")
+        tableView.register(FFMuscleGroupTableViewCell.self, forCellReuseIdentifier: FFMuscleGroupTableViewCell.identifier)
         tableView.delegate = self
-        tableView.dataSource = self
+        tableView.dataSource = dataSource
     }
     
     func setupNavigationController() {
@@ -73,39 +106,23 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
     func setupViewModel() {
         viewModel = FFMuscleGroupSelectionViewModel(self)
     }
-}
-
-extension FFMuscleGroupSelectionViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "muscleGroupID", for: indexPath)
-        let key = Array(muscleDictionary.keys.sorted())[indexPath.row]
-        let valueName = muscleDictionary[key]
-        cell.imageView?.image = UIImage(named: key)
-        cell.imageView?.layer.cornerRadius = 8
-        cell.imageView?.layer.masksToBounds = true
-        cell.imageView?.sizeThatFits(CGSize(width: 50, height: 50))
-        cell.textLabel?.text = valueName
-        cell.textLabel?.font = UIFont.textLabelFont(size: 24)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        muscleDictionary.keys.count
-    }
     
     
 }
-
+//MARK: - UITableViewDelegate
 extension FFMuscleGroupSelectionViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        let data = viewModel.indexReturnResult(indexPath: indexPath, firstData: muscleDictionary, secondData: bodyPartDictionary, segment: segment)
+        let key = data.0
+        let request = data.1
+        viewModel.tableView(tableView, didSelectRowAt: indexPath,key: key, request: request)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        55
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
 }
-
+//MARK: - Size extension
 extension FFMuscleGroupSelectionViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
@@ -114,3 +131,4 @@ extension FFMuscleGroupSelectionViewController {
         }
     }
 }
+
