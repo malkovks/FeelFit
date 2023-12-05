@@ -19,7 +19,17 @@ class FFPlanExercisesViewModel {
         self.viewController = viewController
     }
     
-    func checkDataAvailable(key: String,type request: FFTrainingPlanType ){
-        
+    weak var delegate: FFExerciseProtocol?
+    
+    func loadData(key: String, filter type: String){
+        delegate?.viewWillLoadData()
+        FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: key,filter: type) { [weak self] result in
+            switch result {
+            case .success(let success):
+                self?.delegate?.viewDidLoadData(result: .success(success))
+            case .failure(let failure):
+                self?.delegate?.viewDidLoadData(result: .failure(failure))
+            }
+        }
     }
 }

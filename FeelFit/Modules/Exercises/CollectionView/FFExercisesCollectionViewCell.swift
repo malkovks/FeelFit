@@ -28,7 +28,6 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         "lats" : "Lats",
         "pectorals" : "Pectorals",
         "neck" : "Neck",
-        "oblique" : "Obliques",
         "quads" : "Quadriceps",
         "serratus_anterior" : "Serratus Anterior",
         "spine" : "Spine",

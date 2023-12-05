@@ -35,13 +35,12 @@ class FFGetExercisesDataBase {
                     let cacheResponse = CachedURLResponse(response: responseRequest, data: data)
                     URLCache.shared.storeCachedResponse(cacheResponse, for: urlRequest)
                     completionHandler(.success(success))
+                    FFExerciseStoreManager.shared.saveLoadData(model: success)
                 case .failure(let failure):
                     completionHandler(.failure(failure))
                 }
             }.resume()
         }
-        
-        
     }
     
     private func checkValueName(name: String) -> String{

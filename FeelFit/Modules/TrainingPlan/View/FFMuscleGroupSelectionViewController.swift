@@ -40,7 +40,6 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
         "lats" : "Lats",
         "pectorals" : "Pectorals",
         "neck" : "Neck",
-        "oblique" : "Obliques",
         "quads" : "Quadriceps",
         "serratus_anterior" : "Serratus Anterior",
         "spine" : "Spine",
@@ -97,6 +96,9 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
         tableView.register(FFMuscleGroupTableViewCell.self, forCellReuseIdentifier: FFMuscleGroupTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = dataSource
+        DispatchQueue.main.asyncAfter(deadline: .now()+1.5){ [unowned self] in
+            tableView.reloadData()
+        }
     }
     
     func setupNavigationController() {

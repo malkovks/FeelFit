@@ -85,12 +85,19 @@ extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
         switch result {
         case .success(let model):
             self.muscleExercises = model
-            self.tableView.reloadData()
+            
         case .failure(let error):
-            alertError(title: "Error",message: error.localizedDescription)
+            viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 3, controllerView: view)
+            DispatchQueue.main.asyncAfter(deadline: .now()+1){ [unowned self] in
+                navigationController?.popViewController(animated: true)
+            }
         }
-        refreshController.endRefreshing()
-        spinner.stopAnimating()
+        DispatchQueue.main.async { [unowned self] in
+            tableView.reloadData()
+            refreshController.endRefreshing()
+            spinner.stopAnimating()
+        }
+        
     }
     
 }
@@ -105,7 +112,7 @@ extension FFExercisesMuscleGroupViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFExercisesMuscleTableViewCell.identifier, for: indexPath) as! FFExercisesMuscleTableViewCell
         let exercise = muscleExercises[indexPath.row]
         cell.indexPath = indexPath
-        cell.configureView(keyName: muscleGroupName, exercise: exercise,indexPath: indexPath)
+        cell.configureView(keyName: muscleGroupName, exercise: exercise,indexPath: indexPath, isSearching: true)
         return cell
     }
 }

@@ -22,6 +22,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
     
     var status: Bool!
     
+    
     private let mainLabel: UILabel = {
         let label = UILabel()
         label.textColor = FFResources.Colors.textColor
@@ -29,7 +30,6 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         label.numberOfLines = 1
         label.textAlignment = .natural
         label.contentMode = .center
-        
         return label
     }()
     
@@ -75,6 +75,32 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         }
     }
     
+    func configureView(keyName: String, exercise: Exercise, indexPath: IndexPath,isSearching: Bool){
+        checkModelStatus(model: exercise)
+        self.exercise = exercise
+        self.mainLabel.text = exercise.exerciseName.capitalized
+        self.detailLabel.text = "Secondary muscles:  " + exercise.secondaryMuscles.joined(separator: ", ").formatArrayText()
+        self.actionFavouriteImageView.tag = indexPath.row
+        if status {
+            self.actionFavouriteImageView.image = UIImage(systemName: "heart.fill")
+        } else {
+            self.actionFavouriteImageView.image = UIImage(systemName: "heart")
+        }
+        
+        if !isSearching {
+            actionFavouriteImageView.isUserInteractionEnabled = false
+        } else {
+            actionFavouriteImageView.isUserInteractionEnabled = true
+        }
+        
+    }
+    
+    private func updateSelectedInterface(){
+        self.alpha = isSelected ? 0.7 : 1
+        self.accessoryType = isSelected ? .checkmark : .none
+        actionFavouriteImageView.alpha = isSelected ? 0.7 : 1
+    }
+    
     private func changeImageWith(image name: String, action: @escaping () -> ()){
         let image = actionFavouriteImageView
         UIView.transition(with: image, duration: 0.3, options: .transitionCrossDissolve) {
@@ -83,6 +109,21 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
             action()
         }
     }
+
+    private func setupCell(){
+        self.accessoryType = .disclosureIndicator
+    }
+    
+    private func setupImageViewInteraction(){
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapOnImage))
+        actionFavouriteImageView.addGestureRecognizer(gesture)
+    }
+    
+    private func checkModelStatus(model: Exercise){
+        let object = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",model.exerciseID)
+        status = !object.isEmpty ? true : false
+    }
+    
     
     private func setupConstraints(){
         contentView.addSubview(actionFavouriteImageView)
@@ -94,7 +135,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         mainLabel.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalTo(actionFavouriteImageView.snp.trailing).offset(10)
-            make.trailing.equalToSuperview().offset(3)
+            make.trailing.equalToSuperview().offset(10)
         }
         contentView.addSubview(detailLabel)
         detailLabel.snp.makeConstraints { make in
@@ -102,33 +143,6 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
             make.leading.equalTo(actionFavouriteImageView.snp.trailing).offset(10)
             make.trailing.bottom.equalToSuperview().offset(3)
         }
-    }
-    
-    private func setupCell(){
-        self.accessoryType = .disclosureIndicator
-    }
-    
-    func configureView(keyName: String, exercise: Exercise, indexPath: IndexPath){
-        checkModelStatus(model: exercise)
-        self.exercise = exercise
-        self.mainLabel.text = exercise.exerciseName.capitalized
-        self.detailLabel.text = "Secondary muscles:  " + exercise.secondaryMuscles.joined(separator: ", ").formatArrayText()
-        self.actionFavouriteImageView.tag = indexPath.row
-        if status {
-            self.actionFavouriteImageView.image = UIImage(systemName: "heart.fill")
-        } else {
-            self.actionFavouriteImageView.image = UIImage(systemName: "heart")
-        }
-    }
-    
-    private func setupImageViewInteraction(){
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapOnImage))
-        actionFavouriteImageView.addGestureRecognizer(gesture)
-    }
-    
-    private func checkModelStatus(model: Exercise){
-        let object = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",model.exerciseID)
-        status = !object.isEmpty ? true : false
     }
     
 }

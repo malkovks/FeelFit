@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFMuscleGroupTableViewCell: UITableViewCell {
     
@@ -30,6 +31,13 @@ class FFMuscleGroupTableViewCell: UITableViewCell {
         return image
     }()
     
+    let downloadIndicatorImageView: UIImageView = {
+        let image = UIImageView(frame: .zero)
+        image.contentMode = .scaleAspectFit
+        image.tintColor = .systemGray3
+        return image
+    }()
+    
     static let identifier = "FFMuscleGroupTableViewCell"
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -38,19 +46,26 @@ class FFMuscleGroupTableViewCell: UITableViewCell {
         setupCell()
     }
     
-    private func setupCell(){
-        self.accessoryType = .disclosureIndicator
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     func configureCell(indexPath: IndexPath, data: [String : String]){
         let key = Array(data.keys.sorted())[indexPath.row]
         let valueName = data[key]
         muscleImageView.image = UIImage(named: key) ?? UIImage(systemName: "figure.run")
         mainTextLabel.text = valueName
+        checkStatusCode(key: key)
+    }
+   
+    private func checkStatusCode(key: String){
+        let formatKey = key.replacingOccurrences(of: "%20", with: " ")
+        let realm = try! Realm()
+        let value = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@",formatKey)
+        let status = value.count > 0 ? true : false
+        if status {
+            downloadIndicatorImageView.image = UIImage(systemName: "arrow.down.circle.fill")
+        }
+    }
+    
+    private func setupCell(){
+        self.accessoryType = .disclosureIndicator
     }
     
     private func setupCellConstraints(){
@@ -69,5 +84,18 @@ class FFMuscleGroupTableViewCell: UITableViewCell {
             make.leading.equalTo(muscleImageView.snp.trailing).offset(2)
             make.trailing.equalToSuperview().inset(10)
         }
+        
+        contentView.addSubview(downloadIndicatorImageView)
+        downloadIndicatorImageView.snp.makeConstraints { make in
+            let size = contentView.frame.height/1.5
+            make.trailing.equalToSuperview().inset(size)
+            make.top.bottom.equalToSuperview().inset(20)
+            make.height.width.equalTo(15)
+            
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

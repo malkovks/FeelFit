@@ -38,7 +38,6 @@ extension UIViewController {
         button.snp.makeConstraints { make in
             make.width.equalTo(50)
             make.height.equalTo(30)
-            
         }
         if let action = action {
             button.addTarget(self, action: action, for: .touchUpInside)
@@ -47,6 +46,24 @@ extension UIViewController {
             button.menu = menu
             return UIBarButtonItem(customView: button)   
         }
+    }
+    
+    func addBackButtonItem(title: String,action: Selector?) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        
+        button.layer.cornerRadius = 14
+        button.backgroundColor = .secondarySystemBackground
+        button.showsMenuAsPrimaryAction = true
+        button.snp.makeConstraints { make in
+            make.width.equalTo(50)
+            make.height.equalTo(30)
+        }
+        if let action = action {
+            button.addTarget(self, action: action, for: .touchUpInside)
+        }
+        return button
+        
     }
     
     

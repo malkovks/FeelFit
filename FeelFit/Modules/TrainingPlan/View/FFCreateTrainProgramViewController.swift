@@ -209,8 +209,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         let continueButton = addNavigationBarButton(title: "Create", imageName: "" , action: #selector(didTapContinue), menu: nil)
         navigationItem.rightBarButtonItem = continueButton
     }
-    
-
 }
 
 extension FFCreateTrainProgramViewController: UITextFieldDelegate {
