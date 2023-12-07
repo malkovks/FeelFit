@@ -31,8 +31,7 @@ class FFAddExerciseViewModel {
         return config
     }
     
-    func addExercise(){
-        let vc = FFMuscleGroupSelectionViewController()
+    func addExercise(vc: UIViewController){
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     

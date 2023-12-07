@@ -8,6 +8,7 @@
 import UIKit
 
 class FFMuscleGroupSelectionViewModel {
+    
     let viewController: UIViewController
     
     init(_ viewController: UIViewController) {
@@ -32,10 +33,9 @@ class FFMuscleGroupSelectionViewModel {
         }
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath,key: String, request: String) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath,key: String, request: String,controller: UIViewController) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = FFPlanExercisesViewController(key: key, typeRequest: request)
-        viewController.navigationController?.pushViewController(vc, animated: true)
+        viewController.navigationController?.pushViewController(controller, animated: true)
         
     }
     

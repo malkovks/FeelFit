@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import Kingfisher
+
+
 
 
 /// Class for adding exercises to created base program plan
@@ -16,7 +19,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     private var viewModel: FFAddExerciseViewModel!
     
     private let trainProgram: CreateTrainProgram?
-    private let exercises = [Exercise]()
+    private var exercises = [Exercise]()
     
     init(trainProgram: CreateTrainProgram?) {
         self.trainProgram = trainProgram
@@ -40,14 +43,28 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
                 didTapAddExercise()
             }
         } else {
-            setupConstraints()
+            setupNonEmptyValue()
         }
     }
     
+    //MARK: - Target methods
     @objc private func didTapAddExercise(){
-        viewModel.addExercise()
+        let vc = FFMuscleGroupSelectionViewController()
+        vc.delegate = self
+        viewModel.addExercise(vc: vc)
     }
     
+    @objc private func didTapSave(){
+        alertControllerActionConfirm(title: "Warning", message: "Save created program?", confirmActionTitle: "Save", style: .actionSheet) { [unowned self] in
+            print("Saved in realm database")
+            navigationController?.popToRootViewController(animated: true)
+        } secondAction: { [unowned self] in
+            print("not saved in realm")
+            navigationController?.popToRootViewController(animated: true)
+        }
+    }
+    
+    //MARK: - Setup View methods
     func configureUnavailableContent(action: @escaping () -> ()) -> UIContentUnavailableConfiguration {
         var config = UIContentUnavailableConfiguration.empty()
         config.text = "No exercises"
@@ -82,7 +99,34 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     func setupNavigationController() {
         title = "Exercises"
         navigationItem.largeTitleDisplayMode = .never
+        navigationItem.setLeftBarButton(addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil), animated: true)
+        
     }
+    
+    func setupNonEmptyValue(){
+        setupConstraints()
+        navigationItem.setRightBarButton(addNavigationBarButton(title: "Add", imageName: "plus", action: #selector(didTapAddExercise), menu: nil), animated: true)
+    }
+    
+    func loadImage(_ link: String,handler: @escaping ((Data) -> ())){
+        guard let url = URL(string: link) else { return }
+        URLSession.shared.dataTask(with: url) { data ,_,_ in
+            if let data = data {
+                handler(data)
+            }
+        }.resume()
+    }
+}
+
+extension FFAddExerciseViewController: PlanExerciseDelegate {
+    func deliveryData(exercises: [Exercise]) {
+        self.exercises.append(contentsOf: exercises)
+        DispatchQueue.main.async { [unowned self] in
+            tableView.reloadData()
+            setupNonEmptyValue()
+        }
+    }
+    
     
 }
 
@@ -92,9 +136,16 @@ extension FFAddExerciseViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "exerciseCell", for: indexPath)
-        cell.textLabel?.text = "Text"
-        cell.imageView?.image = UIImage(systemName: "figure.highintensity.intervaltraining")
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "exerciseCell")
+        let exercise = exercises[indexPath.row]
+        cell.textLabel?.text = "Name: " + exercise.exerciseName
+        cell.detailTextLabel?.text = "Muscle: " + exercise.muscle
+        loadImage(exercise.imageLink) { data in
+            DispatchQueue.main.async {
+                cell.imageView?.image = UIImage(data: data) ?? UIImage(systemName: "figure.strengthtraining.traditional")
+                cell.imageView?.tintColor = FFResources.Colors.activeColor
+            }
+        }
         return cell
     }
 }
@@ -105,15 +156,37 @@ extension FFAddExerciseViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        tableView.deselectRow(at: indexPath, animated: true)
+        let exercise = exercises[indexPath.row]
+        let vc = FFExerciseDescriptionViewController(exercise: exercise)
+        dump(exercise)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
 extension FFAddExerciseViewController {
     private func setupConstraints(){
+        contentUnavailableConfiguration = nil
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+}
+
+extension UIViewController {
+    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,style: UIAlertController.Style,action: @escaping () -> (), secondAction: @escaping () -> ()){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: style)
+        let confirmAction = UIAlertAction(title: confirmActionTitle, style: .default) { _ in
+            action()
+        }
+        let clearAction = UIAlertAction(title: "Clear", style: .destructive) { _ in
+            secondAction()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(confirmAction)
+        alert.addAction(clearAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 }

@@ -208,6 +208,16 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         navigationItem.largeTitleDisplayMode = .never
         let continueButton = addNavigationBarButton(title: "Create", imageName: "" , action: #selector(didTapContinue), menu: nil)
         navigationItem.rightBarButtonItem = continueButton
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "figure.strengthtraining.traditional"), for: .normal)
+        button.setTitle("Назад", for: .normal)
+        button.backgroundColor = .secondarySystemBackground
+        button.tintColor = FFResources.Colors.activeColor
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+        let barButton = UIBarButtonItem(customView: button)
+        barButton.style = .done
+        navigationItem.backBarButtonItem = barButton
     }
 }
 

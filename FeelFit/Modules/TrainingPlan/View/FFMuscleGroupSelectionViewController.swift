@@ -12,6 +12,9 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
     private var viewModel: FFMuscleGroupSelectionViewModel!
     private var dataSource: FFMuscleGroupTableViewDataSource!
     
+    weak var delegate: PlanExerciseDelegate?
+    var exerciseData: [Exercise] = [Exercise]()
+    
     private var tableView: UITableView!
     private let segment: UISegmentedControl = {
         let control = UISegmentedControl(items: ["Muscles","Body Part"])
@@ -72,6 +75,10 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
         setupTableViewDataSource(value)
     }
     
+    @objc private func didTapSave(){
+        
+    }
+    
     //MARK: - Setup view controller
     func setupTableViewDataSource(_ data: [String: String]){
         dataSource = FFMuscleGroupTableViewDataSource(data: data, viewController: self)
@@ -103,6 +110,7 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
     
     func setupNavigationController() {
         title = "Muscles"
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil)
     }
     
     func setupViewModel() {
@@ -117,12 +125,23 @@ extension FFMuscleGroupSelectionViewController: UITableViewDelegate {
         let data = viewModel.indexReturnResult(indexPath: indexPath, firstData: muscleDictionary, secondData: bodyPartDictionary, segment: segment)
         let key = data.0
         let request = data.1
-        viewModel.tableView(tableView, didSelectRowAt: indexPath,key: key, request: request)
+        let vc = FFPlanExercisesViewController(key: key, typeRequest: request)
+        vc.delegate = self
+        viewModel.tableView(tableView, didSelectRowAt: indexPath,key: key, request: request,controller: vc)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
+}
+
+extension FFMuscleGroupSelectionViewController: PlanExerciseDelegate {
+    func deliveryData(exercises: [Exercise]) {
+        exerciseData.append(contentsOf: exercises)
+        print(exercises.count)
+        delegate?.deliveryData(exercises: exercises)
+    }
+    
 }
 //MARK: - Size extension
 extension FFMuscleGroupSelectionViewController {

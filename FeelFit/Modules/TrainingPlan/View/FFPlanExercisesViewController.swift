@@ -7,9 +7,16 @@
 
 import UIKit
 
+protocol PlanExerciseDelegate: AnyObject {
+    func deliveryData(exercises: [Exercise])
+}
+
 class FFPlanExercisesViewController: UIViewController, SetupViewController {
     
+    var dataCompletion: ((Any) -> Void)?
+    
     private var viewModel: FFPlanExercisesViewModel!
+    weak var delegate: PlanExerciseDelegate?
     
     private let key: String
     private let typeRequest: String
@@ -24,12 +31,9 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
     }
     
     init(key: String, typeRequest: String) {
-        
         self.key = key
         self.typeRequest = typeRequest
         super.init(nibName: nil, bundle: nil)
-        
-        
     }
     
     required init?(coder: NSCoder) {
@@ -57,13 +61,26 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
         navigationController?.popViewController(animated: true)
     }
     
+    @objc private func didTapSave(){
+        if let viewControllers = self.navigationController?.viewControllers {
+            if viewControllers.count > 4 {
+                let targetVC = viewControllers[viewControllers.count-3]
+                delegate?.deliveryData(exercises: selectedExercise)
+                dataCompletion?(selectedExercise)
+                self.navigationController?.popToViewController(targetVC, animated: true)
+//                self.navigationController?.popViewController(animated: true)
+            }
+        }
+
+    }
+    
     func setupView() {
         view.backgroundColor = .systemBackground
     }
     
     func setupNavigationController() {
         title = "Exercises"
-        navigationItem.backBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapPop), menu: nil)
+        
     }
     
     func setupViewModel() {
@@ -90,7 +107,7 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
     }
     
     func updateNavigation(){
-        let button = addNavigationBarButton(title: "Done", imageName: "", action: nil, menu: nil)
+        let button = addNavigationBarButton(title: "Done", imageName: "", action: #selector(didTapSave), menu: nil)
         if numberOfSelectedCells > 0 {
             navigationItem.setRightBarButton(button, animated: true)
         } else {
@@ -148,7 +165,7 @@ extension FFPlanExercisesViewController: UITableViewDelegate {
         updateNavigation()
         guard let data = loadData else { return }
         let item = data[indexPath.row]
-        if let index = selectedExercise.firstIndex(where: { $0.exerciseID == item.exerciseID }){
+        if let index: Int = selectedExercise.firstIndex(where: { $0.exerciseID == item.exerciseID }){
             selectedExercise.remove(at: index)
         }
     }
