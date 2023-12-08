@@ -17,6 +17,7 @@ class FFPlanExercisesViewModel {
     
     init(viewController: UIViewController) {
         self.viewController = viewController
+        
     }
     
     weak var delegate: FFExerciseProtocol?

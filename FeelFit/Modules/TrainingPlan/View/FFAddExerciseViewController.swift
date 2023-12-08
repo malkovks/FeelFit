@@ -89,7 +89,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
         tableView = UITableView(frame: .zero,style: .plain)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "exerciseCell")
+        tableView.register(FFAddExerciseTableViewCell.self, forCellReuseIdentifier: FFAddExerciseTableViewCell.identifier)
     }
     
     func setupView() {
@@ -100,7 +100,6 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
         title = "Exercises"
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.setLeftBarButton(addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil), animated: true)
-        
     }
     
     func setupNonEmptyValue(){
@@ -113,6 +112,9 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
         URLSession.shared.dataTask(with: url) { data ,_,_ in
             if let data = data {
                 handler(data)
+                DispatchQueue.main.async { [unowned self] in
+                    tableView.reloadData()
+                }
             }
         }.resume()
     }
@@ -136,16 +138,8 @@ extension FFAddExerciseViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "exerciseCell")
-        let exercise = exercises[indexPath.row]
-        cell.textLabel?.text = "Name: " + exercise.exerciseName
-        cell.detailTextLabel?.text = "Muscle: " + exercise.muscle
-        loadImage(exercise.imageLink) { data in
-            DispatchQueue.main.async {
-                cell.imageView?.image = UIImage(data: data) ?? UIImage(systemName: "figure.strengthtraining.traditional")
-                cell.imageView?.tintColor = FFResources.Colors.activeColor
-            }
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFAddExerciseTableViewCell.identifier, for: indexPath) as! FFAddExerciseTableViewCell
+        cell.configureCell(indexPath: indexPath, data: exercises)
         return cell
     }
 }

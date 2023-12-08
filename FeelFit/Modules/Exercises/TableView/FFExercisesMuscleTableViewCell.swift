@@ -79,7 +79,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         checkModelStatus(model: exercise)
         self.exercise = exercise
         self.mainLabel.text = exercise.exerciseName.capitalized
-        self.detailLabel.text = "Secondary muscles:  " + exercise.secondaryMuscles.joined(separator: ", ").formatArrayText()
+        self.detailLabel.text = "Muscles: " + exercise.muscle.formatArrayText() + "Sec: " + exercise.secondaryMuscles.joined(separator: ", ").formatArrayText()
         self.actionFavouriteImageView.tag = indexPath.row
         if status {
             self.actionFavouriteImageView.image = UIImage(systemName: "heart.fill")

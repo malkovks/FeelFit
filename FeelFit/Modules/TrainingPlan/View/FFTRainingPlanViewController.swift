@@ -38,11 +38,6 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupNavigationController()
         setupConstraints()
     }
-    
-//    @objc private func didTapCreateProgram(){
-//        let vc = FFCreateProgramViewController()
-//        navigationController?.pushViewController(vc, animated: true)
-//    }
 
     @objc private func didTapCreateProgram(){
         let vc = FFCreateTrainProgramViewController()
@@ -112,6 +107,7 @@ extension FFTRainingPlanViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension FFTRainingPlanViewController: UIContextMenuInteractionDelegate {
+    //MARK: - Test delegate method
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let share = UIAction(title: "Share") { _ in

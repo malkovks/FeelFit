@@ -13,8 +13,6 @@ protocol PlanExerciseDelegate: AnyObject {
 
 class FFPlanExercisesViewController: UIViewController, SetupViewController {
     
-    var dataCompletion: ((Any) -> Void)?
-    
     private var viewModel: FFPlanExercisesViewModel!
     weak var delegate: PlanExerciseDelegate?
     
@@ -23,17 +21,17 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
     private var loadData: [Exercise]?
     
     private var selectedExercise: [Exercise] = [Exercise]()
-    private var selectedRows: [IndexPath] = [IndexPath]()
     
     
     private var numberOfSelectedCells: Int {
         return tableView.indexPathsForSelectedRows?.count ?? 0
     }
     
-    init(key: String, typeRequest: String) {
+    init(key: String, typeRequest: String,title: String) {
         self.key = key
         self.typeRequest = typeRequest
         super.init(nibName: nil, bundle: nil)
+        self.title = title
     }
     
     required init?(coder: NSCoder) {
@@ -66,9 +64,7 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
             if viewControllers.count > 4 {
                 let targetVC = viewControllers[viewControllers.count-3]
                 delegate?.deliveryData(exercises: selectedExercise)
-                dataCompletion?(selectedExercise)
                 self.navigationController?.popToViewController(targetVC, animated: true)
-//                self.navigationController?.popViewController(animated: true)
             }
         }
 
@@ -78,10 +74,7 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
         view.backgroundColor = .systemBackground
     }
     
-    func setupNavigationController() {
-        title = "Exercises"
-        
-    }
+    func setupNavigationController() { }
     
     func setupViewModel() {
         viewModel = FFPlanExercisesViewModel(viewController: self)

@@ -26,7 +26,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
         let field = UITextField(frame: .zero)
         field.returnKeyType = .continue
-        field.enablesReturnKeyAutomatically = true
         field.tintColor = .blue
         field.font = UIFont.textLabelFont()
         field.placeholder = "Enter the name of training"
@@ -91,6 +90,21 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         return button
     }()
     
+    private let datePickerButton: UIButton = {
+       let button = UIButton()
+        button.titleLabel?.font = UIFont.detailLabelFont()
+        button.configuration = .borderedTinted()
+        button.configuration?.title = "Select Training Date"
+        button.configuration?.image = UIImage(systemName: "calendar.badge.plus")
+        button.configuration?.imagePadding = 2
+        button.configuration?.imagePlacement = .leading
+        button.configuration?.baseBackgroundColor = .systemBlue
+        button.configuration?.baseForegroundColor = .systemBlue
+        button.showsMenuAsPrimaryAction = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     private var textViewToolBar: UIToolbar!
     
     override func viewDidLoad() {
@@ -104,8 +118,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         dismissKeyboardBySwipe()
         setupToolBar()
         setupDelegates()
-        
-        
     }
     //MARK: - Target methods
     @objc private func didTapSwipeKeyboard(){
@@ -125,42 +137,29 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     
     @objc private func didTapContinue(){
-        guard let firstText = trainingPlanTextField.text, firstText != "",
-              let secondText = noteTrainingPlanTextView.text, secondText != ""
-        else {
-            viewAlertController(text: "Fill in all the fields", startDuration: 0.5, timer: 1.5, controllerView: self.view)
-            return
+        viewModel.confirmAndContinue(model: trainPlanData, textfield: trainingPlanTextField, textView: noteTrainingPlanTextView) {
+            viewAlertController(text: "Fill all the fields", startDuration: 0.5, timer: 2, controllerView: self.view)
         }
-        trainPlanData.name = firstText
-        trainPlanData.note = secondText
-        let vc = FFAddExerciseViewController(trainProgram: trainPlanData)
-        navigationController?.pushViewController(vc, animated: true)
     }
     
-    @objc private func didTapQuestion(){
-        
+    @objc private func didTapOpenDatePicker(){
+        viewModel.openDatePickerController()
     }
-
     //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
     
-    func setupToolBar(){
-        textViewToolBar = UIToolbar(frame: .zero)
-        textViewToolBar.sizeToFit()
-        textViewToolBar.tintColor = FFResources.Colors.activeColor
-        let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .done, target: self, action: #selector(didTapBoldText))
-        let italicText = UIBarButtonItem(image: UIImage(systemName: "italic"),style: .done, target: self, action: #selector(didTapItalicText))
-        let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .done, target: self, action: #selector(didTapUnderlineText))
-        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(didTapSwipeKeyboard))
-        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        textViewToolBar.setItems([boldText, space, italicText, space, underlineText, space, doneButton], animated: true)
-        noteTrainingPlanTextView.inputAccessoryView = textViewToolBar
+    private func setupToolBar(){
+        textViewToolBar = viewModel.setupToolBar(boldAction: #selector(didTapBoldText),
+                                                 italicAction: #selector(didTapItalicText),
+                                                 underlineAction: #selector(didTapUnderlineText),
+                                                 doneAction: #selector(didTapSwipeKeyboard)
+        )
     }
     
     func setupViewModel(){
-        viewModel = FFCreateTrainProgramViewModel()
+        viewModel = FFCreateTrainProgramViewModel(viewController: self)
     }
     
-    func setupTextViewInsets(){
+    private func setupTextViewInsets(){
         let style = NSMutableParagraphStyle()
         style.firstLineHeadIndent = 20
         let attributes = [NSAttributedString.Key.paragraphStyle: style]
@@ -168,30 +167,24 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         noteTrainingPlanTextView.attributedText = string
     }
     
-    func dismissKeyboardBySwipe(){
+    private func dismissKeyboardBySwipe(){
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(didTapSwipeKeyboard))
         swipe.direction = .down
         view.addGestureRecognizer(swipe)
     }
     
-    func setupDelegates(){
+    private func setupDelegates(){
         trainingPlanTextField.delegate = self
     }
     
-    func setupGradient(){
-        let gradient = CAGradientLayer()
-        gradient.frame = view.frame
-        gradient.colors = [FFResources.Colors.activeColor.cgColor,FFResources.Colors.darkPurple.cgColor]
-        view.layer.insertSublayer(gradient, at: 0)
-    }
+    
 
     func setupView() {
         trainingPlanTextField.becomeFirstResponder()
-//        setupGradient()
         view.backgroundColor = FFResources.Colors.backgroundColor
     }
     
-    func setupButtons(){
+    private func setupButtons(){
         locationButton.menu = viewModel.setLocationMenu(handler: { [unowned self] location in
             trainPlanData.location = location
             locationButton.configuration?.title = location
@@ -199,25 +192,15 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         trainingTypeButton.menu = viewModel.setTrainingTypeMenu(handler: { [unowned self] type in
             trainPlanData.type = type
             trainingTypeButton.configuration?.title = type
-            
         })
+        
+        datePickerButton.addTarget(self, action: #selector(didTapOpenDatePicker), for: .primaryActionTriggered)
     }
     
     func setupNavigationController() {
         title = "Create program"
         navigationItem.largeTitleDisplayMode = .never
-        let continueButton = addNavigationBarButton(title: "Create", imageName: "" , action: #selector(didTapContinue), menu: nil)
-        navigationItem.rightBarButtonItem = continueButton
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "figure.strengthtraining.traditional"), for: .normal)
-        button.setTitle("Назад", for: .normal)
-        button.backgroundColor = .secondarySystemBackground
-        button.tintColor = FFResources.Colors.activeColor
-        button.layer.cornerRadius = 12
-        button.layer.masksToBounds = true
-        let barButton = UIBarButtonItem(customView: button)
-        barButton.style = .done
-        navigationItem.backBarButtonItem = barButton
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Create", imageName: "" , action: #selector(didTapContinue), menu: nil)
     }
 }
 
@@ -226,10 +209,12 @@ extension FFCreateTrainProgramViewController: UITextFieldDelegate {
         if let text = trainingPlanTextField.text,
            !text.isEmpty {
             trainPlanData.name = text
+            trainingPlanTextField.enablesReturnKeyAutomatically = true
             trainingPlanTextField.resignFirstResponder()
             noteTrainingPlanTextView.becomeFirstResponder()
             return true
         } else {
+            trainingPlanTextField.enablesReturnKeyAutomatically = false
             return false
         }
     }
@@ -237,7 +222,7 @@ extension FFCreateTrainProgramViewController: UITextFieldDelegate {
 
 extension FFCreateTrainProgramViewController {
     private func setupConstraints(){
-        let stackView = UIStackView(arrangedSubviews: [locationButton,trainingTypeButton])
+        let stackView = UIStackView(arrangedSubviews: [locationButton, datePickerButton,trainingTypeButton])
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
@@ -255,7 +240,7 @@ extension FFCreateTrainProgramViewController {
         noteTrainingPlanTextView.snp.makeConstraints { make in
             make.top.equalTo(trainingPlanTextField.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().multipliedBy(0.65)
+            make.height.equalToSuperview().multipliedBy(0.6)
         }
         
         view.addSubview(stackView)
@@ -264,5 +249,12 @@ extension FFCreateTrainProgramViewController {
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-15)
         }
+    }
+    //UNUSED
+    func setupGradient(){
+        let gradient = CAGradientLayer()
+        gradient.frame = view.frame
+        gradient.colors = [FFResources.Colors.activeColor.cgColor,FFResources.Colors.darkPurple.cgColor]
+        view.layer.insertSublayer(gradient, at: 0)
     }
 }

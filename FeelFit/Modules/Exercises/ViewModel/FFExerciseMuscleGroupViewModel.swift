@@ -24,25 +24,10 @@ class FFExerciseMuscleGroupViewModel {
         FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name,filter: filter) { result in
             switch result {
             case .success(let data):
-                FFExerciseStoreManager.shared.saveLoadData(model: data)
                 self.delegate?.viewDidLoadData(result: .success(data))
             case .failure(let error):
                 self.delegate?.viewDidLoadData(result: .failure(error))
             }
-        }
-    }
-
-    func checkAvailableData(loadName: String){
-        delegate?.viewWillLoadData()
-        let formattedKey = loadName.replacingOccurrences(of: "%20", with: " ")
-        let value = FFExerciseStoreManager.shared.loadMusclesData(formattedKey)
-        if value.count > 0 {
-            self.delegate?.viewDidLoadData(result: .success(value))
-        } else if value.count == 0 {
-            loadData(name: loadName)
-        } else {
-            let error = NSError()
-            self.delegate?.viewDidLoadData(result: .failure(error))
         }
     }
     

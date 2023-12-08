@@ -74,11 +74,6 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
         let value = viewModel.settingSegmentController(segment: sender, firstData: muscleDictionary, secondData: bodyPartDictionary)
         setupTableViewDataSource(value)
     }
-    
-    @objc private func didTapSave(){
-        
-    }
-    
     //MARK: - Setup view controller
     func setupTableViewDataSource(_ data: [String: String]){
         dataSource = FFMuscleGroupTableViewDataSource(data: data, viewController: self)
@@ -110,14 +105,11 @@ class FFMuscleGroupSelectionViewController: UIViewController, SetupViewControlle
     
     func setupNavigationController() {
         title = "Muscles"
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil)
     }
     
     func setupViewModel() {
         viewModel = FFMuscleGroupSelectionViewModel(self)
     }
-    
-    
 }
 //MARK: - UITableViewDelegate
 extension FFMuscleGroupSelectionViewController: UITableViewDelegate {
@@ -125,7 +117,7 @@ extension FFMuscleGroupSelectionViewController: UITableViewDelegate {
         let data = viewModel.indexReturnResult(indexPath: indexPath, firstData: muscleDictionary, secondData: bodyPartDictionary, segment: segment)
         let key = data.0
         let request = data.1
-        let vc = FFPlanExercisesViewController(key: key, typeRequest: request)
+        let vc = FFPlanExercisesViewController(key: key, typeRequest: request, title: key.capitalized)
         vc.delegate = self
         viewModel.tableView(tableView, didSelectRowAt: indexPath,key: key, request: request,controller: vc)
     }
