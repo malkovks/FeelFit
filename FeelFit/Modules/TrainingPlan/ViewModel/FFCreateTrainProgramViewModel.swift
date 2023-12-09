@@ -9,6 +9,8 @@ import UIKit
 
 class FFCreateTrainProgramViewModel {
     
+    var completionData: ((Date,Bool) -> ())?
+    
     private let viewController: UIViewController
     
     init(viewController: UIViewController) {
@@ -111,6 +113,9 @@ class FFCreateTrainProgramViewModel {
             return viewController.view.frame.size.height/1.5
         })]
         nav.isNavigationBarHidden = false
+        vc.handler = { date, status in
+            self.completionData?(date,status)
+        }
         viewController.present(nav, animated: true)
     }
     

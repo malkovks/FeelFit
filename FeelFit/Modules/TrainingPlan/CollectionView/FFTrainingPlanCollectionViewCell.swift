@@ -56,11 +56,11 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configureLabels(model: TrainingPlan){
-        nameLabel.text = model.firstName
-        detailLabel.text = model.location
-        dateLabel.text = String(describing: model.plannedDate)
-        muscleGroupLabel.text = model.exercises.first?.muscle
+    public func configureLabels(model: FFTrainingPlanRealmModel){
+        nameLabel.text = model.trainingName
+        detailLabel.text = model.trainingLocation
+        dateLabel.text = String(describing: model.trainingDate)
+        muscleGroupLabel.text = model.trainingExercises.first?.exerciseMuscle
     }
     
     private func setupContentView(){

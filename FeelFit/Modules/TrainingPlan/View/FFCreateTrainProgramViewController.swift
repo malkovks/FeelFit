@@ -12,6 +12,8 @@ struct CreateTrainProgram {
     var note: String
     var type: String
     var location: String
+    var date: Date
+    var notificationStatus: Bool
 }
 
 
@@ -20,7 +22,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     private var viewModel: FFCreateTrainProgramViewModel!
     
-    var trainPlanData = CreateTrainProgram(name: "", note: "", type: "", location: "")
+    var trainPlanData = CreateTrainProgram(name: "", note: "", type: "", location: "",date: Date(),notificationStatus: false)
     
     private let trainingPlanTextField: UITextField = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
@@ -144,6 +146,12 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     @objc private func didTapOpenDatePicker(){
         viewModel.openDatePickerController()
+        viewModel.completionData = { [unowned self] date, status in
+            trainPlanData.date = date
+            trainPlanData.notificationStatus = status
+            let dateString = date.formatted(date: .abbreviated, time: .shortened)
+            datePickerButton.configuration?.title = "Planned date: " + dateString
+        }
     }
     //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
     

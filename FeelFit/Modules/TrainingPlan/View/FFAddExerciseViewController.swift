@@ -8,13 +8,14 @@
 import UIKit
 import Kingfisher
 
-
+struct TrainingPlanModel {
+    var firstPartTrain: CreateTrainProgram
+    var exercises: [Exercise]
+}
 
 
 /// Class for adding exercises to created base program plan
 class FFAddExerciseViewController: UIViewController, SetupViewController {
-    
-    
     
     private var viewModel: FFAddExerciseViewModel!
     
@@ -56,7 +57,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     
     @objc private func didTapSave(){
         alertControllerActionConfirm(title: "Warning", message: "Save created program?", confirmActionTitle: "Save", style: .actionSheet) { [unowned self] in
-            print("Saved in realm database")
+            saveConfirmedData()
             navigationController?.popToRootViewController(animated: true)
         } secondAction: { [unowned self] in
             print("not saved in realm")
@@ -65,20 +66,10 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     //MARK: - Setup View methods
-    func configureUnavailableContent(action: @escaping () -> ()) -> UIContentUnavailableConfiguration {
-        var config = UIContentUnavailableConfiguration.empty()
-        config.text = "No exercises"
-        config.image = UIImage(systemName: "figure.strengthtraining.traditional")
-        config.button = .plain()
-        config.button.image = UIImage(systemName: "plus")
-        config.button.baseForegroundColor = FFResources.Colors.activeColor
-        config.button.title = "Add exercise"
-        config.button.imagePlacement = .leading
-        config.button.imagePadding = 2
-        config.buttonProperties.primaryAction = UIAction(handler: { _ in
-            action()
-        })
-        return config
+    
+    func saveConfirmedData(){
+        guard let data = trainProgram else { return }
+        FFTrainingPlanStoreManager.shared.savePlan(plan: data, exercises: exercises)
     }
     
     func setupViewModel() {
@@ -128,8 +119,6 @@ extension FFAddExerciseViewController: PlanExerciseDelegate {
             setupNonEmptyValue()
         }
     }
-    
-    
 }
 
 extension FFAddExerciseViewController: UITableViewDataSource {

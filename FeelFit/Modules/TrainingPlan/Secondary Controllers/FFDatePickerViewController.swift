@@ -9,7 +9,7 @@ import UIKit
 
 class FFDatePickerViewController: UIViewController, SetupViewController {
     
-    var handler: ((String) -> ())?
+    var handler: ((Date,Bool) -> ())?
     
     private var datePicker: UIDatePicker!
     
@@ -26,7 +26,6 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
         datePicker = UIDatePicker(frame: .zero)
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .dateAndTime
-//        datePicker.backgroundColor = FFResources.Colors.backgroundColor
         datePicker.backgroundColor = .clear
         datePicker.tintColor = FFResources.Colors.activeColor
         datePicker.locale = .current
@@ -37,26 +36,18 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapDismiss(){
+        let date = datePicker.date
         if datePicker.date != Date() {
-            alertControllerActionConfirm(title: "Warning", message: "Do you want add notification on chosen date?", confirmActionTitle: "Add notification", style: .alert) {
-                print("Added")
-            } secondAction: {
-                print("Not Added")
+            alertControllerActionConfirm(title: "Warning", message: "Do you want add notification on chosen date?", confirmActionTitle: "Add notification", style: .alert) { [unowned self] in
+                handler?(date,true)
+                dismiss(animated: true)
+            } secondAction: { [unowned self] in
+                handler?(date,false)
+                self.dismiss(animated: true)
             }
-            self.dismiss(animated: true)
         } else {
             self.dismiss(animated: true)
         }
-        
-    }
-    
-    //Сделать функцию которая будет брать дату и время, конвертировать в строковый литерал и возвращать через замыкание в предыдущий вью
-    func getChosenDate(datePicker: UIDatePicker){
-        
-    }
-    //сделать добавление и включение уведомлений в случае если пользователь захочет их получать
-    func setupNotification(date: Date){
-        
     }
     
     func setupNavigationController() {

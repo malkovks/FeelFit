@@ -14,7 +14,7 @@ extension UIViewController {
     ///   - text: custom text variations
     ///   - duration: time duration of presenting alert
     ///   - controllerView: view of UIViewController where this alert will presented
-    func viewAlertController(text: String,startDuration startTime: Double,timer endTime: Double,controllerView: UIView){
+    func viewAlertController(text: String?,startDuration startTime: Double,timer endTime: Double,controllerView: UIView){
         let customView = UIView()
         customView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         customView.layer.cornerRadius = 12

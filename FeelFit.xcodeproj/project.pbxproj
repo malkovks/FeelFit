@@ -54,6 +54,7 @@
 		0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */; };
 		0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */; };
 		0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */; };
+		0A86DEDB2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */; };
 		0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */; };
 		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
 		0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */; };
@@ -131,6 +132,7 @@
 		0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanExercisesViewModel.swift; sourceTree = "<group>"; };
 		0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseTableViewCell.swift; sourceTree = "<group>"; };
 		0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFDatePickerViewController.swift; sourceTree = "<group>"; };
+		0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanStoreManager.swift; sourceTree = "<group>"; };
 		0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanViewModel.swift; sourceTree = "<group>"; };
 		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
 		0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateHeaderView.swift; sourceTree = "<group>"; };
@@ -268,7 +270,7 @@
 				0ACEA9E72AD7ED1700899CF6 /* Coordinator */,
 				0A4495002AB9CFB40082C909 /* Modules */,
 				0A4495342ABC3F720082C909 /* APIClient */,
-				0ACEA9DB2ACF1B6E00899CF6 /* Store Managers */,
+				0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */,
 				0A4495172ABA728F0082C909 /* Helpers */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
 				0A44950B2AB9FC260082C909 /* Managers */,
@@ -348,12 +350,12 @@
 		0A4495062AB9D1330082C909 /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
+				0A86DED92B23E80800E9DA24 /* Secondary Controllers */,
 				0A91519F2B0379F900FE5E41 /* TableView */,
 				0A91519E2B02567E00FE5E41 /* CollectionView */,
 				0A4495262ABA79440082C909 /* ViewModel */,
 				0A4495252ABA79400082C909 /* View */,
 				0A4495242ABA793C0082C909 /* Model */,
-				0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */,
 			);
 			path = TrainingPlan;
 			sourceTree = "<group>";
@@ -584,6 +586,14 @@
 			path = TableViewDataSource;
 			sourceTree = "<group>";
 		};
+		0A86DED92B23E80800E9DA24 /* Secondary Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */,
+			);
+			path = "Secondary Controllers";
+			sourceTree = "<group>";
+		};
 		0A91519E2B02567E00FE5E41 /* CollectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -628,14 +638,15 @@
 			path = TableViewHeaderView;
 			sourceTree = "<group>";
 		};
-		0ACEA9DB2ACF1B6E00899CF6 /* Store Managers */ = {
+		0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */ = {
 			isa = PBXGroup;
 			children = (
 				0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */,
 				0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */,
 				0ABDEB022B18659B00BDDAFE /* FFExerciseModelStoreManager.swift */,
+				0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */,
 			);
-			path = "Store Managers";
+			path = "Realm Store Managers";
 			sourceTree = "<group>";
 		};
 		0ACEA9E02ACF77AB00899CF6 /* SecondaryView+UIView */ = {
@@ -890,6 +901,7 @@
 				0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
+				0A86DEDB2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift in Sources */,
 				0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */,
 				0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */,
 				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,

@@ -6,36 +6,27 @@
 //
 
 import UIKit
+import RealmSwift
 
-
-struct TrainingSetup {
-    let basic: BasicSettings
-    let warmUp: WarmUpSettings
-    let mainTrainPart: [MainTrainingPart]
-    let hitch: HitchSettings
+class FFTrainingPlanRealmModel: Object {
+    @Persisted dynamic var trainingUniqueID: String = UUID().uuidString
+    @Persisted dynamic var trainingName: String = ""
+    @Persisted dynamic var trainingNotes: String = ""
+    @Persisted dynamic var trainingLocation: String?
+    @Persisted dynamic var trainingType: String?
+    @Persisted dynamic var trainingDate: Date
+    @Persisted dynamic var trainingNotificationStatus: Bool = false
+    @Persisted dynamic var trainingExercises = List<FFExerciseModelRealm>()
+    
+    convenience init(name: String, notes: String, location: String, type: String, date: Date, status: Bool, exercises: [FFExerciseModelRealm]) {
+        self.init()
+        self.trainingName = name
+        self.trainingNotes = notes
+        self.trainingLocation = location
+        self.trainingType = type
+        self.trainingDate = date
+        self.trainingNotificationStatus = status
+        self.trainingExercises.append(objectsIn: exercises)
+    }
 }
 
-struct BasicSettings {
-    let duration: String
-    let location: String
-    let type: String
-    let dateString: String
-    let date: Date
-}
-
-struct WarmUpSettings {
-    let duration: String
-    let type: String
-}
-
-struct MainTrainingPart {
-    let weight: String?
-    let repeats: String
-    let approaches: String
-    let exercise: Exercise
-}
-
-struct HitchSettings {
-    let duration: String
-    let type: String
-}

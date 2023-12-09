@@ -6,7 +6,8 @@
 //
 
 import UIKit
-import Kingfisher
+import UserNotifications
+import RealmSwift
 
 struct TrainingPlan {
     let firstName: String
@@ -16,22 +17,27 @@ struct TrainingPlan {
     let durationMinutes: Int
     let location: String
     let exercises: [Exercise]
-//    let warmUp: WarmUpExercises
 }
 
 
 /// Main view controller which displaying planned if they have trainings. If not - user can create them
 class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
-    var viewModel: FFTrainingPlanViewModel!
+    private var viewModel: FFTrainingPlanViewModel!
     
-    var trainingPlans = Array<TrainingPlan>()
+    private let realm = try! Realm()
+    private var trainingPlans: Results<FFTrainingPlanRealmModel>!
     
-    var collectionView: UICollectionView!
+    private var collectionView: UICollectionView!
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupLocalNotificationsAuth()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        loadData()
         setupViewModel()
         setupView()
         setupCollectionView()
@@ -44,19 +50,34 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    func setupView() {
-        
-        view.backgroundColor = FFResources.Colors.tabBarBackgroundColor
-        if trainingPlans.isEmpty {
-            contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
-                self.didTapCreateProgram()
-            })
+    func loadData(){
+        let object = realm.objects(FFTrainingPlanRealmModel.self)
+        trainingPlans = object
+    }
+    
+    func setupLocalNotificationsAuth(){
+        let userNotification = UNUserNotificationCenter.current()
+        let authOptions = UNAuthorizationOptions.init(arrayLiteral: .alert,.badge,.sound)
+        userNotification.requestAuthorization(options: authOptions) { [unowned self] status, error in
+            guard error == nil else {
+                self.viewAlertController(text: error?.localizedDescription, startDuration: 0.5, timer: 2, controllerView: self.view)
+                return
+            }
         }
+    }
+    
+    func setupView() {
+        view.backgroundColor = FFResources.Colors.backgroundColor
+//        if trainingPlans.isEmpty {
+//            contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
+//                self.didTapCreateProgram()
+//            })
+//        }
     }
     
     func setupViewModel() {
         viewModel = FFTrainingPlanViewModel(viewController: self)
-        trainingPlans = viewModel.setupMockTest()
+//        trainingPlans = viewModel.setupMockTest()
     }
     
     func setupCollectionView(){
@@ -64,6 +85,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 2
+        
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(FFTrainingPlanCollectionViewCell.self, forCellWithReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier)
         collectionView.delegate = self
@@ -88,6 +110,8 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier, for: indexPath) as! FFTrainingPlanCollectionViewCell
+        cell.layer.borderWidth = 0.3
+        cell.layer.borderColor = FFResources.Colors.textColor.cgColor
         let data = trainingPlans[indexPath.row]
         cell.configureLabels(model: data)
         return cell
