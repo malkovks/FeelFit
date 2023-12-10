@@ -10,7 +10,6 @@ import RealmSwift
 
 class FFExercisesMuscleTableViewCell: UITableViewCell {
     
-    
     var indexPath: IndexPath!
     
     static let identifier = "FFExercisesMuscleTableViewCell"
@@ -28,7 +27,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         label.textColor = FFResources.Colors.textColor
         label.font = .textLabelFont(weight: UIFont.Weight.regular)
         label.numberOfLines = 1
-        label.textAlignment = .natural
+        label.textAlignment = .left
         label.contentMode = .center
         return label
     }()
@@ -38,7 +37,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         label.textColor = FFResources.Colors.detailTextColor
         label.font = .detailLabelFont(weight: UIFont.Weight.thin)
         label.numberOfLines = 0
-        label.textAlignment = .natural
+        label.textAlignment = .left
         label.contentMode = .center
         return label
     }()
@@ -86,13 +85,28 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         } else {
             self.actionFavouriteImageView.image = UIImage(systemName: "heart")
         }
-        
-        if !isSearching {
-            actionFavouriteImageView.isUserInteractionEnabled = false
+        changeLabelsConstraints(status: isSearching)
+    }
+    
+    func changeLabelsConstraints(status: Bool){
+        if !status {
+            actionFavouriteImageView.isHidden = true
+            actionFavouriteImageView.removeFromSuperview()
+            mainLabel.snp.remakeConstraints { make in
+                make.top.equalToSuperview()
+                make.leading.equalToSuperview().offset(3)
+                make.trailing.equalToSuperview().offset(10)
+                make.height.equalTo(contentView.frame.size.height/2)
+            }
+            detailLabel.snp.remakeConstraints { make in
+                make.top.equalTo(mainLabel.snp.bottom)
+                make.leading.equalToSuperview().offset(3)
+                make.trailing.bottom.equalToSuperview().offset(3)
+            }
+            self.contentView.layoutIfNeeded()
         } else {
-            actionFavouriteImageView.isUserInteractionEnabled = true
+            actionFavouriteImageView.isHidden = false
         }
-        
     }
     
     private func updateSelectedInterface(){
@@ -141,7 +155,7 @@ class FFExercisesMuscleTableViewCell: UITableViewCell {
         detailLabel.snp.makeConstraints { make in
             make.top.equalTo(mainLabel.snp.bottom)
             make.leading.equalTo(actionFavouriteImageView.snp.trailing).offset(10)
-            make.trailing.bottom.equalToSuperview().offset(3)
+            make.trailing.bottom.equalToSuperview().offset(10)
         }
     }
     

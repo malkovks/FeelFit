@@ -110,7 +110,7 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier, for: indexPath) as! FFTrainingPlanCollectionViewCell
-        cell.layer.borderWidth = 0.3
+        cell.layer.borderWidth = 0.5
         cell.layer.borderColor = FFResources.Colors.textColor.cgColor
         let data = trainingPlans[indexPath.row]
         cell.configureLabels(model: data)

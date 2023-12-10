@@ -141,14 +141,29 @@ extension FFPlanExercisesViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFExercisesMuscleTableViewCell.identifier, for: indexPath) as! FFExercisesMuscleTableViewCell
         let data = loadData?[indexPath.row]
         cell.accessoryType = .none
+        cell.tintColor = FFResources.Colors.activeColor
         cell.configureView(keyName: key, exercise: data!, indexPath: indexPath, isSearching: false)
         return cell
     }
 }
 
 extension FFPlanExercisesViewController: UITableViewDelegate {
+//    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+//        return UIContextMenuConfiguration { actions in
+//            let openAction = UIAction(title: "Details", image: UIImage(systemName: "info.circle")) { _ in
+//                
+//            }
+//            let addToFavouriteAction = UIAction(title: "Add to Favorite", image: UIImage(systemName: "")) { _ in
+//                
+//            }
+//
+//        }
+//    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         updateNavigation()
+        let cell = tableView.cellForRow(at: indexPath) as! FFExercisesMuscleTableViewCell
+        cell.accessoryType = .checkmark
         guard let data = loadData else { return }
         let value = data[indexPath.row]
         selectedExercise.append(value)
@@ -156,6 +171,8 @@ extension FFPlanExercisesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         updateNavigation()
+        let cell = tableView.cellForRow(at: indexPath) as! FFExercisesMuscleTableViewCell
+        cell.accessoryType = .none
         guard let data = loadData else { return }
         let item = data[indexPath.row]
         if let index: Int = selectedExercise.firstIndex(where: { $0.exerciseID == item.exerciseID }){
