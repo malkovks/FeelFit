@@ -134,6 +134,21 @@ extension FFAddExerciseViewController: UITableViewDataSource {
 }
 
 extension FFAddExerciseViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let exercise = exercises[indexPath.row]
+        let vc = FFExerciseDescriptionViewController(exercise: exercise)
+        let configuration = UIContextMenuConfiguration {
+            return vc
+        } actionProvider: { _ in
+            let openView = UIAction(title: "Open") { _ in
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+            return UIMenu(children: [openView])
+        }
+        return configuration
+
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         viewModel.tableView(tableView, heightForRowAt: indexPath)
     }

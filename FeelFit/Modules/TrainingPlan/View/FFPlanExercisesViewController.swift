@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 protocol PlanExerciseDelegate: AnyObject {
     func deliveryData(exercises: [Exercise])
@@ -21,6 +22,7 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
     private var loadData: [Exercise]?
     
     private var selectedExercise: [Exercise] = [Exercise]()
+    private var status: Bool = false
     
     
     private var numberOfSelectedCells: Int {
@@ -55,10 +57,6 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
         setupConstraints()
     }
     
-    @objc private func didTapPop(){
-        navigationController?.popViewController(animated: true)
-    }
-    
     @objc private func didTapSave(){
         if let viewControllers = self.navigationController?.viewControllers {
             if viewControllers.count > 4 {
@@ -72,6 +70,9 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
     
     func setupView() {
         view.backgroundColor = .systemBackground
+        DispatchQueue.main.asyncAfter(deadline: .now()+3){
+            self.tableView.reloadData()
+        }
     }
     
     func setupNavigationController() { }
@@ -107,6 +108,23 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
             navigationItem.setRightBarButton(nil, animated: true)
         }
     }
+    
+    func checkAvailableData(exercise: Exercise) {
+        let realm = try! Realm()
+        let model = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@", exercise.exerciseID)
+        let boolean = !model.isEmpty ? true : false
+        status = boolean
+    }
+    
+    func favouriteExerciseAction(exercise: Exercise){
+        if status {
+            FFFavouriteExerciseStoreManager.shared.deleteExerciseWith(model: exercise)
+            status.toggle()
+        } else {
+            try! FFFavouriteExerciseStoreManager.shared.saveExercise(exercise: exercise)
+            status.toggle()
+        }
+    }
 }
 
 extension FFPlanExercisesViewController: FFExerciseProtocol {
@@ -128,7 +146,6 @@ extension FFPlanExercisesViewController: FFExerciseProtocol {
             tableView.reloadData()
             spinner.stopAnimating()
         }
-        
     }
 }
 
@@ -148,36 +165,23 @@ extension FFPlanExercisesViewController: UITableViewDataSource {
 }
 
 extension FFPlanExercisesViewController: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-//        return UIContextMenuConfiguration { actions in
-//            let openAction = UIAction(title: "Details", image: UIImage(systemName: "info.circle")) { _ in
-//                
-//            }
-//            let addToFavouriteAction = UIAction(title: "Add to Favorite", image: UIImage(systemName: "")) { _ in
-//                
-//            }
-//
-//        }
-//    }
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let data = loadData?[indexPath.row] else { return nil}
+        return viewModel.tableView(tableView, contextMenuConfigurationForRowAt: indexPath, point: point, loadData: loadData, boolean: status) {
+            self.favouriteExerciseAction(exercise: data)
+        }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        updateNavigation()
-        let cell = tableView.cellForRow(at: indexPath) as! FFExercisesMuscleTableViewCell
-        cell.accessoryType = .checkmark
-        guard let data = loadData else { return }
-        let value = data[indexPath.row]
-        selectedExercise.append(value)
+        selectedExercise = viewModel.tableView(tableView, didSelectRowAt: indexPath, loadedData: loadData, selectedExercise: selectedExercise) {
+            updateNavigation()
+        }
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        updateNavigation()
-        let cell = tableView.cellForRow(at: indexPath) as! FFExercisesMuscleTableViewCell
-        cell.accessoryType = .none
-        guard let data = loadData else { return }
-        let item = data[indexPath.row]
-        if let index: Int = selectedExercise.firstIndex(where: { $0.exerciseID == item.exerciseID }){
-            selectedExercise.remove(at: index)
-        }
+        selectedExercise = viewModel.tableView(tableView, didDeselectRowAt: indexPath, loadData, exercises: selectedExercise,action: {
+            updateNavigation()
+        })
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
