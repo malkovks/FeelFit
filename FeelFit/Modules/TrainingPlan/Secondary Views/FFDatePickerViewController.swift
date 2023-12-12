@@ -27,8 +27,10 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .dateAndTime
         datePicker.backgroundColor = .clear
+        datePicker.date = Date()
         datePicker.tintColor = FFResources.Colors.activeColor
         datePicker.locale = .current
+        datePicker.timeZone = TimeZone.current
     }
     
     func setupView() {
@@ -37,15 +39,12 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
     
     @objc private func didTapDismiss(){
         let date = datePicker.date
-        if datePicker.date != Date() {
-            alertControllerActionConfirm(title: "Warning", message: "Do you want add notification on chosen date?", confirmActionTitle: "Add notification", style: .alert) { [unowned self] in
-                handler?(date,true)
-                dismiss(animated: true)
-            } secondAction: { [unowned self] in
-                handler?(date,false)
-                self.dismiss(animated: true)
-            }
-        } else {
+        
+        alertControllerActionConfirm(title: "Warning", message: "Do you want add notification on chosen date?", confirmActionTitle: "Add Notification", style: .alert) { [unowned self] in
+            handler?(date,true)
+            dismiss(animated: true)
+        } secondAction: { [unowned self] in
+            handler?(date,false)
             self.dismiss(animated: true)
         }
     }

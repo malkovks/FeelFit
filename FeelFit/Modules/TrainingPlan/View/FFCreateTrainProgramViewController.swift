@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 struct CreateTrainProgram {
     var name: String
@@ -155,6 +156,8 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
     
+    
+    
     private func setupToolBar(){
         textViewToolBar = viewModel.setupToolBar(boldAction: #selector(didTapBoldText),
                                                  italicAction: #selector(didTapItalicText),
@@ -185,8 +188,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         trainingPlanTextField.delegate = self
     }
     
-    
-
     func setupView() {
         trainingPlanTextField.becomeFirstResponder()
         view.backgroundColor = FFResources.Colors.backgroundColor

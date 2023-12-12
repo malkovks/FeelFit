@@ -32,6 +32,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        collectionView.reloadData()
         setupLocalNotificationsAuth()
     }
     

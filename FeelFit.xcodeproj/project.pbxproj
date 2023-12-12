@@ -350,11 +350,11 @@
 		0A4495062AB9D1330082C909 /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
-				0A86DED92B23E80800E9DA24 /* Secondary Controllers */,
 				0A91519F2B0379F900FE5E41 /* TableView */,
 				0A91519E2B02567E00FE5E41 /* CollectionView */,
 				0A4495262ABA79440082C909 /* ViewModel */,
 				0A4495252ABA79400082C909 /* View */,
+				0A86DED92B23E80800E9DA24 /* Secondary Views */,
 				0A4495242ABA793C0082C909 /* Model */,
 			);
 			path = TrainingPlan;
@@ -586,12 +586,12 @@
 			path = TableViewDataSource;
 			sourceTree = "<group>";
 		};
-		0A86DED92B23E80800E9DA24 /* Secondary Controllers */ = {
+		0A86DED92B23E80800E9DA24 /* Secondary Views */ = {
 			isa = PBXGroup;
 			children = (
 				0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */,
 			);
-			path = "Secondary Controllers";
+			path = "Secondary Views";
 			sourceTree = "<group>";
 		};
 		0A91519E2B02567E00FE5E41 /* CollectionView */ = {
