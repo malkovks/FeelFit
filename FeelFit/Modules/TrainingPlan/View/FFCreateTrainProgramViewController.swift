@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import UserNotifications
 
 struct CreateTrainProgram {
     var name: String

@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import UserNotifications
 
 class FFCreateTrainProgramViewModel {
     
@@ -28,39 +27,8 @@ class FFCreateTrainProgramViewModel {
         var data = model
         data.name = firstText
         data.note = secondText
-        data.notificationStatus ? createNotification(data) : nil
         let vc = FFAddExerciseViewController(trainProgram: data)
         viewController.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func createNotification(_ model: CreateTrainProgram){
-        let sound = UNNotificationSound(named: UNNotificationSoundName("ringtone.mp3"))
-//        guard let image = Bundle.main.url(forResource: "traps", withExtension: "jpeg") else { return }
-        
-        let dateComponents: DateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: model.date)
-        let id = UUID().uuidString
-//        let attachment = try! UNNotificationAttachment(identifier: id, url: image, options: nil)
-        
-        let content = UNMutableNotificationContent()
-        content.title = model.name.capitalized
-        content.body = model.note.capitalized
-        content.sound = sound
-//        content.attachments = [attachment]
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
-        let center = UNUserNotificationCenter.current()
-        center.add(request) { error in
-            if error == nil {
-                DispatchQueue.main.async {
-                    self.viewController.viewAlertController(text: "Notification was created", startDuration: 0.5, timer: 2, controllerView: self.viewController.view)
-                }
-            } else {
-                print("Error")
-            }
-        }
-        
-        
     }
     
     //MARK: - Action methods

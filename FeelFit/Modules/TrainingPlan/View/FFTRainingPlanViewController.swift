@@ -30,25 +30,47 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     private var collectionView: UICollectionView!
     
+    private var refreshController: UIRefreshControl = {
+        let refresh = UIRefreshControl(frame: .zero)
+        refresh.tintColor = FFResources.Colors.activeColor
+        return refresh
+    }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        collectionView.reloadData()
+        loadData()
+        setupView()
         setupLocalNotificationsAuth()
+        DispatchQueue.main.async { [ unowned self ] in
+            collectionView.reloadData()
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadData()
         setupViewModel()
-        setupView()
+       
         setupCollectionView()
+        setupRefreshController()
         setupNavigationController()
         setupConstraints()
+        view.backgroundColor = FFResources.Colors.backgroundColor
     }
 
     @objc private func didTapCreateProgram(){
         let vc = FFCreateTrainProgramViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didTapRefreshView(){
+        refreshController.beginRefreshing()
+        setupView()
+        loadData()
+        DispatchQueue.main.async { [ unowned self ] in
+            collectionView.reloadData()
+            refreshController.endRefreshing()
+        }
     }
     
     func loadData(){
@@ -68,17 +90,18 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
     
     func setupView() {
-        view.backgroundColor = FFResources.Colors.backgroundColor
-//        if trainingPlans.isEmpty {
-//            contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
-//                self.didTapCreateProgram()
-//            })
-//        }
+        
+        if trainingPlans.isEmpty {
+            contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
+                self.didTapCreateProgram()
+            })
+        } else {
+            contentUnavailableConfiguration = nil
+        }
     }
     
     func setupViewModel() {
         viewModel = FFTrainingPlanViewModel(viewController: self)
-//        trainingPlans = viewModel.setupMockTest()
     }
     
     func setupCollectionView(){
@@ -94,6 +117,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         collectionView.backgroundColor = .clear
         collectionView.contentInsetAdjustmentBehavior = .automatic
         collectionView.allowsMultipleSelection = true
+        collectionView.refreshControl = refreshController
     }
     
     func setupNavigationController() {
@@ -101,6 +125,10 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "rectangle.badge.plus", action: #selector(didTapCreateProgram), menu: nil)
+    }
+    
+    func setupRefreshController(){
+        refreshController.addTarget(self, action: #selector(didTapRefreshView), for: .valueChanged)
     }
 }
 
@@ -111,16 +139,43 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier, for: indexPath) as! FFTrainingPlanCollectionViewCell
-        cell.layer.borderWidth = 0.5
-        cell.layer.borderColor = FFResources.Colors.textColor.cgColor
-        let data = trainingPlans[indexPath.row]
-        cell.configureLabels(model: data)
+        cell.configureLabels(model: trainingPlans,indexPath: indexPath)
         return cell
     }
 }
 
 extension FFTRainingPlanViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, canEditItemAt indexPath: IndexPath) -> Bool {
+        return true
+    }
     
+    func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+        if action == #selector(UIResponderStandardEditActions.delete(_:)){
+            let model = trainingPlans[indexPath.row]
+            FFTrainingPlanStoreManager.shared.deletePlan(model)
+            collectionView.deleteItems(at: [indexPath])
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration {
+            return nil
+            //здесь должна быть ссылка на контроллер деталей планируемой тренировки
+        } actionProvider: { _ in
+            let actionOpen = UIAction(title: "Open", image: UIImage(systemName: "arrow.up.forward.square")) { _ in
+                //показывать детали данной программы
+            }
+            let actionDelete = UIAction(title: "Delete", image: UIImage(systemName: "trash.square"),attributes: .destructive) { _ in
+                let index = collectionView.indexPathForItem(at: point)!
+                let model = self.trainingPlans[index.row]
+                FFTrainingPlanStoreManager.shared.deletePlan(model)
+                collectionView.deleteItems(at: indexPaths)
+                self.setupView()
+            }
+            let menu = UIMenu(children: [actionOpen,actionDelete])
+            return menu
+        }
+    }
 }
 
 extension FFTRainingPlanViewController: UICollectionViewDelegateFlowLayout {

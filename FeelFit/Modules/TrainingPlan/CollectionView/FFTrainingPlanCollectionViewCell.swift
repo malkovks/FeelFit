@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrainingPlanCell"
@@ -56,16 +57,20 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configureLabels(model: FFTrainingPlanRealmModel){
+    public func configureLabels(model: Results<FFTrainingPlanRealmModel>,indexPath: IndexPath){
+        let model = model[indexPath.row]
         nameLabel.text = model.trainingName
         detailLabel.text = model.trainingLocation
-        dateLabel.text = String(describing: model.trainingDate)
+        let dateString = DateFormatter.localizedString(from: model.trainingDate, dateStyle: .medium, timeStyle: .short)
+        dateLabel.text = "Planned \(dateString)"
         muscleGroupLabel.text = model.trainingExercises.first?.exerciseMuscle
     }
     
     private func setupContentView(){
         self.layer.cornerRadius = 12
         self.layer.masksToBounds = true
+        self.layer.borderWidth = 0.5
+        self.layer.borderColor = FFResources.Colors.textColor.cgColor
         self.backgroundColor = FFResources.Colors.backgroundColor
     }
     

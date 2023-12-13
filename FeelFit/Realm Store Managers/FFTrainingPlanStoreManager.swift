@@ -35,4 +35,10 @@ class FFTrainingPlanStoreManager {
         })
     }
     
+    func deletePlan(_ model: FFTrainingPlanRealmModel){
+        try! realm.write({
+            realm.delete(model)
+        })
+    }
+    
 }

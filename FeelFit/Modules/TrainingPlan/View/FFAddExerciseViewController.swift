@@ -56,22 +56,10 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapSave(){
-        alertControllerActionConfirm(title: "Warning", message: "Save created program?", confirmActionTitle: "Save", style: .actionSheet) { [unowned self] in
-            saveConfirmedData()
-            navigationController?.popToRootViewController(animated: true)
-        } secondAction: { [unowned self] in
-            print("not saved in realm")
-            navigationController?.popToRootViewController(animated: true)
-        }
+        viewModel.didTapConfirmSaving(plan: trainProgram, exercises: exercises)
     }
     
     //MARK: - Setup View methods
-    
-    func saveConfirmedData(){
-        guard let data = trainProgram else { return }
-        FFTrainingPlanStoreManager.shared.savePlan(plan: data, exercises: exercises)
-    }
-    
     func setupViewModel() {
         viewModel = FFAddExerciseViewModel(viewController: self)
     }
@@ -96,18 +84,6 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     func setupNonEmptyValue(){
         setupConstraints()
         navigationItem.setRightBarButton(addNavigationBarButton(title: "Add", imageName: "plus", action: #selector(didTapAddExercise), menu: nil), animated: true)
-    }
-    
-    func loadImage(_ link: String,handler: @escaping ((Data) -> ())){
-        guard let url = URL(string: link) else { return }
-        URLSession.shared.dataTask(with: url) { data ,_,_ in
-            if let data = data {
-                handler(data)
-                DispatchQueue.main.async { [unowned self] in
-                    tableView.reloadData()
-                }
-            }
-        }.resume()
     }
 }
 
@@ -173,7 +149,7 @@ extension FFAddExerciseViewController {
 }
 
 extension UIViewController {
-    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,style: UIAlertController.Style,action: @escaping () -> (), secondAction: @escaping () -> ()){
+    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,secondTitleAction: String = "Clear",style: UIAlertController.Style,action: @escaping () -> (), secondAction: @escaping () -> ()){
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         let confirmAction = UIAlertAction(title: confirmActionTitle, style: .default) { _ in
             action()
