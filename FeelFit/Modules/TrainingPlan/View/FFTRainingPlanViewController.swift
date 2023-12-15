@@ -145,6 +145,12 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
 }
 
 extension FFTRainingPlanViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let data = trainingPlans[indexPath.row]
+        let vc = FFPlanDetailsViewController(data: data)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, canEditItemAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -158,16 +164,16 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        let index = collectionView.indexPathForItem(at: point)!
+        let model = trainingPlans[index.row]
+        let vc = FFPlanDetailsViewController(data: model)
         return UIContextMenuConfiguration {
-            return nil
-            //здесь должна быть ссылка на контроллер деталей планируемой тренировки
+            return vc
         } actionProvider: { _ in
             let actionOpen = UIAction(title: "Open", image: UIImage(systemName: "arrow.up.forward.square")) { _ in
-                //показывать детали данной программы
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             let actionDelete = UIAction(title: "Delete", image: UIImage(systemName: "trash.square"),attributes: .destructive) { _ in
-                let index = collectionView.indexPathForItem(at: point)!
-                let model = self.trainingPlans[index.row]
                 FFTrainingPlanStoreManager.shared.deletePlan(model)
                 collectionView.deleteItems(at: indexPaths)
                 self.setupView()

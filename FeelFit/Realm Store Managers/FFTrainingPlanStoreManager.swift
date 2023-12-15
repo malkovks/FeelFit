@@ -16,7 +16,7 @@ class FFTrainingPlanStoreManager {
     
     private init() {}
     
-    func savePlan(plan: CreateTrainProgram,exercises: [Exercise]){
+    func savePlan(plan: CreateTrainProgram,exercises: [Exercise],completionHandler: @escaping (Bool) -> ()){
         let exercisesObjects: [FFExerciseModelRealm] = exercises.map { data -> FFExerciseModelRealm in
             let exercise = FFExerciseModelRealm()
             exercise.exerciseID = data.exerciseID
@@ -32,8 +32,45 @@ class FFTrainingPlanStoreManager {
         let data = FFTrainingPlanRealmModel(name: plan.name, notes: plan.note, location: plan.location, type: plan.type, date: plan.date, status: plan.notificationStatus, exercises: exercisesObjects)
         try! realm.write({
             realm.add(data)
+            if data.trainingNotificationStatus {
+                createNotification(data) { status in
+                    completionHandler(status)
+                }
+            }
         })
     }
+    
+    private func createNotification(_ model: FFTrainingPlanRealmModel,handler: @escaping (Bool) ->()){
+        let sound = UNNotificationSound(named: UNNotificationSoundName("ding.mp3"))
+        guard let image = Bundle.main.url(forResource: "arnold_run", withExtension: "jpeg") else {
+            return
+        }
+        
+        let dateComponents: DateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: model.trainingDate)
+        let id = model.trainingUniqueID
+        let attachment = try! UNNotificationAttachment(identifier: id, url: image, options: nil)
+        
+        let content = UNMutableNotificationContent()
+        content.title = model.trainingName.capitalized
+        content.body = model.trainingNotes.capitalized
+        content.sound = sound
+        content.attachments = [attachment]
+        if model.trainingType != "" {
+            content.subtitle = "Type: \(String(describing: model.trainingType))"
+        }
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        let center = UNUserNotificationCenter.current()
+        center.add(request) { error in
+            if error == nil {
+                handler(true)
+            } else {
+                handler(false)
+            }
+        }
+    }
+
     
     func deletePlan(_ model: FFTrainingPlanRealmModel){
         try! realm.write({

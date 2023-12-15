@@ -114,11 +114,12 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         setupViewModel()
         setupView()
         setupNavigationController()
+        setupToolBar()
         setupConstraints()
         setupButtons()
         setupTextViewInsets()
         dismissKeyboardBySwipe()
-        setupToolBar()
+        
         setupDelegates()
     }
     //MARK: - Target methods
@@ -160,9 +161,9 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     private func setupToolBar(){
         textViewToolBar = viewModel.setupToolBar(boldAction: #selector(didTapBoldText),
                                                  italicAction: #selector(didTapItalicText),
-                                                 underlineAction: #selector(didTapUnderlineText),
-                                                 doneAction: #selector(didTapSwipeKeyboard)
-        )
+                                                 underlineAction:     #selector(didTapUnderlineText),
+                                                 doneAction: #selector(didTapSwipeKeyboard))
+        noteTrainingPlanTextView.inputAccessoryView = textViewToolBar
     }
     
     func setupViewModel(){

@@ -56,7 +56,11 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapSave(){
-        viewModel.didTapConfirmSaving(plan: trainProgram, exercises: exercises)
+        viewModel.didTapConfirmSaving(plan: trainProgram, exercises: exercises) { [unowned self] status in
+            if status {
+                viewAlertController(text: "Notification added successfully", startDuration: 0.5, timer: 2, controllerView: self.view)
+            }
+        }
     }
     
     //MARK: - Setup View methods

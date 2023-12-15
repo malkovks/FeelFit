@@ -60,7 +60,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     public func configureLabels(model: Results<FFTrainingPlanRealmModel>,indexPath: IndexPath){
         let model = model[indexPath.row]
         nameLabel.text = model.trainingName
-        detailLabel.text = model.trainingLocation
+        detailLabel.text = model.trainingNotes
         let dateString = DateFormatter.localizedString(from: model.trainingDate, dateStyle: .medium, timeStyle: .short)
         dateLabel.text = "Planned \(dateString)"
         muscleGroupLabel.text = model.trainingExercises.first?.exerciseMuscle

@@ -24,5 +24,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler(.list)
     }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        
+        if let tabBar = window?.rootViewController as? FFTabBarController,
+           let navCon = tabBar.selectedViewController as? FFNavigationController {
+            navCon.pushViewController(FFTRainingPlanViewController(), animated: true)
+        }
+        
+        completionHandler()
+        
+    }
+    
+    
 }
 
