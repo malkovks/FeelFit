@@ -70,9 +70,6 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
     
     func setupView() {
         view.backgroundColor = .systemBackground
-        DispatchQueue.main.asyncAfter(deadline: .now()+3){
-            self.tableView.reloadData()
-        }
     }
     
     func setupNavigationController() { }

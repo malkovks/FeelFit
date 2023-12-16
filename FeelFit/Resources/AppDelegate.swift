@@ -7,6 +7,7 @@
 
 import UIKit
 import UserNotifications
+import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,15 +27,37 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
-        
-        if let tabBar = window?.rootViewController as? FFTabBarController,
-           let navCon = tabBar.selectedViewController as? FFNavigationController {
-            navCon.pushViewController(FFTRainingPlanViewController(), animated: true)
+        let identifier = response.notification.request.identifier
+        guard let object = getRealmModel(identifier) else {
+            print("Error getting model from realm")
+            return
         }
+        guard let tabBarController = UIApplication.shared.delegate?.window??.rootViewController as? FFTabBarController else { return }
+        tabBarController.selectedIndex = 2
+        let navVC = tabBarController.selectedViewController as? FFNavigationController
+        let rootVC = FFTRainingPlanViewController()
+        rootVC.didTapCreateProgram()
+        let vc = UINavigationController(rootViewController: rootVC)
+        navVC?.pushViewController(vc, animated: true)
+//        let vc = FFProfileViewController()
+        
+//        
+//        if let tabBar = window?.rootViewController as? FFTabBarController,
+//           let navCon = tabBar.selectedViewController as? FFNavigationController {
+//            
+//            navCon.pushViewController(vc, animated: true)
+//        } else {
+//            print("Error")
+//        }
         
         completionHandler()
         
+    }
+    
+    func getRealmModel(_ identifier: String) -> FFTrainingPlanRealmModel? {
+        let realm = try! Realm()
+        let object = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingUniqueID == %@",identifier)
+        return object.first
     }
     
     

@@ -57,7 +57,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configureLabels(model: Results<FFTrainingPlanRealmModel>,indexPath: IndexPath){
+    public func configureLabels(model: [FFTrainingPlanRealmModel],indexPath: IndexPath){
         let model = model[indexPath.row]
         nameLabel.text = model.trainingName
         detailLabel.text = model.trainingNotes

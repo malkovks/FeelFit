@@ -26,7 +26,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     private var viewModel: FFTrainingPlanViewModel!
     
     private let realm = try! Realm()
-    private var trainingPlans: Results<FFTrainingPlanRealmModel>!
+    private var trainingPlans: [FFTrainingPlanRealmModel]!
     
     private var collectionView: UICollectionView!
     
@@ -56,9 +56,11 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupNavigationController()
         setupConstraints()
         view.backgroundColor = FFResources.Colors.backgroundColor
+        
+        
     }
 
-    @objc private func didTapCreateProgram(){
+    @objc func didTapCreateProgram(){
         let vc = FFCreateTrainProgramViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -74,7 +76,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
     
     func loadData(){
-        let object = realm.objects(FFTrainingPlanRealmModel.self)
+        let object = realm.objects(FFTrainingPlanRealmModel.self).sorted { $0.trainingDate > $1.trainingDate }
         trainingPlans = object
     }
     

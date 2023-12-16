@@ -60,7 +60,7 @@
 		0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */; };
 		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
 		0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */; };
-		0A9151A72B03BE1A00FE5E41 /* FFCreatePlanModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */; };
+		0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */; };
 		0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */; };
 		0ABDEAFF2B173F3100BDDAFE /* FFAddExerciseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */; };
 		0ABDEB012B174E1300BDDAFE /* FFExersiceModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB002B174E1300BDDAFE /* FFExersiceModelRealm.swift */; };
@@ -142,7 +142,7 @@
 		0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanViewModel.swift; sourceTree = "<group>"; };
 		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
 		0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateHeaderView.swift; sourceTree = "<group>"; };
-		0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreatePlanModel.swift; sourceTree = "<group>"; };
+		0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanRealmModel.swift; sourceTree = "<group>"; };
 		0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTrainProgramViewController.swift; sourceTree = "<group>"; };
 		0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseViewController.swift; sourceTree = "<group>"; };
 		0ABDEB002B174E1300BDDAFE /* FFExersiceModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExersiceModelRealm.swift; sourceTree = "<group>"; };
@@ -512,7 +512,7 @@
 		0A4495242ABA793C0082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0A9151A62B03BE1A00FE5E41 /* FFCreatePlanModel.swift */,
+				0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -887,7 +887,7 @@
 				0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
-				0A9151A72B03BE1A00FE5E41 /* FFCreatePlanModel.swift in Sources */,
+				0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */,
 				0AE0F4F92B0619E600874C0B /* FFFavouriteExercisesModel.swift in Sources */,
 				0A82CD1F2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift in Sources */,
 				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,

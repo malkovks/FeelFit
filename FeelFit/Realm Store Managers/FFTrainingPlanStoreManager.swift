@@ -16,7 +16,7 @@ class FFTrainingPlanStoreManager {
     
     private init() {}
     
-    func savePlan(plan: CreateTrainProgram,exercises: [Exercise],completionHandler: @escaping (Bool) -> ()){
+    func savePlanExercise(plan: CreateTrainProgram,exercises: [Exercise]){
         let exercisesObjects: [FFExerciseModelRealm] = exercises.map { data -> FFExerciseModelRealm in
             let exercise = FFExerciseModelRealm()
             exercise.exerciseID = data.exerciseID
@@ -29,18 +29,42 @@ class FFTrainingPlanStoreManager {
             exercise.exerciseInstructions = data.instructions.joined(separator: ". ")
             return exercise
         }
-        let data = FFTrainingPlanRealmModel(name: plan.name, notes: plan.note, location: plan.location, type: plan.type, date: plan.date, status: plan.notificationStatus, exercises: exercisesObjects)
+        let data = FFTrainingPlanRealmModel(
+            name: plan.name,
+            notes: plan.note,
+            location: plan.location,
+            type: plan.type,
+            date: plan.date,
+            status: plan.notificationStatus,
+            exercises: exercisesObjects
+        )
         try! realm.write({
             realm.add(data)
             if data.trainingNotificationStatus {
-                createNotification(data) { status in
-                    completionHandler(status)
-                }
+                createNotification(data)
             }
         })
     }
     
-    private func createNotification(_ model: FFTrainingPlanRealmModel,handler: @escaping (Bool) ->()){
+    func savePlanRealmModel(_ plan: CreateTrainProgram,_ model: [FFExerciseModelRealm]){
+        let data = FFTrainingPlanRealmModel(
+            name: plan.name,
+            notes: plan.note,
+            location: plan.location,
+            type: plan.type,
+            date: plan.date,
+            status: plan.notificationStatus,
+            exercises: model
+        )
+        try! realm.write({
+            realm.add(data)
+            if data.trainingNotificationStatus {
+                createNotification(data)
+            }
+        })
+    }
+    
+    private func createNotification(_ model: FFTrainingPlanRealmModel){
         let sound = UNNotificationSound(named: UNNotificationSoundName("ding.mp3"))
         guard let image = Bundle.main.url(forResource: "arnold_run", withExtension: "jpeg") else {
             return
@@ -63,10 +87,8 @@ class FFTrainingPlanStoreManager {
         let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
         let center = UNUserNotificationCenter.current()
         center.add(request) { error in
-            if error == nil {
-                handler(true)
-            } else {
-                handler(false)
+            if error != nil {
+                print(error!.localizedDescription)
             }
         }
     }

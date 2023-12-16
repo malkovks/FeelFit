@@ -1,5 +1,5 @@
 //
-//  FFCreatePlanModel.swift
+//  FFTrainingPlanRealmModel.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 14.11.2023.

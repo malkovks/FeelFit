@@ -16,22 +16,18 @@ class FFAddExerciseViewModel {
         self.viewController = viewController
     }
     
-    func didTapConfirmSaving(plan: CreateTrainProgram?,exercises: [Exercise],handler: @escaping (Bool) -> ()){
+    func didTapConfirmSaving(plan: CreateTrainProgram?,model: [FFExerciseModelRealm]){
         viewController.alertControllerActionConfirm(title: "Warning", message: "Save created program?", confirmActionTitle: "Save", secondTitleAction: "Don't save", style: .actionSheet) { [ unowned self] in
-            savePlanProgram(basic: plan, exercises: exercises) { status in
-                handler(status)
-            }
+            savePlanProgram(plan: plan,model)
             viewController.navigationController?.popToRootViewController(animated: true)
         } secondAction: { [unowned self] in
             viewController.navigationController?.popToRootViewController(animated: true)
         }
     }
     
-    func savePlanProgram(basic: CreateTrainProgram?,exercises: [Exercise],handler: @escaping (Bool) -> ()){
+    func savePlanProgram(plan basic: CreateTrainProgram?,_ model: [FFExerciseModelRealm]){
         guard let data = basic else { return }
-        FFTrainingPlanStoreManager.shared.savePlan(plan: data, exercises: exercises) { status in
-            handler(status)
-        }
+        FFTrainingPlanStoreManager.shared.savePlanRealmModel(data, model)
     }
     
     func configureView(action: @escaping () -> ()) -> UIContentUnavailableConfiguration {
@@ -52,6 +48,38 @@ class FFAddExerciseViewModel {
     
     func addExercise(vc: UIViewController){
         viewController.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func convertExerciseToRealm(exercises: [Exercise]) -> [FFExerciseModelRealm] {
+        let object: [FFExerciseModelRealm] = exercises.map { data -> FFExerciseModelRealm in
+            let model = FFExerciseModelRealm()
+            model.exerciseID = data.exerciseID
+            model.exerciseBodyPart = data.bodyPart
+            model.exerciseEquipment = data.equipment
+            model.exerciseImageLink = data.imageLink
+            model.exerciseName = data.exerciseName
+            model.exerciseMuscle = data.muscle
+            model.exerciseSecondaryMuscles = data.secondaryMuscles.joined(separator: ", ")
+            model.exerciseInstructions = data.instructions.joined(separator: ". ")
+            return model
+        }
+        return object
+    }
+    
+    func convertRealmModelToExercise(_ model: [FFExerciseModelRealm]) -> [Exercise]{
+        let object: [Exercise] = model.map { data -> Exercise in
+            let exercise = Exercise(
+                bodyPart: data.exerciseBodyPart,
+                equipment: data.exerciseEquipment,
+                imageLink: data.exerciseImageLink,
+                exerciseID: data.exerciseID,
+                exerciseName: data.exerciseName,
+                muscle: data.exerciseMuscle,
+                secondaryMuscles: [data.exerciseSecondaryMuscles],
+                instructions: [data.exerciseInstructions])
+            return exercise
+        }
+        return object
     }
     
     //MARK: - TableViewDelegate

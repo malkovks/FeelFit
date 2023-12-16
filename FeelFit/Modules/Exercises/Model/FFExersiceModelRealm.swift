@@ -17,4 +17,7 @@ class FFExerciseModelRealm: Object {
     @Persisted var exerciseMuscle: String
     @Persisted var exerciseSecondaryMuscles: String
     @Persisted var exerciseInstructions: String
+    @Persisted var exerciseApproach: String = "4"
+    @Persisted var exerciseRepeat: String = "10"
+    @Persisted var exerciseWeight: String = "0"
 }

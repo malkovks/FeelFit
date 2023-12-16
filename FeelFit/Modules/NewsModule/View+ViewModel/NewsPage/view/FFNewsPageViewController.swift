@@ -81,8 +81,6 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupConstraints()
         setupSpinner()
         setupTableView()
-        let vc = UIFontPickerViewController()
-        present(vc, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now()+0.5){ [unowned self] in
             self.viewModel!.requestData(type: self.typeRequest, filter: self.sortRequest,locale: self.localeRequest)
         }
@@ -234,10 +232,6 @@ extension FFNewsPageViewController {
         }
     }
 }
-//#Preview {
-//    let vc = FFNewsPageViewController()
-//    return vc
-//}
 
 
 

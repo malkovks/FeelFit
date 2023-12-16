@@ -11,6 +11,7 @@ import Kingfisher
 struct TrainingPlanModel {
     var firstPartTrain: CreateTrainProgram
     var exercises: [Exercise]
+    var exerciseSetup: [String]
 }
 
 
@@ -19,8 +20,9 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFAddExerciseViewModel!
     
+    
     private let trainProgram: CreateTrainProgram?
-    private var exercises = [Exercise]()
+    private var model = [FFExerciseModelRealm]()
     
     init(trainProgram: CreateTrainProgram?) {
         self.trainProgram = trainProgram
@@ -39,7 +41,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
         setupViewModel()
         setupNavigationController()
         setupTableView()
-        if exercises.isEmpty {
+        if model.isEmpty {
             contentUnavailableConfiguration =  viewModel.configureView { [unowned self] in
                 didTapAddExercise()
             }
@@ -56,11 +58,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapSave(){
-        viewModel.didTapConfirmSaving(plan: trainProgram, exercises: exercises) { [unowned self] status in
-            if status {
-                viewAlertController(text: "Notification added successfully", startDuration: 0.5, timer: 2, controllerView: self.view)
-            }
-        }
+        viewModel.didTapConfirmSaving(plan: trainProgram, model: model)
     }
     
     //MARK: - Setup View methods
@@ -93,7 +91,8 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
 
 extension FFAddExerciseViewController: PlanExerciseDelegate {
     func deliveryData(exercises: [Exercise]) {
-        self.exercises.append(contentsOf: exercises)
+        let values = viewModel.convertExerciseToRealm(exercises: exercises)
+        model.append(contentsOf: values)
         DispatchQueue.main.async { [unowned self] in
             tableView.reloadData()
             setupNonEmptyValue()
@@ -103,19 +102,19 @@ extension FFAddExerciseViewController: PlanExerciseDelegate {
 
 extension FFAddExerciseViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return exercises.count
+        return model.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFAddExerciseTableViewCell.identifier, for: indexPath) as! FFAddExerciseTableViewCell
-        cell.configureCell(indexPath: indexPath, data: exercises)
+        cell.configureCell(indexPath: indexPath, data: model)
         return cell
     }
 }
 
 extension FFAddExerciseViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        let exercise = exercises[indexPath.row]
+        let exercise = viewModel.convertRealmModelToExercise(model)[indexPath.row]
         let vc = FFExerciseDescriptionViewController(exercise: exercise)
         let configuration = UIContextMenuConfiguration {
             return vc
@@ -126,7 +125,6 @@ extension FFAddExerciseViewController: UITableViewDelegate {
             return UIMenu(children: [openView])
         }
         return configuration
-
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -135,10 +133,13 @@ extension FFAddExerciseViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let exercise = exercises[indexPath.row]
-        let vc = FFExerciseDescriptionViewController(exercise: exercise)
-        dump(exercise)
-        navigationController?.pushViewController(vc, animated: true)
+        let value = model[indexPath.row]
+        alertData(view: self.view) { data in
+            value.exerciseWeight = data[0]
+            value.exerciseApproach = data[1]
+            value.exerciseRepeat = data[2]
+            tableView.reloadRows(at: [indexPath], with: .fade)
+        }
     }
 }
 
@@ -153,18 +154,94 @@ extension FFAddExerciseViewController {
 }
 
 extension UIViewController {
-    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,secondTitleAction: String = "Clear",style: UIAlertController.Style,action: @escaping () -> (), secondAction: @escaping () -> ()){
-        let alert = UIAlertController(title: title, message: message, preferredStyle: style)
-        let confirmAction = UIAlertAction(title: confirmActionTitle, style: .default) { _ in
-            action()
+    func alertData(view: UIView,handler: @escaping ([String])-> ()?){
+        let alertController = UIAlertController(title: "Fill the fields", message: nil, preferredStyle: .alert)
+        
+        //Label Setup
+        let weightLabel = UILabel(frame: .zero)
+        weightLabel.text = "Weight :"
+        weightLabel.font = UIFont.textLabelFont()
+        weightLabel.textColor = FFResources.Colors.textColor
+        weightLabel.textAlignment = .justified
+        
+        let setsLabel = UILabel(frame: .zero)
+        setsLabel.text = "Sets :"
+        setsLabel.font = UIFont.textLabelFont()
+        setsLabel.textColor = FFResources.Colors.textColor
+        setsLabel.textAlignment = .justified
+        
+        let repeatLabel = UILabel(frame: .zero)
+        repeatLabel.text = "Repeats :"
+        repeatLabel.font = UIFont.textLabelFont()
+        repeatLabel.textColor = FFResources.Colors.textColor
+        repeatLabel.textAlignment = .justified
+        
+        let labelStackView = UIStackView(arrangedSubviews: [weightLabel,setsLabel,repeatLabel])
+        labelStackView.axis = .vertical
+        labelStackView.spacing = 10
+        labelStackView.alignment = .fill
+        labelStackView.distribution = .fillProportionally
+
+        //TextField Setup
+        let weightTextField = UITextField(frame: .zero)
+        weightTextField.borderStyle = .roundedRect
+        weightTextField.placeholder = "Weight value"
+        weightTextField.keyboardType = .numberPad
+        weightTextField.font = UIFont.textLabelFont()
+        weightTextField.textColor = FFResources.Colors.textColor
+        weightTextField.textAlignment = .center
+        
+        
+        let setsTextField = UITextField(frame: .zero)
+        setsTextField.borderStyle = .roundedRect
+        setsTextField.placeholder = "Sets value"
+        setsTextField.keyboardType = .numberPad
+        setsTextField.font = UIFont.textLabelFont()
+        setsTextField.textColor = FFResources.Colors.textColor
+        setsTextField.textAlignment = .center
+
+        let repeatTextField = UITextField(frame: .zero)
+        repeatTextField.borderStyle = .roundedRect
+        repeatTextField.placeholder = "Sets value"
+        repeatTextField.keyboardType = .numberPad
+        repeatTextField.font = UIFont.textLabelFont()
+        repeatTextField.textColor = FFResources.Colors.textColor
+        repeatTextField.textAlignment = .center
+
+        let textFieldStackView = UIStackView(arrangedSubviews: [weightTextField, setsTextField, repeatTextField])
+        textFieldStackView.axis = .vertical
+        textFieldStackView.spacing = 10
+        textFieldStackView.distribution = .fillProportionally
+        
+        //Stack view from two stack views
+        let stackView = UIStackView(arrangedSubviews: [labelStackView,textFieldStackView])
+        stackView.axis = .horizontal
+        stackView.distribution = .fillProportionally
+        stackView.spacing = 10
+        stackView.alignment = .fill
+        
+        alertController.view.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(50)
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.height.equalTo(120)
         }
-        let clearAction = UIAlertAction(title: "Clear", style: .destructive) { _ in
-            secondAction()
+        
+        alertController.view.snp.makeConstraints { make in
+            make.height.equalTo(220)
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(confirmAction)
-        alert.addAction(clearAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
+
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            guard let text = weightTextField.text,
+                    let secondText = setsTextField.text,
+                    let thirdText = repeatTextField.text else {
+                return
+            }
+            let value: [String] = [text, secondText, thirdText]
+            handler(value)
+        }))
+        
+        present(alertController, animated: true, completion: nil)
     }
 }
