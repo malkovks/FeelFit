@@ -153,27 +153,4 @@ class FFCreateTrainProgramViewModel {
         let menu = UIMenu(title: "Choose Type of your training",image: UIImage(systemName: "figure.highintensity.intervaltraining"),children: actions)
         return menu
     }
-    
-    
-
-    
-    /// Method for setting up toolbar for uitextview when user start to work with textviews keyboard
-    /// - Parameters:
-    ///   - boldAction: setting up selected text to bold
-    ///   - italicAction: setting up selected text to italic
-    ///   - underlineAction: setting up selected text to italic
-    ///   - doneAction: dismiss keyboard
-    /// - Returns: return sets up toolbar
-    func setupToolBar(boldAction: Selector,italicAction: Selector,underlineAction: Selector,doneAction: Selector) -> UIToolbar{
-        let toolBar = UIToolbar(frame: .zero)
-        toolBar.sizeToFit()
-        toolBar.tintColor = FFResources.Colors.activeColor
-        let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .done, target: self, action: boldAction)
-        let italicText = UIBarButtonItem(image: UIImage(systemName: "italic"),style: .done, target: self, action: italicAction)
-        let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .done, target: self, action: underlineAction)
-        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: doneAction)
-        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        toolBar.setItems([boldText, space, italicText, space, underlineText, space, doneButton], animated: true)
-        return toolBar
-    }
 }

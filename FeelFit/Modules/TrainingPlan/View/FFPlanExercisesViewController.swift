@@ -11,7 +11,7 @@ import RealmSwift
 protocol PlanExerciseDelegate: AnyObject {
     func deliveryData(exercises: [Exercise])
 }
-
+///Class for selecting exercises for next adding to training plan
 class FFPlanExercisesViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFPlanExercisesViewModel!

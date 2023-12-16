@@ -7,6 +7,7 @@
 
 import UIKit
 
+///Class for selecting one of 15 type of muscles and segue to choose exercise for this muscle group
 class FFMuscleGroupSelectionViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFMuscleGroupSelectionViewModel!

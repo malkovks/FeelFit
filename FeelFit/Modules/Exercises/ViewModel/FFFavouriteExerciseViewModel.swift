@@ -25,7 +25,7 @@ class FFFavouriteExerciseViewModel {
         let values = sortedModel[key]
         let value = values![indexPath.row]
         let model = Exercise(bodyPart: value.exerciseBodyPart, equipment: value.exerciseEquipment, imageLink: value.exerciseImageLink, exerciseID: value.exerciseID, exerciseName: value.exerciseName, muscle: value.exerciseMuscle, secondaryMuscles: [value.exerciseSecondaryMuscles], instructions: [value.exerciseInstructions])
-        let vc = FFExerciseDescriptionViewController(exercise: model)
+        let vc = FFExerciseDescriptionViewController(exercise: model, isElementsHidden: false)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     

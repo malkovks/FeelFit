@@ -34,7 +34,7 @@ class FFPlanExercisesViewModel {
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint,loadData: [Exercise]?, boolean status: Bool,saveAction: @escaping () -> ()) -> UIContextMenuConfiguration? {
         guard let longGesturedData = loadData?[indexPath.row] else { return nil}
-        let vc = FFExerciseDescriptionViewController(exercise: longGesturedData)
+        let vc = FFExerciseDescriptionViewController(exercise: longGesturedData, isElementsHidden: true)
         let title = status ? "Remove from Favourite" : "Add To Favourite"
         let image = status ? "heart.fill" : "heart"
         guard let interaction = tableView.contextMenuInteraction else { return nil}

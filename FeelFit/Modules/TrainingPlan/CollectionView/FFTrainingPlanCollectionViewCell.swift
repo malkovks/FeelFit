@@ -69,9 +69,9 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     private func setupContentView(){
         self.layer.cornerRadius = 12
         self.layer.masksToBounds = true
-        self.layer.borderWidth = 0.5
-        self.layer.borderColor = FFResources.Colors.textColor.cgColor
-        self.backgroundColor = FFResources.Colors.backgroundColor
+        self.layer.borderWidth = 1
+        self.layer.borderColor = FFResources.Colors.griRed.cgColor
+        self.backgroundColor = .systemBackground
     }
     
     private func setupConstraints(){

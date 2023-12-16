@@ -40,7 +40,7 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
     @objc private func didTapDismiss(){
         let date = datePicker.date
         
-        alertControllerActionConfirm(title: "Warning", message: "Do you want add notification on chosen date?", confirmActionTitle: "Add Notification", style: .alert) { [unowned self] in
+        alertControllerActionConfirm(title: "Warning", message: "Do you want add notification on chosen date?", confirmActionTitle: "Add Notification", secondTitleAction: "Don't add", style: .alert) { [unowned self] in
             handler?(date,true)
             dismiss(animated: true)
         } secondAction: { [unowned self] in

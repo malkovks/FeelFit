@@ -77,7 +77,7 @@ extension FFProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == 0 {
-            alertControllerActionConfirm(title: "Warning", message: "Drop all data from database?", confirmActionTitle: "Drop it", style: .actionSheet) {
+            alertControllerActionConfirm(title: "Warning", message: "Drop all data from database?", confirmActionTitle: "Delete all", secondTitleAction: "Don't delete", style: .actionSheet) {
                 self.deleteRealmModel()
             } secondAction: {
                 print("Second action")

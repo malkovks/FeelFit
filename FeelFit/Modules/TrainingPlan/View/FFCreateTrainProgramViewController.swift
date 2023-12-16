@@ -47,7 +47,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     private let noteTrainingPlanTextView: UITextView = {
         let textView = UITextView(frame: .zero)
         textView.font = UIFont.textLabelFont(size: 20)
-        textView.returnKeyType = .next
+        textView.returnKeyType = .done
         textView.textAlignment = .justified
         textView.textColor = FFResources.Colors.textColor
         textView.layer.cornerRadius = 8
@@ -107,8 +107,6 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         return button
     }()
     
-    private var textViewToolBar: UIToolbar!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewModel()
@@ -159,11 +157,16 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     
     private func setupToolBar(){
-        textViewToolBar = viewModel.setupToolBar(boldAction: #selector(didTapBoldText),
-                                                 italicAction: #selector(didTapItalicText),
-                                                 underlineAction:     #selector(didTapUnderlineText),
-                                                 doneAction: #selector(didTapSwipeKeyboard))
-        noteTrainingPlanTextView.inputAccessoryView = textViewToolBar
+        let toolBar = UIToolbar(frame: .zero)
+        toolBar.sizeToFit()
+        toolBar.tintColor = FFResources.Colors.activeColor
+        let boldText = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .done, target: self, action: #selector(didTapBoldText))
+        let italicText = UIBarButtonItem(image: UIImage(systemName: "italic"),style: .done, target: self, action: #selector(didTapItalicText))
+        let underlineText = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .done, target: self, action: #selector(didTapUnderlineText))
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(didTapSwipeKeyboard))
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolBar.setItems([boldText, space, italicText, space, underlineText, space, doneButton], animated: true)
+        noteTrainingPlanTextView.inputAccessoryView = toolBar
     }
     
     func setupViewModel(){

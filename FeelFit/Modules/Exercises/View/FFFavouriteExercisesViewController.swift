@@ -40,6 +40,17 @@ class FFFavouriteExercisesViewController: UIViewController, SetupViewController 
     
     func setupView() {
         view.backgroundColor = FFResources.Colors.darkPurple
+        if model.count > 0 {
+            setupConstraints()
+            contentUnavailableConfiguration = nil
+        } else {
+            var config = UIContentUnavailableConfiguration.empty()
+            config.text = "No favourite exercises"
+            config.secondaryText = "Add it by selecting muscles modules"
+            config.image = UIImage(systemName: "heart.fill")
+            config.image?.withTintColor(FFResources.Colors.activeColor)
+            contentUnavailableConfiguration = config
+        }
     }
     
     func setupViewModel(){

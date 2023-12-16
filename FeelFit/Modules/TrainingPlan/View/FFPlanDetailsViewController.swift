@@ -7,6 +7,7 @@
 
 import UIKit
 
+///Class for displaying previous created training plan and for some actions with these
 class FFPlanDetailsViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFPlanDetailsViewModel!

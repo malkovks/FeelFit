@@ -56,11 +56,14 @@ class FFMuscleGroupTableViewCell: UITableViewCell {
    
     private func checkStatusCode(key: String){
         let formatKey = key.replacingOccurrences(of: "%20", with: " ")
+        let secondFormatKey = formatKey.replacingOccurrences(of: "_", with: " ")
         let realm = try! Realm()
-        let value = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@",formatKey)
+        let value = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@",secondFormatKey)
         let status = value.count > 0 ? true : false
         if status {
             downloadIndicatorImageView.image = UIImage(systemName: "arrow.down.circle.fill")
+        } else {
+            downloadIndicatorImageView.image = nil
         }
     }
     

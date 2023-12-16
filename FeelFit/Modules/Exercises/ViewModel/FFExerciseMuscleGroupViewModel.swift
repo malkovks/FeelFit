@@ -34,7 +34,7 @@ class FFExerciseMuscleGroupViewModel {
     func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [Exercise]) {
         tableView.deselectRow(at: indexPath, animated: true)
         let exercise = model[indexPath.row]
-        let vc = FFExerciseDescriptionViewController(exercise: exercise)
+        let vc = FFExerciseDescriptionViewController(exercise: exercise, isElementsHidden: false)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
 }

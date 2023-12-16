@@ -43,6 +43,13 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
         return image
     }()
     
+    private let statusImageView: UIImageView = {
+       let image = UIImageView(image: UIImage(systemName: "arrow.down.circle.fill"))
+        image.contentMode = .scaleAspectFit
+        image.tintColor = FFResources.Colors.textColor
+        return image
+    }()
+    
     let muscleTitleLabel: UILabel = {
        let label = UILabel()
         label.font = .headerFont()
@@ -73,6 +80,25 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
             make.leading.trailing.bottom.equalToSuperview().inset(5)
             make.height.equalTo(contentView.frame.size.height/6)
         }
+        
+        muscleImageView.addSubview(statusImageView)
+        statusImageView.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(5)
+            make.height.width.equalTo(20)
+        }
+    }
+    
+    private func checkStatusCode(_ key: String){
+        let formatKey = key.replacingOccurrences(of: "%20", with: " ")
+        let fKey = formatKey.replacingOccurrences(of: "_", with: " ")
+        let realm = try! Realm()
+        let value = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@", fKey)
+        let status = value.count > 0 ? true : false
+        if status {
+            statusImageView.image = UIImage(systemName: "arrow.down.circle.fill")
+        } else {
+            statusImageView.image = nil
+        }
     }
     
     private func setupContentView(){
@@ -84,6 +110,7 @@ class FFExercisesCollectionViewCell: UICollectionViewCell {
     func configureCell(indexPath: IndexPath){
         let key = Array(muscleDictionary.keys.sorted())[indexPath.row]
         let value = muscleDictionary[key]
+        checkStatusCode(key)
         muscleTitleLabel.text = value
         muscleImageView.image = UIImage(named: key)
         FFExerciseStoreManager.shared.checkDuplicates(key)

@@ -26,11 +26,19 @@ class FFExerciseStoreManager {
             exercise.exerciseMuscle = data.muscle
             exercise.exerciseSecondaryMuscles = data.secondaryMuscles.joined(separator: ", ")
             exercise.exerciseInstructions = data.instructions.joined(separator: ". ")
+            
+            let savedObject = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",exercise.exerciseID).first
+            
+            if let _ = savedObject {
+                
+            } else {
+                try! realm.write({
+                    realm.add(exercise)
+                })
+            }
+            
             return exercise
         }
-        try! realm.write({
-            realm.add(exerciseObjects)
-        })
     }
     
     func loadMusclesData(_ filterName: String,filter: String = "exerciseMuscle") -> [Exercise] {

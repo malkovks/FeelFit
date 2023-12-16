@@ -26,6 +26,8 @@ final class FFNavigationController: UINavigationController {
         
         self.navigationBar.isTranslucent = false
         
+        let attributes = [NSAttributedString.Key.font: FFResources.Fonts.futuraFont(size: 28)]
+        navigationBar.largeTitleTextAttributes = attributes
         
         navigationBar.tintColor = FFResources.Colors.activeColor
         navigationBar.barTintColor = FFResources.Colors.tabBarBackgroundColor

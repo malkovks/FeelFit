@@ -18,9 +18,11 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     var viewModel: FFExerciseDescriptionViewModel!
     
     let exercise: Exercise
+    let isElementsHidden: Bool
     
-    init(exercise: Exercise) {
+    init(exercise: Exercise,isElementsHidden: Bool) {
         self.exercise = exercise
+        self.isElementsHidden = isElementsHidden
         super.init(nibName: nil, bundle: nil)
     }
     

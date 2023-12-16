@@ -21,8 +21,6 @@ final class FFTabBarController: UITabBarController {
         tabBar.barTintColor = .systemBackground
         tabBar.backgroundColor = .systemBackground
         tabBar.layer.masksToBounds = true
-        tabBar.layer.borderWidth = 0.5
-        tabBar.layer.borderColor = FFResources.Colors.textColor.cgColor
         let height = tabBar.frame.size.height/2
         tabBar.frame.size.height = height
         tabBar.frame.origin.y = tabBar.frame.size.height - height

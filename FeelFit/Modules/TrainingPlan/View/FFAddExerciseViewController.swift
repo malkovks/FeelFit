@@ -8,21 +8,14 @@
 import UIKit
 import Kingfisher
 
-struct TrainingPlanModel {
-    var firstPartTrain: CreateTrainProgram
-    var exercises: [Exercise]
-    var exerciseSetup: [String]
-}
-
-
 /// Class for adding exercises to created base program plan
 class FFAddExerciseViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFAddExerciseViewModel!
     
     
-    private let trainProgram: CreateTrainProgram?
-    private var model = [FFExerciseModelRealm]()
+    var trainProgram: CreateTrainProgram?
+    var model = [FFExerciseModelRealm]()
     
     init(trainProgram: CreateTrainProgram?) {
         self.trainProgram = trainProgram
@@ -58,7 +51,17 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapSave(){
-        viewModel.didTapConfirmSaving(plan: trainProgram, model: model)
+        if model.count == 0 {
+            alertControllerActionConfirm(title: "Warning", message: "You exercise list is empty. Are you sure you want to save plan without including them?", confirmActionTitle: "Continue",secondTitleAction: "", style: .alert) {
+                self.viewModel.didTapConfirmSaving(plan: self.trainProgram, model: self.model)
+            } secondAction: {
+                self.dismiss(animated: true)
+            }
+
+        } else {
+            viewModel.didTapConfirmSaving(plan: trainProgram, model: model)
+        }
+        
     }
     
     //MARK: - Setup View methods
@@ -67,14 +70,17 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     func setupTableView(){
-        tableView = UITableView(frame: .zero,style: .plain)
+        tableView = UITableView(frame: .zero,style: .grouped)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.dragDelegate = self
+        tableView.dragInteractionEnabled = true
+        tableView.estimatedSectionFooterHeight = 40
         tableView.register(FFAddExerciseTableViewCell.self, forCellReuseIdentifier: FFAddExerciseTableViewCell.identifier)
     }
     
     func setupView() {
-        view.backgroundColor = FFResources.Colors.backgroundColor
+        view.backgroundColor = .systemBackground
     }
     
     func setupNavigationController() {
@@ -115,12 +121,18 @@ extension FFAddExerciseViewController: UITableViewDataSource {
 extension FFAddExerciseViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         let exercise = viewModel.convertRealmModelToExercise(model)[indexPath.row]
-        let vc = FFExerciseDescriptionViewController(exercise: exercise)
+        let vc = FFExerciseDescriptionViewController(exercise: exercise, isElementsHidden: true)
         let configuration = UIContextMenuConfiguration {
             return vc
         } actionProvider: { _ in
             let openView = UIAction(title: "Open") { _ in
                 self.navigationController?.pushViewController(vc, animated: true)
+            }
+            let deleteExercise = UIAction(title: "Delete", image: UIImage(systemName: "trash"),attributes: .destructive) { [unowned self] _ in
+                tableView.beginUpdates()
+                model.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .top)
+                tableView.endUpdates()
             }
             return UIMenu(children: [openView])
         }
@@ -134,12 +146,42 @@ extension FFAddExerciseViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let value = model[indexPath.row]
-        alertData(view: self.view) { data in
+        setupExerciseSecondaryParameters() { data in
             value.exerciseWeight = data[0]
             value.exerciseApproach = data[1]
             value.exerciseRepeat = data[2]
             tableView.reloadRows(at: [indexPath], with: .fade)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        view.setNeedsDisplay()
+        let deleteInstance = UIContextualAction(style: .destructive, title: "") { [unowned self] _, _, _ in
+            tableView.beginUpdates()
+            model.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .top)
+            tableView.endUpdates()
+        }
+        deleteInstance.backgroundColor = UIColor.systemRed
+        deleteInstance.image = UIImage(systemName: "trash.fill")
+        deleteInstance.image?.withTintColor(FFResources.Colors.backgroundColor)
+        let action = UISwipeActionsConfiguration(actions: [deleteInstance])
+        return action
+    }
+    
+    //Drag func
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let mover = model.remove(at: sourceIndexPath.row)
+        model.insert(mover, at: sourceIndexPath.row)
+    }
+}
+
+extension FFAddExerciseViewController: UITableViewDragDelegate {
+    
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let dragItem = UIDragItem(itemProvider: NSItemProvider())
+        dragItem.localObject = model[indexPath.row]
+        return [dragItem]
     }
 }
 
@@ -150,98 +192,5 @@ extension FFAddExerciseViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-    }
-}
-
-extension UIViewController {
-    func alertData(view: UIView,handler: @escaping ([String])-> ()?){
-        let alertController = UIAlertController(title: "Fill the fields", message: nil, preferredStyle: .alert)
-        
-        //Label Setup
-        let weightLabel = UILabel(frame: .zero)
-        weightLabel.text = "Weight :"
-        weightLabel.font = UIFont.textLabelFont()
-        weightLabel.textColor = FFResources.Colors.textColor
-        weightLabel.textAlignment = .justified
-        
-        let setsLabel = UILabel(frame: .zero)
-        setsLabel.text = "Sets :"
-        setsLabel.font = UIFont.textLabelFont()
-        setsLabel.textColor = FFResources.Colors.textColor
-        setsLabel.textAlignment = .justified
-        
-        let repeatLabel = UILabel(frame: .zero)
-        repeatLabel.text = "Repeats :"
-        repeatLabel.font = UIFont.textLabelFont()
-        repeatLabel.textColor = FFResources.Colors.textColor
-        repeatLabel.textAlignment = .justified
-        
-        let labelStackView = UIStackView(arrangedSubviews: [weightLabel,setsLabel,repeatLabel])
-        labelStackView.axis = .vertical
-        labelStackView.spacing = 10
-        labelStackView.alignment = .fill
-        labelStackView.distribution = .fillProportionally
-
-        //TextField Setup
-        let weightTextField = UITextField(frame: .zero)
-        weightTextField.borderStyle = .roundedRect
-        weightTextField.placeholder = "Weight value"
-        weightTextField.keyboardType = .numberPad
-        weightTextField.font = UIFont.textLabelFont()
-        weightTextField.textColor = FFResources.Colors.textColor
-        weightTextField.textAlignment = .center
-        
-        
-        let setsTextField = UITextField(frame: .zero)
-        setsTextField.borderStyle = .roundedRect
-        setsTextField.placeholder = "Sets value"
-        setsTextField.keyboardType = .numberPad
-        setsTextField.font = UIFont.textLabelFont()
-        setsTextField.textColor = FFResources.Colors.textColor
-        setsTextField.textAlignment = .center
-
-        let repeatTextField = UITextField(frame: .zero)
-        repeatTextField.borderStyle = .roundedRect
-        repeatTextField.placeholder = "Sets value"
-        repeatTextField.keyboardType = .numberPad
-        repeatTextField.font = UIFont.textLabelFont()
-        repeatTextField.textColor = FFResources.Colors.textColor
-        repeatTextField.textAlignment = .center
-
-        let textFieldStackView = UIStackView(arrangedSubviews: [weightTextField, setsTextField, repeatTextField])
-        textFieldStackView.axis = .vertical
-        textFieldStackView.spacing = 10
-        textFieldStackView.distribution = .fillProportionally
-        
-        //Stack view from two stack views
-        let stackView = UIStackView(arrangedSubviews: [labelStackView,textFieldStackView])
-        stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
-        stackView.spacing = 10
-        stackView.alignment = .fill
-        
-        alertController.view.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(50)
-            make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(120)
-        }
-        
-        alertController.view.snp.makeConstraints { make in
-            make.height.equalTo(220)
-        }
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-            guard let text = weightTextField.text,
-                    let secondText = setsTextField.text,
-                    let thirdText = repeatTextField.text else {
-                return
-            }
-            let value: [String] = [text, secondText, thirdText]
-            handler(value)
-        }))
-        
-        present(alertController, animated: true, completion: nil)
     }
 }
