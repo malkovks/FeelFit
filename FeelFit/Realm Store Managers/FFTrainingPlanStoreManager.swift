@@ -85,6 +85,7 @@ class FFTrainingPlanStoreManager {
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
         let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        print(id)
         let center = UNUserNotificationCenter.current()
         center.add(request) { error in
             if error != nil {

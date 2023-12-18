@@ -23,32 +23,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler(.list)
+        completionHandler(.badge)
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let identifier = response.notification.request.identifier
         guard let object = getRealmModel(identifier) else {
-            print("Error getting model from realm")
+            print("error getting object")
             return
         }
-        guard let tabBarController = UIApplication.shared.delegate?.window??.rootViewController as? FFTabBarController else { return }
-        tabBarController.selectedIndex = 2
-        let navVC = tabBarController.selectedViewController as? FFNavigationController
-        let rootVC = FFTRainingPlanViewController()
-        rootVC.didTapCreateProgram()
-        let vc = UINavigationController(rootViewController: rootVC)
-        navVC?.pushViewController(vc, animated: true)
-//        let vc = FFProfileViewController()
-        
-//        
-//        if let tabBar = window?.rootViewController as? FFTabBarController,
-//           let navCon = tabBar.selectedViewController as? FFNavigationController {
-//            
-//            navCon.pushViewController(vc, animated: true)
-//        } else {
-//            print("Error")
-//        }
+        guard let rootVC = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
+            print("Error getting rootVC")
+            return
+        }
+        let vc = FFTRainingPlanViewController()
+        if let tabbar = rootVC as? FFTabBarController,
+           let nav = tabbar.selectedViewController as? FFNavigationController {
+            DispatchQueue.main.asyncAfter(deadline: .now()+1){
+                vc.openPlanDetail(object)
+            }
+            
+            nav.modalPresentationStyle = .fullScreen
+            nav.present(vc, animated: true)
+            
+        } else {
+            print("Error getting tab bar or nav bar")
+        }
         
         completionHandler()
         
@@ -60,6 +60,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         return object.first
     }
     
+//    let identifier = response.notification.request.identifier
+    //        guard let object = getRealmModel(identifier) else {
+    //            print("Error getting model from realm")
+    //            return
+    //        }
     
 }
 

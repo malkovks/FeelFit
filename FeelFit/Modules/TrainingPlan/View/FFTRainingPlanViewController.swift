@@ -132,6 +132,14 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     func setupRefreshController(){
         refreshController.addTarget(self, action: #selector(didTapRefreshView), for: .valueChanged)
     }
+    
+    func openPlanDetail(_ model: FFTrainingPlanRealmModel){
+        let vc = FFPlanDetailsViewController(data: model)
+        let nav = FFNavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.isNavigationBarHidden = false
+        present(nav, animated: true)
+    }
 }
 
 extension FFTRainingPlanViewController: UICollectionViewDataSource {
@@ -149,8 +157,7 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
 extension FFTRainingPlanViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let data = trainingPlans[indexPath.row]
-        let vc = FFPlanDetailsViewController(data: data)
-        navigationController?.pushViewController(vc, animated: true)
+        openPlanDetail(data)
     }
     
     func collectionView(_ collectionView: UICollectionView, canEditItemAt indexPath: IndexPath) -> Bool {
