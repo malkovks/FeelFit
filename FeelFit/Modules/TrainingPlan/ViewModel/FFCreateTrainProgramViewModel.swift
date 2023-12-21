@@ -104,8 +104,8 @@ class FFCreateTrainProgramViewModel {
         }
     }
     
-    func openDatePickerController(){
-        let vc = FFDatePickerViewController()
+    func openDatePickerController(date: Date = Date()){
+        let vc = FFDatePickerViewController(chosenDate: date)
         let nav = FFNavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .pageSheet
         nav.sheetPresentationController?.prefersGrabberVisible = true

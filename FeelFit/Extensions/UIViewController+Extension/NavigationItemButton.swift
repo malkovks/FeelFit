@@ -33,8 +33,9 @@ extension UIViewController {
         button.layer.cornerRadius = 14
         button.backgroundColor = .secondarySystemBackground
         button.showsMenuAsPrimaryAction = true
+        button.sizeToFit()
         button.snp.makeConstraints { make in
-            make.width.equalTo(50)
+            make.width.equalTo(60)
             make.height.equalTo(30)
         }
         if let action = action {

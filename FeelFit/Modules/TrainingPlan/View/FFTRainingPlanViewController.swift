@@ -19,6 +19,13 @@ struct TrainingPlan {
     let exercises: [Exercise]
 }
 
+enum PlanTrainingSortType: String {
+    case date = "By Date"
+    case name = "By Name"
+    case type = "By Type"
+    case location = "By Location"
+}
+
 
 /// Main view controller which displaying planned if they have trainings. If not - user can create them
 class FFTRainingPlanViewController: UIViewController,SetupViewController {
@@ -38,7 +45,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadData()
+        loadData(sorted: .date)
         setupView()
         setupLocalNotificationsAuth()
         DispatchQueue.main.async { [ unowned self ] in
@@ -48,7 +55,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData()
+        loadData(sorted: .date)
         setupViewModel()
        
         setupCollectionView()
@@ -61,23 +68,35 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
 
     @objc func didTapCreateProgram(){
-        let vc = FFCreateTrainProgramViewController()
+        let vc = FFCreateTrainProgramViewController(isViewEdited: false, trainPlanData: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func didTapRefreshView(){
         refreshController.beginRefreshing()
         setupView()
-        loadData()
+        loadData(sorted: .date)
         DispatchQueue.main.async { [ unowned self ] in
             collectionView.reloadData()
             refreshController.endRefreshing()
         }
     }
     
-    func loadData(){
-        let object = realm.objects(FFTrainingPlanRealmModel.self).sorted { $0.trainingDate > $1.trainingDate }
-        trainingPlans = object
+    func loadData(sorted: PlanTrainingSortType){
+        //MARK: - Доделать
+        switch sorted {
+        case .date:
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingDate > $1.trainingDate })
+        case .name:
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingName > $1.trainingName })
+        case .type:
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingType ?? "Default" > $1.trainingType ?? "Default" })
+        case .location:
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingLocation ?? "Default" > $1.trainingLocation ?? "Default" })
+        }
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     func setupLocalNotificationsAuth(){
@@ -127,6 +146,29 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "rectangle.badge.plus", action: #selector(didTapCreateProgram), menu: nil)
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "line.3.horizontal.decrease", action: nil, menu: setupSortingMenu())
+    }
+    
+    
+    
+    func setupSortingMenu() -> UIMenu {
+        var actions: [UIAction] {
+            return [
+                UIAction(title: "By Date", handler: { [unowned self] _ in
+                    loadData(sorted: .date)
+                }),
+                UIAction(title: "By Name", handler: { [unowned self] _ in
+                    loadData(sorted: .name)
+                }),
+                UIAction(title: "By Type", handler: { [unowned self] _ in
+                    loadData(sorted: .type)
+                }),
+                UIAction(title: "By Location", handler: { [unowned self] _ in
+                    loadData(sorted: .location)
+                }),]
+        }
+        let menu = UIMenu(title: "Sort type",options: .singleSelection,children: actions)
+        return menu
     }
     
     func setupRefreshController(){
@@ -186,6 +228,9 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
                 FFTrainingPlanStoreManager.shared.deletePlan(model)
                 collectionView.deleteItems(at: indexPaths)
                 self.setupView()
+            }
+            let actionChange = UIAction(title: "Change", image: UIImage(systemName: "gear")) { _ in
+                //подумать как изменять данные выбранной модели
             }
             let menu = UIMenu(children: [actionOpen,actionDelete])
             return menu

@@ -11,6 +11,16 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
     
     var handler: ((Date,Bool) -> ())?
     
+    private let chosenDate: Date
+    init(chosenDate: Date) {
+        self.chosenDate = chosenDate
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private var datePicker: UIDatePicker!
     
     override func viewDidLoad() {
@@ -27,7 +37,7 @@ class FFDatePickerViewController: UIViewController, SetupViewController {
         datePicker.preferredDatePickerStyle = .inline
         datePicker.datePickerMode = .dateAndTime
         datePicker.backgroundColor = .clear
-        datePicker.date = Date()
+        datePicker.setDate(chosenDate, animated: true)
         datePicker.tintColor = FFResources.Colors.activeColor
         datePicker.locale = .current
         datePicker.timeZone = TimeZone.current

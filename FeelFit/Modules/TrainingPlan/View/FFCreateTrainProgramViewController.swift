@@ -10,8 +10,8 @@ import UIKit
 struct CreateTrainProgram {
     var name: String
     var note: String
-    var type: String
-    var location: String
+    var type: String?
+    var location: String?
     var date: Date
     var notificationStatus: Bool
 }
@@ -22,7 +22,19 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     private var viewModel: FFCreateTrainProgramViewModel!
     
-    var trainPlanData = CreateTrainProgram(name: "", note: "", type: "", location: "",date: Date(),notificationStatus: false)
+    let isViewEdited: Bool
+    var trainPlanData: CreateTrainProgram
+    
+    init( isViewEdited: Bool, trainPlanData: CreateTrainProgram?) {
+        let plan = CreateTrainProgram(name: "", note: "", type: "", location: "", date: Date(), notificationStatus: false)
+        self.isViewEdited = isViewEdited
+        self.trainPlanData = trainPlanData ?? plan
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let trainingPlanTextField: UITextField = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
@@ -117,7 +129,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         setupButtons()
         setupTextViewInsets()
         dismissKeyboardBySwipe()
-        
+        setupEditingView(isViewEdited)
         setupDelegates()
     }
     //MARK: - Target methods
@@ -154,7 +166,16 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     //MARK: - ДОДЕЛАТЬ ОТСТУП у TEXTVIEW
     
-    
+    func setupEditingView(_ isEditing: Bool) {
+        if isEditing {
+            let dateString = DateFormatter.localizedString(from: trainPlanData.date, dateStyle: .short, timeStyle: .short)
+            trainingPlanTextField.text = trainPlanData.name
+            noteTrainingPlanTextView.text = trainPlanData.note
+            locationButton.setTitle(trainPlanData.location, for: .normal)
+            datePickerButton.setTitle(dateString, for: .normal)
+            trainingTypeButton.setTitle(trainPlanData.type, for: .normal)
+        }
+    }
     
     private func setupToolBar(){
         let toolBar = UIToolbar(frame: .zero)

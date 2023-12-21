@@ -32,8 +32,8 @@ class FFTrainingPlanStoreManager {
         let data = FFTrainingPlanRealmModel(
             name: plan.name,
             notes: plan.note,
-            location: plan.location,
-            type: plan.type,
+            location: plan.location ?? "Default",
+            type: plan.type ?? "Default",
             date: plan.date,
             status: plan.notificationStatus,
             exercises: exercisesObjects
@@ -50,8 +50,8 @@ class FFTrainingPlanStoreManager {
         let data = FFTrainingPlanRealmModel(
             name: plan.name,
             notes: plan.note,
-            location: plan.location,
-            type: plan.type,
+            location: plan.location ?? "Default",
+            type: plan.type ?? "Default",
             date: plan.date,
             status: plan.notificationStatus,
             exercises: model
