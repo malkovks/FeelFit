@@ -77,27 +77,9 @@ class FFAddExerciseTableViewCell: UITableViewCell {
         let exercise = data[indexPath.row]
         mainTextLabel.text = "Name: " + exercise.exerciseName.capitalized
         configureDetailCell(exercise)
-        loadImage(exercise.exerciseImageLink) { [unowned self] image in
-            DispatchQueue.main.async {
-                self.exerciseImageView.image = image
-            }
+        FFLoadAnimatedImage.shared.loadingAnimateImage(exercise: exercise) { [unowned self] imageView in
+            self.exerciseImageView.image = imageView.image
         }
-    }
-    
-    private func loadImage(_ link: String,handler: @escaping ((UIImage) -> ())){
-        guard let url = URL(string: link) else { return }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print(error.localizedDescription)
-            }
-            if let data = data, let image = UIImage(data: data){
-                handler(image)
-            } else {
-                let image = UIImage(systemName: "figure.strengthtraining.traditional")!
-                handler(image)
-            }
-        }
-        task.resume()
     }
     
     required init?(coder: NSCoder) {

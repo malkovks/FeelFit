@@ -48,6 +48,7 @@
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
+		0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */; };
 		0A7278AA2B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */; };
 		0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */; };
 		0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */; };
@@ -134,6 +135,7 @@
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFLoadAnimatedImage.swift; sourceTree = "<group>"; };
 		0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewCell.swift; sourceTree = "<group>"; };
 		0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewDataSource.swift; sourceTree = "<group>"; };
 		0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanExercisesViewController.swift; sourceTree = "<group>"; };
@@ -561,6 +563,7 @@
 		0A4495342ABC3F720082C909 /* APIClient */ = {
 			isa = PBXGroup;
 			children = (
+				0A7158092B359AEC00FBCF72 /* Animated Image */,
 				0A2347E82AFBBC74002C161C /* News Module */,
 				0A2347E92AFBBC80002C161C /* Exercise Module */,
 			);
@@ -594,6 +597,14 @@
 				0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */,
 			);
 			path = TableViewFooter;
+			sourceTree = "<group>";
+		};
+		0A7158092B359AEC00FBCF72 /* Animated Image */ = {
+			isa = PBXGroup;
+			children = (
+				0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */,
+			);
+			path = "Animated Image";
 			sourceTree = "<group>";
 		};
 		0A7278AD2B1DFAEA0055EECD /* TableViewDataSource */ = {
@@ -923,6 +934,7 @@
 				0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
+				0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */,
 				0ACEA9F12AD9734D00899CF6 /* AppCoordinator.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,

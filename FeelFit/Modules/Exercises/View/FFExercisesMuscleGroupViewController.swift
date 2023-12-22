@@ -45,6 +45,11 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         setupView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.loadData(name: muscleGroupName)
+    }
+    
     @objc private func didTapRefreshPage(){
         viewModel.loadData(name: muscleGroupName)
     }

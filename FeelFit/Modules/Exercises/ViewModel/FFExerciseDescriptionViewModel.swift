@@ -34,15 +34,9 @@ class FFExerciseDescriptionViewModel {
     }
     
     func loadingImageView(exercise: Exercise,completion: @escaping (UIImageView) -> () )  {
-        guard let url = URL(string: exercise.imageLink)  else { return }
-        var imageView = UIImageView()
-        imageView.kf.setImage(with: url) { result in
-            switch result {
-            case .success(_):
-                completion(imageView)
-            case .failure(_):
-                completion(UIImageView(image: UIImage(systemName: "figure.strengthtraining.traditional")))
-            }
+        let realmModel = FFExerciseModelRealm(exercise: exercise)
+        FFLoadAnimatedImage.shared.loadingAnimateImage(exercise: realmModel) { imageView in
+            completion(imageView)
         }
     }
 }

@@ -224,10 +224,14 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
             let actionOpen = UIAction(title: "Open", image: UIImage(systemName: "arrow.up.forward.square")) { _ in
                 self.navigationController?.pushViewController(vc, animated: true)
             }
-            let actionDelete = UIAction(title: "Delete", image: UIImage(systemName: "trash.square"),attributes: .destructive) { _ in
+            let actionDelete = UIAction(title: "Delete", image: UIImage(systemName: "trash.square"),attributes: .destructive) { [unowned self] _ in
                 FFTrainingPlanStoreManager.shared.deletePlan(model)
+                trainingPlans.remove(at: index.row)
                 collectionView.deleteItems(at: indexPaths)
                 self.setupView()
+                DispatchQueue.main.async {
+                    collectionView.reloadData()
+                }
             }
             let actionChange = UIAction(title: "Change", image: UIImage(systemName: "gear")) { _ in
                 //подумать как изменять данные выбранной модели

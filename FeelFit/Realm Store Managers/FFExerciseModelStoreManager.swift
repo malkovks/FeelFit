@@ -57,6 +57,13 @@ class FFExerciseStoreManager {
         return valueArray
     }
     
+    func updateImageLink(newImageLink string: String,exerciseID: String) {
+        let object = realm.objects(FFExerciseModelRealm.self).filter("exerciseID == %@",exerciseID)
+        try! realm.write({
+            object.first?.exerciseImageLink = string
+        })
+    }
+    
     func checkDuplicates(_ filterName: String) {
         let values = realm.objects(FFExerciseModelRealm.self).filter("exerciseMuscle == %@", filterName)
         var uniqueValue = [FFExerciseModelRealm]()

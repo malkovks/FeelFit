@@ -20,20 +20,15 @@ class FFGetExercisesDataBase {
     func getMuscleDatabase(muscle: String,limit number: String = "20",filter: String = "exerciseMuscle",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         var valueRequest = checkValueName(name: muscle)
         guard let url = prepareURL(value: valueRequest, number: number, filter: filter) else { return }
-        let request = setupRequest(url: url, name: muscle)
+        let request = setupRequest(url: url)
         
         let exercises = checkDataAvailable(key: valueRequest, filterString: filter)
         if exercises.count > 0 {
             completionHandler(.success(exercises))
         } else {
             AF.request(request).validate().responseDecodable(of: [Exercise].self) { response in
-                guard let urlRequest = response.request else { return }
-                guard let data = response.data else { return }
-                guard let responseRequest = response.response else { return }
                 switch response.result {
                 case .success(let success):
-                    let cacheResponse = CachedURLResponse(response: responseRequest, data: data)
-                    URLCache.shared.storeCachedResponse(cacheResponse, for: urlRequest)
                     completionHandler(.success(success))
                     FFExerciseStoreManager.shared.saveLoadData(model: success)
                 case .failure(let failure):
@@ -41,6 +36,20 @@ class FFGetExercisesDataBase {
                 }
             }.resume()
         }
+    }
+    
+    func getUpdateImageLinkBy(exerciseID: String){
+        guard let url = URL(string: "https://exercisedb.p.rapidapi.com/exercises/exercise/" + exerciseID) else { return }
+        let request = setupRequest(url: url)
+        AF.request(request).validate().responseDecodable(of: Exercise.self) { response in
+            switch response.result {
+            case .success(let exercise):
+                let link = exercise.imageLink
+                FFExerciseStoreManager.shared.updateImageLink(newImageLink: link, exerciseID: exerciseID)
+            case .failure(_):
+                break
+            }
+        }.resume()
     }
     
     private func checkValueName(name: String) -> String{
@@ -70,12 +79,11 @@ class FFGetExercisesDataBase {
         }
     }
     
-    private func setupRequest(url: URL,name: String) -> URLRequest {
+    private func setupRequest(url: URL) -> URLRequest {
         let headers = [
             "X-RapidAPI-Key": "e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306",
             "X-RapidAPI-Host": "exercisedb.p.rapidapi.com"
         ]
-        let nameRequest = checkValueName(name: name)
         let cache = URLCache(memoryCapacity: 100*1024*1024, diskCapacity: 100*1024*1024)
         URLCache.shared = cache
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10.0)

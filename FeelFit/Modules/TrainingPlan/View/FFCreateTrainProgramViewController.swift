@@ -119,6 +119,15 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         return button
     }()
     
+    private let placeholderLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = UIFont.detailLabelFont(size: 18,weight: .thin)
+        label.textAlignment = .left
+        label.textColor = FFResources.Colors.detailTextColor
+        label.text = "Enter your workout details"
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewModel()
@@ -200,6 +209,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         let attributes = [NSAttributedString.Key.paragraphStyle: style]
         let string = NSAttributedString(string: noteTrainingPlanTextView.text, attributes: attributes)
         noteTrainingPlanTextView.attributedText = string
+        noteTrainingPlanTextView.delegate = self
     }
     
     private func dismissKeyboardBySwipe(){
@@ -237,9 +247,22 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
 }
 
+extension FFCreateTrainProgramViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+        let truncatedText = String(newText.prefix(50))
+//        textView.text = truncatedText
+        return newText.count <= 50
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+}
+
 extension FFCreateTrainProgramViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = trainingPlanTextField.text,
+        if let text = textField.text,
            !text.isEmpty {
             trainPlanData.name = text
             trainingPlanTextField.enablesReturnKeyAutomatically = true
@@ -250,6 +273,15 @@ extension FFCreateTrainProgramViewController: UITextFieldDelegate {
             trainingPlanTextField.enablesReturnKeyAutomatically = false
             return false
         }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let newText = textField.text ?? ""
+        guard let stringRange = Range(range, in: newText) else { return false }
+        let updatedText = newText.replacingCharacters(in: stringRange, with: string)
+        let truncatedText = String(newText.prefix(50))
+        textField.text = truncatedText
+        return updatedText.count <= 250
     }
 }
 
@@ -274,6 +306,14 @@ extension FFCreateTrainProgramViewController {
             make.top.equalTo(trainingPlanTextField.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalToSuperview().multipliedBy(0.6)
+        }
+        
+        noteTrainingPlanTextView.addSubview(placeholderLabel)
+        placeholderLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(5)
+            make.leading.equalToSuperview().offset(10)
+            make.width.equalToSuperview().inset(10)
+            make.height.equalToSuperview().multipliedBy(0.1)
         }
         
         view.addSubview(stackView)

@@ -7,9 +7,9 @@
 
 import UIKit
 import SafariServices
-import Kingfisher
 import Alamofire
 import RealmSwift
+import Kingfisher
 
 class FFExerciseDescriptionViewController: UIViewController, SetupViewController {
     
@@ -167,9 +167,11 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
     
     func setupViewModel(){
         viewModel = FFExerciseDescriptionViewModel(viewController: self)
-        viewModel.loadingImageView(exercise: exercise) { [weak self] imageView in
-            guard let self = self else { return }
-            self.exerciseImageView.image = imageView.image
+        viewModel.loadingImageView(exercise: exercise) { [unowned self] imageView in
+            DispatchQueue.main.async {
+                self.exerciseImageView.image = imageView.image
+            }
+            
         }
     }
     

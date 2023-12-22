@@ -39,7 +39,7 @@ class FFPlanDetailTableViewCell: UITableViewCell {
     let infoTextField: UITextField = {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         label.text = "Title: "
-        label.font = UIFont.headerFont(size: 20)
+        label.font = UIFont.headerFont(size: 16)
         label.textAlignment = .left
         
         let field = UITextField(frame: .zero)
@@ -52,6 +52,7 @@ class FFPlanDetailTableViewCell: UITableViewCell {
         field.leftViewMode = .always
         field.clearButtonMode = .whileEditing
         field.borderStyle = .none
+        field.isEnabled = false
         field.textColor = FFResources.Colors.textColor
         field.backgroundColor = .clear
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -108,6 +109,9 @@ class FFPlanDetailTableViewCell: UITableViewCell {
         case .init(row: 0, section: 0):
             infoTextField.text = data.trainingName
             infoTextField.isHidden = false
+            infoTextField.isEnabled = false
+            infoTextField.backgroundColor = .clear
+            infoTextField.borderStyle = .none
             stackView.addArrangedSubview(infoTextField)
         case .init(row: 1, section: 0):
             mainLabel.text = "Note :"
@@ -140,6 +144,7 @@ class FFPlanDetailTableViewCell: UITableViewCell {
         case .init(row: 5, section: 0):
             mainLabel.text = "Notification status:"
             switchButton.isOn = data.trainingNotificationStatus
+            switchButton.isEnabled = false
             infoLabel.isHidden = true
             infoTextField.isHidden = true
             switchButton.isHidden = false
