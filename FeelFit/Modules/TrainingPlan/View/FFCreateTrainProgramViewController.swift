@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 struct CreateTrainProgram {
     var name: String
@@ -22,13 +23,18 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     
     private var viewModel: FFCreateTrainProgramViewModel!
     
-    let isViewEdited: Bool
+    let isViewEditing: Bool
     var trainPlanData: CreateTrainProgram
+    var exercises: List<FFExerciseModelRealm>?
+    var trainModel: FFTrainingPlanRealmModel?
     
-    init( isViewEdited: Bool, trainPlanData: CreateTrainProgram?) {
+    init( isViewEditing: Bool = false, trainPlanData: CreateTrainProgram?,_ exercises: List<FFExerciseModelRealm>? = nil,trainPlanRealmModel: FFTrainingPlanRealmModel? = nil) {
         let plan = CreateTrainProgram(name: "", note: "", type: "", location: "", date: Date(), notificationStatus: false)
-        self.isViewEdited = isViewEdited
+        
+        self.isViewEditing = isViewEditing
         self.trainPlanData = trainPlanData ?? plan
+        self.exercises = exercises
+        self.trainModel = trainPlanRealmModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -125,6 +131,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         label.textAlignment = .left
         label.textColor = FFResources.Colors.detailTextColor
         label.text = "Enter your workout details"
+        label.isHidden = true
         return label
     }()
     
@@ -138,7 +145,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         setupButtons()
         setupTextViewInsets()
         dismissKeyboardBySwipe()
-        setupEditingView(isViewEdited)
+        setupEditingView(isViewEditing)
         setupDelegates()
     }
     //MARK: - Target methods
@@ -159,13 +166,13 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
     }
     
     @objc private func didTapContinue(){
-        viewModel.confirmAndContinue(model: trainPlanData, textfield: trainingPlanTextField, textView: noteTrainingPlanTextView) {
+        viewModel.confirmAndContinue(model: trainPlanData, textfield: trainingPlanTextField, textView: noteTrainingPlanTextView, exercises, isViewEditing, trainModel) {
             viewAlertController(text: "Fill all the fields", startDuration: 0.5, timer: 2, controllerView: self.view)
         }
     }
     
     @objc private func didTapOpenDatePicker(){
-        viewModel.openDatePickerController()
+        viewModel.openDatePickerController(date: trainPlanData.date)
         viewModel.completionData = { [unowned self] date, status in
             trainPlanData.date = date
             trainPlanData.notificationStatus = status
@@ -183,6 +190,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
             locationButton.setTitle(trainPlanData.location, for: .normal)
             datePickerButton.setTitle(dateString, for: .normal)
             trainingTypeButton.setTitle(trainPlanData.type, for: .normal)
+            placeholderLabel.isHidden = true
         }
     }
     
@@ -210,6 +218,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         let string = NSAttributedString(string: noteTrainingPlanTextView.text, attributes: attributes)
         noteTrainingPlanTextView.attributedText = string
         noteTrainingPlanTextView.delegate = self
+        placeholderLabel.isHidden = !noteTrainingPlanTextView.text.isEmpty
     }
     
     private func dismissKeyboardBySwipe(){
@@ -227,7 +236,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
         view.backgroundColor = FFResources.Colors.backgroundColor
     }
     
-    private func setupButtons(){
+    private func setupButtons(location: String = "",type: String = "",date: Date = Date()){
         locationButton.menu = viewModel.setLocationMenu(handler: { [unowned self] location in
             trainPlanData.location = location
             locationButton.configuration?.title = location
@@ -250,9 +259,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
 extension FFCreateTrainProgramViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
-        let truncatedText = String(newText.prefix(50))
-//        textView.text = truncatedText
-        return newText.count <= 50
+        return newText.count <= 1000
     }
     
     func textViewDidChange(_ textView: UITextView) {

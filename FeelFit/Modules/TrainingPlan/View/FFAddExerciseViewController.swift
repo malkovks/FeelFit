@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import RealmSwift
 
 /// Class for adding exercises to created base program plan
 class FFAddExerciseViewController: UIViewController, SetupViewController {
@@ -14,11 +15,23 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     private var viewModel: FFAddExerciseViewModel!
     
     
-    var trainProgram: CreateTrainProgram?
+    private var trainProgram: CreateTrainProgram?
     var model = [FFExerciseModelRealm]()
+    private var trainPlanModel: FFTrainingPlanRealmModel?
+    private let isViewEditing: Bool
     
-    init(trainProgram: CreateTrainProgram?) {
+    init(trainProgram: CreateTrainProgram?,exercises: List<FFExerciseModelRealm>? = nil,_ isViewEditing: Bool = false,trainPlanModel: FFTrainingPlanRealmModel? = nil) {
         self.trainProgram = trainProgram
+        self.isViewEditing = isViewEditing
+        guard let exercises = exercises,
+              let models = trainPlanModel else {
+            super.init(nibName: nil, bundle: nil)
+            return
+        }
+        for exercise in exercises {
+            model.append(exercise)
+        }
+        self.trainPlanModel = models
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -51,16 +64,25 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapSave(){
-        if model.count == 0 {
+        if model.count > 0  {
+            viewModel.didTapConfirmSaving(plan: trainProgram, model: model)
+        } else {
             alertControllerActionConfirm(title: "Warning", message: "You exercise list is empty. Are you sure you want to save plan without including them?", confirmActionTitle: "Continue",secondTitleAction: "", style: .alert) {
                 self.viewModel.didTapConfirmSaving(plan: self.trainProgram, model: self.model)
             } secondAction: {
                 self.dismiss(animated: true)
             }
-
-        } else {
-            viewModel.didTapConfirmSaving(plan: trainProgram, model: model)
         }
+    }
+    
+    @objc private func didTapEditPlan(){
+        FFTrainingPlanStoreManager.shared.editPlanRealmModel(
+            trainProgram!,
+            model,
+            trainPlanModel!)
+        navigationController?.popToRootViewController(animated: true)
+        dismiss(animated: true)
+        
         
     }
     
@@ -86,7 +108,12 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     func setupNavigationController() {
         title = "Exercises"
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.setLeftBarButton(addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil), animated: true)
+        if isViewEditing {
+            navigationItem.setLeftBarButton(addNavigationBarButton(title: "Edit", imageName: "", action: #selector(didTapEditPlan), menu: nil), animated: true)
+        } else {
+            navigationItem.setLeftBarButton(addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil), animated: true)
+        }
+        
     }
     
     func setupNonEmptyValue(){
@@ -116,6 +143,7 @@ extension FFAddExerciseViewController: UITableViewDataSource {
         cell.configureCell(indexPath: indexPath, data: model)
         return cell
     }
+   
 }
 
 extension FFAddExerciseViewController: UITableViewDelegate {
@@ -134,7 +162,7 @@ extension FFAddExerciseViewController: UITableViewDelegate {
                 tableView.deleteRows(at: [indexPath], with: .top)
                 tableView.endUpdates()
             }
-            return UIMenu(children: [openView])
+            return UIMenu(children: [openView,deleteExercise])
         }
         return configuration
     }
@@ -173,6 +201,30 @@ extension FFAddExerciseViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let mover = model.remove(at: sourceIndexPath.row)
         model.insert(mover, at: sourceIndexPath.row)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return tableView.rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        let button = UIButton(frame: CGRect(x: 10, y: 0, width: tableView.frame.size.width-20, height: tableView.rowHeight))
+        button.configuration = .filled()
+        button.configuration?.cornerStyle = .capsule
+        button.configuration?.title = isViewEditing ? "Save edits" : "Save"
+        button.configuration?.image = isViewEditing ? UIImage(systemName: "arrow.up.right.circle") : UIImage(systemName: "arrow.down.circle")
+        button.configuration?.imagePlacement = .leading
+        button.configuration?.imagePadding = 6
+        button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
+        button.configuration?.baseForegroundColor = FFResources.Colors.backgroundColor
+        if isViewEditing {
+            button.addTarget(self, action: #selector(didTapEditPlan), for: .primaryActionTriggered)
+        } else {
+            button.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
+        }
+        return button
+        
     }
 }
 

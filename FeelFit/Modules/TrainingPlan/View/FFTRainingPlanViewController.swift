@@ -55,6 +55,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         loadData(sorted: .date)
         setupViewModel()
        
@@ -68,7 +69,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
 
     @objc func didTapCreateProgram(){
-        let vc = FFCreateTrainProgramViewController(isViewEdited: false, trainPlanData: nil)
+        let vc = FFCreateTrainProgramViewController(isViewEditing: false, trainPlanData: nil)
         navigationController?.pushViewController(vc, animated: true)
     }
     

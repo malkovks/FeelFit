@@ -28,6 +28,7 @@ class FFPlanDetailTableViewCell: UITableViewCell {
         label.numberOfLines = 0
         label.contentMode = .left
         label.textAlignment = .left
+        label.text = "Default"
         label.sizeToFit()
         label.isHidden = true
         label.layer.cornerRadius = 12

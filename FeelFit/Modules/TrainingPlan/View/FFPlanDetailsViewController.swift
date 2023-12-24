@@ -52,7 +52,8 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
                                            location: data.trainingType,
                                            date: data.trainingDate,
                                            notificationStatus: data.trainingNotificationStatus)
-        let vc = FFCreateTrainProgramViewController(isViewEdited: true, trainPlanData: trainPlan)
+        let exercises = data.trainingExercises
+        let vc = FFCreateTrainProgramViewController(isViewEditing: true, trainPlanData: trainPlan,exercises, trainPlanRealmModel: data)
         
         navigationController?.pushViewController(vc, animated: true)
     }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FFCreateTrainProgramViewModel {
     
@@ -17,7 +18,7 @@ class FFCreateTrainProgramViewModel {
         self.viewController = viewController
     }
     
-    func confirmAndContinue(model: CreateTrainProgram,textfield: UITextField,textView: UITextView,alertView: ()->()) {
+    func confirmAndContinue(model: CreateTrainProgram,textfield: UITextField,textView: UITextView,_ exercises: List<FFExerciseModelRealm>? = nil,_ isViewEditing: Bool,_ trainPlanModel: FFTrainingPlanRealmModel?,alertView: ()->()) {
         guard let firstText = textfield.text, !firstText.isEmpty,
               let secondText = textView.text, !secondText.isEmpty
         else {
@@ -27,7 +28,7 @@ class FFCreateTrainProgramViewModel {
         var data = model
         data.name = firstText
         data.note = secondText
-        let vc = FFAddExerciseViewController(trainProgram: data)
+        let vc = FFAddExerciseViewController(trainProgram: data,exercises: exercises,isViewEditing,trainPlanModel: trainPlanModel)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
