@@ -137,7 +137,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         setupNavigationController()
         configureView()
         setupConstraints()
-        loadingExerciseData()
+        checkSavedStatus()
         setupNavigationController()
     }
     //MARK: - Target methods
@@ -199,7 +199,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         descriptionTextView.text = exercise.instructions.joined(separator: " ")
     }
     
-    func loadingExerciseData(){
+    func checkSavedStatus(){
         let realm = try! Realm()
         let models = realm.objects(FFFavouriteExerciseRealmModel.self).filter("exerciseID == %@",exercise.exerciseID)
         saveStatus = !models.isEmpty ? true : false
@@ -208,15 +208,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
 
 extension FFExerciseDescriptionViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            let share = UIAction(title: "Share") { _ in
-                print("Share image")
-            }
-            let openImage = UIAction(title: "Open Image") { _ in
-                print("Open image")
-            }
-            return UIMenu(children: [share,openImage])
-        }
+        viewModel.contextMenuInteraction(interaction, configurationForMenuAtLocation: location, exercise)
     }
     
     

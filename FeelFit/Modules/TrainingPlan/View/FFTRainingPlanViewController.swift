@@ -33,6 +33,8 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     private var viewModel: FFTrainingPlanViewModel!
     
     private let realm = try! Realm()
+    private var sortingValue: String = UserDefaults.standard.string(forKey: "planSortKey") ?? "By Date"
+    private var sortingTypeValue = UserDefaults.standard.bool(forKey: "planSortValueType")
     private var trainingPlans: [FFTrainingPlanRealmModel]!
     
     private var collectionView: UICollectionView!
@@ -45,7 +47,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadData(sorted: .date)
+        loadData(sorted: sortingValue)
         setupView()
         setupLocalNotificationsAuth()
         DispatchQueue.main.async { [ unowned self ] in
@@ -55,10 +57,9 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loadData(sorted: .date)
+        loadData(sorted: sortingValue)
         setupViewModel()
-       
+        print(sortingValue)
         setupCollectionView()
         setupRefreshController()
         setupNavigationController()
@@ -76,25 +77,15 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     @objc private func didTapRefreshView(){
         refreshController.beginRefreshing()
         setupView()
-        loadData(sorted: .date)
+        loadData(sorted: sortingValue)
         DispatchQueue.main.async { [ unowned self ] in
             collectionView.reloadData()
             refreshController.endRefreshing()
         }
     }
     
-    func loadData(sorted: PlanTrainingSortType){
-        //MARK: - Доделать
-        switch sorted {
-        case .date:
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingDate > $1.trainingDate })
-        case .name:
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingName > $1.trainingName })
-        case .type:
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingType ?? "Default" > $1.trainingType ?? "Default" })
-        case .location:
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingLocation ?? "Default" > $1.trainingLocation ?? "Default" })
-        }
+    func loadData(sorted: PlanTrainingSortType.RawValue){
+        trainingPlans =  viewModel.startLoadingPlans(sorted)
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }
@@ -112,7 +103,6 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
     
     func setupView() {
-        
         if trainingPlans.isEmpty {
             contentUnavailableConfiguration = viewModel.configurationUnavailableView(action: {
                 self.didTapCreateProgram()
@@ -150,38 +140,50 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "line.3.horizontal.decrease", action: nil, menu: setupSortingMenu())
     }
     
-    
-    
     func setupSortingMenu() -> UIMenu {
-        var actions: [UIAction] {
-            return [
-                UIAction(title: "By Date", handler: { [unowned self] _ in
-                    loadData(sorted: .date)
+        let sortMenu = UIMenu(title: "Sorting By", options: .displayInline, children: [
+            UIAction(title: "By Date", handler: { [unowned self] _ in
+                UserDefaults.standard.setValue(PlanTrainingSortType.date.rawValue, forKey: "planSortKey")
+                sortingValue = PlanTrainingSortType.date.rawValue
+                didTapRefreshView()
+                
+            }),
+            UIAction(title: "By Name", handler: { [unowned self] _ in
+                UserDefaults.standard.setValue(PlanTrainingSortType.name.rawValue, forKey: "planSortKey")
+                sortingValue = PlanTrainingSortType.name.rawValue
+                didTapRefreshView()
+            }),
+            UIAction(title: "By Type", handler: { [unowned self] _ in
+                UserDefaults.standard.setValue(PlanTrainingSortType.type.rawValue, forKey: "planSortKey")
+                sortingValue = PlanTrainingSortType.type.rawValue
+                didTapRefreshView()
+            }),
+            UIAction(title: "By Location", handler: { [unowned self] _ in
+                
+                UserDefaults.standard.setValue(PlanTrainingSortType.location.rawValue, forKey: "planSortKey")
+                sortingValue = PlanTrainingSortType.location.rawValue
+                didTapRefreshView()
+            })
+        ])
+        let sortTypeMenu = UIMenu(title: "Sort Type", options: .singleSelection, children: [
+            UIAction(title: "By Increase",handler: { [unowned self] _ in
+                UserDefaults.standard.setValue(true, forKey: "planSortValueType")
+                sortingTypeValue = true
+                didTapRefreshView()
                 }),
-                UIAction(title: "By Name", handler: { [unowned self] _ in
-                    loadData(sorted: .name)
-                }),
-                UIAction(title: "By Type", handler: { [unowned self] _ in
-                    loadData(sorted: .type)
-                }),
-                UIAction(title: "By Location", handler: { [unowned self] _ in
-                    loadData(sorted: .location)
-                }),]
-        }
-        let menu = UIMenu(title: "Sort type",options: .singleSelection,children: actions)
+            UIAction(title: "By decrease",handler: { [unowned self] _ in
+                UserDefaults.standard.setValue(false, forKey: "planSortValueType")
+                sortingTypeValue = false
+                didTapRefreshView()
+            })
+        ])
+
+        let menu = UIMenu(title: "Sort type",options: .singleSelection,children: [sortMenu,sortTypeMenu])
         return menu
     }
     
     func setupRefreshController(){
         refreshController.addTarget(self, action: #selector(didTapRefreshView), for: .valueChanged)
-    }
-    
-    func openPlanDetail(_ model: FFTrainingPlanRealmModel){
-        let vc = FFPlanDetailsViewController(data: model)
-        let nav = FFNavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
-        nav.isNavigationBarHidden = false
-        present(nav, animated: true)
     }
 }
 
@@ -199,20 +201,7 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
 
 extension FFTRainingPlanViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let data = trainingPlans[indexPath.row]
-        openPlanDetail(data)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, canEditItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-        if action == #selector(UIResponderStandardEditActions.delete(_:)){
-            let model = trainingPlans[indexPath.row]
-            FFTrainingPlanStoreManager.shared.deletePlan(model)
-            collectionView.deleteItems(at: [indexPath])
-        }
+        viewModel.collectionView(collectionView, didSelectItemAt: indexPath, trainingPlans)
     }
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
@@ -234,10 +223,10 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
                     collectionView.reloadData()
                 }
             }
-            let actionChange = UIAction(title: "Change", image: UIImage(systemName: "gear")) { _ in
-                //подумать как изменять данные выбранной модели
+            let actionChange = UIAction(title: "Change", image: UIImage(systemName: "gear")) { [unowned self] _ in
+                viewModel.openSelectedPlan(model)
             }
-            let menu = UIMenu(children: [actionOpen,actionDelete])
+            let menu = UIMenu(children: [actionOpen,actionDelete,actionChange])
             return menu
         }
     }

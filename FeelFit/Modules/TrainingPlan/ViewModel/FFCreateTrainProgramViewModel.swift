@@ -154,4 +154,32 @@ class FFCreateTrainProgramViewModel {
         let menu = UIMenu(title: "Choose Type of your training",image: UIImage(systemName: "figure.highintensity.intervaltraining"),children: actions)
         return menu
     }
+    
+    //MARK: - Delegates methods for textView
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+        return newText.count <= 1000
+    }
+    //MARK: - Delegates methods for textField
+    func textFieldShouldReturn(_ textField: UITextField,_ trainingPlanTextField: UITextField,textView: UITextView) -> (Bool,String) {
+        if let text = textField.text,
+           !text.isEmpty {
+            trainingPlanTextField.enablesReturnKeyAutomatically = true
+            trainingPlanTextField.resignFirstResponder()
+            textView.becomeFirstResponder()
+            return (true,text)
+        } else {
+            trainingPlanTextField.enablesReturnKeyAutomatically = false
+            return (false,"")
+        }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let newText = textField.text ?? ""
+        guard let stringRange = Range(range, in: newText) else { return false }
+        let updatedText = newText.replacingCharacters(in: stringRange, with: string)
+        let truncatedText = String(newText.prefix(50))
+        textField.text = truncatedText
+        return updatedText.count <= 250
+    }
 }

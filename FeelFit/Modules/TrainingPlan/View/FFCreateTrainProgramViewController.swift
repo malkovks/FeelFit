@@ -258,8 +258,7 @@ class FFCreateTrainProgramViewController: UIViewController, SetupViewController 
 
 extension FFCreateTrainProgramViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
-        return newText.count <= 1000
+        viewModel.textView(textView, shouldChangeTextIn: range, replacementText: text)
     }
     
     func textViewDidChange(_ textView: UITextView) {
@@ -269,26 +268,13 @@ extension FFCreateTrainProgramViewController: UITextViewDelegate {
 
 extension FFCreateTrainProgramViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text,
-           !text.isEmpty {
-            trainPlanData.name = text
-            trainingPlanTextField.enablesReturnKeyAutomatically = true
-            trainingPlanTextField.resignFirstResponder()
-            noteTrainingPlanTextView.becomeFirstResponder()
-            return true
-        } else {
-            trainingPlanTextField.enablesReturnKeyAutomatically = false
-            return false
-        }
+        let (status,text) = viewModel.textFieldShouldReturn(textField, trainingPlanTextField, textView: noteTrainingPlanTextView)
+        trainPlanData.name = text
+        return status
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let newText = textField.text ?? ""
-        guard let stringRange = Range(range, in: newText) else { return false }
-        let updatedText = newText.replacingCharacters(in: stringRange, with: string)
-        let truncatedText = String(newText.prefix(50))
-        textField.text = truncatedText
-        return updatedText.count <= 250
+        viewModel.textField(textField, shouldChangeCharactersIn: range, replacementString: string)
     }
 }
 

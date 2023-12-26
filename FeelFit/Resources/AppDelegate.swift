@@ -59,12 +59,5 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let object = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingUniqueID == %@",identifier)
         return object.first
     }
-    
-//    let identifier = response.notification.request.identifier
-    //        guard let object = getRealmModel(identifier) else {
-    //            print("Error getting model from realm")
-    //            return
-    //        }
-    
 }
 

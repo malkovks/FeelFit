@@ -52,12 +52,4 @@ class FFMuscleGroupViewModel {
         let height = CGFloat(viewController.view.frame.size.height/4)
         return CGSize(width: width, height: height)
     }
-    
-    func clearModelByName(){
-        let value = realm.objects(FFExerciseModelRealm.self)
-        try! realm.write({
-            realm.delete(value)
-            print("Data was deleted")
-        })
-    }
 }

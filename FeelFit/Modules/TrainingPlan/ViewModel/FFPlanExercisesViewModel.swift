@@ -58,7 +58,7 @@ class FFPlanExercisesViewModel {
             let closeAction = UIAction(title: "Close preview",image: UIImage(systemName: "xmark")) { _ in
                 interaction.dismissMenu()
             }
-            var menu: UIMenu = UIMenu(title: "Actions", image: UIImage(systemName: "gear.badge"), children: [openAction, addFavourite,closeAction])
+            let menu: UIMenu = UIMenu(title: "Actions", image: UIImage(systemName: "gear.badge"), children: [openAction, addFavourite,closeAction])
             return menu
         }
         return configuration

@@ -14,6 +14,7 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFPlanDetailsViewModel!
     
+    private var numberOfRows: Int = 0
     private let data: FFTrainingPlanRealmModel
     private var isTableViewEditing: Bool = false
     
@@ -46,16 +47,7 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapEditTraining() {
-        let trainPlan = CreateTrainProgram(name: data.trainingName,
-                                           note: data.trainingNotes,
-                                           type: data.trainingType,
-                                           location: data.trainingType,
-                                           date: data.trainingDate,
-                                           notificationStatus: data.trainingNotificationStatus)
-        let exercises = data.trainingExercises
-        let vc = FFCreateTrainProgramViewController(isViewEditing: true, trainPlanData: trainPlan,exercises, trainPlanRealmModel: data)
-        
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.didTapEditTraining(data)
     }
     
     func setupView() {
@@ -98,27 +90,11 @@ extension FFPlanDetailsViewController: UITableViewDataSource {
 
 extension FFPlanDetailsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.row {
-        case 1, 6:
-            return UITableView.automaticDimension
-        default:
-            return 50
-        }
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.row {
-        case 6:
-            let program = CreateTrainProgram(name: data.trainingName, note: data.trainingNotes,type: data.trainingType ?? "Default", location: data.trainingLocation, date: data.trainingDate, notificationStatus: data.trainingNotificationStatus)
-            let vc = FFAddExerciseViewController(trainProgram: program)
-            navigationController?.pushViewController(vc, animated: true)
-        default:
-            break
-        }
+        viewModel.tableView(tableView, estimatedHeightForRowAt: indexPath)
     }
 }
 

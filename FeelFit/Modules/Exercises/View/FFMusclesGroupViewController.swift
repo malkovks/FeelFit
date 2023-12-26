@@ -8,11 +8,10 @@
 import UIKit
 import RealmSwift
 
+
 class FFMusclesGroupViewController: UIViewController, SetupViewController {
-    
-    
-    
-    var viewModel: FFMuscleGroupViewModel!
+
+    private var viewModel: FFMuscleGroupViewModel!
     
     private var collectionView: UICollectionView!
 
@@ -21,26 +20,19 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
         setupViewModel()
         setupView()
         setupNavigationController()
-        
-        let realm = try! Realm()
-        print(realm.configuration.fileURL!)
-        
         contentUnavailableConfiguration = viewModel.setupConfiguration { [unowned self] in
             setupCollectionView()
             setupConstraints()
             contentUnavailableConfiguration = nil
         }
     }
-    
+    //MARK: - Action method
     @objc private func didTapOpenFavourite(){
         let vc = FFFavouriteExercisesViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    @objc private func didTapDelete(){
-        viewModel.clearModelByName()
-    }
-    
+    //MARK: - Setup methods
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
     }
@@ -79,8 +71,6 @@ extension FFMusclesGroupViewController: UICollectionViewDataSource {
         cell.configureCell(indexPath: indexPath)
         return cell
     }
-    
-    
 }
 
 extension FFMusclesGroupViewController: UICollectionViewDelegateFlowLayout{

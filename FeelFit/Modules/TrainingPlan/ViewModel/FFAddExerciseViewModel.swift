@@ -16,6 +16,19 @@ class FFAddExerciseViewModel {
         self.viewController = viewController
     }
     
+    func didTapEditPlan(_ trainProgram: CreateTrainProgram?,_ model: [FFExerciseModelRealm],_ fullModel: FFTrainingPlanRealmModel?){
+        guard let train = trainProgram,
+              let fullModel = fullModel else {
+            return
+        }
+        FFTrainingPlanStoreManager.shared.editPlanRealmModel(
+            train,
+            model,
+            fullModel)
+        viewController.navigationController?.popToRootViewController(animated: true)
+        viewController.dismiss(animated: true)
+    }
+    
     func didTapConfirmSaving(plan: CreateTrainProgram?,model: [FFExerciseModelRealm]){
         viewController.alertControllerActionConfirm(title: "Warning", message: "Save created program?", confirmActionTitle: "Save", secondTitleAction: "Don't save", style: .actionSheet) { [ unowned self] in
             savePlanProgram(plan: plan,model)
@@ -83,11 +96,47 @@ class FFAddExerciseViewModel {
     }
     
     //MARK: - TableViewDelegate
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath,_ model: [FFExerciseModelRealm]) {
+        let value = model[indexPath.row]
+        viewController.setupExerciseSecondaryParameters() { data in
+            value.exerciseWeight = data[0]
+            value.exerciseApproach = data[1]
+            value.exerciseRepeat = data[2]
+            tableView.reloadRows(at: [indexPath], with: .fade)
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         55
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int,_ isViewEditing: Bool,editAction: Selector,saveAction: Selector) -> UIView? {
+        
+        let button = UIButton(frame: CGRect(x: 10, y: 0, width: tableView.frame.size.width-20, height: tableView.rowHeight))
+        button.configuration = .filled()
+        button.configuration?.cornerStyle = .capsule
+        button.configuration?.title = isViewEditing ? "Save edits" : "Save"
+        button.configuration?.image = isViewEditing ? UIImage(systemName: "arrow.up.right.circle") : UIImage(systemName: "arrow.down.circle")
+        button.configuration?.imagePlacement = .leading
+        button.configuration?.imagePadding = 6
+        button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
+        button.configuration?.baseForegroundColor = FFResources.Colors.backgroundColor
+        if isViewEditing {
+            button.addTarget(self, action: editAction, for: .primaryActionTriggered)
+        } else {
+            button.addTarget(self, action: saveAction, for: .primaryActionTriggered)
+        }
+        return button
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return tableView.rowHeight
+    }
+    
+    //MARK: - UITableViewDragDelegate
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath,_ model: [FFExerciseModelRealm]) -> [UIDragItem] {
+        let dragItem = UIDragItem(itemProvider: NSItemProvider())
+        dragItem.localObject = model[indexPath.row]
+        return [dragItem]
     }
 }

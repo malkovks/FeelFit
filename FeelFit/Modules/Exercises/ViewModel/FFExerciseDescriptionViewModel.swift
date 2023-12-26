@@ -39,4 +39,17 @@ class FFExerciseDescriptionViewModel {
             completion(imageView)
         }
     }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint,_ exercise: Exercise) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [unowned self]_ in
+            let share = UIAction(title: "Share") { _ in
+                UIPasteboard.general.string = exercise.imageLink
+                self.viewController.viewAlertController(text: "Text copied!", startDuration: 0.5, timer: 2, controllerView: self.viewController.view)
+            }
+            let openImage = UIAction(title: "Open Image") { _ in
+                self.viewController.showFullSizeImage(url: exercise.imageLink)
+            }
+            return UIMenu(children: [share,openImage])
+        }
+    }
 }

@@ -131,7 +131,6 @@ extension FFMuscleGroupSelectionViewController: UITableViewDelegate {
 extension FFMuscleGroupSelectionViewController: PlanExerciseDelegate {
     func deliveryData(exercises: [Exercise]) {
         exerciseData.append(contentsOf: exercises)
-        print(exercises.count)
         delegate?.deliveryData(exercises: exercises)
     }
     

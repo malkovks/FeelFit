@@ -76,14 +76,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapEditPlan(){
-        FFTrainingPlanStoreManager.shared.editPlanRealmModel(
-            trainProgram!,
-            model,
-            trainPlanModel!)
-        navigationController?.popToRootViewController(animated: true)
-        dismiss(animated: true)
-        
-        
+        viewModel.didTapEditPlan(trainProgram, model, trainPlanModel)
     }
     
     //MARK: - Setup View methods
@@ -204,36 +197,19 @@ extension FFAddExerciseViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return tableView.rowHeight
+        viewModel.tableView(tableView, heightForFooterInSection: section)
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
-        let button = UIButton(frame: CGRect(x: 10, y: 0, width: tableView.frame.size.width-20, height: tableView.rowHeight))
-        button.configuration = .filled()
-        button.configuration?.cornerStyle = .capsule
-        button.configuration?.title = isViewEditing ? "Save edits" : "Save"
-        button.configuration?.image = isViewEditing ? UIImage(systemName: "arrow.up.right.circle") : UIImage(systemName: "arrow.down.circle")
-        button.configuration?.imagePlacement = .leading
-        button.configuration?.imagePadding = 6
-        button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
-        button.configuration?.baseForegroundColor = FFResources.Colors.backgroundColor
-        if isViewEditing {
-            button.addTarget(self, action: #selector(didTapEditPlan), for: .primaryActionTriggered)
-        } else {
-            button.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
-        }
-        return button
-        
+        viewModel.tableView(tableView, viewForFooterInSection: section, isViewEditing, editAction: #selector(didTapEditPlan), saveAction: #selector(didTapSave))
     }
 }
 
 extension FFAddExerciseViewController: UITableViewDragDelegate {
     
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let dragItem = UIDragItem(itemProvider: NSItemProvider())
-        dragItem.localObject = model[indexPath.row]
-        return [dragItem]
+        viewModel.tableView(tableView, itemsForBeginning: session, at: indexPath, model)
     }
 }
 

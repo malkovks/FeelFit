@@ -50,10 +50,11 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
         viewModel.loadData(name: muscleGroupName)
     }
     
+    //MARK: - Target method
     @objc private func didTapRefreshPage(){
         viewModel.loadData(name: muscleGroupName)
     }
-    
+    //MARK: - Setup methods
     func setupViewModel() {
         viewModel = FFExerciseMuscleGroupViewModel()
         viewModel.delegate = self
@@ -90,7 +91,6 @@ extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
         switch result {
         case .success(let model):
             self.muscleExercises = model
-            
         case .failure(let error):
             viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 3, controllerView: view)
             DispatchQueue.main.asyncAfter(deadline: .now()+1){ [unowned self] in
@@ -102,9 +102,7 @@ extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
             refreshController.endRefreshing()
             spinner.stopAnimating()
         }
-        
     }
-    
 }
 
 extension FFExercisesMuscleGroupViewController: UITableViewDataSource {

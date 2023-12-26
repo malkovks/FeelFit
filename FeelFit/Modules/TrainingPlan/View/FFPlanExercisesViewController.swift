@@ -65,7 +65,6 @@ class FFPlanExercisesViewController: UIViewController, SetupViewController {
                 self.navigationController?.popToViewController(targetVC, animated: true)
             }
         }
-
     }
     
     func setupView() {
