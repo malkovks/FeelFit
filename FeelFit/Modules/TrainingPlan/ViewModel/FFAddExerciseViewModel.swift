@@ -16,6 +16,11 @@ class FFAddExerciseViewModel {
         self.viewController = viewController
     }
     
+    
+    @objc func didTapSavePlan(){
+        
+    }
+    
     func didTapEditPlan(_ trainProgram: CreateTrainProgram?,_ model: [FFExerciseModelRealm],_ fullModel: FFTrainingPlanRealmModel?){
         guard let train = trainProgram,
               let fullModel = fullModel else {
@@ -30,6 +35,7 @@ class FFAddExerciseViewModel {
     }
     
     func didTapConfirmSaving(plan: CreateTrainProgram?,model: [FFExerciseModelRealm]){
+        
         viewController.alertControllerActionConfirm(title: "Warning", message: "Save created program?", confirmActionTitle: "Save", secondTitleAction: "Don't save", style: .actionSheet) { [ unowned self] in
             savePlanProgram(plan: plan,model)
             viewController.navigationController?.popToRootViewController(animated: true)
@@ -122,9 +128,9 @@ class FFAddExerciseViewModel {
         button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
         button.configuration?.baseForegroundColor = FFResources.Colors.backgroundColor
         if isViewEditing {
-            button.addTarget(self, action: editAction, for: .primaryActionTriggered)
+            button.addTarget(viewController, action: editAction, for: .primaryActionTriggered)
         } else {
-            button.addTarget(self, action: saveAction, for: .primaryActionTriggered)
+            button.addTarget(viewController, action: saveAction, for: .primaryActionTriggered)
         }
         return button
     }

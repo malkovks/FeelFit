@@ -20,6 +20,7 @@ class FFExerciseModelRealm: Object {
     @Persisted var exerciseApproach: String = "4"
     @Persisted var exerciseRepeat: String = "10"
     @Persisted var exerciseWeight: String = "0"
+    @Persisted var exerciseCompleteStatus: Bool = false
     
     convenience init(exercise: Exercise) {
         self.init()

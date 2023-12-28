@@ -8,8 +8,25 @@
 import UIKit
 import RealmSwift
 
+protocol TrainingPlanCompleteStatusProtocol: AnyObject {
+    func planStatusWasChanged(_ status: Bool,arrayPlace: Int)
+}
+
 class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrainingPlanCell"
+    
+    private var isTrainingCompleted: Bool = false
+    
+    weak var delegate: TrainingPlanCompleteStatusProtocol?
+    
+    let completeStatusButton: UIButton = {
+        let button = UIButton(frame: .zero)
+        button.backgroundColor = .clear
+        button.tintColor = FFResources.Colors.activeColor
+        button.setImage(UIImage(systemName: "circle"), for: .normal)
+        button.backgroundColor = .clear
+        return button
+    }()
     
     let nameLabel: UILabel = {
        let label = UILabel()
@@ -57,13 +74,46 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    @objc private func didTapSave(){
+        if isTrainingCompleted {
+            isTrainingCompleteSetup(isTrainingCompleted)
+        } else {
+            isTrainingCompleteSetup(isTrainingCompleted)
+        }
+    }
+    
+    func isTrainingCompleteSetup(_ status: Bool) {
+        let labels = [ nameLabel,detailLabel,dateLabel,muscleGroupLabel]
+        let image = status ? UIImage(systemName: "circle")! : UIImage(systemName: "checkmark.circle")!
+        let color = status ? FFResources.Colors.textColor : FFResources.Colors.detailTextColor
+        let backgroundColor = status ? UIColor.systemBackground : UIColor.secondarySystemBackground
+        let actionColor = status ? FFResources.Colors.activeColor : FFResources.Colors.darkPurple
+        UIView.animate(withDuration: 0.5, delay: 0, options: .transitionFlipFromTop) { [unowned self] in
+            self.layer.borderColor = actionColor.cgColor
+            self.backgroundColor = backgroundColor
+            completeStatusButton.setImage(image, for: .normal)
+            completeStatusButton.tintColor = actionColor
+            labels.forEach { label in
+                label.textColor = color
+            }
+            isTrainingCompleted.toggle()
+            delegate?.planStatusWasChanged(isTrainingCompleted, arrayPlace: completeStatusButton.tag)
+        }
+        
+    }
+    
     public func configureLabels(model: [FFTrainingPlanRealmModel],indexPath: IndexPath){
         let model = model[indexPath.row]
-        nameLabel.text = model.trainingName
-        detailLabel.text = model.trainingNotes
+        let exercises: [String] = model.trainingExercises.compactMap { data -> String in
+            return data.exerciseName
+        }
+        let exerciseText = exercises.joined(separator: ", ")
+        nameLabel.text = "Name: " + model.trainingName
+        detailLabel.text = "Details: " + model.trainingNotes
         let dateString = DateFormatter.localizedString(from: model.trainingDate, dateStyle: .medium, timeStyle: .short)
-        dateLabel.text = "Planned \(dateString)"
-        muscleGroupLabel.text = model.trainingExercises.first?.exerciseMuscle
+        dateLabel.text = "Date: \(dateString)"
+        muscleGroupLabel.text = exerciseText
+        completeStatusButton.tag = indexPath.row
     }
     
     private func setupContentView(){
@@ -71,7 +121,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1
         self.layer.borderColor = FFResources.Colors.griRed.cgColor
-        self.backgroundColor = .systemBackground
+        completeStatusButton.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
     }
     
     private func setupConstraints(){
@@ -84,6 +134,13 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(2)
+        }
+        
+        let squareSize = contentView.frame.height / 3
+        contentView.addSubview(completeStatusButton)
+        completeStatusButton.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(5)
+            make.height.width.equalTo(squareSize)
         }
     }
 }

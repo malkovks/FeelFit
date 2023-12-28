@@ -74,7 +74,7 @@ class FFTrainingPlanViewModel: TrainingPlanProtocol {
                     break
                 }
             }
-            return trainingPlans
+        return trainingPlans
             
     }
     

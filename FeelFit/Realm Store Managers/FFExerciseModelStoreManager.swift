@@ -16,7 +16,7 @@ class FFExerciseStoreManager {
     private init() {}
     
     func saveLoadData(model: [Exercise]) {
-        let exerciseObjects = model.map { data -> FFExerciseModelRealm in
+        let _ = model.map { data in
             let exercise = FFExerciseModelRealm()
             exercise.exerciseID = data.exerciseID
             exercise.exerciseBodyPart = data.bodyPart
@@ -36,8 +36,6 @@ class FFExerciseStoreManager {
                     realm.add(exercise)
                 })
             }
-            
-            return exercise
         }
     }
     

@@ -47,9 +47,10 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadData(sorted: sortingValue)
-        setupView()
         setupLocalNotificationsAuth()
+        setupView()
+        setupViewModel()
+        loadData(sorted: sortingValue)
         DispatchQueue.main.async { [ unowned self ] in
             collectionView.reloadData()
         }
@@ -57,9 +58,8 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData(sorted: sortingValue)
         setupViewModel()
-        print(sortingValue)
+        loadData(sorted: sortingValue)
         setupCollectionView()
         setupRefreshController()
         setupNavigationController()
@@ -137,53 +137,93 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "rectangle.badge.plus", action: #selector(didTapCreateProgram), menu: nil)
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "line.3.horizontal.decrease", action: nil, menu: setupSortingMenu())
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "line.3.horizontal.decrease", action: nil, menu: setupMenu())
     }
     
-    func setupSortingMenu() -> UIMenu {
-        let sortMenu = UIMenu(title: "Sorting By", options: .displayInline, children: [
-            UIAction(title: "By Date", handler: { [unowned self] _ in
+    //MARK: - Menu setups
+    private func sortTypeMenu() -> UIMenu {
+        let sortMenu = UIMenu(title: "Sorting By",image: UIImage(systemName: "line.3.horizontal.decrease.circle"), options: .singleSelection, children: [
+            UIAction(title: "Date",image: UIImage(systemName: "calendar"), handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(PlanTrainingSortType.date.rawValue, forKey: "planSortKey")
                 sortingValue = PlanTrainingSortType.date.rawValue
                 didTapRefreshView()
                 
             }),
-            UIAction(title: "By Name", handler: { [unowned self] _ in
+            UIAction(title: "Name",image: UIImage(systemName: "character"), handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(PlanTrainingSortType.name.rawValue, forKey: "planSortKey")
                 sortingValue = PlanTrainingSortType.name.rawValue
                 didTapRefreshView()
             }),
-            UIAction(title: "By Type", handler: { [unowned self] _ in
+            UIAction(title: "Type",image: UIImage(systemName: "checklist.unchecked"), handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(PlanTrainingSortType.type.rawValue, forKey: "planSortKey")
                 sortingValue = PlanTrainingSortType.type.rawValue
                 didTapRefreshView()
             }),
-            UIAction(title: "By Location", handler: { [unowned self] _ in
-                
+            UIAction(title: "Location",image: UIImage(systemName: "location"), handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(PlanTrainingSortType.location.rawValue, forKey: "planSortKey")
                 sortingValue = PlanTrainingSortType.location.rawValue
                 didTapRefreshView()
             })
         ])
-        let sortTypeMenu = UIMenu(title: "Sort Type", options: .singleSelection, children: [
-            UIAction(title: "By Increase",handler: { [unowned self] _ in
+        return sortMenu
+    }
+    
+    private func sortStyleMenu() -> UIMenu {
+        let sortStyleMenu = UIMenu(title: "Sort Type",image: UIImage(systemName: "chevron.up.chevron.down"), options: .singleSelection, children: [
+            UIAction(title: "By Increase",image: UIImage(systemName: "chevron.up"),handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(true, forKey: "planSortValueType")
                 sortingTypeValue = true
                 didTapRefreshView()
                 }),
-            UIAction(title: "By decrease",handler: { [unowned self] _ in
+            UIAction(title: "By decrease",image: UIImage(systemName: "chevron.down"),handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(false, forKey: "planSortValueType")
                 sortingTypeValue = false
                 didTapRefreshView()
             })
         ])
-
-        let menu = UIMenu(title: "Sort type",options: .singleSelection,children: [sortMenu,sortTypeMenu])
+        return sortStyleMenu
+    }
+    
+    private func setupMenu() -> UIMenu {
+        let sortMenu = sortTypeMenu()
+        let styleMenu = sortStyleMenu()
+        let menu = UIMenu(title: "Sort type",image: UIImage(systemName: "pencil"),options: .singleSelection,children: [
+            UIAction(title: "Completed Trainings",image: UIImage(systemName: "figure.highintensity.intervaltraining"),handler: { _ in
+                self.alertError(title: "Opening Controller with previous trainings")
+            }),
+            UIAction(title: "Search by Date",image: UIImage(systemName: "magnifyingglass"), handler: { _ in
+                self.alertError(title: "Opening calendar picker ")
+            }),
+            sortMenu,
+            styleMenu
+        ])
         return menu
     }
     
     func setupRefreshController(){
         refreshController.addTarget(self, action: #selector(didTapRefreshView), for: .valueChanged)
+    }
+    
+    func openPlanDetail(_ model: FFTrainingPlanRealmModel){
+        let vc = FFPlanDetailsViewController(data: model)
+        let nav = FFNavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.isNavigationBarHidden = false
+        present(nav, animated: true)
+    }
+}
+
+extension FFTRainingPlanViewController: TrainingPlanCompleteStatusProtocol {
+    func planStatusWasChanged(_ status: Bool,arrayPlace: Int ) {
+        let selectedData = trainingPlans[arrayPlace]
+        trainingPlans.remove(at: arrayPlace)
+        trainingPlans.append(selectedData)
+        UIView.animate(withDuration: 0.5, delay: 0,options: .transitionFlipFromTop) {
+            self.collectionView.reloadData()
+        }
+        
+        
+        
     }
 }
 
@@ -194,6 +234,7 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier, for: indexPath) as! FFTrainingPlanCollectionViewCell
+        cell.delegate = self
         cell.configureLabels(model: trainingPlans,indexPath: indexPath)
         return cell
     }

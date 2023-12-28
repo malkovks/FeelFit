@@ -97,8 +97,6 @@ class FFPlanDetailTableViewCell: UITableViewCell {
     
     func configureCell(_ data: FFTrainingPlanRealmModel,indexPath: IndexPath,_ isTableViewEditing: Bool){
         checkTableView(isEditing: isTableViewEditing, indexPath: indexPath)
-        
-        
         let value: [String] = data.trainingExercises.map { values -> String in
             let text = values.exerciseName
             return text

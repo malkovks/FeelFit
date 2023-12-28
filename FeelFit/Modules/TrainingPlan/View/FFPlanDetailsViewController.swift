@@ -17,6 +17,7 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
     private var numberOfRows: Int = 0
     private let data: FFTrainingPlanRealmModel
     private var isTableViewEditing: Bool = false
+    private var tableCount = 7
     
     init(data: FFTrainingPlanRealmModel) {
         self.data = data
@@ -35,6 +36,7 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupView()
         setupViewModel()
         setupNavigationController()
@@ -73,12 +75,13 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
         tableView.dataSource = self
         tableView.bounces = true
         tableView.allowsSelection = false
+        tableView.separatorStyle = .none
     }
 }
 
 extension FFPlanDetailsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return tableCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
