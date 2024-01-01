@@ -39,42 +39,25 @@ class FFTrainingPlanViewModel: TrainingPlanProtocol {
         })
         return config
     }
-    
+    //изменить enum raw value таким образом, чтобы она возвращала ключ от realm DB
     func startLoadingPlans(_ sorted: PlanTrainingSortType.RawValue) -> [FFTrainingPlanRealmModel] {
-        var trainingPlans = [FFTrainingPlanRealmModel]()
+        var trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingCompleteStatus == %@",false)
         let sortingTypeValue = UserDefaults.standard.bool(forKey: "planSortValueType")
-            if sortingTypeValue {
-                switch sorted {
-                case "By Date":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingDate < $1.trainingDate })
-                case "By Name":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingName < $1.trainingName })
-                case "By Type":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingType ?? "Default" < $1.trainingType ?? "Default" })
-                case "By Location":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingLocation ?? "Default" < $1.trainingLocation ?? "Default" })
-                default:
-
-                    break
-                }
-            } else {
-                switch sorted {
-                case "By Date":
-
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingDate > $1.trainingDate })
-                case "By Name":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingName > $1.trainingName })
-
-                case "By Type":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingType ?? "Default" > $1.trainingType ?? "Default" })
-
-                case "By Location":
-                    trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(by: { $0.trainingLocation ?? "Default" > $1.trainingLocation ?? "Default" })
-                default:
-                    break
-                }
-            }
-        return trainingPlans
+        
+        switch sorted {
+        case "By Date":
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingDate", ascending: sortingTypeValue)
+        case "By Name":
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingName", ascending: sortingTypeValue)
+        case "By Type"://trainingType
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingType", ascending: sortingTypeValue)
+        case "By Location"://trainingLocation
+            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingLocation", ascending: sortingTypeValue)
+        default:
+            break
+        }
+        
+        return Array(trainingPlans)
             
     }
     

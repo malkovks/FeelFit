@@ -107,6 +107,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         let exercises: [String] = model.trainingExercises.compactMap { data -> String in
             return data.exerciseName
         }
+        isTrainingCompleteSetup(!model.trainingCompleteStatus)
         let exerciseText = exercises.joined(separator: ", ")
         nameLabel.text = "Name: " + model.trainingName
         detailLabel.text = "Details: " + model.trainingNotes

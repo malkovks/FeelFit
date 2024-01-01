@@ -43,6 +43,7 @@
 		0A4495332ABA8D9E0082C909 /* ExerciseAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495322ABA8D9E0082C909 /* ExerciseAlertController.swift */; };
 		0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */; };
 		0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495382ABC43B70082C909 /* FFNewsModel.swift */; };
+		0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */; };
 		0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */; };
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
@@ -130,6 +131,7 @@
 		0A4495322ABA8D9E0082C909 /* ExerciseAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseAlertController.swift; sourceTree = "<group>"; };
 		0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetNewsRequest.swift; sourceTree = "<group>"; };
 		0A4495382ABC43B70082C909 /* FFNewsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModel.swift; sourceTree = "<group>"; };
+		0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewController.swift; sourceTree = "<group>"; };
 		0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseViewModel.swift; sourceTree = "<group>"; };
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
@@ -534,6 +536,7 @@
 				0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */,
 				0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */,
 				0A82CD1C2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift */,
+				0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -938,6 +941,7 @@
 				0ACEA9F12AD9734D00899CF6 /* AppCoordinator.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
+				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
 				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
 				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,

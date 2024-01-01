@@ -24,6 +24,8 @@ class FFTrainingPlanRealmModel: Object {
     @Persisted dynamic var trainingNotificationStatus: Bool = false
     ///Array for appending or export exercises. Default value is List<FFExerciseModelRealm>() and return nil
     @Persisted dynamic var trainingExercises = List<FFExerciseModelRealm>()
+    ///Property for storing status if completed current model by user or not.
+    @Persisted dynamic var trainingCompleteStatus: Bool = false
     
     convenience init(name: String, notes: String, location: String, type: String, date: Date, status: Bool, exercises: [FFExerciseModelRealm]) {
         self.init()

@@ -85,6 +85,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     }
     
     func loadData(sorted: PlanTrainingSortType.RawValue){
+        trainingPlans = [FFTrainingPlanRealmModel]()
         trainingPlans =  viewModel.startLoadingPlans(sorted)
         DispatchQueue.main.async {
             self.collectionView.reloadData()
@@ -188,8 +189,9 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         let sortMenu = sortTypeMenu()
         let styleMenu = sortStyleMenu()
         let menu = UIMenu(title: "Sort type",image: UIImage(systemName: "pencil"),options: .singleSelection,children: [
-            UIAction(title: "Completed Trainings",image: UIImage(systemName: "figure.highintensity.intervaltraining"),handler: { _ in
-                self.alertError(title: "Opening Controller with previous trainings")
+            UIAction(title: "Completed Trainings",image: UIImage(systemName: "figure.highintensity.intervaltraining"),handler: {  [unowned self] _ in
+                let vc = FFPlanCompletedTrainingViewController()
+                navigationController?.pushViewController(vc, animated: true)
             }),
             UIAction(title: "Search by Date",image: UIImage(systemName: "magnifyingglass"), handler: { _ in
                 self.alertError(title: "Opening calendar picker ")
@@ -215,12 +217,12 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
 
 extension FFTRainingPlanViewController: TrainingPlanCompleteStatusProtocol {
     func planStatusWasChanged(_ status: Bool,arrayPlace: Int ) {
-        let selectedData = trainingPlans[arrayPlace]
-        trainingPlans.remove(at: arrayPlace)
-        trainingPlans.append(selectedData)
-        UIView.animate(withDuration: 0.5, delay: 0,options: .transitionFlipFromTop) {
-            self.collectionView.reloadData()
-        }
+        try! realm.write({
+            trainingPlans[arrayPlace].trainingCompleteStatus = status
+        })
+//        DispatchQueue.main.asyncAfter(deadline: .now()+3){ [unowned self] in
+//            loadData(sorted: sortingValue)
+//        }
         
         
         
