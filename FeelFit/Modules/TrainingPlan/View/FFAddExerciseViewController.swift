@@ -19,6 +19,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     var model = [FFExerciseModelRealm]()
     private var trainPlanModel: FFTrainingPlanRealmModel?
     private let isViewEditing: Bool
+    private var editedTrainPlanModel: FFTrainingPlanRealmModel?
     
     init(trainProgram: CreateTrainProgram?,exercises: List<FFExerciseModelRealm>? = nil,_ isViewEditing: Bool = false,trainPlanModel: FFTrainingPlanRealmModel? = nil) {
         self.trainProgram = trainProgram
@@ -85,7 +86,7 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     func setupTableView(){
-        tableView = UITableView(frame: .zero,style: .grouped)
+        tableView = UITableView(frame: .zero,style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.dragDelegate = self
@@ -106,7 +107,6 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
         } else {
             navigationItem.setLeftBarButton(addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSave), menu: nil), animated: true)
         }
-        
     }
     
     func setupNonEmptyValue(){

@@ -9,7 +9,7 @@ import UIKit
 import RealmSwift
 
 protocol TrainingPlanCompleteStatusProtocol: AnyObject {
-    func planStatusWasChanged(_ status: Bool,arrayPlace: Int)
+    func planStatusWasChanged(arrayPlace: Int)
 }
 
 class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
@@ -75,19 +75,15 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func didTapSave(){
-        if isTrainingCompleted {
-            isTrainingCompleteSetup(isTrainingCompleted)
-        } else {
-            isTrainingCompleteSetup(isTrainingCompleted)
-        }
+        isTrainingCompleteSetup()
     }
     
-    func isTrainingCompleteSetup(_ status: Bool) {
+    func isTrainingCompleteSetup() {
         let labels = [ nameLabel,detailLabel,dateLabel,muscleGroupLabel]
-        let image = status ? UIImage(systemName: "circle")! : UIImage(systemName: "checkmark.circle")!
-        let color = status ? FFResources.Colors.textColor : FFResources.Colors.detailTextColor
-        let backgroundColor = status ? UIColor.systemBackground : UIColor.secondarySystemBackground
-        let actionColor = status ? FFResources.Colors.activeColor : FFResources.Colors.darkPurple
+        let image =  UIImage(systemName: "checkmark.circle")!
+        let color = FFResources.Colors.detailTextColor
+        let backgroundColor = UIColor.secondarySystemBackground
+        let actionColor = FFResources.Colors.darkPurple
         UIView.animate(withDuration: 0.5, delay: 0, options: .transitionFlipFromTop) { [unowned self] in
             self.layer.borderColor = actionColor.cgColor
             self.backgroundColor = backgroundColor
@@ -96,8 +92,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
             labels.forEach { label in
                 label.textColor = color
             }
-            isTrainingCompleted.toggle()
-            delegate?.planStatusWasChanged(isTrainingCompleted, arrayPlace: completeStatusButton.tag)
+            delegate?.planStatusWasChanged(arrayPlace: completeStatusButton.tag)
         }
         
     }
@@ -107,7 +102,6 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         let exercises: [String] = model.trainingExercises.compactMap { data -> String in
             return data.exerciseName
         }
-        isTrainingCompleteSetup(!model.trainingCompleteStatus)
         let exerciseText = exercises.joined(separator: ", ")
         nameLabel.text = "Name: " + model.trainingName
         detailLabel.text = "Details: " + model.trainingNotes

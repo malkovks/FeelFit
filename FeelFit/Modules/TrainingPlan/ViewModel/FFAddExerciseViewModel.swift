@@ -117,8 +117,7 @@ class FFAddExerciseViewModel {
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int,_ isViewEditing: Bool,editAction: Selector,saveAction: Selector) -> UIView? {
-        
-        let button = UIButton(frame: CGRect(x: 10, y: 0, width: tableView.frame.size.width-20, height: tableView.rowHeight))
+        let button = UIButton()
         button.configuration = .filled()
         button.configuration?.cornerStyle = .capsule
         button.configuration?.title = isViewEditing ? "Save edits" : "Save"
@@ -132,6 +131,7 @@ class FFAddExerciseViewModel {
         } else {
             button.addTarget(viewController, action: saveAction, for: .primaryActionTriggered)
         }
+        button.frame = CGRect(x: 10, y: 0, width: tableView.frame.width-20, height: tableView.rowHeight)
         return button
     }
     

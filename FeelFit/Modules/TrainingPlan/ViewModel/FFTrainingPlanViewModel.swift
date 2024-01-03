@@ -42,20 +42,23 @@ class FFTrainingPlanViewModel: TrainingPlanProtocol {
     //изменить enum raw value таким образом, чтобы она возвращала ключ от realm DB
     func startLoadingPlans(_ sorted: PlanTrainingSortType.RawValue) -> [FFTrainingPlanRealmModel] {
         var trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingCompleteStatus == %@",false)
-        let sortingTypeValue = UserDefaults.standard.bool(forKey: "planSortValueType")
         
-        switch sorted {
-        case "By Date":
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingDate", ascending: sortingTypeValue)
-        case "By Name":
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingName", ascending: sortingTypeValue)
-        case "By Type"://trainingType
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingType", ascending: sortingTypeValue)
-        case "By Location"://trainingLocation
-            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).sorted(byKeyPath: "trainingLocation", ascending: sortingTypeValue)
-        default:
-            break
-        }
+//        var trainingPlans: Results<FFTrainingPlanRealmModel>!
+//        var filterPredicate = NSPredicate(format: "trainingCompleteStatus == %@", false)
+//        let sortingTypeValue = UserDefaults.standard.bool(forKey: "planSortValueType")
+        
+//        switch sorted {
+//        case "By Date":
+//            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).filter(filterPredicate).sorted(byKeyPath: "trainingDate", ascending: sortingTypeValue)
+//        case "By Name":
+//            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).filter(filterPredicate).sorted(byKeyPath: "trainingName", ascending: sortingTypeValue)
+//        case "By Type"://trainingType
+//            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).filter(filterPredicate).sorted(byKeyPath: "trainingType", ascending: sortingTypeValue)
+//        case "By Location"://trainingLocation
+//            trainingPlans = realm.objects(FFTrainingPlanRealmModel.self).filter(filterPredicate).sorted(byKeyPath: "trainingLocation", ascending: sortingTypeValue)
+//        default:
+//            break
+//        }
         
         return Array(trainingPlans)
             

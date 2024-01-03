@@ -51,9 +51,6 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupView()
         setupViewModel()
         loadData(sorted: sortingValue)
-        DispatchQueue.main.async { [ unowned self ] in
-            collectionView.reloadData()
-        }
     }
     
     override func viewDidLoad() {
@@ -65,8 +62,6 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         setupNavigationController()
         setupConstraints()
         view.backgroundColor = FFResources.Colors.backgroundColor
-        
-        
     }
 
     @objc func didTapCreateProgram(){
@@ -87,8 +82,18 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     func loadData(sorted: PlanTrainingSortType.RawValue){
         trainingPlans = [FFTrainingPlanRealmModel]()
         trainingPlans =  viewModel.startLoadingPlans(sorted)
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
+        if !trainingPlans.isEmpty {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                self.contentUnavailableConfiguration = nil
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                self.contentUnavailableConfiguration = self.viewModel.configurationUnavailableView {
+                    self.didTapCreateProgram()
+                }
+            }
         }
     }
     
@@ -216,13 +221,13 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
 }
 
 extension FFTRainingPlanViewController: TrainingPlanCompleteStatusProtocol {
-    func planStatusWasChanged(_ status: Bool,arrayPlace: Int ) {
+    func planStatusWasChanged(arrayPlace: Int ) {
         try! realm.write({
-            trainingPlans[arrayPlace].trainingCompleteStatus = status
+            trainingPlans[arrayPlace].trainingCompleteStatus = true
         })
-//        DispatchQueue.main.asyncAfter(deadline: .now()+3){ [unowned self] in
-//            loadData(sorted: sortingValue)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+3){ [unowned self] in
+            loadData(sorted: sortingValue)
+        }
         
         
         
@@ -248,7 +253,8 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-        let index = collectionView.indexPathForItem(at: point)!
+        let indexPath = IndexPath(row: 0, section: 0)
+        let index = collectionView.indexPathForItem(at: point) ?? indexPath
         let model = trainingPlans[index.row]
         let vc = FFPlanDetailsViewController(data: model)
         return UIContextMenuConfiguration {
