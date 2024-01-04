@@ -19,7 +19,8 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     var model = [FFExerciseModelRealm]()
     private var trainPlanModel: FFTrainingPlanRealmModel?
     private let isViewEditing: Bool
-    private var editedTrainPlanModel: FFTrainingPlanRealmModel?
+    private var oldExercises: [FFExerciseModelRealm]?
+    private var newExercises: [FFExerciseModelRealm]?
     
     init(trainProgram: CreateTrainProgram?,exercises: List<FFExerciseModelRealm>? = nil,_ isViewEditing: Bool = false,trainPlanModel: FFTrainingPlanRealmModel? = nil) {
         self.trainProgram = trainProgram
@@ -33,6 +34,9 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
             model.append(exercise)
         }
         self.trainPlanModel = models
+        if isViewEditing {
+            self.oldExercises = self.model
+        }
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -77,12 +81,25 @@ class FFAddExerciseViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapEditPlan(){
-        viewModel.didTapEditPlan(trainProgram, model, trainPlanModel)
+        checkEqualExercisesModels()
     }
     
     //MARK: - Setup View methods
     func setupViewModel() {
         viewModel = FFAddExerciseViewModel(viewController: self)
+    }
+    
+    func checkEqualExercisesModels(){
+        newExercises = model 
+        if newExercises != oldExercises {
+            alertControllerActionConfirm(title: "Warning", message: "Do you want to change training plan structure?", confirmActionTitle: "Continue",secondTitleAction: "", style: .alert) { [unowned self] in
+                viewModel.didTapEditPlan(trainProgram, model, trainPlanModel)
+            } secondAction: {
+                self.dismiss(animated: true)
+            }
+        } else {
+            viewModel.didTapEditPlan(trainProgram, model, trainPlanModel)
+        }
     }
     
     func setupTableView(){
@@ -119,6 +136,7 @@ extension FFAddExerciseViewController: PlanExerciseDelegate {
     func deliveryData(exercises: [Exercise]) {
         let values = viewModel.convertExerciseToRealm(exercises: exercises)
         model.append(contentsOf: values)
+        newExercises?.append(contentsOf: values)
         DispatchQueue.main.async { [unowned self] in
             tableView.reloadData()
             setupNonEmptyValue()

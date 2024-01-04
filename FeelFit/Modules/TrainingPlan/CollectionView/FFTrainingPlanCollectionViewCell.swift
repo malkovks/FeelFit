@@ -9,13 +9,15 @@ import UIKit
 import RealmSwift
 
 protocol TrainingPlanCompleteStatusProtocol: AnyObject {
-    func planStatusWasChanged(arrayPlace: Int)
+    func planStatusWasChanged(status: Bool,arrayPlace: Int)
 }
 
 class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrainingPlanCell"
     
     private var isTrainingCompleted: Bool = false
+    private var timer: Timer?
+    
     
     weak var delegate: TrainingPlanCompleteStatusProtocol?
     
@@ -75,15 +77,27 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func didTapSave(){
-        isTrainingCompleteSetup()
+        if isTrainingCompleted {
+            isTrainingCompleteSetup()
+            isTrainingCompleted.toggle()
+            delegate?.planStatusWasChanged(status: isTrainingCompleted, arrayPlace: completeStatusButton.tag)
+            
+        } else {
+            isTrainingCompleteSetup()
+            isTrainingCompleted.toggle()
+            delegate?.planStatusWasChanged(status: isTrainingCompleted, arrayPlace: completeStatusButton.tag)
+            
+        }
     }
     
+    
     func isTrainingCompleteSetup() {
+        let boolean = isTrainingCompleted
         let labels = [ nameLabel,detailLabel,dateLabel,muscleGroupLabel]
-        let image =  UIImage(systemName: "checkmark.circle")!
-        let color = FFResources.Colors.detailTextColor
-        let backgroundColor = UIColor.secondarySystemBackground
-        let actionColor = FFResources.Colors.darkPurple
+        let image = boolean ? UIImage(systemName: "circle")! : UIImage(systemName: "checkmark.circle")!
+        let color = boolean ? FFResources.Colors.textColor : FFResources.Colors.detailTextColor
+        let backgroundColor = boolean ? UIColor.systemBackground : UIColor.secondarySystemBackground
+        let actionColor = boolean ? FFResources.Colors.activeColor : FFResources.Colors.darkPurple
         UIView.animate(withDuration: 0.5, delay: 0, options: .transitionFlipFromTop) { [unowned self] in
             self.layer.borderColor = actionColor.cgColor
             self.backgroundColor = backgroundColor
@@ -92,9 +106,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
             labels.forEach { label in
                 label.textColor = color
             }
-            delegate?.planStatusWasChanged(arrayPlace: completeStatusButton.tag)
         }
-        
     }
     
     public func configureLabels(model: [FFTrainingPlanRealmModel],indexPath: IndexPath){

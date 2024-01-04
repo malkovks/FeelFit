@@ -12,7 +12,7 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     
     private var tableView: UITableView!
     
-    private var completedPlans: Results<FFTrainingPlanRealmModel>!
+    private var completedPlans: [FFTrainingPlanRealmModel]!
     
     private let realm = try! Realm()
     
@@ -42,12 +42,14 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     func setupTableView(){
         tableView = UITableView(frame: .zero)
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "completedCell")
     }
     
     func loadRealmData(){
         let objects = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingCompleteStatus == %@", true)
-        completedPlans = objects
+        let data = Array(objects)
+        completedPlans = data
     }
 }
 
@@ -63,6 +65,22 @@ extension FFPlanCompletedTrainingViewController: UITableViewDataSource {
         cell.textLabel?.text = completedPlans[indexPath.row].trainingName
         cell.detailTextLabel?.text = DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .short)
         return cell
+    }
+}
+
+extension FFPlanCompletedTrainingViewController: UITableViewDelegate  {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        tableView.performBatchUpdates {
+            tableView.deleteRows(at: [indexPath], with: .top)
+            completedPlans.remove(at: indexPath.row)
+        } completion: { _ in
+            try! self.realm.write({
+                self.completedPlans[indexPath.row].trainingCompleteStatus = false
+                
+            })
+        }
+        
     }
 }
 

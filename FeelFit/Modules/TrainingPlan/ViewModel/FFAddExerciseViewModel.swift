@@ -16,11 +16,6 @@ class FFAddExerciseViewModel {
         self.viewController = viewController
     }
     
-    
-    @objc func didTapSavePlan(){
-        
-    }
-    
     func didTapEditPlan(_ trainProgram: CreateTrainProgram?,_ model: [FFExerciseModelRealm],_ fullModel: FFTrainingPlanRealmModel?){
         guard let train = trainProgram,
               let fullModel = fullModel else {

@@ -37,6 +37,8 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     private var sortingTypeValue = UserDefaults.standard.bool(forKey: "planSortValueType")
     private var trainingPlans: [FFTrainingPlanRealmModel]!
     
+    private var timer: Timer?
+    
     private var collectionView: UICollectionView!
     
     private var refreshController: UIRefreshControl = {
@@ -218,19 +220,45 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         nav.isNavigationBarHidden = false
         present(nav, animated: true)
     }
+    
+    func startTimer(_ index: Int){
+        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: { [weak self] _ in
+            self?.deleteSelectedCell(index)
+        })
+    }
+    
+    func deleteSelectedCell(_ index: Int){
+        collectionView.performBatchUpdates {
+            collectionView.deleteItems(at: [IndexPath(row: index, section: 0)])
+            try! realm.write({
+                trainingPlans[index].trainingCompleteStatus = true
+            })
+            self.trainingPlans.remove(at: index)
+            
+        } completion: { [weak self] _ in
+            
+            self?.resetTimer()
+        }
+    }
+    
+    func resetTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
 }
 
 extension FFTRainingPlanViewController: TrainingPlanCompleteStatusProtocol {
-    func planStatusWasChanged(arrayPlace: Int ) {
+    func planStatusWasChanged(status: Bool,arrayPlace: Int ) {
+        if status {
+            resetTimer()
+            startTimer(arrayPlace)
+            
+        } else {
+            resetTimer()
+        }
         try! realm.write({
             trainingPlans[arrayPlace].trainingCompleteStatus = true
         })
-        DispatchQueue.main.asyncAfter(deadline: .now()+3){ [unowned self] in
-            loadData(sorted: sortingValue)
-        }
-        
-        
-        
     }
 }
 
