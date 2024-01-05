@@ -74,6 +74,8 @@
 		0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */; };
 		0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */; };
 		0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */; };
+		0ACBC2662B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */; };
+		0ACBC2682B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */; };
 		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
 		0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */; };
 		0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */; };
@@ -162,6 +164,8 @@
 		0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseViewModel.swift; sourceTree = "<group>"; };
 		0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewController.swift; sourceTree = "<group>"; };
 		0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewModel.swift; sourceTree = "<group>"; };
+		0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewModel.swift; sourceTree = "<group>"; };
+		0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingTableViewCell.swift; sourceTree = "<group>"; };
 		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		0ACEA9D92ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsFavouriteViewController.swift; sourceTree = "<group>"; };
 		0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsStoreManager.swift; sourceTree = "<group>"; };
@@ -371,10 +375,9 @@
 		0A4495062AB9D1330082C909 /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
+				0ACBC2642B48004D0046F83D /* V+VM */,
 				0A91519F2B0379F900FE5E41 /* TableView */,
 				0A91519E2B02567E00FE5E41 /* CollectionView */,
-				0A4495262ABA79440082C909 /* ViewModel */,
-				0A4495252ABA79400082C909 /* View */,
 				0A86DED92B23E80800E9DA24 /* Secondary Views */,
 				0A4495242ABA793C0082C909 /* Model */,
 			);
@@ -527,33 +530,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0A4495252ABA79400082C909 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */,
-				0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */,
-				0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */,
-				0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */,
-				0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */,
-				0A82CD1C2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift */,
-				0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		0A4495262ABA79440082C909 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */,
-				0ABDEB062B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift */,
-				0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */,
-				0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */,
-				0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */,
-				0A82CD1E2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
 		0A4495272ABA794E0082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -682,6 +658,84 @@
 			children = (
 			);
 			path = TableViewHeaderView;
+			sourceTree = "<group>";
+		};
+		0ACBC25D2B47FF770046F83D /* TrainingPlan */ = {
+			isa = PBXGroup;
+			children = (
+				0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */,
+				0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */,
+			);
+			path = TrainingPlan;
+			sourceTree = "<group>";
+		};
+		0ACBC25E2B47FF9C0046F83D /* CreateTrainingPlan */ = {
+			isa = PBXGroup;
+			children = (
+				0ABDEB062B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift */,
+				0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */,
+			);
+			path = CreateTrainingPlan;
+			sourceTree = "<group>";
+		};
+		0ACBC25F2B47FFA60046F83D /* AddExerciseToPlan */ = {
+			isa = PBXGroup;
+			children = (
+				0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */,
+				0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */,
+			);
+			path = AddExerciseToPlan;
+			sourceTree = "<group>";
+		};
+		0ACBC2602B47FFAE0046F83D /* SelectExercise */ = {
+			isa = PBXGroup;
+			children = (
+				0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */,
+				0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */,
+			);
+			path = SelectExercise;
+			sourceTree = "<group>";
+		};
+		0ACBC2612B47FFB90046F83D /* SelectMuscleType */ = {
+			isa = PBXGroup;
+			children = (
+				0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */,
+				0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */,
+			);
+			path = SelectMuscleType;
+			sourceTree = "<group>";
+		};
+		0ACBC2622B47FFC60046F83D /* TrainingPlanDetails */ = {
+			isa = PBXGroup;
+			children = (
+				0A82CD1E2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift */,
+				0A82CD1C2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift */,
+			);
+			path = TrainingPlanDetails;
+			sourceTree = "<group>";
+		};
+		0ACBC2632B47FFD00046F83D /* TrainingPlanCompleted */ = {
+			isa = PBXGroup;
+			children = (
+				0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */,
+				0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */,
+				0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */,
+			);
+			path = TrainingPlanCompleted;
+			sourceTree = "<group>";
+		};
+		0ACBC2642B48004D0046F83D /* V+VM */ = {
+			isa = PBXGroup;
+			children = (
+				0ACBC2632B47FFD00046F83D /* TrainingPlanCompleted */,
+				0ACBC2622B47FFC60046F83D /* TrainingPlanDetails */,
+				0ACBC2612B47FFB90046F83D /* SelectMuscleType */,
+				0ACBC2602B47FFAE0046F83D /* SelectExercise */,
+				0ACBC25F2B47FFA60046F83D /* AddExerciseToPlan */,
+				0ACBC25E2B47FF9C0046F83D /* CreateTrainingPlan */,
+				0ACBC25D2B47FF770046F83D /* TrainingPlan */,
+			);
+			path = "V+VM";
 			sourceTree = "<group>";
 		};
 		0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */ = {
@@ -974,8 +1028,10 @@
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
 				0ACEAA532ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift in Sources */,
 				0A2347AE2AEFEF21002C161C /* FFMuscleGroupViewModel.swift in Sources */,
+				0ACBC2662B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift in Sources */,
 				0ACEA9E92AD7EDBF00899CF6 /* Coordinator.swift in Sources */,
 				0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */,
+				0ACBC2682B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift in Sources */,
 				0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */,
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,

@@ -19,22 +19,13 @@ struct TrainingPlan {
     let exercises: [Exercise]
 }
 
-enum PlanTrainingSortType: String {
-    case date = "By Date"
-    case name = "By Name"
-    case type = "By Type"
-    case location = "By Location"
-}
-
-
 /// Main view controller which displaying planned if they have trainings. If not - user can create them
 class FFTRainingPlanViewController: UIViewController,SetupViewController {
     
     private var viewModel: FFTrainingPlanViewModel!
     
     private let realm = try! Realm()
-    private var sortingValue: String = UserDefaults.standard.string(forKey: "planSortKey") ?? "By Date"
-    private var sortingTypeValue = UserDefaults.standard.bool(forKey: "planSortValueType")
+    private var sortingValue: String = UserDefaults.standard.string(forKey: "planSortKey") ?? "trainingDate"
     private var trainingPlans: [FFTrainingPlanRealmModel]!
     
     private var timer: Timer?
@@ -81,7 +72,7 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         }
     }
     
-    func loadData(sorted: PlanTrainingSortType.RawValue){
+    func loadData(sorted: String){
         trainingPlans = [FFTrainingPlanRealmModel]()
         trainingPlans =  viewModel.startLoadingPlans(sorted)
         if !trainingPlans.isEmpty {
@@ -152,24 +143,14 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
     private func sortTypeMenu() -> UIMenu {
         let sortMenu = UIMenu(title: "Sorting By",image: UIImage(systemName: "line.3.horizontal.decrease.circle"), options: .singleSelection, children: [
             UIAction(title: "Date",image: UIImage(systemName: "calendar"), handler: { [unowned self] _ in
-                UserDefaults.standard.setValue(PlanTrainingSortType.date.rawValue, forKey: "planSortKey")
-                sortingValue = PlanTrainingSortType.date.rawValue
+                UserDefaults.standard.setValue("trainingDate", forKey: "planSortKey")
+                sortingValue = "trainingDate"
                 didTapRefreshView()
                 
             }),
             UIAction(title: "Name",image: UIImage(systemName: "character"), handler: { [unowned self] _ in
-                UserDefaults.standard.setValue(PlanTrainingSortType.name.rawValue, forKey: "planSortKey")
-                sortingValue = PlanTrainingSortType.name.rawValue
-                didTapRefreshView()
-            }),
-            UIAction(title: "Type",image: UIImage(systemName: "checklist.unchecked"), handler: { [unowned self] _ in
-                UserDefaults.standard.setValue(PlanTrainingSortType.type.rawValue, forKey: "planSortKey")
-                sortingValue = PlanTrainingSortType.type.rawValue
-                didTapRefreshView()
-            }),
-            UIAction(title: "Location",image: UIImage(systemName: "location"), handler: { [unowned self] _ in
-                UserDefaults.standard.setValue(PlanTrainingSortType.location.rawValue, forKey: "planSortKey")
-                sortingValue = PlanTrainingSortType.location.rawValue
+                UserDefaults.standard.setValue("trainingName", forKey: "planSortKey")
+                sortingValue = "trainingName"
                 didTapRefreshView()
             })
         ])
@@ -180,12 +161,10 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         let sortStyleMenu = UIMenu(title: "Sort Type",image: UIImage(systemName: "chevron.up.chevron.down"), options: .singleSelection, children: [
             UIAction(title: "By Increase",image: UIImage(systemName: "chevron.up"),handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(true, forKey: "planSortValueType")
-                sortingTypeValue = true
                 didTapRefreshView()
                 }),
             UIAction(title: "By decrease",image: UIImage(systemName: "chevron.down"),handler: { [unowned self] _ in
                 UserDefaults.standard.setValue(false, forKey: "planSortValueType")
-                sortingTypeValue = false
                 didTapRefreshView()
             })
         ])
@@ -270,7 +249,7 @@ extension FFTRainingPlanViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFTrainingPlanCollectionViewCell.identifier, for: indexPath) as! FFTrainingPlanCollectionViewCell
         cell.delegate = self
-        cell.configureLabels(model: trainingPlans,indexPath: indexPath)
+        cell.configureLabels(model: trainingPlans,indexPath: indexPath, sortingType: sortingValue)
         return cell
     }
 }
@@ -285,6 +264,7 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
         let index = collectionView.indexPathForItem(at: point) ?? indexPath
         let model = trainingPlans[index.row]
         let vc = FFPlanDetailsViewController(data: model)
+        let cell = collectionView.cellForItem(at: index) as! FFTrainingPlanCollectionViewCell
         return UIContextMenuConfiguration {
             return vc
         } actionProvider: { _ in
@@ -300,10 +280,10 @@ extension FFTRainingPlanViewController: UICollectionViewDelegate {
                     collectionView.reloadData()
                 }
             }
-            let actionChange = UIAction(title: "Change", image: UIImage(systemName: "gear")) { [unowned self] _ in
-                viewModel.openSelectedPlan(model)
+            let actionChangeStatus = UIAction(title: "Change complete status", image: UIImage(systemName: "checkmark.square")) { _ in
+                cell.didTapSave()
             }
-            let menu = UIMenu(children: [actionOpen,actionDelete,actionChange])
+            let menu = UIMenu(children: [actionOpen,actionDelete,actionChangeStatus])
             return menu
         }
     }

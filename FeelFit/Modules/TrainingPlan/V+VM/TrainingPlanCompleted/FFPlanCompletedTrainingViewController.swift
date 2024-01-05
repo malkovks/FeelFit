@@ -11,6 +11,8 @@ import RealmSwift
 class FFPlanCompletedTrainingViewController: UIViewController, SetupViewController {
     
     private var tableView: UITableView!
+    private var viewModel: FFPlanCompletedTrainingViewModel!
+    private var timer: Timer?
     
     private var completedPlans: [FFTrainingPlanRealmModel]!
     
@@ -18,18 +20,23 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadRealmData()
         setupView()
         setupViewModel()
         setupNavigationController()
         setupTableView()
         setupConstraints()
-        loadRealmData()
+        
     }
     
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
         
-        //Если таблица пустая, добавить contentUnavailableConfiguration
+        if completedPlans.isEmpty {
+            contentUnavailableConfiguration = viewModel.configUnavailableView()
+        } else {
+            contentUnavailableConfiguration = nil
+        }
     }
     
     func setupNavigationController() {
@@ -37,7 +44,7 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     }
     
     func setupViewModel() {
-        
+        viewModel = FFPlanCompletedTrainingViewModel(viewController: self)
     }
     func setupTableView(){
         tableView = UITableView(frame: .zero)
@@ -51,6 +58,27 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
         let data = Array(objects)
         completedPlans = data
     }
+    
+    func startTimer(_ index: Int,_ tableView: UITableView){
+        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: { [weak self] _ in
+            self?.deleteSelectedCell(index, tableView)
+        })
+    }
+    
+    func deleteSelectedCell(_ index: Int,_ tableView: UITableView) {
+        tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .top)
+        try! realm.write({
+            self.completedPlans[index].trainingCompleteStatus = false
+        })
+        self.completedPlans.remove(at: index)
+        self.resetTimer()
+    }
+    
+    func resetTimer(){
+        timer?.invalidate()
+        timer = nil
+    }
+    
 }
 
 extension FFPlanCompletedTrainingViewController: UITableViewDataSource {
@@ -71,16 +99,46 @@ extension FFPlanCompletedTrainingViewController: UITableViewDataSource {
 extension FFPlanCompletedTrainingViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        tableView.performBatchUpdates {
+        
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let data = completedPlans[indexPath.row]
+        let deleteInstance = UIContextualAction(style: .destructive, title: "") { [unowned self] _, _, _ in
+            tableView.beginUpdates()
+            deleteModel(data)
             tableView.deleteRows(at: [indexPath], with: .top)
-            completedPlans.remove(at: indexPath.row)
-        } completion: { _ in
+            tableView.endUpdates()
+        }
+        deleteInstance.backgroundColor = UIColor.systemRed
+        deleteInstance.image = UIImage(systemName: "trash.fill")
+        deleteInstance.image?.withTintColor(.systemBackground)
+        let action = UISwipeActionsConfiguration(actions: [deleteInstance])
+        return action
+    }
+    
+    func deleteModel(_ model: FFTrainingPlanRealmModel){
+        try! realm.write({
+            realm.delete(model)
+        })
+    }
+    
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let data = completedPlans[indexPath.row]
+        let completeInstance = UIContextualAction(style: .normal, title: "") { [unowned self] _, _, _ in
+            tableView.beginUpdates()
             try! self.realm.write({
                 self.completedPlans[indexPath.row].trainingCompleteStatus = false
-                
             })
+            completedPlans.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .top)
+            tableView.endUpdates()
         }
-        
+        completeInstance.backgroundColor = FFResources.Colors.activeColor
+        completeInstance.image = UIImage(systemName: "checkmark.square")
+        completeInstance.image?.withTintColor(.systemBackground)
+        let action = UISwipeActionsConfiguration(actions: [completeInstance])
+        return action
     }
 }
 

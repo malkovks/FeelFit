@@ -16,8 +16,6 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrainingPlanCell"
     
     private var isTrainingCompleted: Bool = false
-    private var timer: Timer?
-    
     
     weak var delegate: TrainingPlanCompleteStatusProtocol?
     
@@ -41,7 +39,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     
     let detailLabel: UILabel = {
        let label = UILabel()
-        label.font = .headerFont()
+        label.font = .textLabelFont(size: 20, weight: .thin)
         label.textColor = FFResources.Colors.textColor
         label.numberOfLines = 1
         label.textAlignment = .left
@@ -50,7 +48,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     
     let dateLabel: UILabel = {
        let label = UILabel()
-        label.font = .headerFont()
+        label.font = .textLabelFont(size: 20, weight: .thin)
         label.textColor = FFResources.Colors.textColor
         label.numberOfLines = 1
         label.textAlignment = .left
@@ -59,7 +57,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
     
     let muscleGroupLabel: UILabel = {
        let label = UILabel()
-        label.font = .headerFont()
+        label.font = .textLabelFont(size: 18, weight: .thin)
         label.textColor = FFResources.Colors.textColor
         label.numberOfLines = 1
         label.textAlignment = .left
@@ -76,7 +74,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc private func didTapSave(){
+    @objc func didTapSave(){
         if isTrainingCompleted {
             isTrainingCompleteSetup()
             isTrainingCompleted.toggle()
@@ -109,7 +107,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    public func configureLabels(model: [FFTrainingPlanRealmModel],indexPath: IndexPath){
+    public func configureLabels(model: [FFTrainingPlanRealmModel],indexPath: IndexPath,sortingType: String){
         let model = model[indexPath.row]
         let exercises: [String] = model.trainingExercises.compactMap { data -> String in
             return data.exerciseName
@@ -121,6 +119,13 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         dateLabel.text = "Date: \(dateString)"
         muscleGroupLabel.text = exerciseText
         completeStatusButton.tag = indexPath.row
+        if sortingType == "trainingName" {
+            nameLabel.font = .headerFont()
+            dateLabel.font = .textLabelFont(size: 20, weight: .thin)
+        } else {
+            nameLabel.font = .textLabelFont(size: 20, weight: .thin)
+            dateLabel.font = .headerFont()
+        }
     }
     
     private func setupContentView(){
@@ -129,6 +134,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         self.layer.borderWidth = 1
         self.layer.borderColor = FFResources.Colors.griRed.cgColor
         completeStatusButton.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
+        
     }
     
     private func setupConstraints(){

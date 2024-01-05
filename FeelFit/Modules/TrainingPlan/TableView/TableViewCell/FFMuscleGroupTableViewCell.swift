@@ -10,6 +10,8 @@ import RealmSwift
 
 class FFMuscleGroupTableViewCell: UITableViewCell {
     
+    static let identifier = "FFMuscleGroupTableViewCell"
+    
     let mainTextLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.numberOfLines = 1
@@ -38,7 +40,7 @@ class FFMuscleGroupTableViewCell: UITableViewCell {
         return image
     }()
     
-    static let identifier = "FFMuscleGroupTableViewCell"
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
