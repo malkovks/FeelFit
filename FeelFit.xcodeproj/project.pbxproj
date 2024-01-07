@@ -46,6 +46,9 @@
 		0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */; };
 		0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */; };
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
+		0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */; };
+		0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */; };
+		0A69E0CF2B4AA5AC0023487B /* FFSearchResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CE2B4AA5AC0023487B /* FFSearchResultTableViewController.swift */; };
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
@@ -136,6 +139,9 @@
 		0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewController.swift; sourceTree = "<group>"; };
 		0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseViewModel.swift; sourceTree = "<group>"; };
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
+		0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewController.swift; sourceTree = "<group>"; };
+		0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewModel.swift; sourceTree = "<group>"; };
+		0A69E0CE2B4AA5AC0023487B /* FFSearchResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchResultTableViewController.swift; sourceTree = "<group>"; };
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
@@ -578,6 +584,16 @@
 			path = TableViewFooter;
 			sourceTree = "<group>";
 		};
+		0A69E0C92B4AA3780023487B /* SearchTrainingPlan */ = {
+			isa = PBXGroup;
+			children = (
+				0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */,
+				0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */,
+				0A69E0CE2B4AA5AC0023487B /* FFSearchResultTableViewController.swift */,
+			);
+			path = SearchTrainingPlan;
+			sourceTree = "<group>";
+		};
 		0A7158092B359AEC00FBCF72 /* Animated Image */ = {
 			isa = PBXGroup;
 			children = (
@@ -727,6 +743,7 @@
 		0ACBC2642B48004D0046F83D /* V+VM */ = {
 			isa = PBXGroup;
 			children = (
+				0A69E0C92B4AA3780023487B /* SearchTrainingPlan */,
 				0ACBC2632B47FFD00046F83D /* TrainingPlanCompleted */,
 				0ACBC2622B47FFC60046F83D /* TrainingPlanDetails */,
 				0ACBC2612B47FFB90046F83D /* SelectMuscleType */,
@@ -967,6 +984,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
@@ -1003,6 +1021,7 @@
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
+				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
 				0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */,
 				0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */,
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,
@@ -1047,6 +1066,7 @@
 				0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,
 				0ABDEB072B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift in Sources */,
+				0A69E0CF2B4AA5AC0023487B /* FFSearchResultTableViewController.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

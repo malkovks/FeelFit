@@ -75,6 +75,13 @@ class FFTrainingPlanStoreManager {
         })
     }
     
+    
+    func deleteModel(_ model: FFTrainingPlanRealmModel){
+        try! realm.write({
+            realm.delete(model)
+        })
+    }
+    
     private func createNotification(_ model: FFTrainingPlanRealmModel){
         let sound = UNNotificationSound(named: UNNotificationSoundName("ding.mp3"))
         guard let image = Bundle.main.url(forResource: "arnold_run", withExtension: "jpeg") else {

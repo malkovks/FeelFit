@@ -20,7 +20,6 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadRealmData()
         setupView()
         setupViewModel()
         setupNavigationController()
@@ -31,7 +30,7 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
-        
+        completedPlans = viewModel.loadRealmData()
         if completedPlans.isEmpty {
             contentUnavailableConfiguration = viewModel.configUnavailableView()
         } else {
@@ -50,13 +49,7 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
         tableView = UITableView(frame: .zero)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "completedCell")
-    }
-    
-    func loadRealmData(){
-        let objects = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingCompleteStatus == %@", true)
-        let data = Array(objects)
-        completedPlans = data
+        tableView.register(FFPlanCompletedTrainingTableViewCell.self, forCellReuseIdentifier: FFPlanCompletedTrainingTableViewCell.identifier)
     }
     
     func startTimer(_ index: Int,_ tableView: UITableView){
@@ -87,26 +80,30 @@ extension FFPlanCompletedTrainingViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "completedCell", for: indexPath)
-        cell = UITableViewCell(style: .subtitle, reuseIdentifier: "completedCell")
-        let date = completedPlans[indexPath.row].trainingDate
-        cell.textLabel?.text = completedPlans[indexPath.row].trainingName
-        cell.detailTextLabel?.text = DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .short)
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFPlanCompletedTrainingTableViewCell.identifier, for: indexPath) as! FFPlanCompletedTrainingTableViewCell
+        cell.configureCellVisual(data: completedPlans, indexPath: indexPath)
         return cell
     }
 }
 
 extension FFPlanCompletedTrainingViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
+        viewModel.tableView(tableView, didSelectRowAt: indexPath, data: completedPlans)
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let data = completedPlans[indexPath.row]
-        let deleteInstance = UIContextualAction(style: .destructive, title: "") { [unowned self] _, _, _ in
+        let deleteInstance = UIContextualAction(style: .destructive, title: "") { _, _, _ in
             tableView.beginUpdates()
-            deleteModel(data)
+            FFTrainingPlanStoreManager.shared.deleteModel(data)
             tableView.deleteRows(at: [indexPath], with: .top)
             tableView.endUpdates()
         }
@@ -116,15 +113,9 @@ extension FFPlanCompletedTrainingViewController: UITableViewDelegate  {
         let action = UISwipeActionsConfiguration(actions: [deleteInstance])
         return action
     }
-    
-    func deleteModel(_ model: FFTrainingPlanRealmModel){
-        try! realm.write({
-            realm.delete(model)
-        })
-    }
+
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let data = completedPlans[indexPath.row]
         let completeInstance = UIContextualAction(style: .normal, title: "") { [unowned self] _, _, _ in
             tableView.beginUpdates()
             try! self.realm.write({

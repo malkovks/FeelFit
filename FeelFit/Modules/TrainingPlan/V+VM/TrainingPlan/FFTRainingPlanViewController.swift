@@ -175,11 +175,11 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
         let sortMenu = sortTypeMenu()
         let styleMenu = sortStyleMenu()
         let menu = UIMenu(title: "Sort type",image: UIImage(systemName: "pencil"),options: .singleSelection,children: [
-            UIAction(title: "Completed Trainings",image: UIImage(systemName: "figure.highintensity.intervaltraining"),handler: {  [unowned self] _ in
+            UIAction(title: "Completed Trainings",image: UIImage(systemName: "figure.highintensity.intervaltraining"),state: .off,handler: {  [unowned self] _ in
                 let vc = FFPlanCompletedTrainingViewController()
                 navigationController?.pushViewController(vc, animated: true)
             }),
-            UIAction(title: "Search by Date",image: UIImage(systemName: "magnifyingglass"), handler: { _ in
+            UIAction(title: "Search by Date",image: UIImage(systemName: "magnifyingglass"),state: .off, handler: { _ in
                 self.alertError(title: "Opening calendar picker ")
             }),
             sortMenu,

@@ -18,6 +18,7 @@ class FFGetExercisesDataBase {
     private let realm = try! Realm()
     
     func getMuscleDatabase(muscle: String,limit number: String = "20",filter: String = "exerciseMuscle",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
+        checkForDuplicatesInList()
         var valueRequest = checkValueName(name: muscle)
         guard let url = prepareURL(value: valueRequest, number: number, filter: filter) else { return }
         let request = setupRequest(url: url)
@@ -35,6 +36,20 @@ class FFGetExercisesDataBase {
                     completionHandler(.failure(failure))
                 }
             }.resume()
+        }
+    }
+    
+    func checkForDuplicatesInList(){
+        let objects = realm.objects(FFExerciseModelRealm.self)
+        var uniqueValues = Set<String>()
+        for object in objects {
+            if uniqueValues.contains(object.exerciseID) {
+                try! realm.write({
+                    realm.delete(object)
+                })
+            } else {
+                uniqueValues.insert(object.exerciseID)
+            }
         }
     }
     
