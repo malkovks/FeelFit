@@ -180,7 +180,8 @@ class FFTRainingPlanViewController: UIViewController,SetupViewController {
                 navigationController?.pushViewController(vc, animated: true)
             }),
             UIAction(title: "Search by Date",image: UIImage(systemName: "magnifyingglass"),state: .off, handler: { _ in
-                self.alertError(title: "Opening calendar picker ")
+                let vc = FFSearchPlanViewController()
+                self.navigationController?.pushViewController(vc, animated: true)
             }),
             sortMenu,
             styleMenu

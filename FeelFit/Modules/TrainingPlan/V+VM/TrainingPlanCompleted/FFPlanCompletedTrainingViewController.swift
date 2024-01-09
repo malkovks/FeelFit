@@ -14,14 +14,14 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     private var viewModel: FFPlanCompletedTrainingViewModel!
     private var timer: Timer?
     
-    private var completedPlans: [FFTrainingPlanRealmModel]!
+    private var completedPlans: [FFTrainingPlanRealmModel] = []
     
     private let realm = try! Realm()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
         setupViewModel()
+        setupView()
         setupNavigationController()
         setupTableView()
         setupConstraints()
@@ -30,7 +30,7 @@ class FFPlanCompletedTrainingViewController: UIViewController, SetupViewControll
     
     func setupView() {
         view.backgroundColor = FFResources.Colors.backgroundColor
-        completedPlans = viewModel.loadRealmData()
+        completedPlans = viewModel.loadRealmData() ?? []
         if completedPlans.isEmpty {
             contentUnavailableConfiguration = viewModel.configUnavailableView()
         } else {

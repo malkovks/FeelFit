@@ -15,7 +15,7 @@ class FFPlanCompletedTrainingViewModel {
         self.viewController = viewController
     }
     
-    func loadRealmData() -> [FFTrainingPlanRealmModel] {
+    func loadRealmData() -> [FFTrainingPlanRealmModel]? {
         let realm = try! Realm()
         let objects = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingCompleteStatus == %@", true)
         let data = Array(objects)

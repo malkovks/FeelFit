@@ -48,7 +48,7 @@
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
 		0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */; };
 		0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */; };
-		0A69E0CF2B4AA5AC0023487B /* FFSearchResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CE2B4AA5AC0023487B /* FFSearchResultTableViewController.swift */; };
+		0A69E0D12B4D49B50023487B /* FFSearchPlanResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0D02B4D49B50023487B /* FFSearchPlanResultViewController.swift */; };
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
@@ -141,7 +141,7 @@
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
 		0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewController.swift; sourceTree = "<group>"; };
 		0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewModel.swift; sourceTree = "<group>"; };
-		0A69E0CE2B4AA5AC0023487B /* FFSearchResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchResultTableViewController.swift; sourceTree = "<group>"; };
+		0A69E0D02B4D49B50023487B /* FFSearchPlanResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanResultViewController.swift; sourceTree = "<group>"; };
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
@@ -589,7 +589,7 @@
 			children = (
 				0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */,
 				0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */,
-				0A69E0CE2B4AA5AC0023487B /* FFSearchResultTableViewController.swift */,
+				0A69E0D02B4D49B50023487B /* FFSearchPlanResultViewController.swift */,
 			);
 			path = SearchTrainingPlan;
 			sourceTree = "<group>";
@@ -1064,9 +1064,9 @@
 				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
 				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
 				0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */,
+				0A69E0D12B4D49B50023487B /* FFSearchPlanResultViewController.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,
 				0ABDEB072B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift in Sources */,
-				0A69E0CF2B4AA5AC0023487B /* FFSearchResultTableViewController.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
