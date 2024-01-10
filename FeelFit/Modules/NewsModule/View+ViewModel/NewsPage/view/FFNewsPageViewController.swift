@@ -144,6 +144,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         tableView.delegate = self
         tableView.tableFooterView = loadDataButton
         tableView.reloadData()
+        tableView.prefetchDataSource = self
     }
 }
 extension FFNewsPageViewController: UITableViewDelegate {
@@ -162,6 +163,14 @@ extension FFNewsPageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return viewModel.heightForRowAt(view: view)
     }
+    
+}
+
+extension FFNewsPageViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        
+    }
+    
     
 }
 

@@ -21,8 +21,6 @@ class FFSearchPlanViewController: UIViewController, SetupViewController {
         return searchController.isActive && !isSearchBarEmpty
     }
     
-    
-    
     private var tableView: UITableView!
     
     private let searchController = UISearchController(searchResultsController: nil)

@@ -46,6 +46,7 @@ class FFPlanDetailsViewController: UIViewController, SetupViewController {
     
     @objc private func didTapDismiss(){
         self.dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc private func didTapEditTraining() {

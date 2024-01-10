@@ -27,6 +27,9 @@ enum FFResources {
         static var griRed = UIColor(named: "gri_red") ?? .systemRed
         /// dark purple
         static var darkPurple = UIColor(named: "dark_purple") ?? .systemPurple
+        /// very light pink color for background color
+        static var lightBackgroundColor = UIColor(named: "healthBackground") ?? .systemBackground
+        
     }
     
     enum Fonts {
