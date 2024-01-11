@@ -21,6 +21,7 @@ func getSampleType(for identifier: String) -> HKSampleType?{
 }
 
 class FFHealthData {
+    
     static let healthStore: HKHealthStore = HKHealthStore()
     
     static var readDataTypes: [HKSampleType] {

@@ -24,9 +24,8 @@ protocol FFNewsViewModelType {
 }
 
 ///View model for FFNewsPageViewController
-final class FFNewsPageViewModel: FFNewsViewModelType, Coordinating {
-    //delegate method for coordinator. Must be used when need to push or pop to view controller
-    var coordinator: Coordinator?
+final class FFNewsPageViewModel: FFNewsViewModelType {
+    
     
     weak var delegate: FFGetRequestDelegate?
 

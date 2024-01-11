@@ -99,33 +99,51 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
     }
     
-    func getHealthData(completion: @escaping ((String,Date,Date) -> Void)){
-        let steps = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-        let endDate = Date()
-        let startDate = Calendar.current.date(byAdding: .day, value: -7, to: endDate)!
-        let query = HKStatisticsCollectionQuery(quantityType: steps, quantitySamplePredicate: nil, options: .cumulativeSum, anchorDate: startDate, intervalComponents: DateComponents(day: 1))
+    func getStepsCount(_ indexPath: IndexPath,completion: @escaping (([StepCount]) -> Void)){
+        var stepCounts = [StepCount]()
+        let steps = HKQuantityType.quantityType(forIdentifier: .stepCount)! //Force unwrap
+        let now = Date()
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: now)
+        let withStartDate =  calendar.date(byAdding: .day, value: -6, to: startOfDay)! //Force unwrap
+        let interval = DateComponents(day: 1)
+        let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
+        let query = HKStatisticsCollectionQuery(quantityType: steps,
+                                                quantitySamplePredicate: predicate,
+                                                options: .cumulativeSum,
+                                                anchorDate: startOfDay,
+                                                intervalComponents: interval)
         query.initialResultsHandler = { query, results, error in
             guard error == nil else {
+                print("Error getting initial results with handler")
                 return
             }
             guard let results = results else {
+                print("Results equal nil. Error")
                 return
             }
-            results.enumerateStatistics(from: startDate, to: endDate) { stats, stop in
-                if let quantity = stats.sumQuantity() {
-                    let step = Int(quantity.doubleValue(for: .count()))
-                    let stepString = String(describing: step)
-                    completion(stepString, startDate, endDate)
+            results.enumerateStatistics(from: withStartDate, to: now) { stats, stop in
+                if let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) {
+                    let date = stats.startDate
+                    stepCounts.append(StepCount(date: date, count: steps))
                 }
             }
+            stepCounts.reverse()
+            completion(stepCounts)
         }
         healthStore.execute(query)
+    }
+    
+    struct StepCount {
+        let date: Date
+        let count: Double
     }
     
     func setupTableView(){
         tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.backgroundColor = .clear
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "healthCell")
         
     }
@@ -146,12 +164,24 @@ class FFHealthViewController: UIViewController, SetupViewController {
 
 extension FFHealthViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        0
+        7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .value2, reuseIdentifier: "healthCell")
-        cell.textLabel?.text = ""
+        getStepsCount(indexPath) { data in
+            let value = data[indexPath.row]
+            let stepsString = String(describing: value.count)
+            let dateString = DateFormatter.localizedString(from: value.date, dateStyle: .medium, timeStyle: .none)
+            DispatchQueue.main.async {
+                cell.textLabel?.text = "Steps: " + stepsString
+                cell.detailTextLabel?.text = "Date: " + dateString
+            }
+            
+        }
+        cell.textLabel?.sizeToFit()
+        cell.detailTextLabel?.contentMode = .right
+        cell.detailTextLabel?.textAlignment = .right
         return cell
     }
 }
@@ -162,13 +192,21 @@ extension FFHealthViewController: UITableViewDelegate {
 
 extension FFHealthViewController {
     private func setupConstraints(){
-        view.addSubview(tableView)
+        
         
         view.addSubview(healthRequestResultLabel)
         healthRequestResultLabel.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
+            make.top.equalToSuperview().offset(-10)
+            make.centerX.equalToSuperview()
             make.height.equalTo(150)
             make.width.equalToSuperview().inset(10)
+        }
+        
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(healthRequestResultLabel.snp.bottom).offset(-10)
+            make.leading.trailing.equalToSuperview().inset(5)
+            make.bottom.equalToSuperview().offset(5)
         }
     }
 }

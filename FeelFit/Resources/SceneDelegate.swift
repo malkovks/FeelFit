@@ -14,17 +14,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let tabBar = FFTabBarController()
-        tabBar.selectedIndex = 2
-        let coordinator = AppCoordinator()
-        coordinator.tabbarController = tabBar
-        let window = UIWindow(windowScene: windowScene)
-        window.backgroundColor = FFResources.Colors.backgroundColor
-        window.rootViewController = tabBar
-        window.makeKeyAndVisible()
+       let window = UIWindow(windowScene: windowScene)
+        let rootViewController = FFTabBarController()
+        window.rootViewController = rootViewController
+        
         self.window = window
         
-        coordinator.start()
+        window.makeKeyAndVisible()
         
         //Старая версия. ПОка тестим
 //        let view = FFTabBarController()

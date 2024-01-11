@@ -8,9 +8,7 @@
 import UIKit
 import RealmSwift
 
-class FFNewsFavouriteViewModel: Coordinating {
-    ///instance for delegating data and for push or pop view controller
-    var coordinator: Coordinator?
+class FFNewsFavouriteViewModel {
     
     var realm = try! Realm()
     

@@ -7,8 +7,7 @@
 
 import UIKit
 
-class FFNewsSettingViewModel: Coordinating {
-    var coordinator: Coordinator?
+class FFNewsSettingViewModel {
     
     func setupRowModel() -> [[String]]{
         var model = [[String]]()

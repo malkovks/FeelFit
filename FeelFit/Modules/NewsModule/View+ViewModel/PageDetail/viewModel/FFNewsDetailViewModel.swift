@@ -9,8 +9,8 @@ import UIKit
 import RealmSwift
 import SafariServices
 
-class FFNewsDetailViewModel: Coordinating {
-    var coordinator: Coordinator?
+class FFNewsDetailViewModel {
+    
     
     var realm = try! Realm()
     

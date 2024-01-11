@@ -7,8 +7,8 @@
 
 import UIKit
 
-class FFImageDetailsViewModel: Coordinating {
-    var coordinator: Coordinator?
+class FFImageDetailsViewModel {
+    
     
     func shareImageView(viewController: UIViewController,url: URL?,title: String, image: UIImage){
         let message = title
