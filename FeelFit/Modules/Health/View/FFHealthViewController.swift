@@ -9,25 +9,21 @@ import UIKit
 import HealthKit
 
 
-
+struct StepModel {
+    let date: Date
+    let count: Double
+}
 
 class FFHealthViewController: UIViewController, SetupViewController {
     
     private let healthStore = HKHealthStore()
-    
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
+    private let userDefaults = UserDefaults.standard
     
     private var hasRequestedHealthData: Bool = false
-    
-    private let healthRequestResultLabel: UILabel = {
-        let label = UILabel(frame: .zero)
-        label.numberOfLines = 0
-        label.font = .headerFont(size: 16)
-        label.textColor = .systemBlue
-        label.textAlignment = .center
-        return label
-    }()
+    private var dataTypeIdentifier: String = UserDefaults.standard.string(forKey: "dataTypeIdentifier") ?? "HKQuantityTypeIdentifierStepCount"
+    private var titleForTable: String = "Steps"
     
     private var tableView: UITableView!
     
@@ -40,9 +36,30 @@ class FFHealthViewController: UIViewController, SetupViewController {
         setupTableView()
         getHealthAuthorizationRequestStatus()
         setupConstraints()
+        requestForAccessToHealth()
+        print(HKQuantityTypeIdentifier.stepCount.rawValue)
     }
     
-    @objc private func didTapRequestAccessHealth(){
+    //MARK: - Action methods
+    @objc private func didTapChooseLoadingType(){
+        
+    }
+    
+    //
+    private func didSelectDataTypeIdentifier(_ dataTypeIdentifier: String){
+        userDefaults.setValue(dataTypeIdentifier, forKey: "dataTypeIdentifier")
+        self.dataTypeIdentifier = dataTypeIdentifier
+        
+        FFHealthData.requestHealthDataAccessIfNeeded(dataTypes: [self.dataTypeIdentifier]) { [weak self] success, status in
+            if success {
+                
+            } else {
+                
+            }
+        }
+    }
+    
+    private func requestForAccessToHealth(){
         var textStatus: String = ""
         
         healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[unowned self] success, error in
@@ -53,12 +70,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     if self.hasRequestedHealthData {
                         textStatus = "You already gave full access to Health request"
                     } else {
-                        
                         textStatus = "Health kit authorization complete successfully"
                         hasRequestedHealthData = true
-                        DispatchQueue.main.async { [unowned self] in
-                            viewAlertController(text: "Successfully get access for Health", startDuration: 0.5, timer: 3, controllerView: view)
-                        }
+                        
                     }
                 } else {
                     textStatus = "Health kit authorization did not complete successfully"
@@ -66,15 +80,15 @@ class FFHealthViewController: UIViewController, SetupViewController {
             }
             
         }
-        DispatchQueue.main.async {
-            self.healthRequestResultLabel.text = textStatus
+        DispatchQueue.main.async { [unowned self] in
+            viewAlertController(text: textStatus, startDuration: 0.5, timer: 3, controllerView: view)
         }
     }
     
     private func getHealthAuthorizationRequestStatus(){
         if !HKHealthStore.isHealthDataAvailable()  {
-            DispatchQueue.main.async {
-                self.healthRequestResultLabel.text = "Something goes wrong"
+            DispatchQueue.main.async { [unowned self] in
+                viewAlertController(text: "Health Data is unavailable. Try again later", startDuration: 0.5, timer: 3, controllerView: view)
             }
             return
         }
@@ -85,23 +99,23 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 textStatus = "Unknowned error occurred. Try again later."
             case .unnecessary:
                 self.hasRequestedHealthData = true
-                textStatus = "The app has already requested for all data. "
+                textStatus = " Unnecessary .You have already allow all data for using "
             case .shouldRequest:
                 self.hasRequestedHealthData = false
-                textStatus = "The app does not requested for all specific data yet"
+                textStatus = "Should request .The app does not requested for all specific data yet"
             @unknown default:
                 break
             }
         }
-        DispatchQueue.main.async {
-            self.healthRequestResultLabel.text = textStatus
+        DispatchQueue.main.async { [unowned self] in
+            viewAlertController(text: textStatus, startDuration: 0.5, timer: 3, controllerView: view)
         }
         
     }
     
-    func getStepsCount(_ indexPath: IndexPath,completion: @escaping (([StepCount]) -> Void)){
-        var stepCounts = [StepCount]()
-        let steps = HKQuantityType.quantityType(forIdentifier: .stepCount)! //Force unwrap
+    func getStepsCount(_ indexPath: IndexPath,completion: @escaping (([StepModel]) -> Void)){
+        var stepCounts = [StepModel]()
+        let steps = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)! //Force unwrap
         let now = Date()
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: now)
@@ -114,19 +128,21 @@ class FFHealthViewController: UIViewController, SetupViewController {
                                                 anchorDate: startOfDay,
                                                 intervalComponents: interval)
         query.initialResultsHandler = { query, results, error in
-            guard error == nil else {
-                print("Error getting initial results with handler")
-                return
-            }
-            guard let results = results else {
-                print("Results equal nil. Error")
+            guard error == nil,
+                  let results = results else {
+                let title = "Error getting initial results with handler"
+                self.alertError(title: title)
                 return
             }
             results.enumerateStatistics(from: withStartDate, to: now) { stats, stop in
                 if let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) {
                     let date = stats.startDate
-                    stepCounts.append(StepCount(date: date, count: steps))
+                    stepCounts.append(StepModel(date: date, count: steps))
+                } else if let meters = stats.sumQuantity()?.doubleValue(for: .meter()) {
+                    let date = stats.startDate
+                    stepCounts.append(StepModel(date: date, count: meters))
                 }
+                
             }
             stepCounts.reverse()
             completion(stepCounts)
@@ -134,17 +150,16 @@ class FFHealthViewController: UIViewController, SetupViewController {
         healthStore.execute(query)
     }
     
-    struct StepCount {
-        let date: Date
-        let count: Double
-    }
     
+    //MARK: Setup methods
     func setupTableView(){
         tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .clear
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "healthCell")
+        tableView.register(FFHealthTableViewCell.self, forCellReuseIdentifier: FFHealthTableViewCell.identifier)
+        tableView.bounces = false
+        tableView.allowsSelection = false
         
     }
     
@@ -154,7 +169,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     func setupNavigationController() {
         title = "Health"
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "heart", action: #selector(didTapRequestAccessHealth), menu: nil)
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "line.3.horizontal.decrease.circle", action: #selector(didTapChooseLoadingType), menu: nil)
     }
     
     func setupViewModel() {
@@ -168,43 +183,26 @@ extension FFHealthViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .value2, reuseIdentifier: "healthCell")
+        let cell = tableView.dequeueReusableCell(withIdentifier:  FFHealthTableViewCell.identifier, for: indexPath) as! FFHealthTableViewCell
         getStepsCount(indexPath) { data in
-            let value = data[indexPath.row]
-            let stepsString = String(describing: value.count)
-            let dateString = DateFormatter.localizedString(from: value.date, dateStyle: .medium, timeStyle: .none)
-            DispatchQueue.main.async {
-                cell.textLabel?.text = "Steps: " + stepsString
-                cell.detailTextLabel?.text = "Date: " + dateString
-            }
-            
+            cell.configureCell(indexPath, data)
         }
-        cell.textLabel?.sizeToFit()
-        cell.detailTextLabel?.contentMode = .right
-        cell.detailTextLabel?.textAlignment = .right
         return cell
     }
 }
 
 extension FFHealthViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
 }
 
 extension FFHealthViewController {
     private func setupConstraints(){
         
-        
-        view.addSubview(healthRequestResultLabel)
-        healthRequestResultLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(-10)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(150)
-            make.width.equalToSuperview().inset(10)
-        }
-        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(healthRequestResultLabel.snp.bottom).offset(-10)
+            make.top.equalToSuperview().offset(-10)
             make.leading.trailing.equalToSuperview().inset(5)
             make.bottom.equalToSuperview().offset(5)
         }

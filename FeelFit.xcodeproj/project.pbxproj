@@ -65,6 +65,7 @@
 		0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */; };
 		0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */; };
 		0A86DEDB2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */; };
+		0A8EBE062B51248F007AC52E /* FFHealthTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */; };
 		0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */; };
 		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
 		0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */; };
@@ -157,6 +158,7 @@
 		0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseTableViewCell.swift; sourceTree = "<group>"; };
 		0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFDatePickerViewController.swift; sourceTree = "<group>"; };
 		0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanStoreManager.swift; sourceTree = "<group>"; };
+		0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthTableViewCell.swift; sourceTree = "<group>"; };
 		0A91519A2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanViewModel.swift; sourceTree = "<group>"; };
 		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
 		0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateHeaderView.swift; sourceTree = "<group>"; };
@@ -493,6 +495,7 @@
 			isa = PBXGroup;
 			children = (
 				0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */,
+				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1009,6 +1012,7 @@
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
+				0A8EBE062B51248F007AC52E /* FFHealthTableViewCell.swift in Sources */,
 				0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */,
 				0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */,
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,

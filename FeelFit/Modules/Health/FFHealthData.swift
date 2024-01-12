@@ -47,4 +47,36 @@ class FFHealthData {
         }
     }
     
+    class func requestHealthDataAccessIfNeeded(dataTypes: [String]? = nil,
+                                               completion: @escaping (_ success: Bool,_ status: String) -> Void ){
+        var readDataTypes = Set(allHealthDataTypes)
+        var shareDataTypes = Set(allHealthDataTypes)
+        
+        if let identifiers = dataTypes {
+            readDataTypes = Set(identifiers.compactMap { getSampleType(for: $0) })
+            shareDataTypes = readDataTypes
+        }
+        requestHealthDataAccessIfNeeded(toShare: shareDataTypes, read: readDataTypes, completion: completion)
+    }
+    
+    class func requestHealthDataAccessIfNeeded(toShare shareTypes: Set<HKSampleType>?,
+                                               read readTypes: Set<HKSampleType>?,
+                                               completion: @escaping (_ success: Bool,_ status: String) -> Void){
+        if !HKHealthStore.isHealthDataAvailable() {
+            completion(false, "Health data is not available")
+        }
+        
+        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
+            if let error = error {
+                completion(false, "request authorization error. \(error.localizedDescription)")
+            }
+            
+            if success {
+                completion(success, "HealthKit authorization request was successful!")
+            } else {
+                completion(success, "HealthKit authorization was not successful.")
+            }
+        }
+    }
+    
 }
