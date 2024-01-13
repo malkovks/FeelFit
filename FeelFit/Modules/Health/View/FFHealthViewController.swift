@@ -9,9 +9,9 @@ import UIKit
 import HealthKit
 
 
-struct StepModel {
+struct HealthModelValue {
     let date: Date
-    let count: Double
+    let value: Double
 }
 
 class FFHealthViewController: UIViewController, SetupViewController {
@@ -23,7 +23,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     private var hasRequestedHealthData: Bool = false
     private var dataTypeIdentifier: String = UserDefaults.standard.string(forKey: "dataTypeIdentifier") ?? "HKQuantityTypeIdentifierStepCount"
-    private var titleForTable: String = "Steps"
+    private var titleForTable: String {
+        return getDataTypeName(HKQuantityTypeIdentifier(rawValue: dataTypeIdentifier))
+    }
+    private var healthModel: [HealthModelValue] = [HealthModelValue]()
     
     private var tableView: UITableView!
     
@@ -37,26 +40,40 @@ class FFHealthViewController: UIViewController, SetupViewController {
         getHealthAuthorizationRequestStatus()
         setupConstraints()
         requestForAccessToHealth()
-        print(HKQuantityTypeIdentifier.stepCount.rawValue)
     }
     
     //MARK: - Action methods
     @objc private func didTapChooseLoadingType(){
-        
+        let title = "Select displaying data type"
+        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        for type in FFHealthData.allTypeQuantityTypeIdentifiers {
+            let actionTitle = getDataTypeName(type)
+            let action = UIAlertAction(title: actionTitle, style: .default) { [weak self] _ in
+                self?.selectDataTypeIdentifier(type)
+            }
+            alertController.addAction(action)
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        alertController.addAction(cancel)
+        present(alertController, animated: true)
     }
     
     //
-    private func didSelectDataTypeIdentifier(_ dataTypeIdentifier: String){
-        userDefaults.setValue(dataTypeIdentifier, forKey: "dataTypeIdentifier")
-        self.dataTypeIdentifier = dataTypeIdentifier
+    private func selectDataTypeIdentifier(_ dataTypeIdentifier: HKQuantityTypeIdentifier){
+        userDefaults.setValue(dataTypeIdentifier.rawValue, forKey: "dataTypeIdentifier")
+        self.dataTypeIdentifier = dataTypeIdentifier.rawValue
+        let index = [
+            IndexPath(row: 0, section: 0),
+            IndexPath(row: 1, section: 0),
+            IndexPath(row: 2, section: 0),
+            IndexPath(row: 3, section: 0),
+            IndexPath(row: 4, section: 0),
+            IndexPath(row: 5, section: 0),
+            IndexPath(row: 6, section: 0)
+        ]
         
-        FFHealthData.requestHealthDataAccessIfNeeded(dataTypes: [self.dataTypeIdentifier]) { [weak self] success, status in
-            if success {
-                
-            } else {
-                
-            }
-        }
+        self.tableView.reloadRows(at: index, with: .fade)
+        self.tableView.reloadData()
     }
     
     private func requestForAccessToHealth(){
@@ -113,9 +130,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
     }
     
-    func getStepsCount(_ indexPath: IndexPath,completion: @escaping (([StepModel]) -> Void)){
-        var stepCounts = [StepModel]()
-        let steps = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)! //Force unwrap
+    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",data  completion: @escaping (([HealthModelValue]) -> Void)){
+        var value: [HealthModelValue] = [HealthModelValue]()
+        let identifier = HKQuantityTypeIdentifier(rawValue: id)
+        guard let steps = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
         let now = Date()
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: now)
@@ -127,25 +145,33 @@ class FFHealthViewController: UIViewController, SetupViewController {
                                                 options: .cumulativeSum,
                                                 anchorDate: startOfDay,
                                                 intervalComponents: interval)
-        query.initialResultsHandler = { query, results, error in
+        query.initialResultsHandler = { [weak self] query, results, error in
             guard error == nil,
                   let results = results else {
                 let title = "Error getting initial results with handler"
-                self.alertError(title: title)
+                self?.alertError(title: title)
                 return
             }
-            results.enumerateStatistics(from: withStartDate, to: now) { stats, stop in
-                if let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) {
+            results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
+                let startDate = stats.startDate
+                switch identifier {
+                case .stepCount:
+                    guard let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) else { return }
                     let date = stats.startDate
-                    stepCounts.append(StepModel(date: date, count: steps))
-                } else if let meters = stats.sumQuantity()?.doubleValue(for: .meter()) {
-                    let date = stats.startDate
-                    stepCounts.append(StepModel(date: date, count: meters))
+                    value.append(HealthModelValue.init(date: startDate, value: steps))
+                case .distanceWalkingRunning:
+                    guard let meters = stats.sumQuantity()?.doubleValue(for: HKUnit.meter()) else { return }
+                    value.append(HealthModelValue.init(date: startDate, value: meters))
+                case .activeEnergyBurned:
+                    guard let calories = stats.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) else { return }
+                    value.append(HealthModelValue(date: startDate, value: calories))
+                default: break
                 }
                 
             }
-            stepCounts.reverse()
-            completion(stepCounts)
+            value.reverse()
+            completion(value)
+            
         }
         healthStore.execute(query)
     }
@@ -179,21 +205,38 @@ class FFHealthViewController: UIViewController, SetupViewController {
 
 extension FFHealthViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        7
+        return 7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:  FFHealthTableViewCell.identifier, for: indexPath) as! FFHealthTableViewCell
-        getStepsCount(indexPath) { data in
-            cell.configureCell(indexPath, data)
+        let type = dataTypeIdentifier
+        uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
+            cell.configureCell(indexPath, self.dataTypeIdentifier, model)
         }
         return cell
     }
+    
+    
 }
 
 extension FFHealthViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        50
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel(frame: CGRect(x: 10, y: 5, width: tableView.frame.width, height: 40))
+        label.font = UIFont.headerFont(size: 24)
+        label.numberOfLines = 1
+        label.textAlignment = .left
+        label.textColor = FFResources.Colors.detailTextColor
+        label.text = titleForTable
+        return label
     }
 }
 
@@ -202,7 +245,7 @@ extension FFHealthViewController {
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(-10)
+            make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(5)
             make.bottom.equalToSuperview().offset(5)
         }

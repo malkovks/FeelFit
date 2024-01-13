@@ -20,6 +20,21 @@ func getSampleType(for identifier: String) -> HKSampleType?{
     return nil
 }
 
+func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
+    switch types {
+    case .stepCount:
+        return "Step Count"
+    case .distanceWalkingRunning:
+        return "Meters"
+    case .activeEnergyBurned:
+        return "Active Energy Burned"
+    case .heartRate:
+        return "Heart Rate"
+    default:
+        return ""
+    }
+}
+
 class FFHealthData {
     
     static let healthStore: HKHealthStore = HKHealthStore()
@@ -32,20 +47,30 @@ class FFHealthData {
         return allHealthDataTypes
     }
     
-    private static var allHealthDataTypes: [HKSampleType] {
-        let typeIdentifiers: [String] = [
-            HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
-            HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
-            HKQuantityTypeIdentifier.stepCount.rawValue,
-            HKQuantityTypeIdentifier.sixMinuteWalkTestDistance.rawValue,
-            HKQuantityTypeIdentifier.height.rawValue,
-            HKQuantityTypeIdentifier.bodyMass.rawValue,
-            HKQuantityTypeIdentifier.heartRate.rawValue,
-            HKQuantityTypeIdentifier.peakExpiratoryFlowRate.rawValue
-        ]
-        return typeIdentifiers.compactMap { getSampleType(for: $0)
-        }
+    static var allTypeQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
+        return necessaryIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }
     }
+    
+    
+    private static var allHealthDataTypes: [HKSampleType] {
+        return typeIdentifiers.compactMap { getSampleType(for: $0) }
+    }
+    
+    private static var necessaryIdentifiers: [String] = [
+        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
+        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
+        HKQuantityTypeIdentifier.stepCount.rawValue,
+    ]
+    
+    private static var typeIdentifiers: [String] = [
+        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
+        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
+        HKQuantityTypeIdentifier.stepCount.rawValue,
+        HKQuantityTypeIdentifier.sixMinuteWalkTestDistance.rawValue,
+        HKQuantityTypeIdentifier.height.rawValue,
+        HKQuantityTypeIdentifier.bodyMass.rawValue,
+        HKQuantityTypeIdentifier.heartRate.rawValue,
+    ]
     
     class func requestHealthDataAccessIfNeeded(dataTypes: [String]? = nil,
                                                completion: @escaping (_ success: Bool,_ status: String) -> Void ){

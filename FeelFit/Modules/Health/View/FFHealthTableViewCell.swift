@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import HealthKit
 
 class FFHealthTableViewCell: UITableViewCell {
     
@@ -40,12 +41,20 @@ class FFHealthTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(_ indexPath: IndexPath,_ model: [StepModel]){
+    func configureCell(_ indexPath: IndexPath,_ identifier: String,_ model: [HealthModelValue]){
         let value = model[indexPath.row]
-        let stepsString = "Steps: " + String(describing: value.count)
+        let type: HKQuantityTypeIdentifier = HKQuantityTypeIdentifier(rawValue: identifier)
+        var secondaryText: String = ""
+        if type == .activeEnergyBurned {
+            secondaryText = " kkal"
+        }
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0
+        guard let stepsString = formatter.string(from: NSNumber(value: value.value)) else { return }
         let dateString = DateFormatter.localizedString(from: value.date, dateStyle: .medium, timeStyle: .none)
         DispatchQueue.main.async { [unowned self] in
-            firstLabel.text = stepsString
+            firstLabel.text = stepsString + secondaryText
             secondLabel.text = dateString
         }
     }
