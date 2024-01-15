@@ -7,6 +7,8 @@
 
 import UIKit
 import HealthKit
+import BackgroundTasks
+import UserNotifications
 
 
 struct HealthModelValue {
@@ -20,6 +22,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
+    private let taskId = "Malkov.KS.FeelFit.backgroundTask"
     
     private var hasRequestedHealthData: Bool = false
     private var dataTypeIdentifier: String = UserDefaults.standard.string(forKey: "dataTypeIdentifier") ?? "HKQuantityTypeIdentifierStepCount"
@@ -29,6 +32,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private var healthModel: [HealthModelValue] = [HealthModelValue]()
     
     private var tableView: UITableView!
+    //TEST VALUE
+    var backgroundTaskID: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     
 
     override func viewDidLoad() {
@@ -40,6 +45,70 @@ class FFHealthViewController: UIViewController, SetupViewController {
         getHealthAuthorizationRequestStatus()
         setupConstraints()
         requestForAccessToHealth()
+        
+        
+        self.scheduleBackgroundTask()
+        
+    }
+    
+    //MARK: - Setup Background Modes
+    func updateData(){
+        //вызов функции получения количества шагов пользователя
+        sendLocalNotification()
+        
+    }
+    
+    func scheduleAppRefresh(){
+        let request = BGAppRefreshTaskRequest(identifier: taskId)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 60.0)
+        do {
+            try BGTaskScheduler.shared.submit(request)
+        } catch {
+            print("Не удалось запустить задачу \(error.localizedDescription)")
+        }
+    }
+    
+    func sendLocalNotification(){
+        let content = UNMutableNotificationContent()
+        content.title = "Congratulations"
+        content.body = "Background Task Work Correctly"
+        content.sound = .default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.notification", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Did not complete to send notification. \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    //Функция из видео
+    func scheduleBackgroundTask(){
+        
+        //Manual test : e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"Malkov.KS.FeelFit.backgroundTask"]
+        
+        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: taskId)
+        BGTaskScheduler.shared.getPendingTaskRequests { [unowned self] request in
+            
+            print("\(request.count) BGTasks pending....")
+            guard request.isEmpty else {
+                print("Error. Requests is empty")
+                return
+            }
+            
+            do {
+                let newTask = BGAppRefreshTaskRequest(identifier: self.taskId)
+                newTask.earliestBeginDate = Date(timeIntervalSinceNow: 60.0)
+//                newTask.earliestBeginDate = Date().addingTimeInterval(5)//three days timer
+                try BGTaskScheduler.shared.submit(newTask)
+                print("Task scheduled")
+            } catch {
+                //ignore
+                print("Failed to scheduled: \(error.localizedDescription)")
+            }
+        }
     }
     
     //MARK: - Action methods
@@ -210,7 +279,6 @@ extension FFHealthViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:  FFHealthTableViewCell.identifier, for: indexPath) as! FFHealthTableViewCell
-        let type = dataTypeIdentifier
         uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
             cell.configureCell(indexPath, self.dataTypeIdentifier, model)
         }
@@ -230,13 +298,25 @@ extension FFHealthViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel(frame: CGRect(x: 10, y: 5, width: tableView.frame.width, height: 40))
+        let mainView = UIView(frame: CGRect(x: 5, y: 5, width: tableView.frame.size.width-10, height: 40))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: mainView.frame.size.width-90, height: 40))
         label.font = UIFont.headerFont(size: 24)
         label.numberOfLines = 1
         label.textAlignment = .left
         label.textColor = FFResources.Colors.detailTextColor
         label.text = titleForTable
-        return label
+        
+        let button = UIButton(frame: CGRect(x: mainView.frame.size.width-90, y: 10,width: 60, height: mainView.frame.size.height-5))
+        button.configuration = .tinted()
+        button.configuration?.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
+        button.configuration?.baseForegroundColor = FFResources.Colors.activeColor
+        button.configuration?.baseBackgroundColor = FFResources.Colors.textColor
+        button.configuration?.cornerStyle = .capsule
+        button.addTarget(self, action: #selector(didTapChooseLoadingType), for: .touchUpInside)
+        
+        mainView.addSubview(label)
+        mainView.addSubview(button)
+        return mainView
     }
 }
 
