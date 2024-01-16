@@ -23,6 +23,23 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
     private let taskId = "Malkov.KS.FeelFit.backgroundTask"
+    private var fixedIndexPath: [IndexPath] {
+        return [
+            IndexPath(row: 0, section: 0),
+            IndexPath(row: 1, section: 0),
+            IndexPath(row: 2, section: 0),
+            IndexPath(row: 3, section: 0),
+            IndexPath(row: 4, section: 0),
+            IndexPath(row: 5, section: 0),
+            IndexPath(row: 6, section: 0)
+        ]
+    }
+    
+    //MARK: - Background task
+    private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
+    private var timer: Timer?
+    ///Health kit observer
+    private var observerQuery: HKObserverQuery?
     
     private var hasRequestedHealthData: Bool = false
     private var dataTypeIdentifier: String = UserDefaults.standard.string(forKey: "dataTypeIdentifier") ?? "HKQuantityTypeIdentifierStepCount"
@@ -48,16 +65,122 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         
         self.scheduleBackgroundTask()
-        
+        setupBackgroundTask()
+    } 
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        //отменяем наблюдателя при выходе из контроллера
+        //предполагаю если мы переходим на другой контроллер
+        if let observerQuery = observerQuery {
+            healthStore.stop(observerQuery)
+            print("health observer is cancelled")
+        }
     }
+    
+    //MARK: - UIApplication background task
+    func setupBackgroundTask(){
+        UIApplication.shared.isIdleTimerDisabled = true
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "healthKitDataLoading", expirationHandler: {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
+            self.backgroundTaskID = .invalid
+        })
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true, block: { [unowned self] _ in
+            DispatchQueue.global(qos: .background).async {
+                self.setupObserverQuery()
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+                
+            }
+        })
+    }
+    
+    func shouldSendNotification() -> Bool {
+        let lastNotification = userDefaults.object(forKey: "lastNotification") as? Date ?? Date()
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.day], from: lastNotification, to: currentDate)
+        if let days = components.day, days >= 1 {
+            userDefaults.set(currentDate, forKey: "lastNotification")
+            userDefaults.set(false, forKey: "sendStatusNotification")
+            return true
+        } else {
+            return userDefaults.bool(forKey: "sendStatusNotification")
+        }
+    }
+    
+    //функция запроса разрешения на работе в фоновом режиме и отслеживание данных
+    func requestAccessToBackgroundMode(_ success: Bool) {
+        if success {
+            guard let steps = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+            healthStore.enableBackgroundDelivery(for: steps, frequency: .immediate) { status, error in
+                if success {
+                    print("Доступ к фоновой загрузке разрешен")
+                } else {
+                    print("Доступ запрещен. \(String(describing:error?.localizedDescription))")
+                }
+            }
+        }
+    }
+    //функция для создания предиката для запроса данных за последний день и создание наблюдателя для получения обновлений
+    func setupObserverQuery(){
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfDay = calendar.startOfDay(for: .now)
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
+        
+        guard let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+        observerQuery = HKObserverQuery(sampleType: stepCountType, predicate: predicate, updateHandler: { query, completionHandler, error in
+            guard error == nil else {
+                print(String(describing:error?.localizedDescription))
+                return
+            }
+            self.handleStepCountUpdate()
+            completionHandler()
+        })
+        healthStore.execute(observerQuery!)
+    }
+    
+    //функция которая будет вызываться каждый раз при получении оьновления о количестве шагов
+    func handleStepCountUpdate(){
+        print("Количество шагов обновленно")
+        guard let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfDay = calendar.startOfDay(for: now)
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
+        
+        let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate) { query, stats, error in
+            guard error == nil else {
+                print(String(describing:error?.localizedDescription))
+                return
+            }
+            
+            guard let result = stats else { return }
+            guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
+            
+            if stepCount >= 10_000 && !self.shouldSendNotification() {
+                self.sendLocalNotification(steps: stepCount)
+                self.userDefaults.set(true, forKey: "sendStatusNotification")
+            } else {
+                print("Steps count is \(stepCount)")
+            }
+            
+        }
+        healthStore.execute(query)
+    }
+    
+   
     
     //MARK: - Setup Background Modes
     func updateData(){
         //вызов функции получения количества шагов пользователя
-        sendLocalNotification()
-        
+        print("Вызов функции update data")
     }
     
+    // функция не используется (пока оставляем)
     func scheduleAppRefresh(){
         let request = BGAppRefreshTaskRequest(identifier: taskId)
         request.earliestBeginDate = Date(timeIntervalSinceNow: 60.0)
@@ -67,11 +190,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
             print("Не удалось запустить задачу \(error.localizedDescription)")
         }
     }
-    
-    func sendLocalNotification(){
+    ///функция теста для вызова уведомления о количестве шагов пройденных пользователем
+    func sendLocalNotification(steps: Double){
+        let stepsInt = Int(exactly: steps)
+        let steps = String(describing: stepsInt)
         let content = UNMutableNotificationContent()
         content.title = "Congratulations"
-        content.body = "Background Task Work Correctly"
+        content.body = "You have reached \(steps) steps count. Don't stop on this result"
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
@@ -84,7 +209,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
     
-    //Функция из видео
+    //Функция из видео для настройки фонового выполнения задачи. Непонятно пока как работает
     func scheduleBackgroundTask(){
         
         //Manual test : e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"Malkov.KS.FeelFit.backgroundTask"]
@@ -101,7 +226,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
             do {
                 let newTask = BGAppRefreshTaskRequest(identifier: self.taskId)
                 newTask.earliestBeginDate = Date(timeIntervalSinceNow: 60.0)
-//                newTask.earliestBeginDate = Date().addingTimeInterval(5)//three days timer
                 try BGTaskScheduler.shared.submit(newTask)
                 print("Task scheduled")
             } catch {
@@ -131,17 +255,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private func selectDataTypeIdentifier(_ dataTypeIdentifier: HKQuantityTypeIdentifier){
         userDefaults.setValue(dataTypeIdentifier.rawValue, forKey: "dataTypeIdentifier")
         self.dataTypeIdentifier = dataTypeIdentifier.rawValue
-        let index = [
-            IndexPath(row: 0, section: 0),
-            IndexPath(row: 1, section: 0),
-            IndexPath(row: 2, section: 0),
-            IndexPath(row: 3, section: 0),
-            IndexPath(row: 4, section: 0),
-            IndexPath(row: 5, section: 0),
-            IndexPath(row: 6, section: 0)
-        ]
         
-        self.tableView.reloadRows(at: index, with: .fade)
+        
+        self.tableView.reloadRows(at: fixedIndexPath, with: .fade)
         self.tableView.reloadData()
     }
     
@@ -152,7 +268,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
             if let error = error {
                 textStatus = "Applications gets error by trying to get access to Health. \(error.localizedDescription)"
             } else {
+                requestAccessToBackgroundMode(success)
                 if success {
+                    
                     if self.hasRequestedHealthData {
                         textStatus = "You already gave full access to Health request"
                     } else {
@@ -226,7 +344,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 switch identifier {
                 case .stepCount:
                     guard let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) else { return }
-                    let date = stats.startDate
                     value.append(HealthModelValue.init(date: startDate, value: steps))
                 case .distanceWalkingRunning:
                     guard let meters = stats.sumQuantity()?.doubleValue(for: HKUnit.meter()) else { return }

@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             //handler the task
             guard let task = task as? BGAppRefreshTask else { return }
             self?.handlerAppRefreshTask(task: task)
-//            self?.handleTask(task: task)
+            self?.handleTask(task: task)
         }
         let count = UserDefaults.standard.integer(forKey: "task_run_count")
         print("Задание выполнилось количество раз >>> \(count) <<<")
