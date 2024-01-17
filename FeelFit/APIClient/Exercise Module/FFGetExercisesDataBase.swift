@@ -19,7 +19,7 @@ class FFGetExercisesDataBase {
     
     func getMuscleDatabase(muscle: String,limit number: String = "20",filter: String = "exerciseMuscle",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         checkForDuplicatesInList()
-        var valueRequest = checkValueName(name: muscle)
+        let valueRequest = checkValueName(name: muscle)
         guard let url = prepareURL(value: valueRequest, number: number, filter: filter) else { return }
         let request = setupRequest(url: url)
         

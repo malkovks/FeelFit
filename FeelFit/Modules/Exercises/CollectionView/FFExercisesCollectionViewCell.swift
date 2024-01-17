@@ -8,33 +8,35 @@
 import UIKit
 import RealmSwift
 
+var muscleDictionary = [
+    "abs" : "Abdominals",
+    "abductors" : "Abductors",
+    "adductors" : "Adductors",
+    "biceps" : "Biceps",
+    "calves" : "Calves",
+    "cardiovascular_system" : "Circulatory System",
+    "delts" : "Delts",
+    "forearms" : "Forearms",
+    "glutes" : "Glutes",
+    "hamstrings" : "Hamstrings",
+    "lats" : "Lats",
+    "pectorals" : "Pectorals",
+    "neck" : "Neck",
+    "quads" : "Quadriceps",
+    "serratus_anterior" : "Serratus Anterior",
+    "spine" : "Spine",
+    "traps" : "Traps",
+    "triceps" : "Triceps",
+    "upper_back" : "Upper Back"
+]
+
 class FFExercisesCollectionViewCell: UICollectionViewCell {
     
     private let realm = try! Realm()
     
     static let identifier = "ExerciseCell"
     
-    var muscleDictionary = [
-        "abs" : "Abdominals",
-        "abductors" : "Abductors",
-        "adductors" : "Adductors",
-        "biceps" : "Biceps",
-        "calves" : "Calves",
-        "cardiovascular_system" : "Circulatory System",
-        "delts" : "Delts",
-        "forearms" : "Forearms",
-        "glutes" : "Glutes",
-        "hamstrings" : "Hamstrings",
-        "lats" : "Lats",
-        "pectorals" : "Pectorals",
-        "neck" : "Neck",
-        "quads" : "Quadriceps",
-        "serratus_anterior" : "Serratus Anterior",
-        "spine" : "Spine",
-        "traps" : "Traps",
-        "triceps" : "Triceps",
-        "upper_back" : "Upper Back"
-    ]
+    
     
     private let muscleImageView: UIImageView = {
        let image = UIImageView(image: UIImage(named: "biceps"))

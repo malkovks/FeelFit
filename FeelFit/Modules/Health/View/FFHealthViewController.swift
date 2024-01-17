@@ -9,6 +9,7 @@ import UIKit
 import HealthKit
 import BackgroundTasks
 import UserNotifications
+import CareKit
 
 
 struct HealthModelValue {
@@ -19,6 +20,7 @@ struct HealthModelValue {
 class FFHealthViewController: UIViewController, SetupViewController {
     
     private let healthStore = HKHealthStore()
+    private let careKitStore = OCKStore(name: "UserDataStore",type: .inMemory)
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
@@ -34,6 +36,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
             IndexPath(row: 6, section: 0)
         ]
     }
+    
+    private let chartView = OCKCartesianChartView(type: .line)
     
     //MARK: - Background task
     private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
@@ -52,29 +56,49 @@ class FFHealthViewController: UIViewController, SetupViewController {
     //TEST VALUE
     var backgroundTaskID: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getHealthAuthorizationRequestStatus()
+        requestForAccessToHealth()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setupNavigationController()
         setupViewModel()
         setupTableView()
-        getHealthAuthorizationRequestStatus()
         setupConstraints()
-        requestForAccessToHealth()
         
         
-        self.scheduleBackgroundTask()
-        setupBackgroundTask()
-    } 
+        
+//        self.scheduleBackgroundTask()
+//        if hasRequestedHealthData {
+//            setupBackgroundTask()
+//        }
+        
+        setupChartView()
+    }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        //отменяем наблюдателя при выходе из контроллера
-        //предполагаю если мы переходим на другой контроллер
-        if let observerQuery = observerQuery {
-            healthStore.stop(observerQuery)
-            print("health observer is cancelled")
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        //отменяем наблюдателя при выходе из контроллера
+//        //предполагаю если мы переходим на другой контроллер
+//        if let observerQuery = observerQuery {
+//            healthStore.stop(observerQuery)
+//            print("health observer is cancelled")
+//        }
+//    }
+    
+    //MARK: - Setup CareKit diagramm
+    func setupChartView(){
+        chartView.headerView.titleLabel.text = getDataTypeName(HKQuantityTypeIdentifier(rawValue: dataTypeIdentifier))
+        chartView.graphView.horizontalAxisMarkers = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        uploadSelectedData { value in
+            let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
+            self.chartView.graphView.dataSeries = [
+                OCKDataSeries(values: stepValues, title: "Test Titles")
+            ]
         }
     }
     
@@ -86,13 +110,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
             self.backgroundTaskID = .invalid
         })
         
+        
         timer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true, block: { [unowned self] _ in
             DispatchQueue.global(qos: .background).async {
                 self.setupObserverQuery()
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-                
             }
         })
     }
@@ -145,31 +166,37 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     //функция которая будет вызываться каждый раз при получении оьновления о количестве шагов
     func handleStepCountUpdate(){
-        print("Количество шагов обновленно")
-        guard let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
-        let calendar = Calendar.current
-        let now = Date()
-        let startOfDay = calendar.startOfDay(for: now)
-        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
-        
-        let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate) { query, stats, error in
-            guard error == nil else {
-                print(String(describing:error?.localizedDescription))
-                return
+        if hasRequestedHealthData {
+            print("Количество шагов обновленно")
+            guard let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
+            let calendar = Calendar.current
+            let now = Date()
+            let startOfDay = calendar.startOfDay(for: now)
+            let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
+            
+            let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate) { query, stats, error in
+                guard error == nil else {
+                    print(String(describing:error?.localizedDescription))
+                    return
+                }
+                
+                guard let result = stats else { return }
+                guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
+                
+                if stepCount >= 10_000 && !self.shouldSendNotification() {
+                    self.sendLocalNotification(steps: stepCount)
+                    self.userDefaults.set(true, forKey: "sendStatusNotification")
+                } else {
+                    print("Steps count is \(stepCount)")
+                }
+                
+                
             }
-            
-            guard let result = stats else { return }
-            guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
-            
-            if stepCount >= 10_000 && !self.shouldSendNotification() {
-                self.sendLocalNotification(steps: stepCount)
-                self.userDefaults.set(true, forKey: "sendStatusNotification")
-            } else {
-                print("Steps count is \(stepCount)")
-            }
-            
+            healthStore.execute(query)
+        } else {
+            requestForAccessToHealth()
         }
-        healthStore.execute(query)
+        
     }
     
    
@@ -208,6 +235,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
             }
         }
     }
+    
+    
     
     //Функция из видео для настройки фонового выполнения задачи. Непонятно пока как работает
     func scheduleBackgroundTask(){
@@ -267,10 +296,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
         healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[unowned self] success, error in
             if let error = error {
                 textStatus = "Applications gets error by trying to get access to Health. \(error.localizedDescription)"
+                print(textStatus)
             } else {
-                requestAccessToBackgroundMode(success)
+//                requestAccessToBackgroundMode(success)
                 if success {
-                    
                     if self.hasRequestedHealthData {
                         textStatus = "You already gave full access to Health request"
                     } else {
@@ -285,8 +314,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
             
         }
         DispatchQueue.main.async { [unowned self] in
-            viewAlertController(text: textStatus, startDuration: 0.5, timer: 3, controllerView: view)
+            self.viewAlertController(text: textStatus, startDuration: 0.5, timer: 3, controllerView: self.view)
+            self.tableView.reloadRows(at: self.fixedIndexPath, with: .fade)
         }
+       
     }
     
     private func getHealthAuthorizationRequestStatus(){
@@ -317,49 +348,54 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
     }
     
-    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",data  completion: @escaping (([HealthModelValue]) -> Void)){
-        var value: [HealthModelValue] = [HealthModelValue]()
-        let identifier = HKQuantityTypeIdentifier(rawValue: id)
-        guard let steps = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
-        let now = Date()
-        let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: now)
-        let withStartDate =  calendar.date(byAdding: .day, value: -6, to: startOfDay)! //Force unwrap
-        let interval = DateComponents(day: 1)
-        let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
-        let query = HKStatisticsCollectionQuery(quantityType: steps,
-                                                quantitySamplePredicate: predicate,
-                                                options: .cumulativeSum,
-                                                anchorDate: startOfDay,
-                                                intervalComponents: interval)
-        query.initialResultsHandler = { [weak self] query, results, error in
-            guard error == nil,
-                  let results = results else {
-                let title = "Error getting initial results with handler"
-                self?.alertError(title: title)
-                return
-            }
-            results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
-                let startDate = stats.startDate
-                switch identifier {
-                case .stepCount:
-                    guard let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) else { return }
-                    value.append(HealthModelValue.init(date: startDate, value: steps))
-                case .distanceWalkingRunning:
-                    guard let meters = stats.sumQuantity()?.doubleValue(for: HKUnit.meter()) else { return }
-                    value.append(HealthModelValue.init(date: startDate, value: meters))
-                case .activeEnergyBurned:
-                    guard let calories = stats.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) else { return }
-                    value.append(HealthModelValue(date: startDate, value: calories))
-                default: break
+    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",data completion: @escaping (([HealthModelValue]) -> Void)){
+        if hasRequestedHealthData {
+            var value: [HealthModelValue] = [HealthModelValue]()
+            let identifier = HKQuantityTypeIdentifier(rawValue: id)
+            guard let steps = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
+            let now = Date()
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: now)
+            let withStartDate =  calendar.date(byAdding: .day, value: -6, to: startOfDay)! //Force unwrap
+            let interval = DateComponents(day: 1)
+            let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
+            let query = HKStatisticsCollectionQuery(quantityType: steps,
+                                                    quantitySamplePredicate: predicate,
+                                                    options: .cumulativeSum,
+                                                    anchorDate: startOfDay,
+                                                    intervalComponents: interval)
+            query.initialResultsHandler = { [weak self] query, results, error in
+                guard error == nil,
+                      let results = results else {
+                    let title = "Error getting initial results with handler"
+                    self?.alertError(title: title)
+                    return
                 }
+                results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
+                    let startDate = stats.startDate
+                    switch identifier {
+                    case .stepCount:
+                        guard let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) else { return }
+                        value.append(HealthModelValue.init(date: startDate, value: steps))
+                    case .distanceWalkingRunning:
+                        guard let meters = stats.sumQuantity()?.doubleValue(for: HKUnit.meter()) else { return }
+                        value.append(HealthModelValue.init(date: startDate, value: meters))
+                    case .activeEnergyBurned:
+                        guard let calories = stats.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) else { return }
+                        value.append(HealthModelValue(date: startDate, value: calories))
+                    default: break
+                    }
+                    
+                }
+                value.reverse()
+                completion(value)
                 
             }
-            value.reverse()
-            completion(value)
-            
+            healthStore.execute(query)
+        } else {
+            requestForAccessToHealth()
         }
-        healthStore.execute(query)
+        
     }
     
     
@@ -396,9 +432,9 @@ extension FFHealthViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:  FFHealthTableViewCell.identifier, for: indexPath) as! FFHealthTableViewCell
-        uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
-            cell.configureCell(indexPath, self.dataTypeIdentifier, model)
-        }
+//        uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
+//            cell.configureCell(indexPath, self.dataTypeIdentifier, model)
+//        }
         return cell
     }
     
@@ -444,7 +480,14 @@ extension FFHealthViewController {
         tableView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(5)
-            make.bottom.equalToSuperview().offset(5)
+            make.height.equalToSuperview().multipliedBy(0.6)
+        }
+        
+        view.addSubview(chartView)
+        chartView.snp.makeConstraints { make in
+            make.top.equalTo(tableView.snp.bottom).offset(5)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalToSuperview().multipliedBy(0.25)
         }
     }
 }

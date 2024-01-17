@@ -14,21 +14,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-       let window = UIWindow(windowScene: windowScene)
+        let window = UIWindow(windowScene: windowScene)
         let rootViewController = FFTabBarController()
         window.rootViewController = rootViewController
-        
         self.window = window
         
         window.makeKeyAndVisible()
-        
-        //Старая версия. ПОка тестим
-//        let view = FFTabBarController()
-//        guard let windowScene = (scene as? UIWindowScene) else { return }
-//        window?.overrideUserInterfaceStyle = .unspecified
-//        window = UIWindow(windowScene: windowScene)
-//        window?.rootViewController = view
-//        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

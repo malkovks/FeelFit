@@ -63,7 +63,7 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
 
 extension FFMusclesGroupViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return FFExercisesCollectionViewCell().muscleDictionary.count
+        return muscleDictionary.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

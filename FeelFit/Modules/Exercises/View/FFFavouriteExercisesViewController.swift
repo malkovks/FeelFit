@@ -21,10 +21,11 @@ class FFFavouriteExercisesViewController: UIViewController, SetupViewController 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViewModel()
         loadExercisesData()
         setupView()
         setupTableView()
-        setupViewModel()
+        
         setupNavigationController()
         setupConstraints()
     }

@@ -10,12 +10,21 @@
       }
     },
     {
+      "identity" : "carekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/carekit-apple/CareKit",
+      "state" : {
+        "revision" : "9d4233253faf39e5dcd52e6cb4a0498ac4ca4a1f",
+        "version" : "2.0.2"
+      }
+    },
+    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "277f1ab2c6664b19b4a412e32b094b201e2d5757",
-        "version" : "7.10.0"
+        "revision" : "3ec0ab0bca4feb56e8b33e289c9496e89059dd08",
+        "version" : "7.10.2"
       }
     },
     {
@@ -23,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "c569bec4d04da84030d94f376437bc4efda3686b",
-        "version" : "13.23.1"
+        "revision" : "7227d6a447821c28895daa099b6c7cd4c99d461b",
+        "version" : "13.25.1"
       }
     },
     {
@@ -33,7 +42,7 @@
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
         "branch" : "master",
-        "revision" : "95cb711d60801e82542b866d16d75608c40d7b2e"
+        "revision" : "65269e499f882a2f8bc7ebe3e5a36a1ed7be48dc"
       }
     },
     {
@@ -41,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SnapKit/SnapKit",
       "state" : {
-        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
-        "version" : "5.6.0"
+        "revision" : "e74fe2a978d1216c3602b129447c7301573cc2d8",
+        "version" : "5.7.0"
       }
     }
   ],

@@ -21,37 +21,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         
         //register handler for task
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { [weak self] task in
-            
-            //handler the task
-            guard let task = task as? BGAppRefreshTask else { return }
-            self?.handlerAppRefreshTask(task: task)
-            self?.handleTask(task: task)
-        }
-        let count = UserDefaults.standard.integer(forKey: "task_run_count")
-        print("Задание выполнилось количество раз >>> \(count) <<<")
+//        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { [weak self] task in
+//            
+//            //handler the task
+//            guard let task = task as? BGAppRefreshTask else { return }
+//            self?.handleTask(task: task)
+//        }
+//        let count = UserDefaults.standard.integer(forKey: "task_run_count")
+//        print("Задание выполнилось количество раз >>> \(count) <<<")
         
         return true
     }
-    
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        let vc = FFHealthViewController()
-        vc.scheduleAppRefresh()
-    }
-    private func handlerAppRefreshTask(task: BGAppRefreshTask){
-        let timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { timer in
-            let vc = FFHealthViewController()
-            vc.updateData()
-        }
-        RunLoop.current.add(timer, forMode: .default)
-        
-        task.expirationHandler = {
-            timer.invalidate()
-        }
-        task.setTaskCompleted(success: true)
-    }
-    
-    
     
     private func handleTask(task: BGAppRefreshTask) {
         let count = UserDefaults.standard.integer(forKey: "task_run_count")

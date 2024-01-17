@@ -98,6 +98,9 @@
 		0AE0F4F72B06159E00874C0B /* FFFavouriteExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */; };
 		0AE0F4F92B0619E600874C0B /* FFFavouriteExercisesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */; };
 		0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEDA2E22B303A6A0079C564 /* FFPlanDetailTableViewCell.swift */; };
+		0AF03A612B57D48000715007 /* CareKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A602B57D48000715007 /* CareKit */; };
+		0AF03A632B57D48000715007 /* CareKitStore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A622B57D48000715007 /* CareKitStore */; };
+		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -199,6 +202,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AF03A632B57D48000715007 /* CareKitStore in Frameworks */,
+				0AF03A612B57D48000715007 /* CareKit in Frameworks */,
+				0AF03A652B57D48000715007 /* CareKitUI in Frameworks */,
 				0A4494DD2AB82ED80082C909 /* RealmSwift in Frameworks */,
 				0A4494DB2AB82ED80082C909 /* Realm in Frameworks */,
 				0A4494D52AB82AB70082C909 /* SnapKit in Frameworks */,
@@ -912,6 +918,9 @@
 				0A4494DA2AB82ED80082C909 /* Realm */,
 				0A4494DC2AB82ED80082C909 /* RealmSwift */,
 				0A2347E12AF9B2C1002C161C /* Kingfisher */,
+				0AF03A602B57D48000715007 /* CareKit */,
+				0AF03A622B57D48000715007 /* CareKitStore */,
+				0AF03A642B57D48000715007 /* CareKitUI */,
 			);
 			productName = FeelFit;
 			productReference = 0A4494BC2AB821FD0082C909 /* FeelFit.app */;
@@ -925,7 +934,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					0A4494BB2AB821FD0082C909 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -946,6 +955,7 @@
 				0A4494D62AB82B330082C909 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				0A4494D92AB82ED80082C909 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				0A2347E02AF9B2C1002C161C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				0AF03A5F2B57D48000715007 /* XCRemoteSwiftPackageReference "CareKit" */,
 			);
 			productRefGroup = 0A4494BD2AB821FD0082C909 /* Products */;
 			projectDirPath = "";
@@ -1079,6 +1089,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1140,6 +1151,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1199,7 +1211,7 @@
 				CODE_SIGN_ENTITLEMENTS = FeelFit/FeelFit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8UABHSLKYJ;
+				DEVELOPMENT_TEAM = 2275P6FG35;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
@@ -1235,7 +1247,7 @@
 				CODE_SIGN_ENTITLEMENTS = FeelFit/FeelFit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8UABHSLKYJ;
+				DEVELOPMENT_TEAM = 2275P6FG35;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
@@ -1319,6 +1331,14 @@
 				kind = branch;
 			};
 		};
+		0AF03A5F2B57D48000715007 /* XCRemoteSwiftPackageReference "CareKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/carekit-apple/CareKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1346,6 +1366,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0A4494D92AB82ED80082C909 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		0AF03A602B57D48000715007 /* CareKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0AF03A5F2B57D48000715007 /* XCRemoteSwiftPackageReference "CareKit" */;
+			productName = CareKit;
+		};
+		0AF03A622B57D48000715007 /* CareKitStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0AF03A5F2B57D48000715007 /* XCRemoteSwiftPackageReference "CareKit" */;
+			productName = CareKitStore;
+		};
+		0AF03A642B57D48000715007 /* CareKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0AF03A5F2B57D48000715007 /* XCRemoteSwiftPackageReference "CareKit" */;
+			productName = CareKitUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
