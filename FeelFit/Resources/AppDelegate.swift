@@ -8,7 +8,6 @@
 import UIKit
 import UserNotifications
 import RealmSwift
-import BackgroundTasks
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,28 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().delegate = self
-        
-        //register handler for task
-//        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { [weak self] task in
-//            
-//            //handler the task
-//            guard let task = task as? BGAppRefreshTask else { return }
-//            self?.handleTask(task: task)
-//        }
-//        let count = UserDefaults.standard.integer(forKey: "task_run_count")
-//        print("Задание выполнилось количество раз >>> \(count) <<<")
-        
+        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
+        FFHealthDataAccess.shared.requestForAccessToHealth()
         return true
-    }
-    
-    private func handleTask(task: BGAppRefreshTask) {
-        let count = UserDefaults.standard.integer(forKey: "task_run_count")
-        UserDefaults.standard.set(count+1, forKey: "task_run_count")
-        print("Задание выполнилось количество раз >>> \(count) <<<")
-        task.expirationHandler = {
-            //cancel network call
-        }
-        task.setTaskCompleted(success: true)
     }
 }
 

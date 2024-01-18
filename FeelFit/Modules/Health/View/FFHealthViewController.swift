@@ -10,6 +10,7 @@ import HealthKit
 import BackgroundTasks
 import UserNotifications
 import CareKit
+import WatchConnectivity
 
 
 struct HealthModelValue {
@@ -24,7 +25,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
-    private let taskId = "Malkov.KS.FeelFit.backgroundTask"
+    private let watchSession = WCSession.default
+    
     private var fixedIndexPath: [IndexPath] {
         return [
             IndexPath(row: 0, section: 0),
@@ -37,15 +39,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
         ]
     }
     
-    private let chartView = OCKCartesianChartView(type: .line)
-    
     //MARK: - Background task
     private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
     private var timer: Timer?
     ///Health kit observer
     private var observerQuery: HKObserverQuery?
     
-    private var hasRequestedHealthData: Bool = false
+    private var isHealthKitAccess: Bool = UserDefaults.standard.bool(forKey: "healthKitAccess")
     private var dataTypeIdentifier: String = UserDefaults.standard.string(forKey: "dataTypeIdentifier") ?? "HKQuantityTypeIdentifierStepCount"
     private var titleForTable: String {
         return getDataTypeName(HKQuantityTypeIdentifier(rawValue: dataTypeIdentifier))
@@ -53,14 +53,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private var healthModel: [HealthModelValue] = [HealthModelValue]()
     
     private var tableView: UITableView!
-    //TEST VALUE
-    var backgroundTaskID: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        getHealthAuthorizationRequestStatus()
-        requestForAccessToHealth()
-    }
+    private let scrollView: UIScrollView = UIScrollView(frame: .zero)
+    private let chartView = OCKCartesianChartView(type: .line)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,45 +63,37 @@ class FFHealthViewController: UIViewController, SetupViewController {
         setupViewModel()
         setupTableView()
         setupConstraints()
-        
-        
-        
-//        self.scheduleBackgroundTask()
-//        if hasRequestedHealthData {
-//            setupBackgroundTask()
-//        }
-        
         setupChartView()
+        setupScrollView()
+        
+        
+        if isHealthKitAccess {
+            setupBackgroundTask()
+            requestAccessToBackgroundMode()
+        }
     }
-    
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        //отменяем наблюдателя при выходе из контроллера
-//        //предполагаю если мы переходим на другой контроллер
-//        if let observerQuery = observerQuery {
-//            healthStore.stop(observerQuery)
-//            print("health observer is cancelled")
-//        }
-//    }
+
     
     //MARK: - Setup CareKit diagramm
     func setupChartView(){
-        chartView.headerView.titleLabel.text = getDataTypeName(HKQuantityTypeIdentifier(rawValue: dataTypeIdentifier))
+        chartView.headerView.titleLabel.text = titleForTable
         chartView.graphView.horizontalAxisMarkers = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         uploadSelectedData { value in
             let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
-            self.chartView.graphView.dataSeries = [
-                OCKDataSeries(values: stepValues, title: "Test Titles")
-            ]
+            DispatchQueue.main.async {
+                self.chartView.graphView.dataSeries = [
+                    OCKDataSeries(values: stepValues, title: "Test Titles")
+                ]
+            }
         }
     }
     
     //MARK: - UIApplication background task
     func setupBackgroundTask(){
         UIApplication.shared.isIdleTimerDisabled = true
-        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "healthKitDataLoading", expirationHandler: {
-            UIApplication.shared.endBackgroundTask(self.backgroundTaskID)
-            self.backgroundTaskID = .invalid
+        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "healthKitDataLoading", expirationHandler: {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
+            self.backgroundTaskId = .invalid
         })
         
         
@@ -116,6 +102,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 self.setupObserverQuery()
             }
         })
+    }
+    
+    func stopCountingSteps(){
+        if let observerQuery = observerQuery {
+            healthStore.stop(observerQuery)
+            print("health observer is cancelled")
+        }
     }
     
     func shouldSendNotification() -> Bool {
@@ -133,15 +126,18 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     //функция запроса разрешения на работе в фоновом режиме и отслеживание данных
-    func requestAccessToBackgroundMode(_ success: Bool) {
-        if success {
-            guard let steps = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
-            healthStore.enableBackgroundDelivery(for: steps, frequency: .immediate) { status, error in
-                if success {
-                    print("Доступ к фоновой загрузке разрешен")
-                } else {
-                    print("Доступ запрещен. \(String(describing:error?.localizedDescription))")
-                }
+    func requestAccessToBackgroundMode() {
+        if !HKHealthStore.isHealthDataAvailable() {
+            alertError()
+            return
+        }
+        
+        guard let steps = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+        healthStore.enableBackgroundDelivery(for: steps, frequency: .immediate) { status, error in
+            if status {
+                print("Background delivery is enabled")
+            } else if let error = error {
+                print(error.localizedDescription)
             }
         }
     }
@@ -166,7 +162,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     //функция которая будет вызываться каждый раз при получении оьновления о количестве шагов
     func handleStepCountUpdate(){
-        if hasRequestedHealthData {
+        if isHealthKitAccess {
             print("Количество шагов обновленно")
             guard let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
             let calendar = Calendar.current
@@ -179,7 +175,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     print(String(describing:error?.localizedDescription))
                     return
                 }
-                
                 guard let result = stats else { return }
                 guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
                 
@@ -189,34 +184,29 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 } else {
                     print("Steps count is \(stepCount)")
                 }
-                
-                
             }
             healthStore.execute(query)
         } else {
-            requestForAccessToHealth()
-        }
-        
-    }
-    
-   
-    
-    //MARK: - Setup Background Modes
-    func updateData(){
-        //вызов функции получения количества шагов пользователя
-        print("Вызов функции update data")
-    }
-    
-    // функция не используется (пока оставляем)
-    func scheduleAppRefresh(){
-        let request = BGAppRefreshTaskRequest(identifier: taskId)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 60.0)
-        do {
-            try BGTaskScheduler.shared.submit(request)
-        } catch {
-            print("Не удалось запустить задачу \(error.localizedDescription)")
+            FFHealthDataAccess.shared.requestForAccessToHealth()
         }
     }
+    //MARK: - DONT DELETE
+    ///function for collecting steps count from apple watch if it is available
+    func queryStepCountFromWatch(completion: @escaping (Result<Int,Error>) -> ()){
+        if WCSession.isSupported() {
+            if watchSession.isPaired && watchSession.isWatchAppInstalled {
+                watchSession.sendMessage(["request":"stepCount"]) { (reply) in
+                    guard let steps = reply["stepCount"] as? Int else { return }
+                    completion(.success(steps))
+                } errorHandler: { error in
+                    completion(.failure(error))
+                }
+            }
+        } else {
+            print("Apple watch is unavailable")
+        }
+    }
+    
     ///функция теста для вызова уведомления о количестве шагов пройденных пользователем
     func sendLocalNotification(steps: Double){
         let stepsInt = Int(exactly: steps)
@@ -232,34 +222,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("Did not complete to send notification. \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    
-    
-    //Функция из видео для настройки фонового выполнения задачи. Непонятно пока как работает
-    func scheduleBackgroundTask(){
-        
-        //Manual test : e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"Malkov.KS.FeelFit.backgroundTask"]
-        
-        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: taskId)
-        BGTaskScheduler.shared.getPendingTaskRequests { [unowned self] request in
-            
-            print("\(request.count) BGTasks pending....")
-            guard request.isEmpty else {
-                print("Error. Requests is empty")
-                return
-            }
-            
-            do {
-                let newTask = BGAppRefreshTaskRequest(identifier: self.taskId)
-                newTask.earliestBeginDate = Date(timeIntervalSinceNow: 60.0)
-                try BGTaskScheduler.shared.submit(newTask)
-                print("Task scheduled")
-            } catch {
-                //ignore
-                print("Failed to scheduled: \(error.localizedDescription)")
             }
         }
     }
@@ -290,66 +252,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
         self.tableView.reloadData()
     }
     
-    private func requestForAccessToHealth(){
-        var textStatus: String = ""
-        
-        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[unowned self] success, error in
-            if let error = error {
-                textStatus = "Applications gets error by trying to get access to Health. \(error.localizedDescription)"
-                print(textStatus)
-            } else {
-//                requestAccessToBackgroundMode(success)
-                if success {
-                    if self.hasRequestedHealthData {
-                        textStatus = "You already gave full access to Health request"
-                    } else {
-                        textStatus = "Health kit authorization complete successfully"
-                        hasRequestedHealthData = true
-                        
-                    }
-                } else {
-                    textStatus = "Health kit authorization did not complete successfully"
-                }
-            }
-            
-        }
-        DispatchQueue.main.async { [unowned self] in
-            self.viewAlertController(text: textStatus, startDuration: 0.5, timer: 3, controllerView: self.view)
-            self.tableView.reloadRows(at: self.fixedIndexPath, with: .fade)
-        }
-       
-    }
-    
-    private func getHealthAuthorizationRequestStatus(){
-        if !HKHealthStore.isHealthDataAvailable()  {
-            DispatchQueue.main.async { [unowned self] in
-                viewAlertController(text: "Health Data is unavailable. Try again later", startDuration: 0.5, timer: 3, controllerView: view)
-            }
-            return
-        }
-        var textStatus: String = ""
-        healthStore.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes) { authStatus, error in
-            switch authStatus {
-            case .unknown:
-                textStatus = "Unknowned error occurred. Try again later."
-            case .unnecessary:
-                self.hasRequestedHealthData = true
-                textStatus = " Unnecessary .You have already allow all data for using "
-            case .shouldRequest:
-                self.hasRequestedHealthData = false
-                textStatus = "Should request .The app does not requested for all specific data yet"
-            @unknown default:
-                break
-            }
-        }
-        DispatchQueue.main.async { [unowned self] in
-            viewAlertController(text: textStatus, startDuration: 0.5, timer: 3, controllerView: view)
-        }
-        
-    }
-    
     func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",data completion: @escaping (([HealthModelValue]) -> Void)){
-        if hasRequestedHealthData {
+        if isHealthKitAccess {
             var value: [HealthModelValue] = [HealthModelValue]()
             let identifier = HKQuantityTypeIdentifier(rawValue: id)
             guard let steps = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
@@ -383,7 +287,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     case .activeEnergyBurned:
                         guard let calories = stats.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) else { return }
                         value.append(HealthModelValue(date: startDate, value: calories))
-                    default: break
+                    default: fatalError("Error getting data from health kit")
                     }
                     
                 }
@@ -393,7 +297,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
             }
             healthStore.execute(query)
         } else {
-            requestForAccessToHealth()
+            FFHealthDataAccess.shared.requestForAccessToHealth()
         }
         
     }
@@ -408,7 +312,12 @@ class FFHealthViewController: UIViewController, SetupViewController {
         tableView.register(FFHealthTableViewCell.self, forCellReuseIdentifier: FFHealthTableViewCell.identifier)
         tableView.bounces = false
         tableView.allowsSelection = false
-        
+    }
+    
+    func setupScrollView(){
+        scrollView.alwaysBounceHorizontal = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = true
     }
     
     func setupView() {
@@ -432,9 +341,9 @@ extension FFHealthViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:  FFHealthTableViewCell.identifier, for: indexPath) as! FFHealthTableViewCell
-//        uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
-//            cell.configureCell(indexPath, self.dataTypeIdentifier, model)
-//        }
+        uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
+            cell.configureCell(indexPath, self.dataTypeIdentifier, model)
+        }
         return cell
     }
     
@@ -475,19 +384,44 @@ extension FFHealthViewController: UITableViewDelegate {
 
 extension FFHealthViewController {
     private func setupConstraints(){
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
-        view.addSubview(tableView)
+        scrollView.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.leading.trailing.equalToSuperview().inset(5)
+            make.top.left.right.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
+            make.width.equalTo(view.snp.width).offset(10)
         }
         
-        view.addSubview(chartView)
+        scrollView.addSubview(chartView)
         chartView.snp.makeConstraints { make in
-            make.top.equalTo(tableView.snp.bottom).offset(5)
+            make.top.equalTo(tableView.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().multipliedBy(0.25)
+            make.height.equalToSuperview().multipliedBy(0.6)
+            make.width.equalTo(view.snp.width).multipliedBy(0.9)
         }
+        
+        scrollView.snp.makeConstraints { make in
+            make.bottom.equalTo(chartView.snp.bottom)
+            make.width.equalTo(view.snp.width)
+            make.height.equalTo(tableView.snp.height).offset(view.frame.height/3.0)
+        }
+        
+//        view.addSubview(tableView)
+//        tableView.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(20)
+//            make.leading.trailing.equalToSuperview().inset(5)
+//            make.height.equalToSuperview().multipliedBy(0.6)
+//        }
+//        
+//        view.addSubview(chartView)
+//        chartView.snp.makeConstraints { make in
+//            make.top.equalTo(tableView.snp.bottom).offset(5)
+//            make.leading.trailing.equalToSuperview().inset(20)
+//            make.height.equalToSuperview().multipliedBy(0.25)
+//        }
     }
 }

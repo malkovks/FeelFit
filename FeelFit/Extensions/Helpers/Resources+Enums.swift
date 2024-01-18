@@ -16,7 +16,7 @@ enum FFResources {
         /// almost white or almost black
         static var backgroundColor = UIColor(named: "backgroundColor") ?? .systemGreen
         /// deep dark purple
-        static var secondaryColor = UIColor(named: "secondaryColor") ?? .systemMint
+        static var secondaryColor = UIColor(named: "darkPurpleColor") ?? .systemMint
         /// light gray or dark gray
         static var tabBarBackgroundColor = UIColor(named: "tabBarBackgroundColor") ?? .systemBlue
         /// black color

@@ -101,6 +101,7 @@
 		0AF03A612B57D48000715007 /* CareKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A602B57D48000715007 /* CareKit */; };
 		0AF03A632B57D48000715007 /* CareKitStore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A622B57D48000715007 /* CareKitStore */; };
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
+		0AF03A672B58F85200715007 /* FFHealthDataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -194,6 +195,7 @@
 		0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExercisesViewController.swift; sourceTree = "<group>"; };
 		0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExercisesModel.swift; sourceTree = "<group>"; };
 		0AEDA2E22B303A6A0079C564 /* FFPlanDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanDetailTableViewCell.swift; sourceTree = "<group>"; };
+		0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataAccess.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -380,6 +382,7 @@
 				0A44951F2ABA79210082C909 /* View */,
 				0A44951E2ABA79120082C909 /* Model */,
 				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
+				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -1054,6 +1057,7 @@
 				0ACBC2682B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift in Sources */,
 				0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */,
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
+				0AF03A672B58F85200715007 /* FFHealthDataAccess.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
@@ -1211,7 +1215,7 @@
 				CODE_SIGN_ENTITLEMENTS = FeelFit/FeelFit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2275P6FG35;
+				DEVELOPMENT_TEAM = 8UABHSLKYJ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
@@ -1247,7 +1251,7 @@
 				CODE_SIGN_ENTITLEMENTS = FeelFit/FeelFit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2275P6FG35;
+				DEVELOPMENT_TEAM = 8UABHSLKYJ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
