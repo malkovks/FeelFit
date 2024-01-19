@@ -54,7 +54,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     private var tableView: UITableView!
     private let scrollView: UIScrollView = UIScrollView(frame: .zero)
-    private let chartView = OCKCartesianChartView(type: .line)
+    private let chartView = OCKCartesianChartView(type: .bar)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,15 +74,21 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
 
     
-    //MARK: - Setup CareKit diagramm
+    //MARK: - Setup CareKit chart
     func setupChartView(){
+        chartView.delegate = self
+        chartView.contentStackView.distribution = .fillProportionally
+        
         chartView.headerView.titleLabel.text = titleForTable
-        chartView.graphView.horizontalAxisMarkers = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        chartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel() //Добавление в детейл лейблам даты
+        
+        chartView.applyConfiguration()
+        chartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkers()
         uploadSelectedData { value in
             let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
             DispatchQueue.main.async {
                 self.chartView.graphView.dataSeries = [
-                    OCKDataSeries(values: stepValues, title: "Test Titles")
+                    OCKDataSeries(values: stepValues.reversed(), title: "Steps")
                 ]
             }
         }
@@ -334,6 +340,14 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
 }
 
+extension FFHealthViewController: OCKChartViewDelegate {
+    func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
+        //попробовать к примеру при нажатии на chartView переход на отдельный контроллер для показа всех деталей
+    }
+    
+    
+}
+
 extension FFHealthViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 7
@@ -400,7 +414,7 @@ extension FFHealthViewController {
         chartView.snp.makeConstraints { make in
             make.top.equalTo(tableView.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().multipliedBy(0.6)
+            make.height.equalToSuperview().multipliedBy(0.4)
             make.width.equalTo(view.snp.width).multipliedBy(0.9)
         }
         
@@ -409,19 +423,5 @@ extension FFHealthViewController {
             make.width.equalTo(view.snp.width)
             make.height.equalTo(tableView.snp.height).offset(view.frame.height/3.0)
         }
-        
-//        view.addSubview(tableView)
-//        tableView.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(20)
-//            make.leading.trailing.equalToSuperview().inset(5)
-//            make.height.equalToSuperview().multipliedBy(0.6)
-//        }
-//        
-//        view.addSubview(chartView)
-//        chartView.snp.makeConstraints { make in
-//            make.top.equalTo(tableView.snp.bottom).offset(5)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//            make.height.equalToSuperview().multipliedBy(0.25)
-//        }
     }
 }

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */; };
+		0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */; };
+		0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */; };
+		0A13D8D82B5A415D00FD8C92 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */; };
 		0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */; };
 		0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */; };
 		0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */; };
@@ -106,6 +110,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CartesianChartView+Extension.swift"; sourceTree = "<group>"; };
+		0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
+		0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareKitSupport.swift; sourceTree = "<group>"; };
+		0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupport.swift; sourceTree = "<group>"; };
 		0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertError+UIViewControllerExtensions.swift"; sourceTree = "<group>"; };
 		0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageTableViewCell.swift; sourceTree = "<group>"; };
 		0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsTableViewDataSource.swift; sourceTree = "<group>"; };
@@ -218,6 +226,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A13D8D42B5A408900FD8C92 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */,
+				0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		0A1BEC722AC1D9E000914FD5 /* TableViewCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -311,6 +328,7 @@
 				0A4495342ABC3F720082C909 /* APIClient */,
 				0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
+				0A13D8D42B5A408900FD8C92 /* Utilities */,
 				0A44950B2AB9FC260082C909 /* Managers */,
 				0A4495012AB9CFDF0082C909 /* Resources */,
 			);
@@ -378,11 +396,12 @@
 		0A4495052AB9D11D0082C909 /* Health */ = {
 			isa = PBXGroup;
 			children = (
+				0A44951E2ABA79120082C909 /* Model */,
 				0A4495202ABA79250082C909 /* ViewModel */,
 				0A44951F2ABA79210082C909 /* View */,
-				0A44951E2ABA79120082C909 /* Model */,
 				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
 				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
+				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -457,6 +476,7 @@
 				0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */,
 				0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */,
 				0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */,
+				0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -988,6 +1008,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */,
 				0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
@@ -1023,8 +1044,10 @@
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
+				0A13D8D82B5A415D00FD8C92 /* HealthKitSupport.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
+				0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */,
 				0A8EBE062B51248F007AC52E /* FFHealthTableViewCell.swift in Sources */,
 				0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */,
 				0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */,
@@ -1042,6 +1065,7 @@
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSettingViewController.swift in Sources */,
 				0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */,
 				0A69E0D32B4E26F10023487B /* FFHealthData.swift in Sources */,
+				0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */,
 				0A82CD262B2E462400F98D8B /* NavigationItemButton.swift in Sources */,
 				0A82CD1D2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
