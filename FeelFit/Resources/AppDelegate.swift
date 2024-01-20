@@ -8,6 +8,7 @@
 import UIKit
 import UserNotifications
 import RealmSwift
+import BackgroundTasks
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
         FFHealthDataAccess.shared.requestForAccessToHealth()
+        
         return true
     }
 }

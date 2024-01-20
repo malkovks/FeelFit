@@ -42,7 +42,7 @@ class FFHealthTableViewCell: UITableViewCell {
     }
     
     func configureCell(_ indexPath: IndexPath,_ identifier: String,_ model: [HealthModelValue]){
-        let value = model[indexPath.row]
+        let value = model.reversed()[indexPath.row]
         let type: HKQuantityTypeIdentifier = HKQuantityTypeIdentifier(rawValue: identifier)
         var secondaryText: String = ""
         if type == .activeEnergyBurned {

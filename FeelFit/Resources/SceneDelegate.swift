@@ -35,8 +35,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
+        let application = UIApplication.shared
+        application.shortcutItems = [
+            UIApplicationShortcutItem(type: "NewsModule",
+                                      localizedTitle: "News",
+                                      localizedSubtitle: "Open News window",
+                                      icon: UIApplicationShortcutIcon(systemImageName: "newspaper")),
+            UIApplicationShortcutItem(type: "MusclesModule",
+                                      localizedTitle: "Muscles",
+                                      localizedSubtitle: "Open Muscles window",
+                                      icon: UIApplicationShortcutIcon(systemImageName: "figure.strengthtraining.traditional")),
+            UIApplicationShortcutItem(type: "TrainingPlanModule",
+                                      localizedTitle: "Plan",
+                                      localizedSubtitle: "Open Plan window",
+                                      icon: UIApplicationShortcutIcon(systemImageName: "checkmark.diamond")),
+            UIApplicationShortcutItem(type: "HealthModule",
+                                      localizedTitle: "Health",
+                                      localizedSubtitle: "Open Health window",
+                                      icon: UIApplicationShortcutIcon(systemImageName: "heart.text.square"))
+            
+        ]
+        
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {

@@ -88,26 +88,30 @@ class FFHealthViewController: UIViewController, SetupViewController {
             let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
             DispatchQueue.main.async {
                 self.chartView.graphView.dataSeries = [
-                    OCKDataSeries(values: stepValues.reversed(), title: "Steps")
+                    OCKDataSeries(values: stepValues, title: "Steps")
                 ]
             }
         }
     }
-    
     //MARK: - UIApplication background task
     func setupBackgroundTask(){
         UIApplication.shared.isIdleTimerDisabled = true
-        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "healthKitDataLoading", expirationHandler: {
-            UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
-            self.backgroundTaskId = .invalid
+        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Malkov.KS.FeelFit.health_data_refresh", expirationHandler: { [weak self] in
+            self?.stopBackgroundTaskRequest()
         })
         
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true, block: { [unowned self] _ in
+        //repeat check value every 10 minutes in background
+        timer = Timer.scheduledTimer(withTimeInterval: 60*10, repeats: true, block: { [unowned self] _ in
             DispatchQueue.global(qos: .background).async {
                 self.setupObserverQuery()
             }
         })
+    }
+    
+    func stopBackgroundTaskRequest(){
+        UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
+        self.backgroundTaskId = .invalid
+        stopCountingSteps()
     }
     
     func stopCountingSteps(){
@@ -176,7 +180,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
             let startOfDay = calendar.startOfDay(for: now)
             let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
             
-            let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate) { query, stats, error in
+            let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate) { [unowned self] query, stats, error in
                 guard error == nil else {
                     print(String(describing:error?.localizedDescription))
                     return
@@ -185,16 +189,18 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
                 
                 if stepCount >= 10_000 && !self.shouldSendNotification() {
-                    self.sendLocalNotification(steps: stepCount)
+                    self.sendLocalNotification()
                     self.userDefaults.set(true, forKey: "sendStatusNotification")
                 } else {
                     print("Steps count is \(stepCount)")
                 }
+                self.stopBackgroundTaskRequest()
             }
             healthStore.execute(query)
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
         }
+        
     }
     //MARK: - DONT DELETE
     ///function for collecting steps count from apple watch if it is available
@@ -214,12 +220,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     ///функция теста для вызова уведомления о количестве шагов пройденных пользователем
-    func sendLocalNotification(steps: Double){
-        let stepsInt = Int(exactly: steps)
-        let steps = String(describing: stepsInt)
+    func sendLocalNotification(){
         let content = UNMutableNotificationContent()
         content.title = "Congratulations"
-        content.body = "You have reached \(steps) steps count. Don't stop on this result"
+        content.body = "You have reached 10 0000 steps count. Don't stop on this result"
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
@@ -297,7 +301,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     }
                     
                 }
-                value.reverse()
                 completion(value)
                 
             }
@@ -324,6 +327,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
         scrollView.alwaysBounceHorizontal = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = true
+        scrollView.isDirectionalLockEnabled = true
+        scrollView.isScrollEnabled = true
     }
     
     func setupView() {
@@ -405,23 +410,24 @@ extension FFHealthViewController {
         
         scrollView.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
+            make.top.equalToSuperview()
+            make.centerX.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
-            make.width.equalTo(view.snp.width).offset(10)
+            make.width.equalToSuperview()
         }
         
         scrollView.addSubview(chartView)
         chartView.snp.makeConstraints { make in
             make.top.equalTo(tableView.snp.bottom)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalToSuperview().multipliedBy(0.4)
-            make.width.equalTo(view.snp.width).multipliedBy(0.9)
+            make.centerX.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.6)
+            make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
         scrollView.snp.makeConstraints { make in
             make.bottom.equalTo(chartView.snp.bottom)
             make.width.equalTo(view.snp.width)
-            make.height.equalTo(tableView.snp.height).offset(view.frame.height/3.0)
+            make.height.equalTo(tableView.snp.height).offset(view.frame.height/2)
         }
     }
 }
