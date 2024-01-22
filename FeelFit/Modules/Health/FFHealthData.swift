@@ -70,6 +70,7 @@ class FFHealthData {
         HKQuantityTypeIdentifier.height.rawValue,
         HKQuantityTypeIdentifier.bodyMass.rawValue,
         HKQuantityTypeIdentifier.heartRate.rawValue,
+        HKQuantityTypeIdentifier.vo2Max.rawValue
     ]
     
     class func requestHealthDataAccessIfNeeded(dataTypes: [String]? = nil,

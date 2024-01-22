@@ -55,6 +55,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private var tableView: UITableView!
     private let scrollView: UIScrollView = UIScrollView(frame: .zero)
     private let chartView = OCKCartesianChartView(type: .bar)
+    private let lineChartView = OCKCartesianChartView(type: .line)
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,11 +67,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
         setupConstraints()
         setupChartView()
         setupScrollView()
-        
+        setupLineChartView()
         
         if isHealthKitAccess {
             setupBackgroundTask()
             requestAccessToBackgroundMode()
+        } else {
+            FFHealthDataAccess.shared.requestForAccessToHealth()
         }
     }
 
@@ -87,11 +91,70 @@ class FFHealthViewController: UIViewController, SetupViewController {
         uploadSelectedData { value in
             let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
             DispatchQueue.main.async {
-                self.chartView.graphView.dataSeries = [
-                    OCKDataSeries(values: stepValues, title: "Steps")
-                ]
+                let series = OCKDataSeries(values: stepValues, title: "Steps",color: FFResources.Colors.activeColor)
+                self.chartView.graphView.dataSeries = [series]
             }
         }
+        
+//        lineChartView.delegate = self
+//        lineChartView.contentStackView.distribution = .fillProportionally
+//        
+//        lineChartView.headerView.titleLabel.text = "VO 2 Max Comsuption"
+//        lineChartView.applyConfiguration()
+////        lineChartView.graphView.horizontalAxisMarkers = create
+//        uploadAverageOxygenData { result in
+//            switch result {
+//            case .success(let success):
+//                let value: [CGFloat] = success.map { CGFloat($0.value) }
+//                let series = [OCKDataSeries(values: value, title: "VO 2 Average value", color: FFResources.Colors.darkPurple)]
+//                self.lineChartView.graphView.dataSeries = series
+//                print("Work fine")
+//            case .failure(let failure):
+//                print(failure.localizedDescription)
+//            }
+//        }
+    }
+    
+    private func setupLineChartView(){
+        
+    }
+    
+    ///uploading VO 2 MAX and convert to average data for every last 6  months and return HealthModelValue array
+    private func uploadAverageOxygenData(completion: @escaping (Result<[HealthModelValue],Error>) -> ()){
+        let identifier = HKObjectType.quantityType(forIdentifier: .vo2Max)!
+        let startDate = Calendar.current.date(byAdding: .month, value: -6, to: Date())!
+        let endDate = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
+            .startOfMonth()
+            .addingTimeInterval(-1)
+        let interval = DateComponents(month: 1)
+        let kgmin = HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute())
+        let mL = HKUnit.literUnit(with: .milli)
+        let vo2unit = mL.unitDivided(by: kgmin)
+        
+        var healthModel: [HealthModelValue] = [HealthModelValue]()
+        let query = HKStatisticsCollectionQuery(quantityType: identifier, quantitySamplePredicate: nil, options: [.discreteAverage], anchorDate: startDate, intervalComponents: interval)
+        
+        
+        query.initialResultsHandler = { query, results, error in
+            guard let error = error else { return }
+            
+            guard let results = results else {
+                completion(.failure(error))
+                return
+            }
+            results.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
+                let month = stats.startDate
+                guard let average = stats.averageQuantity()?.doubleValue(for: vo2unit) else {
+                    completion(.failure(error))
+                    return
+                }
+                healthModel.append(HealthModelValue(date: month, value: average))
+            }
+            completion(.success(healthModel))
+        }
+        healthStore.execute(query)
+        
+        
     }
     //MARK: - UIApplication background task
     func setupBackgroundTask(){
@@ -424,10 +487,18 @@ extension FFHealthViewController {
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
+        scrollView.addSubview(lineChartView)
+        lineChartView.snp.makeConstraints { make in
+            make.top.equalTo(chartView.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.6)
+            make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
+        }
+        
         scrollView.snp.makeConstraints { make in
-            make.bottom.equalTo(chartView.snp.bottom)
+            make.bottom.equalTo(lineChartView.snp.bottom).offset(20)
             make.width.equalTo(view.snp.width)
-            make.height.equalTo(tableView.snp.height).offset(view.frame.height/2)
+            make.height.equalTo(view.frame.height*2)
         }
     }
 }

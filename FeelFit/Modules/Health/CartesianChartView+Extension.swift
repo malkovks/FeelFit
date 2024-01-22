@@ -10,7 +10,14 @@ import CareKit
 
 extension OCKCartesianChartView {
     func applyConfiguration(){
+        applyDefaultStyle()
         
+        let numberFormatter = NumberFormatter()
+        
+        numberFormatter.numberStyle = .none
+        
+        graphView.numberFormatter = numberFormatter
+        graphView.yMinimum = 0
     }
     
     func applyDefaultStyle(){

@@ -24,4 +24,10 @@ extension Date {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         return dateFormatter.string(from: self)
     }
+    
+    func startOfMonth() -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year,.month], from: self)
+        return calendar.date(from: components)!
+    }
 }
