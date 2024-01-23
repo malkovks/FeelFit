@@ -20,6 +20,11 @@ extension OCKCartesianChartView {
         graphView.yMinimum = 0
     }
     
+    func setupCardioAxisY(){
+        graphView.yMinimum = 10
+        graphView.yMaximum = 70
+    }
+    
     func applyDefaultStyle(){
         headerView.detailLabel.textColor = FFResources.Colors.detailTextColor
     }

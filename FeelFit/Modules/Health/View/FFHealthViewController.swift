@@ -10,6 +10,7 @@ import HealthKit
 import BackgroundTasks
 import UserNotifications
 import CareKit
+import CareKitUI
 import WatchConnectivity
 
 
@@ -26,6 +27,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
     private let watchSession = WCSession.default
+    private let calendar = Calendar.current
     
     private var fixedIndexPath: [IndexPath] {
         return [
@@ -80,14 +82,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     //MARK: - Setup CareKit chart
     func setupChartView(){
-        chartView.delegate = self
         chartView.contentStackView.distribution = .fillProportionally
         
         chartView.headerView.titleLabel.text = titleForTable
         chartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel() //Добавление в детейл лейблам даты
         
         chartView.applyConfiguration()
-        chartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkers()
+        chartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
         uploadSelectedData { value in
             let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
             DispatchQueue.main.async {
@@ -95,35 +96,37 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 self.chartView.graphView.dataSeries = [series]
             }
         }
-        
-//        lineChartView.delegate = self
-//        lineChartView.contentStackView.distribution = .fillProportionally
-//        
-//        lineChartView.headerView.titleLabel.text = "VO 2 Max Comsuption"
-//        lineChartView.applyConfiguration()
-////        lineChartView.graphView.horizontalAxisMarkers = create
-//        uploadAverageOxygenData { result in
-//            switch result {
-//            case .success(let success):
-//                let value: [CGFloat] = success.map { CGFloat($0.value) }
-//                let series = [OCKDataSeries(values: value, title: "VO 2 Average value", color: FFResources.Colors.darkPurple)]
-//                self.lineChartView.graphView.dataSeries = series
-//                print("Work fine")
-//            case .failure(let failure):
-//                print(failure.localizedDescription)
-//            }
-//        }
     }
     
+    
+    
     private func setupLineChartView(){
+        let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
         
+        
+        
+        
+        lineChartView.contentStackView.distribution = .fillProportionally
+        lineChartView.headerView.titleLabel.text = "VO 2 Max Comsuption"
+        lineChartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkers(currentDate: Date(), firstDate: startDate)
+        lineChartView.applyConfiguration()
+        lineChartView.setupCardioAxisY()
+        
+        uploadAverageOxygenData { model in
+            let value: [CGFloat] = model.map { CGFloat($0.value) }
+            let series = [OCKDataSeries(values: value, title: "VO 2 Average value",size: 1, color: FFResources.Colors.darkPurple)]
+            DispatchQueue.main.async { [weak self] in
+                self?.lineChartView.graphView.dataSeries = series
+            }
+            
+        }
     }
     
     ///uploading VO 2 MAX and convert to average data for every last 6  months and return HealthModelValue array
-    private func uploadAverageOxygenData(completion: @escaping (Result<[HealthModelValue],Error>) -> ()){
+    private func uploadAverageOxygenData(completion: @escaping (_ model: [HealthModelValue]) -> ()){
         let identifier = HKObjectType.quantityType(forIdentifier: .vo2Max)!
-        let startDate = Calendar.current.date(byAdding: .month, value: -6, to: Date())!
-        let endDate = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
+        let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
+        let endDate = calendar.date(byAdding: .month, value: 1, to: Date())!
             .startOfMonth()
             .addingTimeInterval(-1)
         let interval = DateComponents(month: 1)
@@ -136,21 +139,17 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         
         query.initialResultsHandler = { query, results, error in
-            guard let error = error else { return }
-            
             guard let results = results else {
-                completion(.failure(error))
                 return
             }
             results.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
                 let month = stats.startDate
                 guard let average = stats.averageQuantity()?.doubleValue(for: vo2unit) else {
-                    completion(.failure(error))
                     return
                 }
                 healthModel.append(HealthModelValue(date: month, value: average))
             }
-            completion(.success(healthModel))
+            completion(healthModel)
         }
         healthStore.execute(query)
         
@@ -162,19 +161,21 @@ class FFHealthViewController: UIViewController, SetupViewController {
         backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Malkov.KS.FeelFit.health_data_refresh", expirationHandler: { [weak self] in
             self?.stopBackgroundTaskRequest()
         })
-        
         //repeat check value every 10 minutes in background
-        timer = Timer.scheduledTimer(withTimeInterval: 60*10, repeats: true, block: { [unowned self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true, block: { [weak self] _ in
             DispatchQueue.global(qos: .background).async {
-                self.setupObserverQuery()
+                self?.setupObserverQuery()
             }
         })
     }
     
     func stopBackgroundTaskRequest(){
-        UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
-        self.backgroundTaskId = .invalid
         stopCountingSteps()
+        DispatchQueue.main.async {
+            UIApplication.shared.isIdleTimerDisabled = false
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
+            self.backgroundTaskId = .invalid
+        }
     }
     
     func stopCountingSteps(){
@@ -187,7 +188,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
     func shouldSendNotification() -> Bool {
         let lastNotification = userDefaults.object(forKey: "lastNotification") as? Date ?? Date()
         let currentDate = Date()
-        let calendar = Calendar.current
         let components = calendar.dateComponents([.day], from: lastNotification, to: currentDate)
         if let days = components.day, days >= 1 {
             userDefaults.set(currentDate, forKey: "lastNotification")
@@ -216,7 +216,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     //функция для создания предиката для запроса данных за последний день и создание наблюдателя для получения обновлений
     func setupObserverQuery(){
-        let calendar = Calendar.current
         let now = Date()
         let startOfDay = calendar.startOfDay(for: .now)
         let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
@@ -236,9 +235,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     //функция которая будет вызываться каждый раз при получении оьновления о количестве шагов
     func handleStepCountUpdate(){
         if isHealthKitAccess {
-            print("Количество шагов обновленно")
             guard let stepCountType = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return }
-            let calendar = Calendar.current
             let now = Date()
             let startOfDay = calendar.startOfDay(for: now)
             let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
@@ -256,6 +253,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     self.userDefaults.set(true, forKey: "sendStatusNotification")
                 } else {
                     print("Steps count is \(stepCount)")
+                    self.stopBackgroundTaskRequest()
                 }
                 self.stopBackgroundTaskRequest()
             }
@@ -331,7 +329,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
             let identifier = HKQuantityTypeIdentifier(rawValue: id)
             guard let steps = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
             let now = Date()
-            let calendar = Calendar.current
             let startOfDay = calendar.startOfDay(for: now)
             let withStartDate =  calendar.date(byAdding: .day, value: -6, to: startOfDay)! //Force unwrap
             let interval = DateComponents(day: 1)

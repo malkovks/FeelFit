@@ -1238,7 +1238,7 @@
 				CODE_SIGN_ENTITLEMENTS = FeelFit/FeelFit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8UABHSLKYJ;
+				DEVELOPMENT_TEAM = 2275P6FG35;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
@@ -1273,7 +1273,7 @@
 				CODE_SIGN_ENTITLEMENTS = FeelFit/FeelFit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8UABHSLKYJ;
+				DEVELOPMENT_TEAM = 2275P6FG35;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;

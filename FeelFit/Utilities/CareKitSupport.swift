@@ -61,8 +61,32 @@ func createHorizontalAxisMarkers(lastDate: Date = Date(), useWeekdays: Bool = tr
         }
         return titles
     }
+}
+
+func createHorizontalAxisMarkers(currentDate: Date = Date(),firstDate: Date) -> [String] {
+    let yearTitles = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    var titles: [String] = []
+    let calendar = Calendar.current
+    var firstRangeCount = calendar.component(.month, from: firstDate)+1
+    var currentRangeCount = calendar.component(.month, from: currentDate)
+    if firstRangeCount < 7 && currentRangeCount <= 12 {
+        for i in firstRangeCount..<currentRangeCount {
+            titles.append(yearTitles[i-1])
+        }
+    } else {
+        let lastRange = firstRangeCount-currentRangeCount-6
+        while firstRangeCount <= 12 {
+            titles.append(yearTitles[firstRangeCount-1])
+            firstRangeCount += 1
+        }
+        while currentRangeCount <= lastRange {
+            titles.append(yearTitles[currentRangeCount-1])
+            currentRangeCount += 1
+        }
+        
+    }
     
-    
+    return titles
 }
 
 
