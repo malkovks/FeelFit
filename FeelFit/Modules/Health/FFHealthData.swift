@@ -30,6 +30,14 @@ func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
         return "Active Energy Burned"
     case .heartRate:
         return "Heart Rate"
+    case .activeEnergyBurned:
+        return "Calories"
+    case .height:
+        return "Height"
+    case .bodyMass:
+        return "Weight"
+    case .vo2Max:
+        return "VO 2 Max Comsuption"
     default:
         return ""
     }
@@ -64,13 +72,16 @@ class FFHealthData {
     
     private static var typeIdentifiers: [String] = [
         HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
+        HKQuantityTypeIdentifier.heartRate.rawValue,
+        
         HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
         HKQuantityTypeIdentifier.stepCount.rawValue,
-        HKQuantityTypeIdentifier.sixMinuteWalkTestDistance.rawValue,
+        
+        HKQuantityTypeIdentifier.vo2Max.rawValue,
+        
         HKQuantityTypeIdentifier.height.rawValue,
-        HKQuantityTypeIdentifier.bodyMass.rawValue,
-        HKQuantityTypeIdentifier.heartRate.rawValue,
-        HKQuantityTypeIdentifier.vo2Max.rawValue
+        HKQuantityTypeIdentifier.bodyMass.rawValue
+        
     ]
     
     class func requestHealthDataAccessIfNeeded(dataTypes: [String]? = nil,

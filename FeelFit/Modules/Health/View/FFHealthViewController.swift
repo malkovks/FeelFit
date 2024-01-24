@@ -58,6 +58,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let scrollView: UIScrollView = UIScrollView(frame: .zero)
     private let chartView = OCKCartesianChartView(type: .bar)
     private let lineChartView = OCKCartesianChartView(type: .line)
+    private let activityChartView = OCKCartesianChartView(type: .bar)
+    private let refreshControl = UIRefreshControl()
+    
+    
     
     
     override func viewDidLoad() {
@@ -69,7 +73,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
         setupConstraints()
         setupChartView()
         setupScrollView()
+        setupRefreshControl()
         setupLineChartView()
+        setupActivityChartView()
         
         if isHealthKitAccess {
             setupBackgroundTask()
@@ -79,7 +85,16 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
 
-    
+    @objc private func didTapRefreshView(){
+        setupChartView()
+        setupLineChartView()
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadRows(at: self!.fixedIndexPath, with: .fade)
+            DispatchQueue.main.asyncAfter(deadline: .now()+1.5){
+                self?.refreshControl.endRefreshing()
+            }
+        }
+    }
     //MARK: - Setup CareKit chart
     func setupChartView(){
         chartView.contentStackView.distribution = .fillProportionally
@@ -89,11 +104,11 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         chartView.applyConfiguration()
         chartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
-        uploadSelectedData { value in
+        uploadSelectedData { [weak self] value in
             let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
             DispatchQueue.main.async {
-                let series = OCKDataSeries(values: stepValues, title: "Steps",color: FFResources.Colors.activeColor)
-                self.chartView.graphView.dataSeries = [series]
+                let series = OCKDataSeries(values: stepValues, title: self?.titleForTable ?? "Default" , color: FFResources.Colors.activeColor)
+                self?.chartView.graphView.dataSeries = [series]
             }
         }
     }
@@ -102,9 +117,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     private func setupLineChartView(){
         let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
-        
-        
-        
         
         lineChartView.contentStackView.distribution = .fillProportionally
         lineChartView.headerView.titleLabel.text = "VO 2 Max Comsuption"
@@ -118,7 +130,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
             DispatchQueue.main.async { [weak self] in
                 self?.lineChartView.graphView.dataSeries = series
             }
-            
         }
     }
     
@@ -152,9 +163,42 @@ class FFHealthViewController: UIViewController, SetupViewController {
             completion(healthModel)
         }
         healthStore.execute(query)
+    }
+    
+    private func setupActivityChartView(){
+        activityChartView.contentStackView.distribution = .fillProportionally
+        activityChartView.headerView.titleLabel.text = "Activity"
+        activityChartView.applyConfiguration()
+        
+        activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel()
+        let firstSeries = OCKDataSeries(values: [0,1,2,3,4,5,4,3,2], title: "Mobility", gradientStartColor: .systemRed, gradientEndColor: .systemGreen,size: 0.8)
+        let secondSeries = OCKDataSeries(values: [5,4,3,2,1,2,3,4,5], title: "Warm-Up", gradientStartColor: .systemBlue, gradientEndColor: .systemYellow,size: 0.8)
+        let thirdSeries = OCKDataSeries(values: [1,3,5,3,2,1,2,5,6], title: "Exercise", gradientStartColor: .systemGreen, gradientEndColor: .systemIndigo,size: 0.8)
+        
+        let caloriesId = HKQuantityTypeIdentifier.activeEnergyBurned.rawValue
+        let heartRate = HKQuantityTypeIdentifier.heartRate.rawValue
+        
+        
+        uploadSelectedData(id: caloriesId) { model in
+            let value: [CGFloat] = model.map { CGFloat($0.value) }
+            let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 2)
+            DispatchQueue.main.async {
+                self.activityChartView.graphView.dataSeries.append(series)
+            }
+        }
+        
+        uploadSelectedData(id: heartRate) { model in
+            let value: [CGFloat] = model.map { CGFloat($0.value) }
+            let series = OCKDataSeries(values: value, title: "Heart Rate", gradientStartColor: .systemBlue, gradientEndColor: .systemGreen, size: 2)
+            DispatchQueue.main.async {
+                self.activityChartView.graphView.dataSeries.append(series)
+            }
+        }
         
         
     }
+    
+    
     //MARK: - UIApplication background task
     func setupBackgroundTask(){
         UIApplication.shared.isIdleTimerDisabled = true
@@ -317,10 +361,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private func selectDataTypeIdentifier(_ dataTypeIdentifier: HKQuantityTypeIdentifier){
         userDefaults.setValue(dataTypeIdentifier.rawValue, forKey: "dataTypeIdentifier")
         self.dataTypeIdentifier = dataTypeIdentifier.rawValue
-        
-        
-        self.tableView.reloadRows(at: fixedIndexPath, with: .fade)
-        self.tableView.reloadData()
+        self.didTapRefreshView()
     }
     
     func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",data completion: @escaping (([HealthModelValue]) -> Void)){
@@ -332,10 +373,16 @@ class FFHealthViewController: UIViewController, SetupViewController {
             let startOfDay = calendar.startOfDay(for: now)
             let withStartDate =  calendar.date(byAdding: .day, value: -6, to: startOfDay)! //Force unwrap
             let interval = DateComponents(day: 1)
+            var options: HKStatisticsOptions = []
+            if id == HKQuantityTypeIdentifier.heartRate.rawValue {
+                options = .discreteAverage
+            } else {
+                options = .cumulativeSum
+            }
             let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
             let query = HKStatisticsCollectionQuery(quantityType: steps,
                                                     quantitySamplePredicate: predicate,
-                                                    options: .cumulativeSum,
+                                                    options: options,
                                                     anchorDate: startOfDay,
                                                     intervalComponents: interval)
             query.initialResultsHandler = { [weak self] query, results, error in
@@ -357,6 +404,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     case .activeEnergyBurned:
                         guard let calories = stats.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) else { return }
                         value.append(HealthModelValue(date: startDate, value: calories))
+                    case .heartRate:
+                        guard let heartRate = stats.averageQuantity()?.doubleValue(for: .count().unitDivided(by: .minute())) else { return }
+                        value.append(HealthModelValue(date: startDate, value: heartRate))
                     default: fatalError("Error getting data from health kit")
                     }
                     
@@ -368,7 +418,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
         }
-        
     }
     
     
@@ -389,6 +438,12 @@ class FFHealthViewController: UIViewController, SetupViewController {
         scrollView.showsVerticalScrollIndicator = true
         scrollView.isDirectionalLockEnabled = true
         scrollView.isScrollEnabled = true
+        scrollView.refreshControl = refreshControl
+        scrollView.alwaysBounceVertical = true
+    }
+    
+    func setupRefreshControl(){
+        refreshControl.addTarget(self, action: #selector(didTapRefreshView), for: .valueChanged)
     }
     
     func setupView() {
@@ -397,7 +452,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     func setupNavigationController() {
         title = "Health"
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "", imageName: "line.3.horizontal.decrease.circle", action: #selector(didTapChooseLoadingType), menu: nil)
     }
     
     func setupViewModel() {
@@ -439,15 +493,19 @@ extension FFHealthViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let mainView = UIView(frame: CGRect(x: 5, y: 5, width: tableView.frame.size.width-10, height: 40))
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: mainView.frame.size.width-90, height: 40))
+        let stackView = UIStackView()
+        stackView.frame = CGRect(x: 5, y: 5, width: tableView.frame.size.width-10, height: 40)
+        stackView.axis = .horizontal
+        stackView.distribution = .fillProportionally
+        
+        let label = UILabel()
         label.font = UIFont.headerFont(size: 24)
         label.numberOfLines = 1
         label.textAlignment = .left
         label.textColor = FFResources.Colors.detailTextColor
         label.text = titleForTable
         
-        let button = UIButton(frame: CGRect(x: mainView.frame.size.width-90, y: 10,width: 60, height: mainView.frame.size.height-5))
+        let button = UIButton()
         button.configuration = .tinted()
         button.configuration?.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
         button.configuration?.baseForegroundColor = FFResources.Colors.activeColor
@@ -455,9 +513,10 @@ extension FFHealthViewController: UITableViewDelegate {
         button.configuration?.cornerStyle = .capsule
         button.addTarget(self, action: #selector(didTapChooseLoadingType), for: .touchUpInside)
         
-        mainView.addSubview(label)
-        mainView.addSubview(button)
-        return mainView
+        stackView.addArrangedSubview(label)
+        stackView.addArrangedSubview(button)
+        
+        return stackView
     }
 }
 
@@ -467,6 +526,9 @@ extension FFHealthViewController {
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+        scrollView.addSubview(refreshControl)
+        
         
         scrollView.addSubview(tableView)
         tableView.snp.makeConstraints { make in
@@ -492,10 +554,17 @@ extension FFHealthViewController {
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
+        scrollView.addSubview(activityChartView)
+        activityChartView.snp.makeConstraints { make in
+            make.top.equalTo(lineChartView.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.6)
+            make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
+        }
+        
         scrollView.snp.makeConstraints { make in
-            make.bottom.equalTo(lineChartView.snp.bottom).offset(20)
+            make.bottom.equalTo(activityChartView.snp.bottom).offset(10)
             make.width.equalTo(view.snp.width)
-            make.height.equalTo(view.frame.height*2)
         }
     }
 }

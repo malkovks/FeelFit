@@ -20,6 +20,7 @@ extension OCKCartesianChartView {
         graphView.yMinimum = 0
     }
     
+    ///Function for display min and max Y for VO 2 Max 
     func setupCardioAxisY(){
         graphView.yMinimum = 10
         graphView.yMaximum = 70
