@@ -2,54 +2,56 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSContactsUsageDescription</key>
+	<string>Please allow access to Contacts for getting user&apos;s data for detail info</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>Malkov.KS.FeelFit.refresh</string>
 		<string>Malkov.KS.FeelFit.health_data_refresh</string>
 	</array>
-    <key>UIApplicationShortcutItems</key>
-    <array>
-        <dict>
-            <key>UIApplicationShortcutItemsType</key>
-            <string>NewsModule</string>
-            <key>UIApplicationShortcutItemIconSymbolName</key>
-            <string>newspaper</string>
-            <key>UIApplicationShortcutItemTitle</key>
-            <string>News</string>
-            <key>UIApplicationShortcutItemSubtitle</key>
-            <string>Open News window</string>
-        </dict>
-        <dict>
-            <key>UIApplicationShortcutItemsType</key>
-            <string>MusclesModule</string>
-            <key>UIApplicationShortcutItemIconSymbolName</key>
-            <string>figure.strengthtraining.traditional</string>
-            <key>UIApplicationShortcutItemTitle</key>
-            <string>Muscles</string>
-            <key>UIApplicationShortcutItemSubtitle</key>
-            <string>Open Muscles window</string>
-        </dict>
-        <dict>
-            <key>UIApplicationShortcutItemsType</key>
-            <string>TrainingPlanModule</string>
-            <key>UIApplicationShortcutItemIconSymbolName</key>
-            <string>checkmark.diamond</string>
-            <key>UIApplicationShortcutItemTitle</key>
-            <string>Plan</string>
-            <key>UIApplicationShortcutItemSubtitle</key>
-            <string>Open Plan window</string>
-        </dict>
-        <dict>
-            <key>UIApplicationShortcutItemsType</key>
-            <string>HealthModule</string>
-            <key>UIApplicationShortcutItemIconSymbolName</key>
-            <string>heart.text.square</string>
-            <key>UIApplicationShortcutItemTitle</key>
-            <string>Health</string>
-            <key>UIApplicationShortcutItemSubtitle</key>
-            <string>Open Health window</string>
-        </dict>
-    </array>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemsType</key>
+			<string>NewsModule</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>newspaper</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>News</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Open News window</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemsType</key>
+			<string>MusclesModule</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>figure.strengthtraining.traditional</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Muscles</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Open Muscles window</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemsType</key>
+			<string>TrainingPlanModule</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>checkmark.diamond</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Plan</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Open Plan window</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemsType</key>
+			<string>HealthModule</string>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>heart.text.square</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Health</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Open Health window</string>
+		</dict>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>youtube</string>

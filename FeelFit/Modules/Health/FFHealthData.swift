@@ -81,7 +81,14 @@ class FFHealthData {
         
         HKQuantityTypeIdentifier.height.rawValue,
         HKQuantityTypeIdentifier.bodyMass.rawValue
-        
+     
+    ]
+    
+    static let userIdentifiers: [HKCharacteristicType] = [
+        HKObjectType.characteristicType(forIdentifier: .biologicalSex)!,
+        HKObjectType.characteristicType(forIdentifier: .dateOfBirth)!,
+        HKObjectType.characteristicType(forIdentifier: .bloodType)!,
+        HKObjectType.characteristicType(forIdentifier: .fitzpatrickSkinType)!
     ]
     
     class func requestHealthDataAccessIfNeeded(dataTypes: [String]? = nil,

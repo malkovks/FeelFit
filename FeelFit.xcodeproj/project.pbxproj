@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A0059252B62B8CB000712D6 /* FFHealthUserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */; };
 		0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */; };
 		0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */; };
 		0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */; };
@@ -110,6 +111,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthUserProfileViewController.swift; sourceTree = "<group>"; };
 		0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CartesianChartView+Extension.swift"; sourceTree = "<group>"; };
 		0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
 		0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareKitSupport.swift; sourceTree = "<group>"; };
@@ -525,6 +527,7 @@
 			children = (
 				0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */,
 				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
+				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1014,6 +1017,7 @@
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
+				0A0059252B62B8CB000712D6 /* FFHealthUserProfileViewController.swift in Sources */,
 				0ABDEAFF2B173F3100BDDAFE /* FFAddExerciseViewController.swift in Sources */,
 				0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,

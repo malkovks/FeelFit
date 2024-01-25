@@ -10,8 +10,6 @@ import HealthKit
 import BackgroundTasks
 import UserNotifications
 import CareKit
-import CareKitUI
-import WatchConnectivity
 
 
 struct HealthModelValue {
@@ -21,12 +19,14 @@ struct HealthModelValue {
 
 class FFHealthViewController: UIViewController, SetupViewController {
     
+    
+    
     private let healthStore = HKHealthStore()
     private let careKitStore = OCKStore(name: "UserDataStore",type: .inMemory)
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
-    private let watchSession = WCSession.default
+//    private let watchSession = WCSession.default
     private let calendar = Calendar.current
     
     private var fixedIndexPath: [IndexPath] {
@@ -66,11 +66,25 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let button = UIButton(type: .custom)
+        button.tintColor = .systemRed
+        button.frame = CGRect(x: 0, y: 0, width: 34, height: 34)
+        button.layer.cornerRadius = button.frame.size.width/2
+        button.layer.masksToBounds = true
+        button.backgroundColor = .secondarySystemBackground
+        button.setImage(UIImage(systemName: "person.circle"), for: .normal)
+        button.tintColor = FFResources.Colors.activeColor
+        
+        button.addTarget(self, action: #selector(didTapOpenProfile), for: .touchUpInside)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        
         setupView()
         setupNavigationController()
         setupViewModel()
         setupTableView()
         setupConstraints()
+//        getUserMainData()
         setupChartView()
         setupScrollView()
         setupRefreshControl()
@@ -85,6 +99,16 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
 
+    //MARK: - Target Methods
+    @objc private func didTapOpenProfile(_ sender: UIButton){
+        let vc = FFHealthUserProfileViewController()
+        let navVC = FFNavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .automatic
+        navVC.isNavigationBarHidden = false
+        present(navVC, animated: true)
+    }
+    
+    ///Method for UIRefreshControl for updating data and reload view
     @objc private func didTapRefreshView(){
         setupChartView()
         setupLineChartView()
@@ -95,7 +119,37 @@ class FFHealthViewController: UIViewController, SetupViewController {
             }
         }
     }
+    ///Method for selecting data type identifier for uploading it and display to table view and chart view
+    @objc private func didTapChooseLoadingType(){
+        let title = "Select displaying data type"
+        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        for type in FFHealthData.allTypeQuantityTypeIdentifiers {
+            let actionTitle = getDataTypeName(type)
+            let action = UIAlertAction(title: actionTitle, style: .default) { [weak self] _ in
+                self?.selectDataTypeIdentifier(type)
+            }
+            alertController.addAction(action)
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        alertController.addAction(cancel)
+        present(alertController, animated: true)
+    }
     //MARK: - Setup CareKit chart
+    func getUserDataFromHealth(){
+        if !HKHealthStore.isHealthDataAvailable() {
+            print("Error. Health store is unavailable")
+        }
+        let readUserData = Set(FFHealthData.userIdentifiers)
+        healthStore.requestAuthorization(toShare: nil, read: readUserData) { success, error in
+            if success {
+                
+                
+            } else {
+                print("User did not give access to some of user identifiers")
+            }
+        }
+    }
+    
     func setupChartView(){
         chartView.contentStackView.distribution = .fillProportionally
         
@@ -171,9 +225,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
         activityChartView.applyConfiguration()
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel()
-        let firstSeries = OCKDataSeries(values: [0,1,2,3,4,5,4,3,2], title: "Mobility", gradientStartColor: .systemRed, gradientEndColor: .systemGreen,size: 0.8)
-        let secondSeries = OCKDataSeries(values: [5,4,3,2,1,2,3,4,5], title: "Warm-Up", gradientStartColor: .systemBlue, gradientEndColor: .systemYellow,size: 0.8)
-        let thirdSeries = OCKDataSeries(values: [1,3,5,3,2,1,2,5,6], title: "Exercise", gradientStartColor: .systemGreen, gradientEndColor: .systemIndigo,size: 0.8)
         
         let caloriesId = HKQuantityTypeIdentifier.activeEnergyBurned.rawValue
         let heartRate = HKQuantityTypeIdentifier.heartRate.rawValue
@@ -206,7 +257,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
             self?.stopBackgroundTaskRequest()
         })
         //repeat check value every 10 minutes in background
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true, block: { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60*10, repeats: true, block: { [weak self] _ in
             DispatchQueue.global(qos: .background).async {
                 self?.setupObserverQuery()
             }
@@ -309,20 +360,20 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     //MARK: - DONT DELETE
     ///function for collecting steps count from apple watch if it is available
-    func queryStepCountFromWatch(completion: @escaping (Result<Int,Error>) -> ()){
-        if WCSession.isSupported() {
-            if watchSession.isPaired && watchSession.isWatchAppInstalled {
-                watchSession.sendMessage(["request":"stepCount"]) { (reply) in
-                    guard let steps = reply["stepCount"] as? Int else { return }
-                    completion(.success(steps))
-                } errorHandler: { error in
-                    completion(.failure(error))
-                }
-            }
-        } else {
-            print("Apple watch is unavailable")
-        }
-    }
+//    func queryStepCountFromWatch(completion: @escaping (Result<Int,Error>) -> ()){
+//        if WCSession.isSupported() {
+//            if watchSession.isPaired && watchSession.isWatchAppInstalled {
+//                watchSession.sendMessage(["request":"stepCount"]) { (reply) in
+//                    guard let steps = reply["stepCount"] as? Int else { return }
+//                    completion(.success(steps))
+//                } errorHandler: { error in
+//                    completion(.failure(error))
+//                }
+//            }
+//        } else {
+//            print("Apple watch is unavailable")
+//        }
+//    }
     
     ///функция теста для вызова уведомления о количестве шагов пройденных пользователем
     func sendLocalNotification(){
@@ -339,22 +390,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 print("Did not complete to send notification. \(error.localizedDescription)")
             }
         }
-    }
-    
-    //MARK: - Action methods
-    @objc private func didTapChooseLoadingType(){
-        let title = "Select displaying data type"
-        let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        for type in FFHealthData.allTypeQuantityTypeIdentifiers {
-            let actionTitle = getDataTypeName(type)
-            let action = UIAlertAction(title: actionTitle, style: .default) { [weak self] _ in
-                self?.selectDataTypeIdentifier(type)
-            }
-            alertController.addAction(action)
-        }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        alertController.addAction(cancel)
-        present(alertController, animated: true)
     }
     
     //
@@ -385,11 +420,11 @@ class FFHealthViewController: UIViewController, SetupViewController {
                                                     options: options,
                                                     anchorDate: startOfDay,
                                                     intervalComponents: interval)
-            query.initialResultsHandler = { [weak self] query, results, error in
+            query.initialResultsHandler = { query, results, error in
                 guard error == nil,
                       let results = results else {
                     let title = "Error getting initial results with handler"
-                    self?.alertError(title: title)
+                    print(title)
                     return
                 }
                 results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
@@ -528,7 +563,7 @@ extension FFHealthViewController {
         }
         
         scrollView.addSubview(refreshControl)
-        
+
         
         scrollView.addSubview(tableView)
         tableView.snp.makeConstraints { make in
