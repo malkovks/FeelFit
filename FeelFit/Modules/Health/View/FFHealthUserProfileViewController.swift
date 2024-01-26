@@ -12,8 +12,22 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     private let headerTextSections = [
         "",
         "Functions",
-        "Сonfidentiality"
+        "Сonfidentiality",
+        ""
     ]
+    
+    private let textLabelRows = [
+        ["Health information"
+         ,"Medical Card"],
+        ["Health Checklist",
+         "Notification"],
+        ["Application and services",
+         "Scientific Research",
+        "Devices"],
+        ["Export Medical Data"]
+    ]
+    
+    private let imagePicker = UIImagePickerController()
     
     private var scrollView: UIScrollView = UIScrollView(frame: .zero)
     private var userImageView: UIImageView = UIImageView(frame: .zero)
@@ -32,8 +46,43 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         self.dismiss(animated: true)
     }
     
+    @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
+        let vc = UIImagePickerController()
+        
+    }
+    
+    private func openImagePicker(_ sourceType: UIImagePickerController.SourceType){
+        
+    }
+    
+    private func selectedSize(_ size: UIImagePickerController){
+        
+    }
+    
+    private func selectImageSizeMenu(){
+        let image = UIImage(systemName: "photo.fill")
+        
+        let children = [
+            UIAction(title: "Small", handler: { [weak self] _ in
+                
+            }),
+            UIAction(title: "Medium", handler: { [weak self] _ in
+                
+            }),
+            UIAction(title: "Large", handler: { [weak self] _ in
+                
+            })
+        ]
+        
+        let menu = UIMenu(title: "Size", subtitle: "Select image size", image: image,children: children)
+    }
+    
     
     //MARK: Set up methods
+    func setupImagePickerView(){
+        imagePicker.delegate = self
+    }
+    
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         setupNavigationController()
@@ -42,6 +91,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         setupUserLabel()
         setupUserImageView()
         setupScrollView()
+        setupImagePickerView()
         setupConstraints()
     }
     
@@ -57,9 +107,11 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     private func setupUserImageView(){
         userImageView = UIImageView(image: UIImage(systemName: "person.crop.circle"))
         userImageView.tintColor = FFResources.Colors.activeColor
-        userImageView.layer.cornerRadius = 12
-        userImageView.layer.masksToBounds = true
         userImageView.isUserInteractionEnabled = true
+        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
+        userImageView.layer.masksToBounds = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
+        userImageView.addGestureRecognizer(tapGesture)
     }
     
     private func setupUserLabel(){
@@ -88,6 +140,14 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         tableView.isScrollEnabled = false
         tableView.backgroundColor = .clear
         tableView.bounces = false
+        tableView.estimatedSectionFooterHeight = 0
+        tableView.estimatedSectionHeaderHeight = 44
+    }
+}
+
+extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
     }
 }
 
@@ -97,13 +157,14 @@ extension FFHealthUserProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        textLabelRows[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "userHealthCell", for: indexPath)
         cell.backgroundColor = .systemBackground
-        cell.textLabel?.text = "Section number \(indexPath.section) and Text Label at index path \(indexPath.row)"
+        cell.textLabel?.text = textLabelRows[indexPath.section][indexPath.row]
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 }
@@ -118,18 +179,19 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 30
+        return 44
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 30
+        return 0
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel(frame: CGRect(x: 5, y: 2, width: tableView.frame.width-10, height: 26))
+        let label = UILabel(frame: CGRect(x: 5, y: 5, width: tableView.frame.width-10, height: 34))
         label.font = UIFont.textLabelFont(size: 24)
         label.text = headerTextSections[section]
-        let customView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 30))
+        label.textAlignment = .left
+        let customView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 44))
         customView.addSubview(label)
         return customView
     }
@@ -163,7 +225,8 @@ extension FFHealthUserProfileViewController {
         tableView.snp.makeConstraints { make in
             make.top.equalTo(userFullNameLabel.snp.bottom)
             make.centerX.equalToSuperview()
-            make.height.equalTo(view.frame.size.height).multipliedBy(1.2)
+            make.height.greaterThanOrEqualToSuperview().multipliedBy(0.8)
+            make.height.lessThanOrEqualToSuperview().multipliedBy(2)
             make.width.equalToSuperview()
         }
         
