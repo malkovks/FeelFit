@@ -1,4 +1,4 @@
-//
+    //
 //  FFHealthUserProfileViewController.swift
 //  FeelFit
 //
@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Photos
 
 class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
@@ -47,41 +48,62 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
-        let vc = UIImagePickerController()
-        
+        let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
+        alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self] _ in
+            self?.openImagePicker(.camera)
+        }))
+        alertController.addAction(UIAlertAction(title: "Open Library", style: .default,handler: { [weak self] _ in
+            self?.openImagePicker(.photoLibrary)
+        }))
+        alertController.addAction(UIAlertAction(title: "Open Saved Photo", style: .default,handler: { [weak self] _ in
+            self?.openImagePicker(.savedPhotosAlbum)
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alertController, animated: true)
     }
     
     private func openImagePicker(_ sourceType: UIImagePickerController.SourceType){
+        var status = false
+        returnCameraAccessStatus { success in
+            status = success
+        }
+        requestPhotoLibraryAccess { success in
+            status = success
+        }
+        if status {
+            imagePicker.sourceType = .photoLibrary
+            present(imagePicker, animated: true)
+        } else {
+            alertError(title: "Error",message: "You did not give access to Camera or Media. Check system Settings for application")
+        }
         
     }
     
-    private func selectedSize(_ size: UIImagePickerController){
-        
-    }
-    
-    private func selectImageSizeMenu(){
-        let image = UIImage(systemName: "photo.fill")
-        
-        let children = [
-            UIAction(title: "Small", handler: { [weak self] _ in
-                
-            }),
-            UIAction(title: "Medium", handler: { [weak self] _ in
-                
-            }),
-            UIAction(title: "Large", handler: { [weak self] _ in
-                
-            })
-        ]
-        
-        let menu = UIMenu(title: "Size", subtitle: "Select image size", image: image,children: children)
-    }
+//    private func selectedSize(_ size: UIImagePickerController){
+//        
+//    }
+//    
+//    private func selectImageSizeMenu(){
+//        let image = UIImage(systemName: "photo.fill")
+//        
+//        let children = [
+//            UIAction(title: "Small", handler: { [weak self] _ in
+//                
+//            }),
+//            UIAction(title: "Medium", handler: { [weak self] _ in
+//                
+//            }),
+//            UIAction(title: "Large", handler: { [weak self] _ in
+//                
+//            })
+//        ]
+//        
+//        let menu = UIMenu(title: "Size", subtitle: "Select image size", image: image,children: children)
+//    }
     
     
     //MARK: Set up methods
-    func setupImagePickerView(){
-        imagePicker.delegate = self
-    }
+    
     
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
@@ -100,18 +122,34 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         FFNavigationController().navigationBar.backgroundColor = .secondarySystemBackground
     }
     
+    func setupImagePickerView(){
+        imagePicker.delegate = self
+    }
+    
     func setupViewModel() {
         
     }
     
     private func setupUserImageView(){
+        
         userImageView = UIImageView(image: UIImage(systemName: "person.crop.circle"))
+        userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
         userImageView.tintColor = FFResources.Colors.activeColor
         userImageView.isUserInteractionEnabled = true
         userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
         userImageView.layer.masksToBounds = true
+        userImageView.contentMode = .scaleAspectFill
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
         userImageView.addGestureRecognizer(tapGesture)
+        
+        let data = UserDefaults.standard.data(forKey: "userImageData")!
+        
+        let decoded = try! PropertyListDecoder().decode(Data.self, from: data)
+        let image = UIImage(data: decoded)
+        DispatchQueue.main.async {
+            self.userImageView.image = image
+        }
+        
     }
     
     private func setupUserLabel(){
@@ -147,6 +185,17 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
 
 extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+            dismiss(animated: true)
+            return
+        }
+        userImageView.image = image
+        guard let data = image.jpegData(compressionQuality: 1.0) else { return }
+        let encodedImage = try! PropertyListEncoder().encode(data)
+        
+        UserDefaults.standard.set(encodedImage, forKey: "userImageData")
+        dismiss(animated: true)
+        
         
     }
 }

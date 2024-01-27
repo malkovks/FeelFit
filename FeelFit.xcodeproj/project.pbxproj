@@ -25,6 +25,7 @@
 		0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347E12AF9B2C1002C161C /* Kingfisher */; };
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
+		0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
@@ -128,6 +129,7 @@
 		0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewModel.swift; sourceTree = "<group>"; };
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
+		0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFilesSupport.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -233,6 +235,7 @@
 			children = (
 				0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */,
 				0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */,
+				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1037,6 +1040,7 @@
 				0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */,
 				0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
+				0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
 				0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
@@ -1247,8 +1251,11 @@
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to Camera for taking pictures";
+				INFOPLIST_KEY_NSContactsUsageDescription = "Please allow access to Contacts for getting user's data for detail info";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow application to get access of your health data for importing it for correct work";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow this app to write health data provided from your doctor or clinician.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please give access for taking and using your personal media";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
@@ -1282,8 +1289,11 @@
 				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to Camera for taking pictures";
+				INFOPLIST_KEY_NSContactsUsageDescription = "Please allow access to Contacts for getting user's data for detail info";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow application to get access of your health data for importing it for correct work";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow this app to write health data provided from your doctor or clinician.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please give access for taking and using your personal media";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = "";

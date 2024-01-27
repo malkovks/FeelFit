@@ -10,6 +10,7 @@ import HealthKit
 import BackgroundTasks
 import UserNotifications
 import CareKit
+import AVFoundation
 
 
 struct HealthModelValue {
@@ -121,6 +122,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     ///Method for selecting data type identifier for uploading it and display to table view and chart view
     @objc private func didTapChooseLoadingType(){
+        
         let title = "Select displaying data type"
         let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         for type in FFHealthData.allTypeQuantityTypeIdentifiers {
