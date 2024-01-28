@@ -7,6 +7,7 @@
 
 import UIKit
 import Photos
+import PhotosUI
 
 class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
@@ -16,6 +17,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         "Сonfidentiality",
         ""
     ]
+    
     
     private let textLabelRows = [
         ["Health information"
@@ -28,7 +30,11 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         ["Export Medical Data"]
     ]
     
-    private let imagePicker = UIImagePickerController()
+    private var pickerConfiguration: PHPickerConfiguration = PHPickerConfiguration(photoLibrary: .shared())
+    private let cameraViewController = UIImagePickerController()
+    private var pickerViewController : PHPickerViewController {
+        return PHPickerViewController(configuration: self.pickerConfiguration)
+    }
     
     private var scrollView: UIScrollView = UIScrollView(frame: .zero)
     private var userImageView: UIImageView = UIImageView(frame: .zero)
@@ -50,19 +56,26 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
         let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self] _ in
-            self?.openImagePicker(.camera)
+            self?.openCamera()
         }))
         alertController.addAction(UIAlertAction(title: "Open Library", style: .default,handler: { [weak self] _ in
-            self?.openImagePicker(.photoLibrary)
-        }))
-        alertController.addAction(UIAlertAction(title: "Open Saved Photo", style: .default,handler: { [weak self] _ in
-            self?.openImagePicker(.savedPhotosAlbum)
+            self?.didTapOpenPickerController()
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alertController, animated: true)
     }
     
-    private func openImagePicker(_ sourceType: UIImagePickerController.SourceType){
+    private func didTapOpenPickerController(){
+        checkAccessToCameraAndMedia { status in
+            if status {
+                present(pickerViewController, animated: true)
+            }else {
+                self.alertError(message: "You did not give access to camera and media. Allow in system settings.")
+            }
+        }
+    }
+    
+    private func checkAccessToCameraAndMedia(handler: (_ status: Bool) -> ()){
         var status = false
         returnCameraAccessStatus { success in
             status = success
@@ -70,15 +83,18 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         requestPhotoLibraryAccess { success in
             status = success
         }
-        if status {
-            imagePicker.sourceType = .photoLibrary
-            present(imagePicker, animated: true)
-        } else {
-            alertError(title: "Error",message: "You did not give access to Camera or Media. Check system Settings for application")
-        }
-        
+        handler(status)
     }
     
+    private func openCamera(){
+        checkAccessToCameraAndMedia { status in
+            if status {
+                self.present(cameraViewController, animated: true)
+            } else {
+                self.alertError(message: "You did not give access to camera and media. Allow in system settings.")
+            }
+        }
+    }
 //    private func selectedSize(_ size: UIImagePickerController){
 //        
 //    }
@@ -113,8 +129,26 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         setupUserLabel()
         setupUserImageView()
         setupScrollView()
-        setupImagePickerView()
+        setupPhotoPickerView()
         setupConstraints()
+        setupCameraViewController()
+    }
+    
+    private func setupPhotoPickerView(){
+        let newFilter = PHPickerFilter.any(of: [.images,.livePhotos])
+        pickerConfiguration.filter = newFilter
+        pickerConfiguration.preferredAssetRepresentationMode = .current
+        pickerConfiguration.selection = .ordered
+        pickerConfiguration.selectionLimit = 1
+        pickerViewController.delegate = self
+    }
+    
+    private func setupCameraViewController(){
+        cameraViewController.delegate = self
+        cameraViewController.sourceType = .camera
+        cameraViewController.mediaTypes = ["public.image"]
+        cameraViewController.showsCameraControls = true
+        cameraViewController.cameraCaptureMode = .photo
     }
     
     func setupNavigationController() {
@@ -122,10 +156,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         FFNavigationController().navigationBar.backgroundColor = .secondarySystemBackground
     }
     
-    func setupImagePickerView(){
-        imagePicker.delegate = self
-    }
-    
+
     func setupViewModel() {
         
     }
@@ -183,20 +214,49 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
 }
 
-extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
-            dismiss(animated: true)
-            return
+        guard let image = info[UIImagePickerController.InfoKey.livePhoto] as? UIImage else { print("Error getting image from camera");self.dismiss(animated: true);  return }
+        DispatchQueue.main.async {
+            self.userImageView.image = image
+            
         }
-        userImageView.image = image
+    }
+}
+
+extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        //Разобраться с закрытием и добавлением фото в userImageView
+       convertSelectedImage(results)
+    }
+    
+    private func convertSelectedImage(_ results: [PHPickerResult]){
+        guard let result = results.first else { return }
+        let itemProvider = result.itemProvider
+        if itemProvider.canLoadObject(ofClass: UIImage.self) {
+            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                guard let image = image as? UIImage else {
+                    print("не получили изображение")
+                    self?.dismiss(animated: true)
+                    return
+                }
+                self?.saveSelectedImage(image)
+                DispatchQueue.main.async {
+                    self?.userImageView = UIImageView(image: image)
+                    self?.pickerViewController.dismiss(animated: true)
+                }
+                
+            }
+        }
+    }
+    
+    func saveSelectedImage(_ image: UIImage){
         guard let data = image.jpegData(compressionQuality: 1.0) else { return }
         let encodedImage = try! PropertyListEncoder().encode(data)
         
         UserDefaults.standard.set(encodedImage, forKey: "userImageData")
-        dismiss(animated: true)
-        
-        
     }
 }
 
