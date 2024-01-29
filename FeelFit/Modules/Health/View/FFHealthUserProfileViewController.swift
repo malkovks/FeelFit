@@ -30,16 +30,18 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         ["Export Medical Data"]
     ]
     
+    private var userImage: UIImage = UIImage(systemName: "person.crop.circle")!
+    private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    
     private var pickerConfiguration: PHPickerConfiguration = PHPickerConfiguration(photoLibrary: .shared())
     private let cameraViewController = UIImagePickerController()
-    private var pickerViewController : PHPickerViewController {
-        return PHPickerViewController(configuration: self.pickerConfiguration)
-    }
+    private var pickerViewController : PHPickerViewController!
     
     private var scrollView: UIScrollView = UIScrollView(frame: .zero)
     private var userImageView: UIImageView = UIImageView(frame: .zero)
     private var userFullNameLabel: UILabel = UILabel(frame: .zero)
     private var tableView: UITableView = UITableView(frame: .zero)
+    
 
 
     override func viewDidLoad() {
@@ -61,6 +63,10 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         alertController.addAction(UIAlertAction(title: "Open Library", style: .default,handler: { [weak self] _ in
             self?.didTapOpenPickerController()
         }))
+        alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+            self?.deleteUserImage()
+            
+        }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alertController, animated: true)
     }
@@ -68,6 +74,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     private func didTapOpenPickerController(){
         checkAccessToCameraAndMedia { status in
             if status {
+                setupPhotoPickerView()
                 present(pickerViewController, animated: true)
             }else {
                 self.alertError(message: "You did not give access to camera and media. Allow in system settings.")
@@ -95,28 +102,65 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
             }
         }
     }
-//    private func selectedSize(_ size: UIImagePickerController){
-//        
-//    }
-//    
-//    private func selectImageSizeMenu(){
-//        let image = UIImage(systemName: "photo.fill")
-//        
-//        let children = [
-//            UIAction(title: "Small", handler: { [weak self] _ in
-//                
-//            }),
-//            UIAction(title: "Medium", handler: { [weak self] _ in
-//                
-//            }),
-//            UIAction(title: "Large", handler: { [weak self] _ in
-//                
-//            })
-//        ]
-//        
-//        let menu = UIMenu(title: "Size", subtitle: "Select image size", image: image,children: children)
-//    }
     
+    // Не нужен
+    private func compressImageWeight(_ image: UIImage,_ size: CGFloat) {
+        guard let data = image.jpegData(compressionQuality: size) else { return }
+        let nsImageData = NSData(data: data)
+        let imageSize: Int = nsImageData.count
+        print("Image size \(Double(imageSize)/1000)")
+    }
+    
+    private func saveUserImage(_ image: UIImage,fileName: String){
+        guard let data = image.jpegData(compressionQuality: 1.0) else { return }
+        let filesURL = getDocumentaryURL().appendingPathComponent(fileName)
+        do {
+            try data.write(to: filesURL)
+            UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
+            userImageFileName = fileName
+        } catch {
+            fatalError("Error saving to file url. Check the way to save data")
+        }
+    }
+    
+    private func loadUserImage() -> UIImage? {
+        UserDefaults.standard.set(nil, forKey: "userImageData")
+        let filesURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
+        do {
+            let imageData = try Data(contentsOf: filesURL)
+            return UIImage(data: imageData)
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
+    private func deleteUserImage() {
+        let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+            DispatchQueue.main.async {
+                self.userImageView = UIImageView(image: UIImage(systemName: "person.crop.circle"))
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func getDocumentaryURL() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let directory = paths.first!
+        return directory
+    }
+    
+    private func isUserImageSavedInDirectory() -> Bool {
+        let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            return true
+        } else {
+            return false
+        }
+    }
     
     //MARK: Set up methods
     
@@ -140,6 +184,8 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         pickerConfiguration.preferredAssetRepresentationMode = .current
         pickerConfiguration.selection = .ordered
         pickerConfiguration.selectionLimit = 1
+        pickerConfiguration.mode = .default
+        pickerViewController = PHPickerViewController(configuration: pickerConfiguration)
         pickerViewController.delegate = self
     }
     
@@ -163,7 +209,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
     private func setupUserImageView(){
         
-        userImageView = UIImageView(image: UIImage(systemName: "person.crop.circle"))
+        userImageView = UIImageView(image: userImage)
         userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
         userImageView.tintColor = FFResources.Colors.activeColor
         userImageView.isUserInteractionEnabled = true
@@ -173,14 +219,11 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
         userImageView.addGestureRecognizer(tapGesture)
         
-        let data = UserDefaults.standard.data(forKey: "userImageData")!
-        
-        let decoded = try! PropertyListDecoder().decode(Data.self, from: data)
-        let image = UIImage(data: decoded)
-        DispatchQueue.main.async {
-            self.userImageView.image = image
+        if let image = loadUserImage() {
+            userImageView.image = image
+        } else {
+            print("error getting image from file path url ")
         }
-        
     }
     
     private func setupUserLabel(){
@@ -227,36 +270,38 @@ extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & U
 extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
+        dismiss(animated: true)
+        
         //Разобраться с закрытием и добавлением фото в userImageView
        convertSelectedImage(results)
     }
     
     private func convertSelectedImage(_ results: [PHPickerResult]){
+        let fileName = "userImage.jpeg"
         guard let result = results.first else { return }
         let itemProvider = result.itemProvider
         if itemProvider.canLoadObject(ofClass: UIImage.self) {
             itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
                 guard let image = image as? UIImage else {
-                    print("не получили изображение")
                     self?.dismiss(animated: true)
                     return
                 }
-                self?.saveSelectedImage(image)
-                DispatchQueue.main.async {
-                    self?.userImageView = UIImageView(image: image)
-                    self?.pickerViewController.dismiss(animated: true)
-                }
                 
+                if !self!.isUserImageSavedInDirectory() {
+                    self?.deleteUserImage()
+                    self?.saveUserImage(image, fileName: fileName)
+                    DispatchQueue.main.async {
+                        self?.userImageView.image = image
+                    }
+                } else {
+                    self?.saveUserImage(image, fileName: fileName)
+                    DispatchQueue.main.async {
+                        self?.userImageView.image = image
+                    }
+                }
+                self?.userImage = image
             }
         }
-    }
-    
-    func saveSelectedImage(_ image: UIImage){
-        guard let data = image.jpegData(compressionQuality: 1.0) else { return }
-        let encodedImage = try! PropertyListEncoder().encode(data)
-        
-        UserDefaults.standard.set(encodedImage, forKey: "userImageData")
     }
 }
 
@@ -315,6 +360,7 @@ extension FFHealthUserProfileViewController {
         
         let imageSize = view.frame.size.width/5
         
+        
         scrollView.addSubview(userImageView)
         userImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
@@ -324,7 +370,7 @@ extension FFHealthUserProfileViewController {
         
         scrollView.addSubview(userFullNameLabel)
         userFullNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(userImageView.snp.bottom).offset(10)
+            make.top.equalTo(userImageView.snp.bottom)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalToSuperview().multipliedBy(0.1)
@@ -345,4 +391,10 @@ extension FFHealthUserProfileViewController {
         }
         
     }
+    
+    #Preview {
+        return FFHealthUserProfileViewController()
+    }
+
 }
+

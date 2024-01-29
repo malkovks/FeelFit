@@ -604,4 +604,10 @@ extension FFHealthViewController {
             make.width.equalTo(view.snp.width)
         }
     }
+    
+    #Preview {
+        return FFHealthViewController()
+    }
 }
+
+
