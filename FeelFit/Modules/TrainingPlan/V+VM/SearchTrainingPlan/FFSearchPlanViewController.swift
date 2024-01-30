@@ -42,7 +42,7 @@ class FFSearchPlanViewController: UIViewController, SetupViewController {
     func setupNavigationController() {
         searchController.searchResultsUpdater = self
         searchController.searchBar.placeholder = "Enter the date"
-        searchController.searchBar.keyboardType = .numbersAndPunctuation
+        searchController.searchBar.keyboardType = .asciiCapable
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.becomeFirstResponder()
         navigationItem.searchController = searchController
@@ -104,7 +104,7 @@ extension FFSearchPlanViewController: UITableViewDataSource {
         let image = UIImageView(image: UIImage(systemName: "arrow.up.forward.app"))
         cell.accessoryView = image
         cell.textLabel?.text = DateFormatter.localizedString(from: trainingPlan.trainingDate, dateStyle: .short, timeStyle: .short)
-        cell.detailTextLabel?.text = trainingPlan.trainingName + trainingPlan.trainingNotes
+        cell.detailTextLabel?.text = "Title: " +  trainingPlan.trainingName + ". Notes: " + trainingPlan.trainingNotes
         return cell
     }
 }

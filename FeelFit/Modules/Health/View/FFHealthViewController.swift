@@ -27,7 +27,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userDefaults = UserDefaults.standard
-//    private let watchSession = WCSession.default
     private let calendar = Calendar.current
     
     private var fixedIndexPath: [IndexPath] {
@@ -58,9 +57,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private var tableView: UITableView!
     private let scrollView: UIScrollView = UIScrollView(frame: .zero)
     private let chartView = OCKCartesianChartView(type: .bar)
-    private let lineChartView = OCKCartesianChartView(type: .line)
     private let activityChartView = OCKCartesianChartView(type: .bar)
     private let refreshControl = UIRefreshControl()
+    private var segmentController = UISegmentedControl(frame: .zero)
     
     
     
@@ -85,18 +84,18 @@ class FFHealthViewController: UIViewController, SetupViewController {
         setupViewModel()
         setupTableView()
         setupConstraints()
-//        getUserMainData()
         setupChartView()
         setupScrollView()
         setupRefreshControl()
-        setupLineChartView()
         setupActivityChartView()
+        setupSegmentController()
         
         if isHealthKitAccess {
             setupBackgroundTask()
             requestAccessToBackgroundMode()
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
+            
         }
     }
 
@@ -112,7 +111,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     ///Method for UIRefreshControl for updating data and reload view
     @objc private func didTapRefreshView(){
         setupChartView()
-        setupLineChartView()
+        setupView()
         DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadRows(at: self!.fixedIndexPath, with: .fade)
             DispatchQueue.main.asyncAfter(deadline: .now()+1.5){
@@ -136,20 +135,12 @@ class FFHealthViewController: UIViewController, SetupViewController {
         alertController.addAction(cancel)
         present(alertController, animated: true)
     }
-    //MARK: - Setup CareKit chart
-    func getUserDataFromHealth(){
-        if !HKHealthStore.isHealthDataAvailable() {
-            print("Error. Health store is unavailable")
-        }
-        let readUserData = Set(FFHealthData.userIdentifiers)
-        healthStore.requestAuthorization(toShare: nil, read: readUserData) { success, error in
-            if success {
-                
-                
-            } else {
-                print("User did not give access to some of user identifiers")
-            }
-        }
+    
+    func setupSegmentController(){
+        let items = ["WK" ,"MTH", "6 MTH", "YEAR"]
+        segmentController = UISegmentedControl(items: items)
+        segmentController.tintColor = FFResources.Colors.activeColor
+        segmentController.backgroundColor = .red
     }
     
     func setupChartView(){
@@ -165,26 +156,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
             DispatchQueue.main.async {
                 let series = OCKDataSeries(values: stepValues, title: self?.titleForTable ?? "Default" , color: FFResources.Colors.activeColor)
                 self?.chartView.graphView.dataSeries = [series]
-            }
-        }
-    }
-    
-    
-    
-    private func setupLineChartView(){
-        let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
-        
-        lineChartView.contentStackView.distribution = .fillProportionally
-        lineChartView.headerView.titleLabel.text = "VO 2 Max Comsuption"
-        lineChartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkers(currentDate: Date(), firstDate: startDate)
-        lineChartView.applyConfiguration()
-        lineChartView.setupCardioAxisY()
-        
-        uploadAverageOxygenData { model in
-            let value: [CGFloat] = model.map { CGFloat($0.value) }
-            let series = [OCKDataSeries(values: value, title: "VO 2 Average value",size: 1, color: FFResources.Colors.darkPurple)]
-            DispatchQueue.main.async { [weak self] in
-                self?.lineChartView.graphView.dataSeries = series
             }
         }
     }
@@ -234,21 +205,11 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         uploadSelectedData(id: caloriesId) { model in
             let value: [CGFloat] = model.map { CGFloat($0.value) }
-            let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 2)
+            let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             DispatchQueue.main.async {
                 self.activityChartView.graphView.dataSeries.append(series)
             }
         }
-        
-        uploadSelectedData(id: heartRate) { model in
-            let value: [CGFloat] = model.map { CGFloat($0.value) }
-            let series = OCKDataSeries(values: value, title: "Heart Rate", gradientStartColor: .systemBlue, gradientEndColor: .systemGreen, size: 2)
-            DispatchQueue.main.async {
-                self.activityChartView.graphView.dataSeries.append(series)
-            }
-        }
-        
-        
     }
     
     
@@ -360,23 +321,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
         
     }
-    //MARK: - DONT DELETE
-    ///function for collecting steps count from apple watch if it is available
-//    func queryStepCountFromWatch(completion: @escaping (Result<Int,Error>) -> ()){
-//        if WCSession.isSupported() {
-//            if watchSession.isPaired && watchSession.isWatchAppInstalled {
-//                watchSession.sendMessage(["request":"stepCount"]) { (reply) in
-//                    guard let steps = reply["stepCount"] as? Int else { return }
-//                    completion(.success(steps))
-//                } errorHandler: { error in
-//                    completion(.failure(error))
-//                }
-//            }
-//        } else {
-//            print("Apple watch is unavailable")
-//        }
-//    }
-    
     ///функция теста для вызова уведомления о количестве шагов пройденных пользователем
     func sendLocalNotification(){
         let content = UNMutableNotificationContent()
@@ -457,6 +401,11 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
     
+    func saveDataToCareKitStore(_ taskIdentifier: String, units: HKUnit,_ values: [HealthModelValue]) {
+        
+        let outcome = OCKOutcome(taskID: .init(taskIdentifier), taskOccurrenceIndex: 0, values: [])
+    }
+    
     
     //MARK: Setup methods
     func setupTableView(){
@@ -467,6 +416,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         tableView.register(FFHealthTableViewCell.self, forCellReuseIdentifier: FFHealthTableViewCell.identifier)
         tableView.bounces = false
         tableView.allowsSelection = false
+        tableView.setupAppearanceShadow()
     }
     
     func setupScrollView(){
@@ -484,7 +434,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     func setupView() {
-        view.backgroundColor = FFResources.Colors.lightBackgroundColor
+        view.backgroundColor = FFResources.Colors.backgroundColor
+        isHealthKitAccess = UserDefaults.standard.bool(forKey: "healthKitAccess")
     }
     
     func setupNavigationController() {
@@ -498,9 +449,17 @@ class FFHealthViewController: UIViewController, SetupViewController {
 
 extension FFHealthViewController: OCKChartViewDelegate {
     func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
-        //попробовать к примеру при нажатии на chartView переход на отдельный контроллер для показа всех деталей
+        if chartView == activityChartView {
+            let configuration: OCKDataSeriesConfiguration = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Steps", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, markerSize: 5, eventAggregator: .countOutcomeValues)
+            
+            let syncrh = OCKSynchronizedStoreManager(wrapping: careKitStore)
+            let vc = FFHealthCartesianChartViewController(plotType: .bar, selectedDate: Date(), configurations: [configuration], storeManager: syncrh )
+        
+        }
     }
-    
+}
+
+class CustomSimpleTaskViewSynchronizer: OCKSimpleTaskViewSynchronizer {
     
 }
 
@@ -516,8 +475,6 @@ extension FFHealthViewController: UITableViewDataSource {
         }
         return cell
     }
-    
-    
 }
 
 extension FFHealthViewController: UITableViewDelegate {
@@ -558,6 +515,7 @@ extension FFHealthViewController: UITableViewDelegate {
 }
 
 extension FFHealthViewController {
+    
     private func setupConstraints(){
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in
@@ -565,7 +523,7 @@ extension FFHealthViewController {
         }
         
         scrollView.addSubview(refreshControl)
-
+        
         
         scrollView.addSubview(tableView)
         tableView.snp.makeConstraints { make in
@@ -583,17 +541,9 @@ extension FFHealthViewController {
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
-        scrollView.addSubview(lineChartView)
-        lineChartView.snp.makeConstraints { make in
-            make.top.equalTo(chartView.snp.bottom).offset(20)
-            make.centerX.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.6)
-            make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
-        }
-        
         scrollView.addSubview(activityChartView)
         activityChartView.snp.makeConstraints { make in
-            make.top.equalTo(lineChartView.snp.bottom).offset(20)
+            make.top.equalTo(chartView.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
@@ -603,10 +553,6 @@ extension FFHealthViewController {
             make.bottom.equalTo(activityChartView.snp.bottom).offset(10)
             make.width.equalTo(view.snp.width)
         }
-    }
-    
-    #Preview {
-        return FFHealthViewController()
     }
 }
 
