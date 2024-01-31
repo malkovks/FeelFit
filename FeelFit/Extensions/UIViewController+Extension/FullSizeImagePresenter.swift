@@ -11,7 +11,7 @@ import Alamofire
 extension UIViewController {
     /// Function for opening image in custom created view
     /// - Parameter url: link of image which will opening
-    func showFullSizeImage(url: String){
+    func showFullSizeImage(url: String,image: UIImage = UIImage(systemName: "photo")!){
         let vc = FFNewsImageView()
         vc.isOpened = { opened in
             if !opened {
@@ -19,16 +19,20 @@ extension UIViewController {
                 self.tabBarController?.tabBar.isHidden = false
             }
         }
-        guard let url = URL(string: url) else { return }
-        AF.request(url,method: .get).response { response in
-            switch response.result {
-            case .success(let imageData):
-                let image = UIImage(data: imageData ?? Data(),scale: 1)
-                vc.imageView.image = image
-            case .failure(_):
-                vc.imageView.image = UIImage(systemName: "photo")
+        if let url = URL(string: url) {
+            AF.request(url,method: .get).response { response in
+                switch response.result {
+                case .success(let imageData):
+                    let image = UIImage(data: imageData ?? Data(),scale: 1)
+                    vc.imageView.image = image
+                case .failure(_):
+                    vc.imageView.image = UIImage(systemName: "photo")
+                }
             }
+        } else {
+            vc.imageView.image = image
         }
+        
         self.view.addSubview(vc)
         vc.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)

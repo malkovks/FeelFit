@@ -16,6 +16,9 @@ import AVFoundation
 struct HealthModelValue {
     let date: Date
     let value: Double
+    let unit: HKUnit
+    ///Identifier for HealthKit item like HKQuantityTypeIdentifier or HKObjectType string type
+    let identifier: String
 }
 
 class FFHealthViewController: UIViewController, SetupViewController {
@@ -72,7 +75,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         button.frame = CGRect(x: 0, y: 0, width: 34, height: 34)
         button.layer.cornerRadius = button.frame.size.width/2
         button.layer.masksToBounds = true
-        button.backgroundColor = .secondarySystemBackground
+        button.backgroundColor = FFResources.Colors.backgroundColor
         button.setImage(UIImage(systemName: "person.circle"), for: .normal)
         button.tintColor = FFResources.Colors.activeColor
         
@@ -139,6 +142,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     func setupSegmentController(){
         let items = ["WK" ,"MTH", "6 MTH", "YEAR"]
         segmentController = UISegmentedControl(items: items)
+        segmentController.selectedSegmentIndex = 0
         segmentController.tintColor = FFResources.Colors.activeColor
         segmentController.backgroundColor = .red
     }
@@ -185,7 +189,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 guard let average = stats.averageQuantity()?.doubleValue(for: vo2unit) else {
                     return
                 }
-                healthModel.append(HealthModelValue(date: month, value: average))
+                healthModel.append(HealthModelValue(date: month, value: average,unit: vo2unit,identifier: identifier.identifier))
             }
             completion(healthModel)
         }
@@ -195,12 +199,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private func setupActivityChartView(){
         activityChartView.contentStackView.distribution = .fillProportionally
         activityChartView.headerView.titleLabel.text = "Activity"
+        
         activityChartView.applyConfiguration()
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel()
         
         let caloriesId = HKQuantityTypeIdentifier.activeEnergyBurned.rawValue
-        let heartRate = HKQuantityTypeIdentifier.heartRate.rawValue
+//        let heartRate = HKQuantityTypeIdentifier.heartRate.rawValue
         
         
         uploadSelectedData(id: caloriesId) { model in
@@ -305,12 +310,14 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 }
                 guard let result = stats else { return }
                 guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
-                
-                if stepCount >= 10_000 && !self.shouldSendNotification() {
+                let value = userDefaults.bool(forKey: "sendStatusNotification")
+                if stepCount >= 10_000 && !value {
                     self.sendLocalNotification()
                     self.userDefaults.set(true, forKey: "sendStatusNotification")
+                    
                 } else {
                     print("Steps count is \(stepCount)")
+                    self.userDefaults.set(false, forKey: "sendStatusNotification")
                     self.stopBackgroundTaskRequest()
                 }
                 self.stopBackgroundTaskRequest()
@@ -338,7 +345,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
     
-    //
+    
     private func selectDataTypeIdentifier(_ dataTypeIdentifier: HKQuantityTypeIdentifier){
         userDefaults.setValue(dataTypeIdentifier.rawValue, forKey: "dataTypeIdentifier")
         self.dataTypeIdentifier = dataTypeIdentifier.rawValue
@@ -366,7 +373,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
                                                     options: options,
                                                     anchorDate: startOfDay,
                                                     intervalComponents: interval)
-            query.initialResultsHandler = { query, results, error in
+            query.initialResultsHandler = { /*[weak self] */ query, results, error in
                 guard error == nil,
                       let results = results else {
                     let title = "Error getting initial results with handler"
@@ -377,21 +384,28 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     let startDate = stats.startDate
                     switch identifier {
                     case .stepCount:
-                        guard let steps = stats.sumQuantity()?.doubleValue(for: HKUnit.count()) else { return }
-                        value.append(HealthModelValue.init(date: startDate, value: steps))
+                        let unit = HKUnit.count()
+                        guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
+                        value.append(HealthModelValue.init(date: startDate, value: steps,unit: unit,identifier: id))
                     case .distanceWalkingRunning:
-                        guard let meters = stats.sumQuantity()?.doubleValue(for: HKUnit.meter()) else { return }
-                        value.append(HealthModelValue.init(date: startDate, value: meters))
+                        let unit = HKUnit.meter()
+                        guard let meters = stats.sumQuantity()?.doubleValue(for: unit) else { return }
+                        value.append(HealthModelValue.init(date: startDate, value: meters,unit: unit,identifier: id))
                     case .activeEnergyBurned:
-                        guard let calories = stats.sumQuantity()?.doubleValue(for: HKUnit.kilocalorie()) else { return }
-                        value.append(HealthModelValue(date: startDate, value: calories))
+                        let unit = HKUnit.kilocalorie()
+                        guard let calories = stats.sumQuantity()?.doubleValue(for: unit) else { return }
+                        value.append(HealthModelValue.init(date: startDate, value: calories,unit: unit,identifier: id))
                     case .heartRate:
-                        guard let heartRate = stats.averageQuantity()?.doubleValue(for: .count().unitDivided(by: .minute())) else { return }
-                        value.append(HealthModelValue(date: startDate, value: heartRate))
+                        let unit = HKUnit.count().unitDivided(by: .minute())
+                        guard let heartRate = stats.averageQuantity()?.doubleValue(for: unit) else { return }
+                        value.append(HealthModelValue.init(date: startDate, value: heartRate,unit: unit,identifier: id))
+                        
                     default: fatalError("Error getting data from health kit")
                     }
                     
                 }
+                //MARK: - Функция добавления данных в OCKStore. Пока не работает, чуть позже будет
+//                self?.saveDataToCareKitStore(value)
                 completion(value)
                 
             }
@@ -401,9 +415,24 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
     
-    func saveDataToCareKitStore(_ taskIdentifier: String, units: HKUnit,_ values: [HealthModelValue]) {
-        
-        let outcome = OCKOutcome(taskID: .init(taskIdentifier), taskOccurrenceIndex: 0, values: [])
+    func saveDataToCareKitStore(_ values: [HealthModelValue]) {
+        guard let model = (values.first) else { return }
+        let taskId = OCKLocalVersionID(model.identifier)
+        let unit = values.first?.unit
+        var outcomeValue = [OCKOutcomeValue]()
+        for value in values {
+            let outcomeValueStep = value.value as OCKOutcomeValueUnderlyingType
+            outcomeValue.append(OCKOutcomeValue(outcomeValueStep, units: unit?.unitString))
+        }
+        let outcome = OCKOutcome(taskID: taskId, taskOccurrenceIndex: 0, values: outcomeValue)
+        careKitStore.addOutcome(outcome) { result in
+            switch result {
+            case .success(_):
+                print("Saved to OCKStore successfully")
+            case .failure(_):
+                print("Did not saved to OCKStore successfully")
+            }
+        }
     }
     
     
@@ -450,10 +479,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
 extension FFHealthViewController: OCKChartViewDelegate {
     func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
         if chartView == activityChartView {
-            let configuration: OCKDataSeriesConfiguration = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Steps", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, markerSize: 5, eventAggregator: .countOutcomeValues)
+//            let configuration: OCKDataSeriesConfiguration = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Steps", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, markerSize: 5, eventAggregator: .countOutcomeValues)
             
-            let syncrh = OCKSynchronizedStoreManager(wrapping: careKitStore)
-            let vc = FFHealthCartesianChartViewController(plotType: .bar, selectedDate: Date(), configurations: [configuration], storeManager: syncrh )
+//            let syncrh = OCKSynchronizedStoreManager(wrapping: careKitStore)
+//            let chartSynchronizer = OCKCartesianChartViewSynchronizer(plotType: .bar, selectedDate: Date())
+//            let cartesianChart = OCKCartesianChartController(weekOfDate: Date(), storeManager: syncrh)
+//            let chartVC = FFHealthCartesianChartViewController(controller: cartesianChart, viewSynchronizer: chartSynchronizer)
+//            present(chartVC, animated: true)
         
         }
     }
@@ -487,30 +519,9 @@ extension FFHealthViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let stackView = UIStackView()
-        stackView.frame = CGRect(x: 5, y: 5, width: tableView.frame.size.width-10, height: 40)
-        stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
-        
-        let label = UILabel()
-        label.font = UIFont.headerFont(size: 24)
-        label.numberOfLines = 1
-        label.textAlignment = .left
-        label.textColor = FFResources.Colors.detailTextColor
-        label.text = titleForTable
-        
-        let button = UIButton()
-        button.configuration = .tinted()
-        button.configuration?.image = UIImage(systemName: "line.3.horizontal.decrease.circle")
-        button.configuration?.baseForegroundColor = FFResources.Colors.activeColor
-        button.configuration?.baseBackgroundColor = FFResources.Colors.textColor
-        button.configuration?.cornerStyle = .capsule
-        button.addTarget(self, action: #selector(didTapChooseLoadingType), for: .touchUpInside)
-        
-        stackView.addArrangedSubview(label)
-        stackView.addArrangedSubview(button)
-        
-        return stackView
+        let headerView = FFHealthTableViewHeaderFooterView()
+        headerView.configureHeader(title: titleForTable, #selector(didTapChooseLoadingType))
+        return headerView
     }
 }
 
@@ -541,12 +552,19 @@ extension FFHealthViewController {
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
+        
         scrollView.addSubview(activityChartView)
         activityChartView.snp.makeConstraints { make in
             make.top.equalTo(chartView.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
+        }
+        
+        activityChartView.addSubview(segmentController)
+        segmentController.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(8)
+            make.centerX.equalToSuperview()
         }
         
         scrollView.snp.makeConstraints { make in

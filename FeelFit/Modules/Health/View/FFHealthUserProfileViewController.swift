@@ -87,7 +87,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         returnCameraAccessStatus { success in
             status = success
         }
-        requestPhotoLibraryAccess { success in
+        returnPhotoLibraryAccessStatus { success in
             status = success
         }
         handler(status)
@@ -124,7 +124,6 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     private func loadUserImage() -> UIImage? {
-        UserDefaults.standard.set(nil, forKey: "userImageData")
         let filesURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             let imageData = try Data(contentsOf: filesURL)
@@ -218,11 +217,21 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         userImageView.contentMode = .scaleAspectFill
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
         userImageView.addGestureRecognizer(tapGesture)
-        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapOpenUserImage))
+        longPressGesture.minimumPressDuration = 0.3
+        userImageView.addGestureRecognizer(longPressGesture)
         if let image = loadUserImage() {
             userImageView.image = image
         } else {
             print("error getting image from file path url ")
+        }
+    }
+    
+    @objc private func didTapOpenUserImage(_ sender: UILongPressGestureRecognizer){
+        guard let userImage = userImageView.image else { return }
+        if sender.state == .began {
+            let vc = FFImageDetailsViewController(newsImage: userImage, imageURL: "")
+            present(vc, animated: true)
         }
     }
     

@@ -25,6 +25,9 @@
 		0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347E12AF9B2C1002C161C /* Kingfisher */; };
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
+		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
+		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
+		0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */; };
 		0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
@@ -131,6 +134,9 @@
 		0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewModel.swift; sourceTree = "<group>"; };
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
+		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
+		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
+		0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthTableViewHeaderFooterView.swift; sourceTree = "<group>"; };
 		0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFilesSupport.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
@@ -240,6 +246,7 @@
 				0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */,
 				0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
+				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -332,6 +339,7 @@
 			children = (
 				0A69E0D42B4E44F80023487B /* FeelFit.entitlements */,
 				0AD8F4312B29C65200A40C4B /* ding.mp3 */,
+				0A38936C2B6A3936007FC363 /* discord-notification.mp3 */,
 				0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */,
 				0A4495002AB9CFB40082C909 /* Modules */,
 				0A4495342ABC3F720082C909 /* APIClient */,
@@ -412,6 +420,7 @@
 				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
 				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
 				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
+				0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -1009,6 +1018,7 @@
 				0AD8F4322B29C65200A40C4B /* ding.mp3 in Resources */,
 				0AD8F4302B29C2CC00A40C4B /* arnold_run.jpeg in Resources */,
 				0A4494CC2AB822000082C909 /* LaunchScreen.storyboard in Resources */,
+				0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */,
 				0A4494C92AB822000082C909 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1024,6 +1034,7 @@
 				0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
+				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A0059252B62B8CB000712D6 /* FFHealthUserProfileViewController.swift in Sources */,
@@ -1034,6 +1045,7 @@
 				0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */,
 				0AE0F4F92B0619E600874C0B /* FFFavouriteExercisesModel.swift in Sources */,
 				0A82CD1F2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift in Sources */,
+				0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */,
 				0A2347B52AF10BA8002C161C /* FFExercisesCollectionViewCell.swift in Sources */,
 				0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */,
 				0A7278AA2B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift in Sources */,

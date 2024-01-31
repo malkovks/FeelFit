@@ -52,7 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func openViewController(_ windowScene: UIWindowScene){
         let tabBar = FFTabBarController()
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = FFTabBarController()
+        window.rootViewController = tabBar
         window.makeKeyAndVisible()
         
         self.window = window

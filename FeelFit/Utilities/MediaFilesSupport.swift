@@ -9,8 +9,7 @@ import AVFoundation
 import Photos
 
 ///Function requesting access to media include photo, videos and etc
-func returnPhotoLibraryAccessStatus(completionHandler: @escaping (_ success:Bool) -> ()) -> Bool{
-    var status: Bool = false
+func returnPhotoLibraryAccessStatus(completionHandler: @escaping (_ success:Bool) -> ()){
     switch PHPhotoLibrary.authorizationStatus(for: .readWrite){
     case .authorized:
         completionHandler(true)
@@ -23,7 +22,6 @@ func returnPhotoLibraryAccessStatus(completionHandler: @escaping (_ success:Bool
     @unknown default:
         fatalError("Fatal error getting access to PHPhotoLibrary data")
     }
-    return status
 }
 
 func requestPhotoLibraryAccess(completionHandler: @escaping (_ success: Bool) -> ()) {

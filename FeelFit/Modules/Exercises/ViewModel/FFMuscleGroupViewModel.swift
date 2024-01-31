@@ -37,7 +37,6 @@ class FFMuscleGroupViewModel {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! FFExercisesCollectionViewCell
         let key: String = Array(muscleDictionary.keys.sorted())[indexPath.row]
         
         let keyValue: String = key.replacingOccurrences(of: "_", with: "%20")
