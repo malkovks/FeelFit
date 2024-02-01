@@ -163,6 +163,7 @@ class FFExerciseDescriptionViewController: UIViewController, SetupViewController
         view.backgroundColor = .secondarySystemBackground
         youtubeSegueButton.addTarget(self, action: #selector(didTapOpenSafari), for: .touchUpInside)
         exerciseImageView.addInteraction(UIContextMenuInteraction(delegate: self))
+        exerciseImageView.isUserInteractionEnabled = true
     }
     
     func setupViewModel(){

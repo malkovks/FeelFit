@@ -75,18 +75,12 @@ class FFNewsImageView: UIVisualEffectView {
             make.height.width.equalTo(25)
         }
         
-        contentView.addSubview(shareImageViewButton)
-//        shareImageViewButton.snp.makeConstraints { make in
-//            make.top.equalToSuperview().dividedBy(5)
-//            make.trailing.equalTo(closeImageViewButton.snp.leading).offset(-15)
-//            make.height.width.equalTo(25)
-//        }
+        let imageSize = contentView.frame.size.width / 1.5
         
         contentView.addSubview(imageView)
         imageView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(1.5)
+            make.height.width.equalTo(imageSize)
         }
     }
     

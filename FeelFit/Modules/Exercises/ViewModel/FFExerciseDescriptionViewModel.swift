@@ -44,10 +44,12 @@ class FFExerciseDescriptionViewModel {
         UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [unowned self]_ in
             let share = UIAction(title: "Share") { _ in
                 UIPasteboard.general.string = exercise.imageLink
-                self.viewController.viewAlertController(text: "Text copied!", startDuration: 0.5, timer: 2, controllerView: self.viewController.view)
+                self.viewController.viewAlertController(text: "Image link copied!", startDuration: 0.5, timer: 2, controllerView: self.viewController.view)
             }
-            let openImage = UIAction(title: "Open Image") { _ in
-                self.viewController.showFullSizeImage(url: exercise.imageLink)
+            let openImage = UIAction(title: "Open Image") { [weak self] _ in
+                let imageLink = exercise.imageLink
+                let vc = FFImageDetailsViewController(newsImage: nil, imageURL: imageLink)
+                self?.viewController.present(vc, animated: true)
             }
             return UIMenu(children: [share,openImage])
         }

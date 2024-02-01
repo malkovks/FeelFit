@@ -6,18 +6,19 @@
 //
 
 import UIKit
+import Kingfisher
 
 class FFImageDetailsViewController: UIViewController, SetupViewController {
     
     var viewModel: FFImageDetailsViewModel!
     
     var imageURL: URL?
-    var newsImage: UIImage
+    private var newsImage: UIImage?
     
-    init(newsImage: UIImage,imageURL: String){
+    init(newsImage: UIImage?,imageURL: String){
         self.imageURL = URL(string: imageURL)
         self.newsImage = newsImage
-        imageView.image = newsImage
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -44,21 +45,13 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
         return button
     }()
     
-    private let shareImageViewButton: UIButton = {
-       let button = UIButton()
-        button.backgroundColor = .clear
-        button.tintColor = FFResources.Colors.activeColor
-        button.clipsToBounds = true
-        button.setImage(UIImage(systemName: "square.and.arrow.up.fill"), for: .normal)
-        return button
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewModel()
         setupView()
         setupNavigationController()
         setupConstraints()
+        setupImageView()
     }
     
     @objc private func didTapDismiss(){
@@ -74,8 +67,6 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     }
     
     func setupView() {
-
-        
         view.backgroundColor = UIColor.clear
         view.clipsToBounds = true
         view.layer.borderColor = FFResources.Colors.tabBarBackgroundColor.cgColor
@@ -83,11 +74,18 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
         view.layer.cornerRadius = 12
         
         closeViewButton.addTarget(self, action: #selector(didTapDismiss), for: .touchUpInside)
-        shareImageViewButton.addTarget(self, action: #selector(didTapShare), for: .touchUpInside)
     }
  
     func setupNavigationController() {
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "xmark", action: #selector(didTapDismiss), menu: nil)
+    }
+    
+    func setupImageView(){
+        if let image = newsImage {
+            imageView.image = image
+        } else {
+            imageView.kf.setImage(with: imageURL)
+        }
     }
 
 }
@@ -111,13 +109,5 @@ extension FFImageDetailsViewController {
             make.trailing.equalToSuperview().offset(-20)
             make.height.width.equalToSuperview().dividedBy(9)
         }
-        
-        visualEffectiveView.contentView.addSubview(shareImageViewButton)
-        shareImageViewButton.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.trailing.equalTo(closeViewButton.snp.leading).offset(-20)
-            make.height.width.equalToSuperview().dividedBy(9)
-        }
-        
     }
 }

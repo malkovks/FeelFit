@@ -53,6 +53,8 @@
 		0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */; };
 		0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495382ABC43B70082C909 /* FFNewsModel.swift */; };
 		0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */; };
+		0A63AC622B6BB87000B32981 /* FFHealthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */; };
+		0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */; };
 		0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */; };
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
 		0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */; };
@@ -160,6 +162,8 @@
 		0A4495352ABC3F950082C909 /* FFGetNewsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetNewsRequest.swift; sourceTree = "<group>"; };
 		0A4495382ABC43B70082C909 /* FFNewsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsModel.swift; sourceTree = "<group>"; };
 		0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewController.swift; sourceTree = "<group>"; };
+		0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthViewModel.swift; sourceTree = "<group>"; };
+		0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthUserViewModel.swift; sourceTree = "<group>"; };
 		0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseViewModel.swift; sourceTree = "<group>"; };
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
 		0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewController.swift; sourceTree = "<group>"; };
@@ -356,8 +360,8 @@
 			isa = PBXGroup;
 			children = (
 				0A4495032AB9D0D90082C909 /* NewsModule */,
-				0A4495042AB9D0F30082C909 /* Exercises */,
 				0A4495062AB9D1330082C909 /* TrainingPlan */,
+				0A4495042AB9D0F30082C909 /* Exercises */,
 				0A4495052AB9D11D0082C909 /* Health */,
 				0A4495072AB9D1460082C909 /* Profile */,
 				0A4495082AB9D1630082C909 /* Information */,
@@ -413,14 +417,15 @@
 		0A4495052AB9D11D0082C909 /* Health */ = {
 			isa = PBXGroup;
 			children = (
-				0A44951E2ABA79120082C909 /* Model */,
-				0A4495202ABA79250082C909 /* ViewModel */,
-				0A44951F2ABA79210082C909 /* View */,
+				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
 				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
 				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
 				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
 				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
 				0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */,
+				0A44951E2ABA79120082C909 /* Model */,
+				0A4495202ABA79250082C909 /* ViewModel */,
+				0A44951F2ABA79210082C909 /* View */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -543,7 +548,6 @@
 			isa = PBXGroup;
 			children = (
 				0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */,
-				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
 				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
 				0A7D060B2B688206006FF02A /* FFHealthCartesianChartViewController.swift */,
 			);
@@ -553,6 +557,8 @@
 		0A4495202ABA79250082C909 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */,
+				0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -1065,6 +1071,7 @@
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
+				0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */,
 				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
 				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
@@ -1080,6 +1087,7 @@
 				0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */,
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,
 				0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */,
+				0A63AC622B6BB87000B32981 /* FFHealthViewModel.swift in Sources */,
 				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
 				0A86DEDB2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift in Sources */,
@@ -1285,7 +1293,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Malkov.KS.FeelFit;
+				PRODUCT_BUNDLE_IDENTIFIER = Malkov.KS.FeelFit.fitness;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1323,7 +1331,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Malkov.KS.FeelFit;
+				PRODUCT_BUNDLE_IDENTIFIER = Malkov.KS.FeelFit.fitness;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

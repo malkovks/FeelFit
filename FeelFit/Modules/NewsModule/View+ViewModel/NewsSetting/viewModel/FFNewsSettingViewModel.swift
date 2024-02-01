@@ -48,17 +48,15 @@ class FFNewsSettingViewModel {
         if pickerView.tag == 0 {
             let value = rows[0][row]
             UserDefaults.standard.setValue(value, forKey: "localeRequest")
-            print(value)
         }
         if pickerView.tag == 1 {
             let value = rows[1][row]
             UserDefaults.standard.setValue(value, forKey: "typeRequest")
-            print(value)
+    
         }
         if pickerView.tag == 2 {
             let value = rows[2][row]
             UserDefaults.standard.setValue(value, forKey: "sortRequest")
-            print(value)
         }
     }
     

@@ -4,8 +4,8 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>Malkov.KS.FeelFit.refresh</string>
-		<string>Malkov.KS.FeelFit.health_data_refresh</string>
+		<string>Malkov.KS.FeelFit.fitness.refresh</string>
+		<string>Malkov.KS.FeelFit.fitness.health_data_refresh</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>

@@ -11,6 +11,8 @@ import PhotosUI
 
 class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
+    private var viewModel: FFHealthUserViewModel!
+    
     private let headerTextSections = [
         "",
         "Functions",
@@ -50,11 +52,13 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         
     }
     
+    
     //MARK: - Target methods
     @objc private func didTapDismiss(){
         self.dismiss(animated: true)
     }
     
+    ///method for displaying actions with users image
     @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
         let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self] _ in
@@ -69,6 +73,15 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alertController, animated: true)
+    }
+    
+    ///Method for opening user image with long press gesture
+    @objc private func didTapOpenUserImage(_ sender: UILongPressGestureRecognizer){
+        guard let userImage = userImageView.image else { return }
+        if sender.state == .began {
+            let vc = FFImageDetailsViewController(newsImage: userImage, imageURL: "")
+            present(vc, animated: true)
+        }
     }
     
     private func didTapOpenPickerController(){
@@ -142,7 +155,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
                 self.userImageView = UIImageView(image: UIImage(systemName: "person.crop.circle"))
             }
         } catch {
-            print(error.localizedDescription)
+            print("Error deleting image " + error.localizedDescription)
         }
     }
     
@@ -203,7 +216,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
 
     func setupViewModel() {
-        
+        viewModel = FFHealthUserViewModel(viewController: self)
     }
     
     private func setupUserImageView(){
@@ -227,13 +240,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         }
     }
     
-    @objc private func didTapOpenUserImage(_ sender: UILongPressGestureRecognizer){
-        guard let userImage = userImageView.image else { return }
-        if sender.state == .began {
-            let vc = FFImageDetailsViewController(newsImage: userImage, imageURL: "")
-            present(vc, animated: true)
-        }
-    }
+    
     
     private func setupUserLabel(){
         userFullNameLabel = UILabel(frame: .zero)

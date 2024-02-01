@@ -152,13 +152,13 @@ class FFNewsPageTableViewCell: UITableViewCell {
             newsImageView.image = UIImage(systemName: "photo")
             return
         }
-        AF.request(imageUrl,method: .get).response { [unowned self] response in
+        AF.request(imageUrl,method: .get).response { [weak self] response in
             switch response.result {
             case .success(let imageData):
                 let image = UIImage(data: imageData ?? Data(),scale: 1)
-                self.newsImageView.image = image
+                self?.newsImageView.image = image
             case .failure(_):
-                self.newsImageView.image = UIImage(systemName: "photo")
+                self?.newsImageView.image = UIImage(systemName: "photo")
             }
         }
         self.filterModel(model: model, indexPath: indexPath)

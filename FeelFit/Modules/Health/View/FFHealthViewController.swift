@@ -24,7 +24,7 @@ struct HealthModelValue {
 class FFHealthViewController: UIViewController, SetupViewController {
     
     
-    
+    private var viewModel: FFHealthViewModel!
     private let healthStore = HKHealthStore()
     private let careKitStore = OCKStore(name: "UserDataStore",type: .inMemory)
     private let readTypes = Set(FFHealthData.readDataTypes)
@@ -64,12 +64,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let refreshControl = UIRefreshControl()
     private var segmentController = UISegmentedControl(frame: .zero)
     
-    
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    private let openProfileButton: UIButton = {
         let button = UIButton(type: .custom)
         button.tintColor = .systemRed
         button.frame = CGRect(x: 0, y: 0, width: 34, height: 34)
@@ -78,11 +73,20 @@ class FFHealthViewController: UIViewController, SetupViewController {
         button.backgroundColor = FFResources.Colors.backgroundColor
         button.setImage(UIImage(systemName: "person.circle"), for: .normal)
         button.tintColor = FFResources.Colors.activeColor
+        return button
+    }()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        button.addTarget(self, action: #selector(didTapOpenProfile), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        
+        
+        
+        
         
         setupView()
+        setupViewModel()
         setupNavigationController()
         setupViewModel()
         setupTableView()
@@ -100,7 +104,17 @@ class FFHealthViewController: UIViewController, SetupViewController {
             FFHealthDataAccess.shared.requestForAccessToHealth()
             
         }
+        
     }
+    
+    @objc private func didTapOpenChart(){
+        let config = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Some title", gradientStartColor: .systemOrange, gradientEndColor: .systemRed, markerSize: 1, eventAggregator: .countOutcomes)
+        
+        let manager = OCKSynchronizedStoreManager(wrapping: careKitStore)
+        let barChart = FFHealthCartesianChartViewController(plotType: .bar, selectedDate: Date(), configurations: [config], storeManager: manager)
+        present(barChart, animated: true)
+    }
+    
 
     //MARK: - Target Methods
     @objc private func didTapOpenProfile(_ sender: UIButton){
@@ -205,9 +219,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel()
         
         let caloriesId = HKQuantityTypeIdentifier.activeEnergyBurned.rawValue
-//        let heartRate = HKQuantityTypeIdentifier.heartRate.rawValue
-        
-        
+    
         uploadSelectedData(id: caloriesId) { model in
             let value: [CGFloat] = model.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
@@ -221,7 +233,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     //MARK: - UIApplication background task
     func setupBackgroundTask(){
         UIApplication.shared.isIdleTimerDisabled = true
-        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Malkov.KS.FeelFit.health_data_refresh", expirationHandler: { [weak self] in
+        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Malkov.KS.FeelFit.fitness.health_data_refresh", expirationHandler: { [weak self] in
             self?.stopBackgroundTaskRequest()
         })
         //repeat check value every 10 minutes in background
@@ -336,7 +348,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.notification", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.fitness.notification", content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
@@ -469,31 +481,25 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     func setupNavigationController() {
         title = "Health"
+        openProfileButton.addTarget(self, action: #selector(didTapOpenProfile), for: .touchUpInside)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: openProfileButton)
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapOpenChart))
     }
     
     func setupViewModel() {
-        
+        viewModel = FFHealthViewModel(viewController: self)
     }
 }
 
 extension FFHealthViewController: OCKChartViewDelegate {
     func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
         if chartView == activityChartView {
-//            let configuration: OCKDataSeriesConfiguration = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Steps", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, markerSize: 5, eventAggregator: .countOutcomeValues)
-            
-//            let syncrh = OCKSynchronizedStoreManager(wrapping: careKitStore)
-//            let chartSynchronizer = OCKCartesianChartViewSynchronizer(plotType: .bar, selectedDate: Date())
-//            let cartesianChart = OCKCartesianChartController(weekOfDate: Date(), storeManager: syncrh)
-//            let chartVC = FFHealthCartesianChartViewController(controller: cartesianChart, viewSynchronizer: chartSynchronizer)
-//            present(chartVC, animated: true)
-        
+            didTapOpenChart()
         }
     }
 }
 
-class CustomSimpleTaskViewSynchronizer: OCKSimpleTaskViewSynchronizer {
-    
-}
 
 extension FFHealthViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -552,20 +558,26 @@ extension FFHealthViewController {
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
-        
+        scrollView.addSubview(segmentController)
         scrollView.addSubview(activityChartView)
-        activityChartView.snp.makeConstraints { make in
+        segmentController.snp.makeConstraints { make in
             make.top.equalTo(chartView.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.9)
+            make.bottom.equalTo(activityChartView.snp.top).offset(-20)
+            make.height.equalTo(50)
+        }
+        
+        
+        activityChartView.snp.makeConstraints { make in
+            make.top.equalTo(segmentController.snp.bottom)
             make.centerX.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
-        activityChartView.addSubview(segmentController)
-        segmentController.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(8)
-            make.centerX.equalToSuperview()
-        }
+        
+       
         
         scrollView.snp.makeConstraints { make in
             make.bottom.equalTo(activityChartView.snp.bottom).offset(10)

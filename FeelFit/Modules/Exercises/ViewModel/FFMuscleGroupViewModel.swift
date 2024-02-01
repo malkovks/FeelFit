@@ -40,8 +40,6 @@ class FFMuscleGroupViewModel {
         let key: String = Array(muscleDictionary.keys.sorted())[indexPath.row]
         
         let keyValue: String = key.replacingOccurrences(of: "_", with: "%20")
-        
-        print(keyValue)
         let vc = FFExercisesMuscleGroupViewController(muscleGroupName: keyValue)
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
