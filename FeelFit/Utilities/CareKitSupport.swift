@@ -8,11 +8,24 @@
 import Foundation
 import CareKit
 
-func createChartWeeklyDateRangeLabel(lastDate: Date = Date()) -> String {
+//func applyTitleAndAxisMarkersConfiguration(startDate: Date, endDate: Date, dateType: HealthModelDate) {
+//    switch dateType {
+//    case .week:
+//        <#code#>
+//    case .month:
+//        <#code#>
+//    case .sixMonth:
+//        <#code#>
+//    case .year:
+//        <#code#>
+//    }
+//}
+
+func createChartWeeklyDateRangeLabel(startDate: Date?, lastDate: Date = Date()) -> String {
     let calendar: Calendar = .current
 
     let endOfWeekDate = lastDate
-    let startOfWeekDate = getLastWeekStartDate()
+    let startOfWeekDate = startDate ?? getLastWeekStartDate()
     
     let monthDateFormatter = DateFormatter()
     monthDateFormatter.dateFormat = "MMM d"
@@ -63,12 +76,29 @@ func createHorizontalAxisMarkers(lastDate: Date = Date(), useWeekdays: Bool = tr
     }
 }
 
-func createHorizontalAxisMarkers(currentDate: Date = Date(),firstDate: Date) -> [String] {
+func createHorizontalAxisMarkersForMonth(startDate: Date, endDate: Date = Date()) -> [String] {
+    let calendar = Calendar.current
+    var titles: [String] = []
+    
+    var currentDate = startDate
+    var number = Int()
+    while currentDate <= endDate {
+        let day = calendar.component(.day, from: currentDate)
+        currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+        number += 1
+        if number.isMultiple(of: 7){
+            titles.append(String(describing: day))
+        }
+    }
+    return titles
+}
+
+func createHorizontalAxisMarkersYear(_ endDate: Date = Date(),_ startDate: Date) -> [String] {
     let yearTitles = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     var titles: [String] = []
     let calendar = Calendar.current
-    var firstRangeCount = calendar.component(.month, from: firstDate)+1
-    var currentRangeCount = calendar.component(.month, from: currentDate)
+    var firstRangeCount = calendar.component(.month, from: startDate)+1
+    var currentRangeCount = calendar.component(.month, from: endDate)
     if firstRangeCount < 7 && currentRangeCount <= 12 {
         for i in firstRangeCount..<currentRangeCount {
             titles.append(yearTitles[i-1])

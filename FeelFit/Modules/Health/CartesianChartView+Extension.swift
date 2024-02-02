@@ -28,6 +28,7 @@ extension OCKCartesianChartView {
     
     func applyDefaultStyle(){
         headerView.detailLabel.textColor = FFResources.Colors.detailTextColor
+        contentStackView.distribution = .fillProportionally
     }
     
     func applyHeaderStyle(){

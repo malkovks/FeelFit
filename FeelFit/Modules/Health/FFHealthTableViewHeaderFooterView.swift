@@ -25,7 +25,7 @@ class FFHealthTableViewHeaderFooterView: UITableViewHeaderFooterView {
         return label
     }()
     
-    private let headerButton: UIButton = {
+    let headerButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle"), for: .normal)
         button.tintColor = FFResources.Colors.activeColor
@@ -43,7 +43,7 @@ class FFHealthTableViewHeaderFooterView: UITableViewHeaderFooterView {
     
     func configureHeader(title: String,_ selector: Selector ){
         headerLabel.text = title
-        headerButton.addTarget(self, action: selector, for: .primaryActionTriggered)
+//        headerButton.addTarget(self, action: selector, for: .primaryActionTriggered)
     }
     
     private func setupHeaderConstraints(){

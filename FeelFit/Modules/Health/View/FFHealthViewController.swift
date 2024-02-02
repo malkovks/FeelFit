@@ -21,6 +21,13 @@ struct HealthModelValue {
     let identifier: String
 }
 
+enum HealthModelDate: String {
+    case week = "week"
+    case month = "month"
+    case sixMonth = "sixMonth"
+    case year = "year"
+}
+
 class FFHealthViewController: UIViewController, SetupViewController {
     
     
@@ -62,11 +69,10 @@ class FFHealthViewController: UIViewController, SetupViewController {
     private let chartView = OCKCartesianChartView(type: .bar)
     private let activityChartView = OCKCartesianChartView(type: .bar)
     private let refreshControl = UIRefreshControl()
-    private var segmentController = UISegmentedControl(frame: .zero)
+    private var segmentController: UISegmentedControl!
     
     private let openProfileButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.tintColor = .systemRed
         button.frame = CGRect(x: 0, y: 0, width: 34, height: 34)
         button.layer.cornerRadius = button.frame.size.width/2
         button.layer.masksToBounds = true
@@ -76,44 +82,41 @@ class FFHealthViewController: UIViewController, SetupViewController {
         return button
     }()
     
+    private let setupChartButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.tintColor = FFResources.Colors.activeColor
+        button.layer.cornerRadius = button.frame.size.width / 2
+        button.layer.masksToBounds = true
+        button.backgroundColor = .clear
+        button.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle"), for: .normal)
+        return button
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        
-        
-        
         setupView()
         setupViewModel()
         setupNavigationController()
         setupViewModel()
         setupTableView()
+        setupSegmentController()
         setupConstraints()
         setupChartView()
         setupScrollView()
         setupRefreshControl()
         setupActivityChartView()
-        setupSegmentController()
+       
         
         if isHealthKitAccess {
             setupBackgroundTask()
             requestAccessToBackgroundMode()
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
-            
         }
-        
     }
     
-    @objc private func didTapOpenChart(){
-        let config = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Some title", gradientStartColor: .systemOrange, gradientEndColor: .systemRed, markerSize: 1, eventAggregator: .countOutcomes)
-        
-        let manager = OCKSynchronizedStoreManager(wrapping: careKitStore)
-        let barChart = FFHealthCartesianChartViewController(plotType: .bar, selectedDate: Date(), configurations: [config], storeManager: manager)
-        present(barChart, animated: true)
-    }
+    
     
 
     //MARK: - Target Methods
@@ -153,19 +156,32 @@ class FFHealthViewController: UIViewController, SetupViewController {
         present(alertController, animated: true)
     }
     
+    @objc private func didTapOpenChart(){
+        let config = OCKDataSeriesConfiguration(taskID: "", legendTitle: "Some title", gradientStartColor: .systemOrange, gradientEndColor: .systemRed, markerSize: 1, eventAggregator: .countOutcomes)
+        
+        let manager = OCKSynchronizedStoreManager(wrapping: careKitStore)
+        let barChart = FFHealthCartesianChartViewController(plotType: .bar, selectedDate: Date(), configurations: [config], storeManager: manager)
+        present(barChart, animated: true)
+    }
+    
     func setupSegmentController(){
         let items = ["WK" ,"MTH", "6 MTH", "YEAR"]
         segmentController = UISegmentedControl(items: items)
         segmentController.selectedSegmentIndex = 0
         segmentController.tintColor = FFResources.Colors.activeColor
-        segmentController.backgroundColor = .red
+        segmentController.backgroundColor = .systemRed
+        segmentController.layer.cornerRadius = 12
+        segmentController.layer.masksToBounds = true
+        segmentController.addTarget(self, action: #selector(changeSegmentValue), for: .valueChanged)
+    }
+    
+    @objc private func changeSegmentValue(_ sender: UISegmentedControl){
+        
     }
     
     func setupChartView(){
-        chartView.contentStackView.distribution = .fillProportionally
-        
         chartView.headerView.titleLabel.text = titleForTable
-        chartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel() //Добавление в детейл лейблам даты
+        chartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: nil) //Добавление в детейл лейблам даты
         
         chartView.applyConfiguration()
         chartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
@@ -178,49 +194,21 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
     }
     
-    ///uploading VO 2 MAX and convert to average data for every last 6  months and return HealthModelValue array
-    private func uploadAverageOxygenData(completion: @escaping (_ model: [HealthModelValue]) -> ()){
-        let identifier = HKObjectType.quantityType(forIdentifier: .vo2Max)!
-        let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
-        let endDate = calendar.date(byAdding: .month, value: 1, to: Date())!
-            .startOfMonth()
-            .addingTimeInterval(-1)
-        let interval = DateComponents(month: 1)
-        let kgmin = HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute())
-        let mL = HKUnit.literUnit(with: .milli)
-        let vo2unit = mL.unitDivided(by: kgmin)
-        
-        var healthModel: [HealthModelValue] = [HealthModelValue]()
-        let query = HKStatisticsCollectionQuery(quantityType: identifier, quantitySamplePredicate: nil, options: [.discreteAverage], anchorDate: startDate, intervalComponents: interval)
-        
-        
-        query.initialResultsHandler = { query, results, error in
-            guard let results = results else {
-                return
-            }
-            results.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
-                let month = stats.startDate
-                guard let average = stats.averageQuantity()?.doubleValue(for: vo2unit) else {
-                    return
-                }
-                healthModel.append(HealthModelValue(date: month, value: average,unit: vo2unit,identifier: identifier.identifier))
-            }
-            completion(healthModel)
-        }
-        healthStore.execute(query)
-    }
+    
     
     private func setupActivityChartView(){
         activityChartView.contentStackView.distribution = .fillProportionally
         activityChartView.headerView.titleLabel.text = "Activity"
         
+        
         activityChartView.applyConfiguration()
+        let (startDate, _) = dateRangeConfiguration(type: .year)
         
-        activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel()
-        
+        activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: startDate)
+        //сделать axisMarkersTitle
         let caloriesId = HKQuantityTypeIdentifier.activeEnergyBurned.rawValue
     
-        uploadSelectedData(id: caloriesId) { model in
+        uploadSelectedData(id: caloriesId,dateType: .year) { model in
             let value: [CGFloat] = model.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             DispatchQueue.main.async {
@@ -237,7 +225,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
             self?.stopBackgroundTaskRequest()
         })
         //repeat check value every 10 minutes in background
-        timer = Timer.scheduledTimer(withTimeInterval: 60*10, repeats: true, block: { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60*15, repeats: true, block: { [weak self] _ in
             DispatchQueue.global(qos: .background).async {
                 self?.setupObserverQuery()
             }
@@ -285,7 +273,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
             if status {
                 print("Background delivery is enabled")
             } else if let error = error {
-                print(error.localizedDescription)
+                print("Error with background access ---\n" + error.localizedDescription)
             }
         }
     }
@@ -316,21 +304,21 @@ class FFHealthViewController: UIViewController, SetupViewController {
             let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictEndDate)
             
             let query = HKStatisticsQuery(quantityType: stepCountType, quantitySamplePredicate: predicate) { [unowned self] query, stats, error in
-                guard error == nil else {
+                guard error == nil,
+                      let result = stats,
+                      let stepCount = result.sumQuantity()?.doubleValue(for: HKUnit.count())
+                else {
+                    self.stopBackgroundTaskRequest()
                     print(String(describing:error?.localizedDescription))
                     return
                 }
-                guard let result = stats else { return }
-                guard let stepCount = result.sumQuantity()?.doubleValue(for: .count()) else { return }
                 let value = userDefaults.bool(forKey: "sendStatusNotification")
                 if stepCount >= 10_000 && !value {
                     self.sendLocalNotification()
                     self.userDefaults.set(true, forKey: "sendStatusNotification")
-                    
                 } else {
                     print("Steps count is \(stepCount)")
                     self.userDefaults.set(false, forKey: "sendStatusNotification")
-                    self.stopBackgroundTaskRequest()
                 }
                 self.stopBackgroundTaskRequest()
             }
@@ -364,15 +352,28 @@ class FFHealthViewController: UIViewController, SetupViewController {
         self.didTapRefreshView()
     }
     
-    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",data completion: @escaping (([HealthModelValue]) -> Void)){
+    func dateIntervalConfiguration(_ type: HealthModelDate = .week) -> DateComponents {
+        var interval = DateComponents()
+        switch type {
+        case .week,.month:
+            interval = DateComponents(day: 1)
+        case .sixMonth:
+            interval = DateComponents(weekday: 1)
+        case .year:
+            interval = DateComponents(month: 1)
+        }
+        return interval
+    }
+    
+    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",dateType: HealthModelDate = .week,data completion: @escaping (([HealthModelValue]) -> Void)){
         if isHealthKitAccess {
             var value: [HealthModelValue] = [HealthModelValue]()
             let identifier = HKQuantityTypeIdentifier(rawValue: id)
-            guard let steps = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
+            guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
             let now = Date()
-            let startOfDay = calendar.startOfDay(for: now)
-            let withStartDate =  calendar.date(byAdding: .day, value: -6, to: startOfDay)! //Force unwrap
-            let interval = DateComponents(day: 1)
+            let (withStartDate,startOfDay) = dateRangeConfiguration(type: dateType)
+            
+            let interval = dateIntervalConfiguration(dateType)
             var options: HKStatisticsOptions = []
             if id == HKQuantityTypeIdentifier.heartRate.rawValue {
                 options = .discreteAverage
@@ -380,14 +381,14 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 options = .cumulativeSum
             }
             let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
-            let query = HKStatisticsCollectionQuery(quantityType: steps,
+            let query = HKStatisticsCollectionQuery(quantityType: quantityType,
                                                     quantitySamplePredicate: predicate,
                                                     options: options,
                                                     anchorDate: startOfDay,
                                                     intervalComponents: interval)
             query.initialResultsHandler = { /*[weak self] */ query, results, error in
                 guard error == nil,
-                      let results = results else {
+                    let results = results else {
                     let title = "Error getting initial results with handler"
                     print(title)
                     return
@@ -425,6 +426,22 @@ class FFHealthViewController: UIViewController, SetupViewController {
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
         }
+    }
+    
+    func dateRangeConfiguration(type: HealthModelDate) -> (startDate: Date, endDate: Date)  {
+        let endDate = calendar.startOfDay(for: Date())
+        var startDate = Date()
+        switch type {
+        case .week:
+            startDate = calendar.date(byAdding: .day, value: -6, to: endDate)!
+        case .month:
+            startDate = calendar.date(byAdding: .month, value: -1, to: endDate)!
+        case .sixMonth:
+            startDate = calendar.date(byAdding: .month, value: -6, to: endDate)!
+        case .year:
+            startDate = calendar.date(byAdding: .year, value: -1, to: endDate)!
+        }
+        return (startDate, endDate)
     }
     
     func saveDataToCareKitStore(_ values: [HealthModelValue]) {
@@ -482,9 +499,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     func setupNavigationController() {
         title = "Health"
         openProfileButton.addTarget(self, action: #selector(didTapOpenProfile), for: .touchUpInside)
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: openProfileButton)
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapOpenChart))
     }
     
     func setupViewModel() {
@@ -526,6 +541,7 @@ extension FFHealthViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = FFHealthTableViewHeaderFooterView()
+        headerView.headerButton.addTarget(self, action: #selector(didTapChooseLoadingType), for: .primaryActionTriggered)
         headerView.configureHeader(title: titleForTable, #selector(didTapChooseLoadingType))
         return headerView
     }
@@ -557,27 +573,32 @@ extension FFHealthViewController {
             make.height.equalToSuperview().multipliedBy(0.6)
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
+    
+        chartView.addSubview(setupChartButton)
+        setupChartButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
+            make.width.height.equalTo(40)
+        }
         
         scrollView.addSubview(segmentController)
-        scrollView.addSubview(activityChartView)
         segmentController.snp.makeConstraints { make in
             make.top.equalTo(chartView.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
-            make.bottom.equalTo(activityChartView.snp.top).offset(-20)
-            make.height.equalTo(50)
+            make.height.equalTo(40)
         }
         
         
+        scrollView.addSubview(activityChartView)
         activityChartView.snp.makeConstraints { make in
-            make.top.equalTo(segmentController.snp.bottom)
+            make.top.equalTo(segmentController.snp.bottom).offset(5)
             make.centerX.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.6)
+            make.height.equalToSuperview().multipliedBy(0.7)
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
         
         
-       
         
         scrollView.snp.makeConstraints { make in
             make.bottom.equalTo(activityChartView.snp.bottom).offset(10)
@@ -587,3 +608,35 @@ extension FFHealthViewController {
 }
 
 
+///uploading VO 2 MAX and convert to average data for every last 6  months and return HealthModelValue array
+/*
+private func uploadAverageOxygenData(completion: @escaping (_ model: [HealthModelValue]) -> ()){
+    let identifier = HKObjectType.quantityType(forIdentifier: .vo2Max)!
+    let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
+    let endDate = calendar.date(byAdding: .month, value: 1, to: Date())!
+        .startOfMonth()
+        .addingTimeInterval(-1)
+    let interval = DateComponents(month: 1)
+    let kgmin = HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute())
+    let mL = HKUnit.literUnit(with: .milli)
+    let vo2unit = mL.unitDivided(by: kgmin)
+    
+    var healthModel: [HealthModelValue] = [HealthModelValue]()
+    let query = HKStatisticsCollectionQuery(quantityType: identifier, quantitySamplePredicate: nil, options: [.discreteAverage], anchorDate: startDate, intervalComponents: interval)
+    
+    
+    query.initialResultsHandler = { query, results, error in
+        guard let results = results else {
+            return
+        }
+        results.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
+            let month = stats.startDate
+            guard let average = stats.averageQuantity()?.doubleValue(for: vo2unit) else {
+                return
+            }
+            healthModel.append(HealthModelValue(date: month, value: average,unit: vo2unit,identifier: identifier.identifier))
+        }
+        completion(healthModel)
+    }
+    healthStore.execute(query)
+}*/
