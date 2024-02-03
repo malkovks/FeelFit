@@ -25,6 +25,7 @@
 		0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347E12AF9B2C1002C161C /* Kingfisher */; };
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
+		0A2A03C92B6DA83F00044820 /* CareKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
 		0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */; };
@@ -55,6 +56,7 @@
 		0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */; };
 		0A63AC622B6BB87000B32981 /* FFHealthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */; };
 		0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */; };
+		0A63AC672B6D8DD800B32981 /* FFMainHealthDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */; };
 		0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */; };
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
 		0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */; };
@@ -136,6 +138,7 @@
 		0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewModel.swift; sourceTree = "<group>"; };
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
+		0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CareKit+Extensions.swift"; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
 		0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthTableViewHeaderFooterView.swift; sourceTree = "<group>"; };
@@ -164,6 +167,7 @@
 		0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewController.swift; sourceTree = "<group>"; };
 		0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthViewModel.swift; sourceTree = "<group>"; };
 		0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthUserViewModel.swift; sourceTree = "<group>"; };
+		0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMainHealthDataViewController.swift; sourceTree = "<group>"; };
 		0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseViewModel.swift; sourceTree = "<group>"; };
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
 		0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewController.swift; sourceTree = "<group>"; };
@@ -251,6 +255,7 @@
 				0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
+				0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -426,6 +431,7 @@
 				0A44951E2ABA79120082C909 /* Model */,
 				0A4495202ABA79250082C909 /* ViewModel */,
 				0A44951F2ABA79210082C909 /* View */,
+				0A63AC652B6D8DB700B32981 /* TEST VIEW */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -619,6 +625,14 @@
 				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		0A63AC652B6D8DB700B32981 /* TEST VIEW */ = {
+			isa = PBXGroup;
+			children = (
+				0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */,
+			);
+			path = "TEST VIEW";
 			sourceTree = "<group>";
 		};
 		0A69AF342B08B4810013FB1B /* View+ViewModel */ = {
@@ -1037,6 +1051,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */,
+				0A63AC672B6D8DD800B32981 /* FFMainHealthDataViewController.swift in Sources */,
 				0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
@@ -1082,6 +1097,7 @@
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
 				0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */,
+				0A2A03C92B6DA83F00044820 /* CareKit+Extensions.swift in Sources */,
 				0A8EBE062B51248F007AC52E /* FFHealthTableViewCell.swift in Sources */,
 				0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */,
 				0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */,

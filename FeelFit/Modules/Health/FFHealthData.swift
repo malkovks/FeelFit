@@ -84,43 +84,46 @@ class FFHealthData {
      
     ]
     
-    static let userIdentifiers: [HKCharacteristicType] = [
-        HKObjectType.characteristicType(forIdentifier: .biologicalSex)!,
-        HKObjectType.characteristicType(forIdentifier: .dateOfBirth)!,
-        HKObjectType.characteristicType(forIdentifier: .bloodType)!,
-        HKObjectType.characteristicType(forIdentifier: .fitzpatrickSkinType)!
-    ]
-    
-    class func requestHealthDataAccessIfNeeded(dataTypes: [String]? = nil,
-                                               completion: @escaping (_ success: Bool,_ status: String) -> Void ){
-        var readDataTypes = Set(allHealthDataTypes)
-        var shareDataTypes = Set(allHealthDataTypes)
-        
-        if let identifiers = dataTypes {
-            readDataTypes = Set(identifiers.compactMap { getSampleType(for: $0) })
-            shareDataTypes = readDataTypes
+    static func dateIntervalConfiguration(_ type: FFHealthDateType = .week) -> DateComponents {
+        var interval = DateComponents()
+        switch type {
+        case .week,.month:
+            interval = DateComponents(day: 1)
+        case .sixMonth:
+            interval = DateComponents(weekday: 1)
+        case .year:
+            interval = DateComponents(month: 1)
+        case .day:
+            interval = DateComponents(hour: 1)
         }
-        requestHealthDataAccessIfNeeded(toShare: shareDataTypes, read: readDataTypes, completion: completion)
+        return interval
     }
     
-    class func requestHealthDataAccessIfNeeded(toShare shareTypes: Set<HKSampleType>?,
-                                               read readTypes: Set<HKSampleType>?,
-                                               completion: @escaping (_ success: Bool,_ status: String) -> Void){
-        if !HKHealthStore.isHealthDataAvailable() {
-            completion(false, "Health data is not available")
+    static func dateRangeConfiguration(_ type: FFHealthDateType) -> (startDate: Date, endDate: Date)  {
+        let calendar = Calendar.current
+        let endDate = calendar.startOfDay(for: Date())
+        var startDate = Date()
+        switch type {
+        case .week:
+            startDate = calendar.date(byAdding: .day, value: -6, to: endDate)!
+        case .month:
+            startDate = calendar.date(byAdding: .month, value: -1, to: endDate)!
+        case .sixMonth:
+            startDate = calendar.date(byAdding: .month, value: -6, to: endDate)!
+        case .year:
+            startDate = calendar.date(byAdding: .year, value: -1, to: endDate)!
+        case .day:
+            startDate = calendar.date(byAdding: .hour, value: -1, to: endDate)!
         }
-        
-        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) { success, error in
-            if let error = error {
-                completion(false, "request authorization error. \(error.localizedDescription)")
-            }
-            
-            if success {
-                completion(success, "HealthKit authorization request was successful!")
-            } else {
-                completion(success, "HealthKit authorization was not successful.")
-            }
-        }
+        return (startDate, endDate)
     }
+    
+//    static let userIdentifiers: [HKCharacteristicType] = [
+//        HKObjectType.characteristicType(forIdentifier: .biologicalSex)!,
+//        HKObjectType.characteristicType(forIdentifier: .dateOfBirth)!,
+//        HKObjectType.characteristicType(forIdentifier: .bloodType)!,
+//        HKObjectType.characteristicType(forIdentifier: .fitzpatrickSkinType)!
+//    ]
+    
     
 }

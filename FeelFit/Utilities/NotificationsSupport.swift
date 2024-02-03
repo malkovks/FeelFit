@@ -7,10 +7,11 @@
 
 import UserNotifications
 
-class FFUserDailyNotification {
-    static let shared = FFUserDailyNotification()
+class FFSendUserNotifications {
     
+    static let shared = FFSendUserNotifications()
     
+    ///Function for sending daily reminder with some random text
     func sendDailyNotification(){
         let sound = UNNotificationSound(named: UNNotificationSoundName("discord-notification.mp3"))
         let content = UNMutableNotificationContent()
@@ -30,6 +31,23 @@ class FFUserDailyNotification {
                 print("Failed to send notification. Error: \(error.localizedDescription)")
             } else{
                 print("Notification request added successfully")
+            }
+        }
+    }
+    
+    ///Function called then user  reached 10k steps for current day
+    func sendReachedStepObjectiveNotification(){
+        let content = UNMutableNotificationContent()
+        content.title = "Congratulations"
+        content.body = "You have reached 10 0000 steps count. Don't stop on this result"
+        content.sound = .default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.fitness.notification", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Did not complete to send notification. \(error.localizedDescription)")
             }
         }
     }

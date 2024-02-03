@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
         FFHealthDataAccess.shared.requestForAccessToHealth()
-        FFUserDailyNotification.shared.sendDailyNotification()
+        FFSendUserNotifications.shared.sendDailyNotification()
         return true
     }
 }

@@ -8,6 +8,8 @@
 import Foundation
 import HealthKit
 
+
+
 func getLastWeekStartDate(from date: Date = Date()) -> Date {
     return Calendar.current.date(byAdding: .day, value: -6, to: date)!
 }

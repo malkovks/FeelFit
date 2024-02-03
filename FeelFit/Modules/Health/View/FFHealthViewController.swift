@@ -21,11 +21,18 @@ struct HealthModelValue {
     let identifier: String
 }
 
-enum HealthModelDate: String {
+enum FFHealthDateType: String,CaseIterable {
+    case day = "day"
     case week = "week"
     case month = "month"
     case sixMonth = "sixMonth"
     case year = "year"
+}
+
+extension FFHealthDateType {
+    static func index(forRawValue rawValue: String) -> Int? {
+        return self.allCases.firstIndex { $0.rawValue == rawValue }
+    }
 }
 
 class FFHealthViewController: UIViewController, SetupViewController {
@@ -202,7 +209,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         
         activityChartView.applyConfiguration()
-        let (startDate, _) = dateRangeConfiguration(type: .year)
+        let (startDate, _) = FFHealthData.dateRangeConfiguration(.year)
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: startDate)
         //сделать axisMarkersTitle
@@ -314,7 +321,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 }
                 let value = userDefaults.bool(forKey: "sendStatusNotification")
                 if stepCount >= 10_000 && !value {
-                    self.sendLocalNotification()
+                    FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
                     self.userDefaults.set(true, forKey: "sendStatusNotification")
                 } else {
                     print("Steps count is \(stepCount)")
@@ -328,23 +335,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
         }
         
     }
-    ///функция теста для вызова уведомления о количестве шагов пройденных пользователем
-    func sendLocalNotification(){
-        let content = UNMutableNotificationContent()
-        content.title = "Congratulations"
-        content.body = "You have reached 10 0000 steps count. Don't stop on this result"
-        content.sound = .default
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.fitness.notification", content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Did not complete to send notification. \(error.localizedDescription)")
-            }
-        }
-    }
-    
     
     private func selectDataTypeIdentifier(_ dataTypeIdentifier: HKQuantityTypeIdentifier){
         userDefaults.setValue(dataTypeIdentifier.rawValue, forKey: "dataTypeIdentifier")
@@ -352,28 +342,15 @@ class FFHealthViewController: UIViewController, SetupViewController {
         self.didTapRefreshView()
     }
     
-    func dateIntervalConfiguration(_ type: HealthModelDate = .week) -> DateComponents {
-        var interval = DateComponents()
-        switch type {
-        case .week,.month:
-            interval = DateComponents(day: 1)
-        case .sixMonth:
-            interval = DateComponents(weekday: 1)
-        case .year:
-            interval = DateComponents(month: 1)
-        }
-        return interval
-    }
-    
-    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",dateType: HealthModelDate = .week,data completion: @escaping (([HealthModelValue]) -> Void)){
+    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",dateType: FFHealthDateType = .week,data completion: @escaping (([HealthModelValue]) -> Void)){
         if isHealthKitAccess {
             var value: [HealthModelValue] = [HealthModelValue]()
             let identifier = HKQuantityTypeIdentifier(rawValue: id)
             guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
             let now = Date()
-            let (withStartDate,startOfDay) = dateRangeConfiguration(type: dateType)
+            let (withStartDate,endDate) = FFHealthData.dateRangeConfiguration(dateType)
             
-            let interval = dateIntervalConfiguration(dateType)
+            let interval = FFHealthData.dateIntervalConfiguration(dateType)
             var options: HKStatisticsOptions = []
             if id == HKQuantityTypeIdentifier.heartRate.rawValue {
                 options = .discreteAverage
@@ -384,7 +361,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
             let query = HKStatisticsCollectionQuery(quantityType: quantityType,
                                                     quantitySamplePredicate: predicate,
                                                     options: options,
-                                                    anchorDate: startOfDay,
+                                                    anchorDate: endDate,
                                                     intervalComponents: interval)
             query.initialResultsHandler = { /*[weak self] */ query, results, error in
                 guard error == nil,
@@ -395,6 +372,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
                 }
                 results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
                     let startDate = stats.startDate
+                    let enddate = stats.endDate
                     switch identifier {
                     case .stepCount:
                         let unit = HKUnit.count()
@@ -418,49 +396,13 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     
                 }
                 //MARK: - Функция добавления данных в OCKStore. Пока не работает, чуть позже будет
-//                self?.saveDataToCareKitStore(value)
+//                self.careKitStore.saveDataToCareKitStore(value)
                 completion(value)
                 
             }
             healthStore.execute(query)
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
-        }
-    }
-    
-    func dateRangeConfiguration(type: HealthModelDate) -> (startDate: Date, endDate: Date)  {
-        let endDate = calendar.startOfDay(for: Date())
-        var startDate = Date()
-        switch type {
-        case .week:
-            startDate = calendar.date(byAdding: .day, value: -6, to: endDate)!
-        case .month:
-            startDate = calendar.date(byAdding: .month, value: -1, to: endDate)!
-        case .sixMonth:
-            startDate = calendar.date(byAdding: .month, value: -6, to: endDate)!
-        case .year:
-            startDate = calendar.date(byAdding: .year, value: -1, to: endDate)!
-        }
-        return (startDate, endDate)
-    }
-    
-    func saveDataToCareKitStore(_ values: [HealthModelValue]) {
-        guard let model = (values.first) else { return }
-        let taskId = OCKLocalVersionID(model.identifier)
-        let unit = values.first?.unit
-        var outcomeValue = [OCKOutcomeValue]()
-        for value in values {
-            let outcomeValueStep = value.value as OCKOutcomeValueUnderlyingType
-            outcomeValue.append(OCKOutcomeValue(outcomeValueStep, units: unit?.unitString))
-        }
-        let outcome = OCKOutcome(taskID: taskId, taskOccurrenceIndex: 0, values: outcomeValue)
-        careKitStore.addOutcome(outcome) { result in
-            switch result {
-            case .success(_):
-                print("Saved to OCKStore successfully")
-            case .failure(_):
-                print("Did not saved to OCKStore successfully")
-            }
         }
     }
     
