@@ -9,6 +9,10 @@ import UIKit
 import Alamofire
 
 extension UIViewController {
+    
+    
+    /// Function calling alertController which display two labels and two textFields for entering sets and weight values
+    /// - Parameter handler: return array of inputed data
     func setupExerciseSecondaryParameters(handler: @escaping ([String])-> ()?){
         let alertController = UIAlertController(title: "Fill the fields", message: nil, preferredStyle: .alert)
         

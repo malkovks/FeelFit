@@ -148,6 +148,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     private func deleteUserImage() {
+        var image = UIImage()
         let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             try FileManager.default.removeItem(at: fileURL)
