@@ -108,6 +108,8 @@
 		0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */; };
 		0AD8F4302B29C2CC00A40C4B /* arnold_run.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */; };
 		0AD8F4322B29C65200A40C4B /* ding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0AD8F4312B29C65200A40C4B /* ding.mp3 */; };
+		0ADB786E2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADB786D2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift */; };
+		0ADB78702B710E7400653952 /* FFNavigationControllerCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */; };
 		0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */; };
 		0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */; };
 		0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */; };
@@ -221,6 +223,8 @@
 		0ACEAA562ADD757900899CF6 /* FFNewsDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsDetailViewModel.swift; sourceTree = "<group>"; };
 		0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = arnold_run.jpeg; sourceTree = "<group>"; };
 		0AD8F4312B29C65200A40C4B /* ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ding.mp3; sourceTree = "<group>"; };
+		0ADB786D2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPresentHealthCollectionViewCell.swift; sourceTree = "<group>"; };
+		0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNavigationControllerCustomView.swift; sourceTree = "<group>"; };
 		0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseStoreManager.swift; sourceTree = "<group>"; };
@@ -367,8 +371,8 @@
 			isa = PBXGroup;
 			children = (
 				0A4495032AB9D0D90082C909 /* NewsModule */,
-				0A4495062AB9D1330082C909 /* TrainingPlan */,
 				0A4495042AB9D0F30082C909 /* Exercises */,
+				0A4495062AB9D1330082C909 /* TrainingPlan */,
 				0A4495052AB9D11D0082C909 /* Health */,
 				0A4495072AB9D1460082C909 /* Profile */,
 				0A4495082AB9D1630082C909 /* Information */,
@@ -424,16 +428,14 @@
 		0A4495052AB9D11D0082C909 /* Health */ = {
 			isa = PBXGroup;
 			children = (
-				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
-				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
-				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
 				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
-				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
-				0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */,
+				0ADB786C2B710B3C00653952 /* CollectionView */,
+				0ADB786B2B710B3500653952 /* TableView */,
 				0A44951E2ABA79120082C909 /* Model */,
 				0A4495202ABA79250082C909 /* ViewModel */,
 				0A44951F2ABA79210082C909 /* View */,
 				0A63AC652B6D8DB700B32981 /* TEST VIEW */,
+				0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -548,6 +550,8 @@
 		0A44951E2ABA79120082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
+				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -847,6 +851,24 @@
 			path = "SecondaryView+UIView";
 			sourceTree = "<group>";
 		};
+		0ADB786B2B710B3500653952 /* TableView */ = {
+			isa = PBXGroup;
+			children = (
+				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
+				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
+				0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */,
+			);
+			path = TableView;
+			sourceTree = "<group>";
+		};
+		0ADB786C2B710B3C00653952 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				0ADB786D2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift */,
+			);
+			path = CollectionView;
+			sourceTree = "<group>";
+		};
 		0AFC89532AFEC813005ADC17 /* NewsPage */ = {
 			isa = PBXGroup;
 			children = (
@@ -1121,6 +1143,7 @@
 				0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */,
 				0A69E0D32B4E26F10023487B /* FFHealthData.swift in Sources */,
 				0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */,
+				0ADB786E2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift in Sources */,
 				0A82CD262B2E462400F98D8B /* NavigationItemButton.swift in Sources */,
 				0A82CD1D2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
@@ -1129,6 +1152,7 @@
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
 				0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */,
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
+				0ADB78702B710E7400653952 /* FFNavigationControllerCustomView.swift in Sources */,
 				0ACEAA532ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift in Sources */,
 				0A2347AE2AEFEF21002C161C /* FFMuscleGroupViewModel.swift in Sources */,
 				0ACBC2662B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift in Sources */,
