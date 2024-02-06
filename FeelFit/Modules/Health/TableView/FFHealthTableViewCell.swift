@@ -41,7 +41,7 @@ class FFHealthTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(_ indexPath: IndexPath,_ identifier: String,_ model: [HealthModelValue]){
+    func configureCell(_ indexPath: IndexPath,_ identifier: String,_ model: [FFUserHealthDataProvider]){
         let value = model.reversed()[indexPath.row]
         let type: HKQuantityTypeIdentifier = HKQuantityTypeIdentifier(rawValue: identifier)
         var secondaryText: String = ""

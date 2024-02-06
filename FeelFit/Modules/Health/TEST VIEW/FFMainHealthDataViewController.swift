@@ -173,8 +173,8 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     }
     
     private func setupChartView(){
-        FFHealthDataLoading.shared.uploadHealthDataBy { userData in
-            let value: [CGFloat] = userData.map { CGFloat($0.value) }
+        FFHealthDataLoading.shared.performQuery { models in
+            let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Steps",size: 2, color: .black)
             DispatchQueue.main.async {
                 self.chartView.graphView.dataSeries.append(series)

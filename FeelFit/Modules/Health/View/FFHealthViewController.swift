@@ -41,9 +41,14 @@ extension FFHealthDateType {
 
 class FFHealthViewController: UIViewController, SetupViewController {
     
+    private var tableViewModel = [FFUserHealthDataProvider]()
+    private var activityChartModel = [OCKDataSeries]()
+    private var walkingChartModel = [OCKDataSeries]()
+    
     
     private var viewModel: FFHealthViewModel!
     private let healthStore = HKHealthStore()
+    private let loadData = FFHealthDataLoading.shared
     private let careKitStore = OCKStore(name: "UserDataStore",type: .inMemory)
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
@@ -77,7 +82,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     private var tableView: UITableView!
     private let scrollView: UIScrollView = UIScrollView(frame: .zero)
-    private let chartView = OCKCartesianChartView(type: .bar)
+    private let walkingMetersChartView = OCKCartesianChartView(type: .bar)
     private let activityChartView = OCKCartesianChartView(type: .bar)
     private let refreshControl = UIRefreshControl()
     private var segmentController: UISegmentedControl!
@@ -106,6 +111,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadDataMethod()
         setupView()
         setupViewModel()
         setupNavigationController()
@@ -124,6 +130,28 @@ class FFHealthViewController: UIViewController, SetupViewController {
             requestAccessToBackgroundMode()
         } else {
             FFHealthDataAccess.shared.requestForAccessToHealth()
+        }
+    }
+    
+    func loadDataMethod(){
+        loadData.performQuery(identifier: .stepCount) { models in
+            self.tableViewModel = models
+            
+        }
+        loadData.performQuery(identifier: .activeEnergyBurned) { models in
+            let value: [CGFloat] = models.map { CGFloat($0.value) }
+            let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
+            self.activityChartModel.append(series)
+        }
+        loadData.performQuery(identifier: .distanceWalkingRunning) { models in
+            let value: [CGFloat] = models.map { CGFloat($0.value) }
+            let series = OCKDataSeries(values: value, title: "Meters", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
+            self.walkingChartModel.append(series)
+        }
+        DispatchQueue.main.async { [unowned self] in
+            tableView.reloadData()
+            activityChartView.graphView.dataSeries = activityChartModel
+            walkingMetersChartView.graphView.dataSeries = walkingChartModel
         }
     }
     
@@ -191,16 +219,16 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     func setupChartView(){
-        chartView.headerView.titleLabel.text = titleForTable
-        chartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: nil) //Добавление в детейл лейблам даты
+        walkingMetersChartView.headerView.titleLabel.text = titleForTable
+        walkingMetersChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: nil) //Добавление в детейл лейблам даты
         
-        chartView.applyConfiguration()
-        chartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
-        uploadSelectedData { [weak self] value in
-            let stepValues: [CGFloat] = value.map { CGFloat($0.value) }
+        walkingMetersChartView.applyConfiguration()
+        walkingMetersChartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
+        FFHealthDataLoading.shared.performQuery(identifier: .stepCount) {[weak self] models in
+            let stepValues: [CGFloat] = models.map { CGFloat($0.value) }
             DispatchQueue.main.async {
                 let series = OCKDataSeries(values: stepValues, title: self?.titleForTable ?? "Default" , color: FFResources.Colors.activeColor)
-                self?.chartView.graphView.dataSeries = [series]
+                self?.walkingMetersChartView.graphView.dataSeries = [series]
             }
         }
     }
@@ -216,10 +244,8 @@ class FFHealthViewController: UIViewController, SetupViewController {
         let (startDate, _) = FFHealthData.dateRangeConfiguration(.year)
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: startDate)
-        //сделать axisMarkersTitle
-        let caloriesId = HKQuantityTypeIdentifier.activeEnergyBurned.rawValue
     
-        uploadSelectedData(id: caloriesId,dateType: .year) { model in
+        FFHealthDataLoading.shared.performQuery(identifier: .activeEnergyBurned) { model in
             let value: [CGFloat] = model.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             DispatchQueue.main.async {
@@ -245,11 +271,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     func stopBackgroundTaskRequest(){
         stopCountingSteps()
-        DispatchQueue.main.async {
             UIApplication.shared.isIdleTimerDisabled = false
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId)
             self.backgroundTaskId = .invalid
-        }
     }
     
     func stopCountingSteps(){
@@ -346,71 +370,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
         self.didTapRefreshView()
     }
     
-    func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",dateType: FFHealthDateType = .week,data completion: @escaping (([HealthModelValue]) -> Void)){
-        if isHealthKitAccess {
-            var value: [HealthModelValue] = [HealthModelValue]()
-            let identifier = HKQuantityTypeIdentifier(rawValue: id)
-            guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
-            let now = Date()
-            let (withStartDate,endDate) = FFHealthData.dateRangeConfiguration(dateType)
-            
-            let interval = FFHealthData.dateIntervalConfiguration(dateType)
-            var options: HKStatisticsOptions = []
-            if id == HKQuantityTypeIdentifier.heartRate.rawValue {
-                options = .discreteAverage
-            } else {
-                options = .cumulativeSum
-            }
-            let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
-            let query = HKStatisticsCollectionQuery(quantityType: quantityType,
-                                                    quantitySamplePredicate: predicate,
-                                                    options: options,
-                                                    anchorDate: endDate,
-                                                    intervalComponents: interval)
-            query.initialResultsHandler = { /*[weak self] */ query, results, error in
-                guard error == nil,
-                    let results = results else {
-                    let title = "Error getting initial results with handler"
-                    print(title)
-                    return
-                }
-                results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
-                    let startDate = stats.startDate
-                    let enddate = stats.endDate
-                    switch identifier {
-                    case .stepCount:
-                        let unit = HKUnit.count()
-                        guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(startDate: startDate, value: steps,unit: unit,identifier: id))
-                    case .distanceWalkingRunning:
-                        let unit = HKUnit.meter()
-                        guard let meters = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(startDate: startDate, value: meters,unit: unit,identifier: id))
-                    case .activeEnergyBurned:
-                        let unit = HKUnit.kilocalorie()
-                        guard let calories = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(startDate: startDate, value: calories,unit: unit,identifier: id))
-                    case .heartRate:
-                        let unit = HKUnit.count().unitDivided(by: .minute())
-                        guard let heartRate = stats.averageQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(startDate: startDate, value: heartRate,unit: unit,identifier: id))
-                        
-                    default: fatalError("Error getting data from health kit")
-                    }
-                    
-                }
-                //MARK: - Функция добавления данных в OCKStore. Пока не работает, чуть позже будет
-//                self.careKitStore.saveDataToCareKitStore(value)
-                completion(value)
-                
-            }
-            healthStore.execute(query)
-        } else {
-            FFHealthDataAccess.shared.requestForAccessToHealth()
-        }
-    }
-    
-    
     //MARK: Setup methods
     func setupTableView(){
         tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -464,14 +423,12 @@ extension FFHealthViewController: OCKChartViewDelegate {
 
 extension FFHealthViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return 6
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier:  FFHealthTableViewCell.identifier, for: indexPath) as! FFHealthTableViewCell
-        uploadSelectedData(id: dataTypeIdentifier) { [unowned self] model in
-            cell.configureCell(indexPath, self.dataTypeIdentifier, model)
-        }
+        cell.configureCell(indexPath, dataTypeIdentifier, tableViewModel)
         return cell
     }
 }
@@ -512,15 +469,15 @@ extension FFHealthViewController {
             make.width.equalToSuperview()
         }
         
-        scrollView.addSubview(chartView)
-        chartView.snp.makeConstraints { make in
+        scrollView.addSubview(walkingMetersChartView)
+        walkingMetersChartView.snp.makeConstraints { make in
             make.top.equalTo(tableView.snp.bottom)
             make.centerX.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
             make.width.equalTo(scrollView.snp.width).multipliedBy(0.9)
         }
     
-        chartView.addSubview(setupChartButton)
+        walkingMetersChartView.addSubview(setupChartButton)
         setupChartButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
@@ -529,7 +486,7 @@ extension FFHealthViewController {
         
         scrollView.addSubview(segmentController)
         segmentController.snp.makeConstraints { make in
-            make.top.equalTo(chartView.snp.bottom).offset(20)
+            make.top.equalTo(walkingMetersChartView.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(40)
@@ -586,3 +543,68 @@ private func uploadAverageOxygenData(completion: @escaping (_ model: [HealthMode
     }
     healthStore.execute(query)
 }*/
+
+
+/*/
+func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",dateType: FFHealthDateType = .week,data completion: @escaping (([HealthModelValue]) -> Void)){
+    if isHealthKitAccess {
+        var value: [HealthModelValue] = [HealthModelValue]()
+        let identifier = HKQuantityTypeIdentifier(rawValue: id)
+        guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
+        let now = Date()
+        let (withStartDate,endDate) = FFHealthData.dateRangeConfiguration(dateType)
+        
+        let interval = FFHealthData.dateIntervalConfiguration(dateType)
+        var options: HKStatisticsOptions = []
+        if id == HKQuantityTypeIdentifier.heartRate.rawValue {
+            options = .discreteAverage
+        } else {
+            options = .cumulativeSum
+        }
+        let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
+        let query = HKStatisticsCollectionQuery(quantityType: quantityType,
+                                                quantitySamplePredicate: predicate,
+                                                options: options,
+                                                anchorDate: now,
+                                                intervalComponents: interval)
+        query.initialResultsHandler = { /*[weak self] */ query, results, error in
+            guard error == nil,
+                let results = results else {
+                let title = "Error getting initial results with handler"
+                print(title)
+                return
+            }
+            results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
+                let startDate = stats.startDate
+                switch identifier {
+                case .stepCount:
+                    let unit = HKUnit.count()
+                    guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
+                    value.append(HealthModelValue.init(startDate: startDate, value: steps,unit: unit,identifier: id))
+                case .distanceWalkingRunning:
+                    let unit = HKUnit.meter()
+                    guard let meters = stats.sumQuantity()?.doubleValue(for: unit) else { return }
+                    value.append(HealthModelValue.init(startDate: startDate, value: meters,unit: unit,identifier: id))
+                case .activeEnergyBurned:
+                    let unit = HKUnit.kilocalorie()
+                    guard let calories = stats.sumQuantity()?.doubleValue(for: unit) else { return }
+                    value.append(HealthModelValue.init(startDate: startDate, value: calories,unit: unit,identifier: id))
+                case .heartRate:
+                    let unit = HKUnit.count().unitDivided(by: .minute())
+                    guard let heartRate = stats.averageQuantity()?.doubleValue(for: unit) else { return }
+                    value.append(HealthModelValue.init(startDate: startDate, value: heartRate,unit: unit,identifier: id))
+                    
+                default: fatalError("Error getting data from health kit")
+                }
+                
+            }
+            //MARK: - Функция добавления данных в OCKStore. Пока не работает, чуть позже будет
+//                self.careKitStore.saveDataToCareKitStore(value)
+            completion(value)
+            
+        }
+        healthStore.execute(query)
+    } else {
+        FFHealthDataAccess.shared.requestForAccessToHealth()
+    }
+} */

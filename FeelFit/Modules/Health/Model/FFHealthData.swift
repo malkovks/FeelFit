@@ -124,7 +124,7 @@ class FFHealthData {
     
     static func dateRangeConfiguration(_ type: FFHealthDateType) -> (startDate: Date, endDate: Date)  {
         let calendar = Calendar.current
-        let endDate = calendar.startOfDay(for: Date())
+        let endDate = Date()
         var startDate = Date()
         switch type {
         case .day:

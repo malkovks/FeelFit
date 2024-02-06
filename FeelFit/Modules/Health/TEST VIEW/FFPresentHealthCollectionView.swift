@@ -13,6 +13,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     private var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     private let loadHealthData = FFHealthDataLoading.shared
+    private var healthData: [FFUserHealthDataProvider] = []
     
     private var collectionView: UICollectionView!
     
@@ -41,14 +42,26 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         }
     }
     
+    @objc private func didTapOpenView(){
+        let vc = FFHealthViewController()
+        show(vc, sender: nil)
+    }
+    
     //MARK: - Setup view
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         setupNavigationController()
+        loadHealthData.performQuery { models in
+            self.healthData = models
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
         setupCollectionView()
         setupRefreshControl()
         setupViewModel()
         setupConstraints()
+        
     }
     
     private func setupCollectionView(){
@@ -75,7 +88,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         customView.configureView(title: "Summary",image)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
         navigationItem.titleView = customView
-        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(didTapOpenView))
     }
     
     func setupViewModel() {
@@ -86,20 +99,16 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
 
 extension FFPresentHealthCollectionView: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return healthData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFPresentHealthCollectionViewCell.identifier, for: indexPath) as! FFPresentHealthCollectionViewCell
-        loadHealthData.uploadHealthDataBy(type: .week,HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue) { userData in
-            DispatchQueue.main.async {
-                cell.configureCell(indexPath, values: userData)
-            }
-        }
+        cell.configureCell(indexPath, values: healthData)
         
         return cell
     }

@@ -26,51 +26,58 @@ class FFHealthDataLoading {
     static let shared = FFHealthDataLoading()
     
     private let healthStore = HKHealthStore()
+    private let calendar = Calendar.current
     
-    /// Function loading selected type from HealthStore ,convert and display in correct form
-    /// - Parameters:
-    ///   - type: necessary for set up period of loading data
-    ///   - identifier: it is HKQuantityTypeIdentifier of selected type for downloading information
-    ///   - completionHandler: return array of FFUserHealthDataProvider
-    func uploadHealthDataBy(type: FFHealthDateType = .week,_ identifier: String = "HKQuantityTypeIdentifierStepCount",completionHandler: @escaping ((_ userData: [FFUserHealthDataProvider]) -> ()) ){
-        var returnValue: [FFUserHealthDataProvider] = [FFUserHealthDataProvider]()
-        let quantityType = prepareQuantityType(identifier)
-        let id = HKQuantityTypeIdentifier(rawValue: identifier)
-        let predicate = preparePredicateHealthData(type)
-        let interval = FFHealthData.dateIntervalConfiguration(type)
-        let date = FFHealthData.dateRangeConfiguration(type)
-        let options = HKStatisticsOptions.cumulativeSum
-        let unit = prepareHealthUnit(id)
+    func performQuery(
+        identifier : HKQuantityTypeIdentifier = .activeEnergyBurned,
+        _ intervalValue: Int = 1,
+        _ optionsCase: HKStatisticsOptions = .cumulativeSum,
+        completion: @escaping (_ models: [FFUserHealthDataProvider])->()) {
+        let predicate = preparePredicateHealthData()
+        let startDate = createLastWeekStartDate()
+        let anchorDate = createAnchorData()
+        let interval = DateComponents(day: intervalValue)
+        let options: HKStatisticsOptions = prepareStatisticOptions(for: identifier.rawValue, options: optionsCase)
+        let id = HKQuantityType.quantityType(forIdentifier: identifier)!
         
-        let query: HKStatisticsCollectionQuery = HKStatisticsCollectionQuery(
-            quantityType: quantityType,
-            quantitySamplePredicate: predicate,
-            options: options,
-            anchorDate: date.endDate,
-            intervalComponents: interval)
+        let query = HKStatisticsCollectionQuery(quantityType: id,
+                                                quantitySamplePredicate: predicate,
+                                                options: options,
+                                                anchorDate: anchorDate,
+                                                intervalComponents: interval)
         
-        query.initialResultsHandler = { queries, results, error in
+        query.initialResultsHandler = { [weak self] queries, results, error in
             guard error == nil,
                   let results = results else {
                 print("Error getting result from query. Try again of fix it")
                 return
             }
+            let startDate = getLastWeekStartDate()
+            let endDate = Date()
+            var returnValue = [FFUserHealthDataProvider]()
             
-            results.enumerateStatistics(from: date.startDate, to: date.endDate) { stats, pointer in
-                //setups for step count
+            results.enumerateStatistics(from: startDate, to: endDate) { stats, pointer in
                 
+                let unitQuantityType = self!.prepareHealthUnit(identifier)!
                 let startDate = stats.startDate
                 let endDate = stats.endDate
                 let type = stats.quantityType
-                guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                let value = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: steps, identifier: identifier, unit: unit, type: type)
+                guard let steps = stats.sumQuantity()?.doubleValue(for: unitQuantityType) else { return }
+                let value = FFUserHealthDataProvider(startDate: startDate, 
+                                                     endDate: endDate,
+                                                     value: steps,
+                                                     identifier: identifier.rawValue,
+                                                     unit: unitQuantityType,
+                                                     type: type)
                 returnValue.append(value)
             }
-            completionHandler(returnValue)
+            completion(returnValue)
         }
         healthStore.execute(query)
+        
     }
-    private func prepareHealthUnit(_ identifier: HKQuantityTypeIdentifier) -> HKUnit{
+
+    private func prepareHealthUnit(_ identifier: HKQuantityTypeIdentifier) -> HKUnit?{
         switch identifier {
         case .stepCount:
             return HKUnit.count()
@@ -90,14 +97,49 @@ class FFHealthDataLoading {
             let vo2Unit = ml.unitDivided(by: kgMin)
             return vo2Unit
         default:
-            return HKUnit.count()
+            return nil
         }
+        
+    }
+    private func createLastWeekStartDate(from date: Date = Date()) -> Date {
+        return Calendar.current.date(byAdding: .day, value: -6, to: date)!
+    }
+    
+    private func prepareStatisticOptions(for dataIdentifier: String, options: HKStatisticsOptions = .cumulativeSum) -> HKStatisticsOptions {
+        var options: HKStatisticsOptions = options
+        let sampleType = getSampleType(for: dataIdentifier)
+        
+        if sampleType is HKQuantityType {
+            let quantityIdentifier = HKQuantityTypeIdentifier(rawValue: dataIdentifier)
+            
+            switch quantityIdentifier {
+            case .heartRate:
+                options = .discreteAverage
+            default:
+                options = .cumulativeSum
+            }
+        }
+        return options
     }
     
     ///Function creating predicate based on HKQuery and input startDate and endDate in this diapason
-    private func preparePredicateHealthData(_ type: FFHealthDateType) -> NSPredicate{
-        let (startDate,endDate) = FFHealthData.dateRangeConfiguration(type)
-        return HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictEndDate)
+    private func preparePredicateHealthData(_ type: FFHealthDateType = .week, from endDate: Date = Date()) -> NSPredicate{
+        let startDate = createLastWeekStartDate()
+        return HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+    }
+    
+    private func createAnchorData() -> Date {
+        let calendar: Calendar = .current
+        var components = calendar.dateComponents([.day,.month,.year,.weekday], from: Date())
+        let offset = (7 + (components.weekday ?? 0 ) - 2) % 7
+        
+        components.day! -= offset
+        components.hour = 3
+        
+        let date = calendar.date(from: components)!
+        
+        return date
+        
     }
     
     /// Function creating, check optional and return quantity type

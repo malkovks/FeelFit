@@ -10,6 +10,6 @@ import HealthKit
 
 
 
-func getLastWeekStartDate(from date: Date = Date()) -> Date {
-    return Calendar.current.date(byAdding: .day, value: -6, to: date)!
+func getLastWeekStartDate(value: Int = -6,from date: Date = Date()) -> Date {
+    return Calendar.current.date(byAdding: .day, value: value, to: date)!
 }
