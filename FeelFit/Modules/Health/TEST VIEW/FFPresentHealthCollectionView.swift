@@ -5,11 +5,14 @@
 //  Created by Константин Малков on 04.02.2024.
 //
 
+import HealthKit
 import UIKit
 
 class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     private var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    
+    private let loadHealthData = FFHealthDataLoading.shared
     
     private var collectionView: UICollectionView!
     
@@ -87,11 +90,17 @@ extension FFPresentHealthCollectionView: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFPresentHealthCollectionViewCell.identifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFPresentHealthCollectionViewCell.identifier, for: indexPath) as! FFPresentHealthCollectionViewCell
+        loadHealthData.uploadHealthDataBy(type: .week,HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue) { userData in
+            DispatchQueue.main.async {
+                cell.configureCell(indexPath, values: userData)
+            }
+        }
+        
         return cell
     }
 }

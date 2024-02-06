@@ -45,6 +45,7 @@ class FFNavigationControllerCustomView: UIView {
     }
     
     func setupFrames(){
+        
         frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50)
         addSubview(navigationTitleLabel)
         navigationTitleLabel.frame = CGRect(x: 0, y: 0, width: self.frame.size.width-60, height: 50)

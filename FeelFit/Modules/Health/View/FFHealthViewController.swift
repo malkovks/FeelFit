@@ -14,11 +14,15 @@ import AVFoundation
 
 
 struct HealthModelValue {
-    let date: Date
+    ///From this date started counting to current date
+    let startDate: Date
+    ///Result from HealthKit in Double format
     let value: Double
+    /// Unit type which used for inheriting data from HealthKit
     let unit: HKUnit
     ///Identifier for HealthKit item like HKQuantityTypeIdentifier or HKObjectType string type
     let identifier: String
+    
 }
 
 enum FFHealthDateType: String,CaseIterable {
@@ -377,19 +381,19 @@ class FFHealthViewController: UIViewController, SetupViewController {
                     case .stepCount:
                         let unit = HKUnit.count()
                         guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(date: startDate, value: steps,unit: unit,identifier: id))
+                        value.append(HealthModelValue.init(startDate: startDate, value: steps,unit: unit,identifier: id))
                     case .distanceWalkingRunning:
                         let unit = HKUnit.meter()
                         guard let meters = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(date: startDate, value: meters,unit: unit,identifier: id))
+                        value.append(HealthModelValue.init(startDate: startDate, value: meters,unit: unit,identifier: id))
                     case .activeEnergyBurned:
                         let unit = HKUnit.kilocalorie()
                         guard let calories = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(date: startDate, value: calories,unit: unit,identifier: id))
+                        value.append(HealthModelValue.init(startDate: startDate, value: calories,unit: unit,identifier: id))
                     case .heartRate:
                         let unit = HKUnit.count().unitDivided(by: .minute())
                         guard let heartRate = stats.averageQuantity()?.doubleValue(for: unit) else { return }
-                        value.append(HealthModelValue.init(date: startDate, value: heartRate,unit: unit,identifier: id))
+                        value.append(HealthModelValue.init(startDate: startDate, value: heartRate,unit: unit,identifier: id))
                         
                     default: fatalError("Error getting data from health kit")
                     }

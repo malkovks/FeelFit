@@ -43,6 +43,29 @@ func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
     }
 }
 
+func getUnitMeasurement(_ type: HKQuantityTypeIdentifier,_ value: Double) -> String {
+    switch type {
+    case .stepCount:
+        return "steps"
+    case .distanceWalkingRunning:
+        return "meters"
+    case .activeEnergyBurned:
+        return "calories"
+    case .heartRate:
+        return "b/m"
+    case .activeEnergyBurned:
+        return "calories"
+    case .height:
+        return "cm"
+    case .bodyMass:
+        return "kg"
+    case .vo2Max:
+        return "MOC"
+    default:
+        return "No unit measurement"
+    }
+}
+
 class FFHealthData {
     
     static let healthStore: HKHealthStore = HKHealthStore()
@@ -104,6 +127,8 @@ class FFHealthData {
         let endDate = calendar.startOfDay(for: Date())
         var startDate = Date()
         switch type {
+        case .day:
+            startDate = calendar.date(byAdding: .hour, value: -1, to: endDate)!
         case .week:
             startDate = calendar.date(byAdding: .day, value: -6, to: endDate)!
         case .month:
@@ -112,8 +137,7 @@ class FFHealthData {
             startDate = calendar.date(byAdding: .month, value: -6, to: endDate)!
         case .year:
             startDate = calendar.date(byAdding: .year, value: -1, to: endDate)!
-        case .day:
-            startDate = calendar.date(byAdding: .hour, value: -1, to: endDate)!
+        
         }
         return (startDate, endDate)
     }

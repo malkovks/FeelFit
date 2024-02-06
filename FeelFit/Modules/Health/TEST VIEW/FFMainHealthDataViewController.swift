@@ -9,13 +9,7 @@ import UIKit
 import CareKit
 import HealthKit
 
-struct FFUserHealthDataProvider {
-    let startDate: Date
-    let endDate: Date
-    let value: Double
-    let identifier: String
-    let unit: HKUnit
-}
+
 
 class FFMainHealthDataViewController: UIViewController, SetupViewController {
     
@@ -36,7 +30,6 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     private let segmentControl: UISegmentedControl = {
         let titles = ["Day","Week","Month","Half Year","Year"]
         let segmentControl = UISegmentedControl(items: titles)
-//        segmentControl.selectedSegmentIndex = 3
         segmentControl.apportionsSegmentWidthsByContent = true
         segmentControl.selectedSegmentTintColor = FFResources.Colors.activeColor
         segmentControl.layer.borderWidth = 0.3
@@ -128,7 +121,7 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
             quantityType: quantityType,
             quantitySamplePredicate: predicate,
             options: options,
-            anchorDate: Date(),
+            anchorDate: date.endDate,
             intervalComponents: interval)
         
         query.initialResultsHandler = { queries, results, error in
@@ -143,8 +136,9 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
                 let unit = HKUnit.count()
                 let startDate = stats.startDate
                 let endDate = stats.endDate
+                let type = stats.quantityType
                 guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                let value = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: steps, identifier: identifier, unit: unit)
+                let value = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: steps, identifier: identifier, unit: unit, type: type)
                 returnValue.append(value)
             }
             completionHandler(returnValue)
@@ -160,7 +154,6 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     /// Function creating, check optional and return quantity type
     /// - Parameter identifier: string identifier of what function must return
     /// - Returns: return completed quantity type if it not nil or no error. If any error return HKQuantityType.stepCount
-    
     private func prepareQuantityType(_ identifier: String) -> HKQuantityType {
         let quantityIdentifier = HKQuantityTypeIdentifier(rawValue: identifier)
         guard let quantityType = HKQuantityType.quantityType(forIdentifier: quantityIdentifier) else { return HKQuantityType(.stepCount)}
@@ -180,7 +173,7 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     }
     
     private func setupChartView(){
-        uploadHealthDataBy { userData in
+        FFHealthDataLoading.shared.uploadHealthDataBy { userData in
             let value: [CGFloat] = userData.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Steps",size: 2, color: .black)
             DispatchQueue.main.async {

@@ -52,7 +52,7 @@ class FFHealthTableViewCell: UITableViewCell {
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 0
         guard let stepsString = formatter.string(from: NSNumber(value: value.value)) else { return }
-        let dateString = DateFormatter.localizedString(from: value.date, dateStyle: .medium, timeStyle: .none)
+        let dateString = DateFormatter.localizedString(from: value.startDate, dateStyle: .medium, timeStyle: .none)
         DispatchQueue.main.async { [weak self] in
             self?.firstLabel.text = stepsString + secondaryText
             self?.secondLabel.text = dateString
