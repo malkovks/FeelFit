@@ -85,6 +85,8 @@
 		0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */; };
 		0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */; };
 		0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */; };
+		0A91E89C2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91E89B2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift */; };
+		0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91E89D2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift */; };
 		0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */; };
 		0A9FF3862B6F7ED700F59714 /* FileManager + UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9FF3852B6F7ED700F59714 /* FileManager + UIViewController.swift */; };
 		0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */; };
@@ -201,6 +203,8 @@
 		0A9151A02B037A1B00FE5E41 /* FFCreateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTableViewCell.swift; sourceTree = "<group>"; };
 		0A9151A42B037AB200FE5E41 /* FFCreateHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateHeaderView.swift; sourceTree = "<group>"; };
 		0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanRealmModel.swift; sourceTree = "<group>"; };
+		0A91E89B2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPresentHealthHeaderCollectionView.swift; sourceTree = "<group>"; };
+		0A91E89D2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPresentHealthFooterCollectionView.swift; sourceTree = "<group>"; };
 		0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTrainProgramViewController.swift; sourceTree = "<group>"; };
 		0A9FF3852B6F7ED700F59714 /* FileManager + UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager + UIViewController.swift"; sourceTree = "<group>"; };
 		0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPresentHealthCollectionView.swift; sourceTree = "<group>"; };
@@ -430,7 +434,6 @@
 		0A4495052AB9D11D0082C909 /* Health */ = {
 			isa = PBXGroup;
 			children = (
-				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
 				0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */,
 				0A85551A2B72434300B1A7EE /* HealthDataUploading */,
 				0ADB786C2B710B3C00653952 /* CollectionView */,
@@ -508,6 +511,7 @@
 		0A4495172ABA728F0082C909 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
 				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
 				0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */,
 				0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */,
@@ -876,6 +880,8 @@
 			isa = PBXGroup;
 			children = (
 				0ADB786D2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift */,
+				0A91E89B2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift */,
+				0A91E89D2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift */,
 			);
 			path = CollectionView;
 			sourceTree = "<group>";
@@ -1123,6 +1129,8 @@
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
+				0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */,
+				0A91E89C2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift in Sources */,
 				0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */,
 				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
 				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,

@@ -42,6 +42,7 @@ class FFNavigationControllerCustomView: UIView {
     
     func setupView(){
         self.autoresizingMask = .flexibleWidth
+        self.backgroundColor = .clear
     }
     
     func setupFrames(){

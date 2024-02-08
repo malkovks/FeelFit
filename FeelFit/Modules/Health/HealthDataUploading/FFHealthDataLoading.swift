@@ -33,48 +33,50 @@ class FFHealthDataLoading {
         _ intervalValue: Int = 1,
         _ optionsCase: HKStatisticsOptions = .cumulativeSum,
         completion: @escaping (_ models: [FFUserHealthDataProvider])->()) {
-        let predicate = preparePredicateHealthData()
-        let startDate = createLastWeekStartDate()
-        let anchorDate = createAnchorData()
-        let interval = DateComponents(day: intervalValue)
-        let options: HKStatisticsOptions = prepareStatisticOptions(for: identifier.rawValue, options: optionsCase)
-        let id = HKQuantityType.quantityType(forIdentifier: identifier)!
-        
-        let query = HKStatisticsCollectionQuery(quantityType: id,
-                                                quantitySamplePredicate: predicate,
-                                                options: options,
-                                                anchorDate: anchorDate,
-                                                intervalComponents: interval)
-        
-        query.initialResultsHandler = { [weak self] queries, results, error in
-            guard error == nil,
-                  let results = results else {
-                print("Error getting result from query. Try again of fix it")
-                return
-            }
-            let startDate = getLastWeekStartDate()
-            let endDate = Date()
-            var returnValue = [FFUserHealthDataProvider]()
-            
-            results.enumerateStatistics(from: startDate, to: endDate) { stats, pointer in
+            let predicate = preparePredicateHealthData()
+            let startDate = createLastWeekStartDate()
+            let anchorDate = createAnchorData()
+            let interval = DateComponents(day: intervalValue)
+            let idArray: [HKQuantityTypeIdentifier] = [.stepCount,.distanceWalkingRunning,.activeEnergyBurned]
+            for iden in idArray {
+                let options: HKStatisticsOptions = prepareStatisticOptions(for: iden.rawValue, options: optionsCase)
+                let id = HKQuantityType.quantityType(forIdentifier: iden)!
                 
-                let unitQuantityType = self!.prepareHealthUnit(identifier)!
-                let startDate = stats.startDate
-                let endDate = stats.endDate
-                let type = stats.quantityType
-                guard let steps = stats.sumQuantity()?.doubleValue(for: unitQuantityType) else { return }
-                let value = FFUserHealthDataProvider(startDate: startDate, 
-                                                     endDate: endDate,
-                                                     value: steps,
-                                                     identifier: identifier.rawValue,
-                                                     unit: unitQuantityType,
-                                                     type: type)
-                returnValue.append(value)
+                let query = HKStatisticsCollectionQuery(quantityType: id,
+                                                    quantitySamplePredicate: predicate,
+                                                    options: options,
+                                                    anchorDate: anchorDate,
+                                                    intervalComponents: interval)
+            
+                query.initialResultsHandler = { [weak self] queries, results, error in
+                    guard error == nil,
+                          let results = results else {
+                        print("Error getting result from query. Try again of fix it")
+                        return
+                    }
+                    let startDate = getLastWeekStartDate()
+                    let endDate = Date()
+                    var returnValue = [FFUserHealthDataProvider]()
+                    
+                    results.enumerateStatistics(from: startDate, to: endDate) { stats, pointer in
+                        
+                        let unitQuantityType = self!.prepareHealthUnit(iden)!
+                        let startDate = stats.startDate
+                        let endDate = stats.endDate
+                        let type = stats.quantityType
+                        guard let steps = stats.sumQuantity()?.doubleValue(for: unitQuantityType) else { return }
+                        let value = FFUserHealthDataProvider(startDate: startDate,
+                                                             endDate: endDate,
+                                                             value: steps,
+                                                             identifier: iden.rawValue,
+                                                             unit: unitQuantityType,
+                                                             type: type)
+                        returnValue.append(value)
+                    }
+                    completion(returnValue)
+                }
+                healthStore.execute(query)
             }
-            completion(returnValue)
-        }
-        healthStore.execute(query)
-        
     }
 
     private func prepareHealthUnit(_ identifier: HKQuantityTypeIdentifier) -> HKUnit?{

@@ -13,7 +13,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     private var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     private let loadHealthData = FFHealthDataLoading.shared
-    private var healthData: [FFUserHealthDataProvider] = []
+    private var healthData = [[FFUserHealthDataProvider]]()
     
     private var collectionView: UICollectionView!
     
@@ -47,12 +47,16 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         show(vc, sender: nil)
     }
     
+    @objc private func didTapPressChangeFavouriteCollectionView(){
+        print("Open list view for setup all downloaded data and display only favourites data")
+    }
+    
     //MARK: - Setup view
     func setupView() {
-        view.backgroundColor = .secondarySystemBackground
+        setGradientBackground(topColor: FFResources.Colors.activeColor, bottom: .secondarySystemBackground)
         setupNavigationController()
         loadHealthData.performQuery { models in
-            self.healthData = models
+            self.healthData.append(models)
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
@@ -72,6 +76,8 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(FFPresentHealthCollectionViewCell.self, forCellWithReuseIdentifier: FFPresentHealthCollectionViewCell.identifier)
+        collectionView.register(FFPresentHealthHeaderCollectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier)
+        collectionView.register(FFPresentHealthFooterCollectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .clear
@@ -108,8 +114,7 @@ extension FFPresentHealthCollectionView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFPresentHealthCollectionViewCell.identifier, for: indexPath) as! FFPresentHealthCollectionViewCell
-        cell.configureCell(indexPath, values: healthData)
-        
+        cell.configureCell(indexPath, values: healthData[indexPath.row])
         return cell
     }
 }
@@ -117,6 +122,16 @@ extension FFPresentHealthCollectionView: UICollectionViewDataSource {
 extension FFPresentHealthCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier, for: indexPath) as! FFPresentHealthHeaderCollectionView
+            header.setupHeaderFavouritesButton.addTarget(self, action: #selector(didTapPressChangeFavouriteCollectionView), for: .primaryActionTriggered)
+            return header
+        }
+        let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView
+        return  footer
     }
 }
 
@@ -128,11 +143,11 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 50)
+        return CGSize(width: collectionView.bounds.width-10, height: 50)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 40)
+        return CGSize(width: collectionView.bounds.width-10, height: 60)
     }
 }
 
@@ -142,5 +157,15 @@ private extension FFPresentHealthCollectionView {
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+}
+
+extension UIViewController {
+    func setGradientBackground(topColor: UIColor, bottom: UIColor) {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [topColor.cgColor,bottom.cgColor]
+        gradientLayer.locations = [0.0,1.0]
+        view.layer.insertSublayer(gradientLayer, at: 0)
     }
 }
