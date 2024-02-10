@@ -10,10 +10,19 @@ import UIKit
 class FFPresentHealthFooterCollectionView: UICollectionReusableView {
     static let identifier = "FFPresentHealthFooterCollectionView"
     
+    var isButtonPressed: ((_ pressed: Bool)->())?
+    
     let segueFooterButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .systemBackground
-        
+        button.configuration = .bordered()
+        button.configuration?.cornerStyle = .medium
+        button.configuration?.image = UIImage(systemName: "heart")?.withTintColor(.systemRed)
+        button.configuration?.imagePlacement = .leading
+        button.configuration?.imagePadding = 5
+        button.configuration?.title = "Show all medical data"
+        button.configuration?.baseBackgroundColor = .systemBackground
+        button.configuration?.baseForegroundColor = FFResources.Colors.textColor
+        button.contentMode = .left
         return button
     }()
     
@@ -23,16 +32,26 @@ class FFPresentHealthFooterCollectionView: UICollectionReusableView {
         setupFooterConstraints()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @objc private func didTapOpenDetails(){
+        isButtonPressed?(true)
+        
     }
     
     private func setupFooterView(){
-        backgroundColor = .systemBlue
+        segueFooterButton.addTarget(self, action: #selector(didTapOpenDetails), for: .primaryActionTriggered)
     }
     private func setupFooterConstraints(){
-        
+        self.addSubview(segueFooterButton)
+        segueFooterButton.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(10)
+            make.leading.trailing.equalToSuperview().inset(10)
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
+
 
 

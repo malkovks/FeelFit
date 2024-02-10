@@ -78,8 +78,12 @@ class FFHealthData {
         return allHealthDataTypes
     }
     
-    static var allTypeQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
+    static var mainQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
         return necessaryIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }
+    }
+    
+    static var allQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
+        return typeIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }
     }
     
     

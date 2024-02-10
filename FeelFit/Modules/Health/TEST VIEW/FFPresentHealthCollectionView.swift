@@ -10,14 +10,14 @@ import UIKit
 
 class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
-    private var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
-    private let loadHealthData = FFHealthDataLoading.shared
-    private var healthData = [[FFUserHealthDataProvider]]()
+    let loadHealthData = FFHealthDataLoading.shared
+    var healthData = [[FFUserHealthDataProvider]]()
     
-    private var collectionView: UICollectionView!
+    var collectionView: UICollectionView!
     
-    private let refreshControl: UIRefreshControl = {
+    let refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl(frame: .zero)
         refresh.tintColor = FFResources.Colors.activeColor
         return refresh
@@ -42,13 +42,16 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         }
     }
     
-    @objc private func didTapOpenView(){
-        let vc = FFHealthViewController()
-        show(vc, sender: nil)
+    @objc private func didTapPressChangeFavouriteCollectionView(){
+        let vc = FFFavouriteHealthDataViewController()
+        let navVC = FFNavigationController(rootViewController: vc)
+        navVC.isNavigationBarHidden = false
+        present(navVC, animated: true)
     }
     
-    @objc private func didTapPressChangeFavouriteCollectionView(){
-        print("Open list view for setup all downloaded data and display only favourites data")
+    @objc private func didTapOpenDetails(){
+        let vc = FFHealthViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     //MARK: - Setup view
@@ -94,7 +97,6 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         customView.configureView(title: "Summary",image)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
         navigationItem.titleView = customView
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(didTapOpenView))
     }
     
     func setupViewModel() {
@@ -131,13 +133,14 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegate {
             return header
         }
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView
+        footer.segueFooterButton.addTarget(self, action: #selector(didTapOpenDetails), for: .primaryActionTriggered)
         return  footer
     }
 }
 
 extension FFPresentHealthCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width-10
+        let width = collectionView.bounds.width-20
         let height = CGFloat(view.frame.size.height/4)
         return CGSize(width: width, height: height)
     }
@@ -160,12 +163,4 @@ private extension FFPresentHealthCollectionView {
     }
 }
 
-extension UIViewController {
-    func setGradientBackground(topColor: UIColor, bottom: UIColor) {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = view.bounds
-        gradientLayer.colors = [topColor.cgColor,bottom.cgColor]
-        gradientLayer.locations = [0.0,1.0]
-        view.layer.insertSublayer(gradientLayer, at: 0)
-    }
-}
+

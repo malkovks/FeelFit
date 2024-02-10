@@ -183,7 +183,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         let title = "Select displaying data type"
         let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        for type in FFHealthData.allTypeQuantityTypeIdentifiers {
+        for type in FFHealthData.mainQuantityTypeIdentifiers {
             let actionTitle = getDataTypeName(type)
             let action = UIAlertAction(title: actionTitle, style: .default) { [weak self] _ in
                 self?.selectDataTypeIdentifier(type)
