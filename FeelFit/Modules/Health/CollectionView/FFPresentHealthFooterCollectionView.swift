@@ -10,11 +10,10 @@ import UIKit
 class FFPresentHealthFooterCollectionView: UICollectionReusableView {
     static let identifier = "FFPresentHealthFooterCollectionView"
     
-    var isButtonPressed: ((_ pressed: Bool)->())?
     
     let segueFooterButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.configuration = .bordered()
+        button.configuration = .filled()
         button.configuration?.cornerStyle = .medium
         button.configuration?.image = UIImage(systemName: "heart")?.withTintColor(.systemRed)
         button.configuration?.imagePlacement = .leading
@@ -32,13 +31,7 @@ class FFPresentHealthFooterCollectionView: UICollectionReusableView {
         setupFooterConstraints()
     }
     
-    @objc private func didTapOpenDetails(){
-        isButtonPressed?(true)
-        
-    }
-    
     private func setupFooterView(){
-        segueFooterButton.addTarget(self, action: #selector(didTapOpenDetails), for: .primaryActionTriggered)
     }
     private func setupFooterConstraints(){
         self.addSubview(segueFooterButton)

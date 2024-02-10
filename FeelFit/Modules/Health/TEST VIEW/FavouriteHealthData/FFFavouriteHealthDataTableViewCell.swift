@@ -39,20 +39,33 @@ class FFFavouriteHealthDataTableViewCell: UITableViewCell {
         setupConstraintsCell()
     }
     
-    @objc private func didTapChangeStatus(_ sender: UIButton) {
+    @objc func didTapChangeStatus() {
         isObjectSaved.toggle()
         let image = isObjectSaved ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
+        let text = titleTextLabel.text!
+        let textID = text + "_status"
         UIView.transition(with: favouriteButton, duration: 0.2) { [weak self] in
             self?.favouriteButton.setImage(image, for: .normal)
+            self?.updateValueStatus(textID, status: self!.isObjectSaved)
         }
         
     }
     
-    public func configureCell(_ indexPath: IndexPath,_ textID: [HKQuantityTypeIdentifier],_ status: Bool){
+    public func configureCell(_ indexPath: IndexPath,identifier textID: [HKQuantityTypeIdentifier]){
+        
         let type = textID[indexPath.row]
         let text = getDataTypeName(type)
+        let keyID = text + "_status"
+        let status = UserDefaults.standard.value(forKey: keyID ) ?? false
+        isObjectSaved = status as! Bool
+        let image = isObjectSaved ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
         titleTextLabel.text = text
-        isObjectSaved = status
+        favouriteButton.setImage(image, for: .normal)
+    }
+    
+    private func updateValueStatus(_ identifier: String, status: Bool){
+        let keyID = identifier
+        UserDefaults.standard.set(status, forKey: keyID)
     }
     
     private func setupViewCell(){

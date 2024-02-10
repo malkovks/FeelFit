@@ -39,28 +39,46 @@ func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
     case .vo2Max:
         return "VO 2 Max Comsuption"
     default:
-        return ""
+        let text = types.rawValue
+        let formattedText = text.replacingOccurrences(of: "HKQuantityTypeIdentifier", with: "")
+        var returnText = ""
+        for (index,char) in formattedText.enumerated() {
+            if index > 0 && char.isUppercase {
+                returnText.append(" ")
+            }
+            returnText.append(char)
+        }
+        
+        return returnText
     }
 }
+
+
 
 func getUnitMeasurement(_ type: HKQuantityTypeIdentifier,_ value: Double) -> String {
     switch type {
     case .stepCount:
         return "steps"
-    case .distanceWalkingRunning:
+    case .distanceWalkingRunning,.distanceCycling:
         return "meters"
     case .activeEnergyBurned:
         return "calories"
     case .heartRate:
         return "b/m"
-    case .activeEnergyBurned:
-        return "calories"
+    case .runningPower:
+        return "W"
+    case .runningSpeed:
+        return "m/sec"
     case .height:
         return "cm"
     case .bodyMass:
         return "kg"
     case .vo2Max:
         return "MOC"
+    case .bodyMassIndex:
+        return "count"
+    case .bodyFatPercentage:
+        return "%"
     default:
         return "No unit measurement"
     }
@@ -86,6 +104,17 @@ class FFHealthData {
         return typeIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }
     }
     
+    static var favouriteQuantityTypeIdentifier: [HKQuantityTypeIdentifier] {
+        
+        let identifier = allQuantityTypeIdentifiers.filter { quantityType in
+            let text = getDataTypeName(quantityType)
+            let keyID: String = text + "_status"
+            let status = UserDefaults.standard.bool(forKey: keyID)
+            return status
+        }
+        return identifier
+    }
+    
     
     private static var allHealthDataTypes: [HKSampleType] {
         return typeIdentifiers.compactMap { getSampleType(for: $0) }
@@ -103,11 +132,16 @@ class FFHealthData {
         
         HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
         HKQuantityTypeIdentifier.stepCount.rawValue,
+        HKQuantityTypeIdentifier.distanceCycling.rawValue,
+        HKQuantityTypeIdentifier.runningPower.rawValue,
+        HKQuantityTypeIdentifier.runningSpeed.rawValue,
         
         HKQuantityTypeIdentifier.vo2Max.rawValue,
         
         HKQuantityTypeIdentifier.height.rawValue,
-        HKQuantityTypeIdentifier.bodyMass.rawValue
+        HKQuantityTypeIdentifier.bodyMass.rawValue,
+        HKQuantityTypeIdentifier.bodyFatPercentage.rawValue,
+        HKQuantityTypeIdentifier.bodyMassIndex.rawValue
      
     ]
     

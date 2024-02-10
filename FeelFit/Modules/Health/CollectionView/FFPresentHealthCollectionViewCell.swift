@@ -75,10 +75,10 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
     }
     
     func configureCell(_ indexPath: IndexPath, values: [FFUserHealthDataProvider]){
-        let data = values.reversed().first
-        let quantityId = HKQuantityTypeIdentifier(rawValue: data!.identifier)
-        let valueResult = data?.value
-        let valueType = getUnitMeasurement(quantityId, data!.value)
+        guard let data = values.reversed().first else { return }
+        let quantityId = HKQuantityTypeIdentifier(rawValue: data.identifier)
+        let valueResult = data.value
+        let valueType = getUnitMeasurement(quantityId, data.value)
         let lastDateUpdate = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
         let titleHeaderText = getDataTypeName(quantityId)
         
@@ -87,21 +87,12 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         
         DispatchQueue.main.async { [weak self] in
             self?.titleHeaderLabel.text = titleHeaderText
-            self?.valueResultLabel.text = String(describing: Int(valueResult!))
+            self?.valueResultLabel.text = String(describing: Int(valueResult))
             self?.valueTypeDataLabel.text = valueType
             self?.dataDetailPresentButton.configuration?.title = lastDateUpdate
             self?.graphView.dataSeries = dataSource
         }
     }
-    
-//    private func setupIndexCell(_ indexPath: IndexPath) -> Int{
-//        switch indexPath.row{
-//        case 0:
-//            return 0
-//        default:
-//            break
-//        }
-//    }
     
     private func setupCellView(){
         backgroundColor = .systemBackground

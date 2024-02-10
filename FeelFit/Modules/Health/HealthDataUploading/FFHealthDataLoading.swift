@@ -29,17 +29,14 @@ class FFHealthDataLoading {
     private let calendar = Calendar.current
     
     func performQuery(
-        identifier : HKQuantityTypeIdentifier = .activeEnergyBurned,
+        identifications : [HKQuantityTypeIdentifier] = [.activeEnergyBurned],
         _ intervalValue: Int = 1,
-        _ optionsCase: HKStatisticsOptions = .cumulativeSum,
         completion: @escaping (_ models: [FFUserHealthDataProvider])->()) {
             let predicate = preparePredicateHealthData()
-            let startDate = createLastWeekStartDate()
             let anchorDate = createAnchorData()
             let interval = DateComponents(day: intervalValue)
-            let idArray: [HKQuantityTypeIdentifier] = [.stepCount,.distanceWalkingRunning,.activeEnergyBurned]
-            for iden in idArray {
-                let options: HKStatisticsOptions = prepareStatisticOptions(for: iden.rawValue, options: optionsCase)
+            for iden in identifications {
+                let options: HKStatisticsOptions = prepareStatisticOptions(for: iden.rawValue)
                 let id = HKQuantityType.quantityType(forIdentifier: iden)!
                 
                 let query = HKStatisticsCollectionQuery(quantityType: id,
@@ -60,14 +57,14 @@ class FFHealthDataLoading {
                     
                     results.enumerateStatistics(from: startDate, to: endDate) { stats, pointer in
                         
-                        let unitQuantityType = self!.prepareHealthUnit(iden)!
+                        let unitQuantityType = self?.prepareHealthUnit(iden) ?? .count()
                         let startDate = stats.startDate
                         let endDate = stats.endDate
                         let type = stats.quantityType
-                        guard let steps = stats.sumQuantity()?.doubleValue(for: unitQuantityType) else { return }
+                        let doubleValue = self?.processingStatistics(statistics: stats, unit: unitQuantityType, value: options) ?? 0.0
                         let value = FFUserHealthDataProvider(startDate: startDate,
                                                              endDate: endDate,
-                                                             value: steps,
+                                                             value: doubleValue,
                                                              identifier: iden.rawValue,
                                                              unit: unitQuantityType,
                                                              type: type)
@@ -78,17 +75,39 @@ class FFHealthDataLoading {
                 healthStore.execute(query)
             }
     }
+    
+    private func processingStatistics(statistics stats: HKStatistics,unit: HKUnit,value options: HKStatisticsOptions) -> Double {
+        switch options {
+        case .cumulativeSum:
+            let cumulativeValue = stats.sumQuantity()?.doubleValue(for: unit)
+            return cumulativeValue ?? 0.0
+        case .discreteAverage:
+            let discreteValue = stats.averageQuantity()?.doubleValue(for: unit)
+            return discreteValue ?? 0.0
+        default:
+            return 0.0
+        }
+        
+    }
 
     private func prepareHealthUnit(_ identifier: HKQuantityTypeIdentifier) -> HKUnit?{
+        
         switch identifier {
-        case .stepCount:
+        case .stepCount,.bodyMassIndex:
             return HKUnit.count()
-        case .distanceWalkingRunning:
+        case .distanceWalkingRunning, .distanceCycling:
             return HKUnit.meter()
         case .activeEnergyBurned:
             return HKUnit.kilocalorie()
         case .heartRate:
             return HKUnit.count().unitDivided(by: .minute())
+        case .runningPower:
+            return HKUnit.watt()
+        case .runningSpeed:
+            let meterPerSeconds =  HKUnit.meter().unitDivided(by: HKUnit.second())
+            return meterPerSeconds
+        case .bodyFatPercentage:
+            return HKUnit.percent()
         case .height:
             return HKUnit.meterUnit(with: .centi)
         case .bodyMass:
@@ -107,15 +126,22 @@ class FFHealthDataLoading {
         return Calendar.current.date(byAdding: .day, value: -6, to: date)!
     }
     
-    private func prepareStatisticOptions(for dataIdentifier: String, options: HKStatisticsOptions = .cumulativeSum) -> HKStatisticsOptions {
-        var options: HKStatisticsOptions = options
+    private func prepareStatisticOptions(for dataIdentifier: String) -> HKStatisticsOptions {
+        var options: HKStatisticsOptions = .cumulativeSum
         let sampleType = getSampleType(for: dataIdentifier)
         
         if sampleType is HKQuantityType {
             let quantityIdentifier = HKQuantityTypeIdentifier(rawValue: dataIdentifier)
             
             switch quantityIdentifier {
-            case .heartRate:
+            case    .heartRate,
+                    .bodyMassIndex,
+                    .runningPower,
+                    .runningSpeed,
+                    .bodyFatPercentage,
+                    .bodyMass,
+                    .height,
+                    .vo2Max:
                 options = .discreteAverage
             default:
                 options = .cumulativeSum

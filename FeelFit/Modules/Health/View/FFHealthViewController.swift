@@ -134,16 +134,15 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     func loadDataMethod(){
-        loadData.performQuery(identifier: .stepCount) { models in
+        loadData.performQuery(identifications: [.stepCount]) { models in
             self.tableViewModel = models
-            
         }
-        loadData.performQuery(identifier: .activeEnergyBurned) { models in
+        loadData.performQuery(identifications: [.activeEnergyBurned]) { models in
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             self.activityChartModel.append(series)
         }
-        loadData.performQuery(identifier: .distanceWalkingRunning) { models in
+        loadData.performQuery(identifications: [.distanceWalkingRunning]) { models in
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Meters", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             self.walkingChartModel.append(series)
@@ -224,7 +223,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         walkingMetersChartView.applyConfiguration()
         walkingMetersChartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
-        FFHealthDataLoading.shared.performQuery(identifier: .stepCount) {[weak self] models in
+        FFHealthDataLoading.shared.performQuery(identifications: [.stepCount]) {[weak self] models in
             let stepValues: [CGFloat] = models.map { CGFloat($0.value) }
             DispatchQueue.main.async {
                 let series = OCKDataSeries(values: stepValues, title: self?.titleForTable ?? "Default" , color: FFResources.Colors.activeColor)
@@ -245,7 +244,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: startDate)
     
-        FFHealthDataLoading.shared.performQuery(identifier: .activeEnergyBurned) { model in
+        FFHealthDataLoading.shared.performQuery(identifications: [.activeEnergyBurned]) { model in
             let value: [CGFloat] = model.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             DispatchQueue.main.async {

@@ -19,14 +19,7 @@ class FFFavouriteHealthDataViewController: UIViewController, SetupViewController
     }
     
     @objc private func didTapSave(){
-        print("Settings saved")
         self.dismiss(animated: true)
-    }
-    
-    @objc private func didTapAddFavourite(_ sender: UIButton){
-        if sender.isSelected {
-            
-        }
     }
     
     func setupView() {
@@ -40,6 +33,8 @@ class FFFavouriteHealthDataViewController: UIViewController, SetupViewController
     func setupNavigationController() {
         title = "Edit Favourites"
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Done", imageName: "", action: #selector(didTapSave), menu: nil)
+        navigationController?.navigationBar.backgroundColor = .clear
+        navigationController?.navigationBar.isTranslucent = true
     }
     
     func setupViewModel() {
@@ -55,6 +50,8 @@ class FFFavouriteHealthDataViewController: UIViewController, SetupViewController
         tableView.layer.masksToBounds = true
         tableView.backgroundColor = .clear
     }
+    
+    
 }
 
 extension FFFavouriteHealthDataViewController: UITableViewDataSource {
@@ -62,21 +59,9 @@ extension FFFavouriteHealthDataViewController: UITableViewDataSource {
         return sharedIdentifiers.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let button = UIButton(type: .custom)
-//        button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-//        button.setImage(UIImage(systemName: "star"), for: .normal)
-//        button.tintColor = FFResources.Colors.darkPurple
-//        button.backgroundColor = .clear
-//        button.addTarget(self, action: #selector(didTapAddFavourite), for: .primaryActionTriggered)
-//        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {        
         let cell = tableView.dequeueReusableCell(withIdentifier: FFFavouriteHealthDataTableViewCell.identifier, for: indexPath) as! FFFavouriteHealthDataTableViewCell
-        cell.configureCell(indexPath, sharedIdentifiers, false)
-//        let type = sharedIdentifiers[indexPath.row]
-//        let text = getDataTypeName(type)
-//        cell.textLabel?.text = text
-//        cell.backgroundColor = .systemBackground
-//        cell.accessoryView = button
+        cell.configureCell(indexPath,identifier: sharedIdentifiers)
         return cell
     }
 }
@@ -84,6 +69,8 @@ extension FFFavouriteHealthDataViewController: UITableViewDataSource {
 extension FFFavouriteHealthDataViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let cell = tableView.cellForRow(at: indexPath) as! FFFavouriteHealthDataTableViewCell
+        cell.didTapChangeStatus()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

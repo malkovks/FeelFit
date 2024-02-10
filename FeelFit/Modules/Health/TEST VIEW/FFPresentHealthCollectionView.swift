@@ -12,21 +12,24 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
-    let loadHealthData = FFHealthDataLoading.shared
-    var healthData = [[FFUserHealthDataProvider]]()
     
-    var collectionView: UICollectionView!
+    private var userFavouriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
+    private let loadHealthData = FFHealthDataLoading.shared
+    private var healthData = [[FFUserHealthDataProvider]]()
     
-    let refreshControl: UIRefreshControl = {
+    private var collectionView: UICollectionView!
+    
+    private let refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl(frame: .zero)
-        refresh.tintColor = FFResources.Colors.activeColor
+        refresh.tintColor = FFResources.Colors.backgroundColor
         return refresh
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
+        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
+        FFHealthDataAccess.shared.requestForAccessToHealth()
     }
     
     //MARK: - Target methods
@@ -38,6 +41,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     @objc private func didTapRefreshView(){
         DispatchQueue.main.asyncAfter(deadline: .now()+2) { [weak self] in
+            self?.prepareCollectionViewData()
             self?.refreshControl.endRefreshing()
         }
     }
@@ -46,7 +50,9 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         let vc = FFFavouriteHealthDataViewController()
         let navVC = FFNavigationController(rootViewController: vc)
         navVC.isNavigationBarHidden = false
-        present(navVC, animated: true)
+        present(navVC, animated: true) { [weak self] in
+            self?.didTapRefreshView()
+        }
     }
     
     @objc private func didTapOpenDetails(){
@@ -58,17 +64,24 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     func setupView() {
         setGradientBackground(topColor: FFResources.Colors.activeColor, bottom: .secondarySystemBackground)
         setupNavigationController()
-        loadHealthData.performQuery { models in
-            self.healthData.append(models)
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
         setupCollectionView()
+        prepareCollectionViewData()
         setupRefreshControl()
         setupViewModel()
         setupConstraints()
-        
+    }
+    
+    private func prepareCollectionViewData(){
+        userFavouriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
+        healthData.removeAll()
+        loadHealthData.performQuery(identifications: userFavouriteTypes) { models in
+            self.healthData.append(models)
+            DispatchQueue.main.async { [weak self] in
+                self?.collectionView.performBatchUpdates({
+                    self?.collectionView.reloadSections(IndexSet(integer: 0))
+                })
+            }
+        }
     }
     
     private func setupCollectionView(){
@@ -97,6 +110,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         customView.configureView(title: "Summary",image)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
         navigationItem.titleView = customView
+        navigationController?.navigationBar.backgroundColor = .clear
     }
     
     func setupViewModel() {
