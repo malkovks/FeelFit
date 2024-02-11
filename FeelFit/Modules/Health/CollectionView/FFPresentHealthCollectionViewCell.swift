@@ -78,7 +78,7 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         guard let data = values.reversed().first else { return }
         let quantityId = HKQuantityTypeIdentifier(rawValue: data.identifier)
         let valueResult = data.value
-        let valueType = getUnitMeasurement(quantityId, data.value)
+        let valueType = getUnitMeasurement(quantityId).capitalized
         let lastDateUpdate = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
         let titleHeaderText = getDataTypeName(quantityId)
         
@@ -110,7 +110,7 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         titleStackView.axis = .horizontal
         titleStackView.distribution = .fill
         titleStackView.spacing = 5
-        titleStackView.alignment = .center
+        titleStackView.alignment = .fill
         
         valueStackView.axis = .vertical
         valueStackView.distribution = .fill
@@ -138,14 +138,6 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
             make.leading.equalToSuperview().offset(5)
             make.width.equalToSuperview().multipliedBy(0.7)
             make.height.equalToSuperview().multipliedBy(0.3)
-        }
-        
-        contentView.addSubview(graphView)
-        graphView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-2)
-            make.trailing.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.3)
-            make.height.equalToSuperview().multipliedBy(0.5)
         }
     }
     

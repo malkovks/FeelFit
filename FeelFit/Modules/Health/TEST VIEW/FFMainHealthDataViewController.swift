@@ -13,9 +13,21 @@ import HealthKit
 
 class FFMainHealthDataViewController: UIViewController, SetupViewController {
     
+    private let chartDataProvider: [FFUserHealthDataProvider]
+    
+    init(chartData: [FFUserHealthDataProvider]){
+        self.chartDataProvider = chartData
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private let calendar = Calendar.current
     private let healthStore = HKHealthStore()
     private let userDefaults = UserDefaults.standard
+    private let loadUserHealth = FFHealthDataLoading.shared
     
     private var selectedDateType = UserDefaults.standard.string(forKey: "healthDateType") ?? FFHealthDateType.week.rawValue
     private var selectedDateIdentifier = UserDefaults.standard.string(forKey: "healthDateIdentifier") ?? "HKQuantityTypeIdentifierStepCount"
@@ -33,7 +45,7 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         segmentControl.apportionsSegmentWidthsByContent = true
         segmentControl.selectedSegmentTintColor = FFResources.Colors.activeColor
         segmentControl.layer.borderWidth = 0.3
-        segmentControl.layer.borderColor = FFResources.Colors.textColor.cgColor
+        segmentControl.layer.borderColor = FFResources.Colors.darkPurple.cgColor
         return segmentControl
     }()
     
@@ -51,13 +63,12 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     
     private let chartView: OCKCartesianChartView = {
         let chart = OCKCartesianChartView(type: .bar)
-        chart.headerView.titleLabel.text = "Title label text"
         chart.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: nil)
         chart.applyConfiguration()
         chart.graphView.horizontalAxisMarkers = createHorizontalAxisMarkers()
         chart.backgroundColor = .systemBackground
         chart.layer.borderWidth = 0.3
-        chart.layer.borderColor = FFResources.Colors.textColor.cgColor
+        chart.layer.borderColor = FFResources.Colors.darkPurple.cgColor
         return chart
     }()
     
@@ -95,69 +106,15 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         }
         userDefaults.setValue(type.rawValue, forKey: "healthDateType")
         selectedDateType = type.rawValue
-        
+    }
+    
+    @objc private func didTapPopToRoot(){
+        navigationController?.popViewController(animated: true)
     }
     
     @objc private func didTapPresentUserProfile(){
         let vc = FFHealthUserProfileViewController()
         present(vc, animated: true)
-    }
-    
-    
-    /// Function loading selected type from HealthStore ,convert and display in correct form
-    /// - Parameters:
-    ///   - type: necessary for set up period of loading data
-    ///   - identifier: it is HKQuantityTypeIdentifier of selected type for downloading information
-    ///   - completionHandler: return array of FFUserHealthDataProvider
-    private func uploadHealthDataBy(type: FFHealthDateType = .week,_ identifier: String = "HKQuantityTypeIdentifierStepCount",completionHandler: @escaping ((_ userData: [FFUserHealthDataProvider]) -> ()) ){
-        var returnValue: [FFUserHealthDataProvider] = [FFUserHealthDataProvider]()
-        let quantityType = prepareQuantityType(identifier)
-        let predicate = preparePredicateHealthData(type)
-        let interval = FFHealthData.dateIntervalConfiguration(type)
-        let date = FFHealthData.dateRangeConfiguration(type)
-        let options = HKStatisticsOptions.cumulativeSum
-        
-        let query: HKStatisticsCollectionQuery = HKStatisticsCollectionQuery(
-            quantityType: quantityType,
-            quantitySamplePredicate: predicate,
-            options: options,
-            anchorDate: date.endDate,
-            intervalComponents: interval)
-        
-        query.initialResultsHandler = { queries, results, error in
-            guard error == nil,
-                  let results = results else {
-                print("Error getting result from query. Try again of fix it")
-                return
-            }
-            
-            results.enumerateStatistics(from: date.startDate, to: date.endDate) { stats, pointer in
-                //setups for step count
-                let unit = HKUnit.count()
-                let startDate = stats.startDate
-                let endDate = stats.endDate
-                let type = stats.quantityType
-                guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                let value = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: steps, identifier: identifier, unit: unit, type: type)
-                returnValue.append(value)
-            }
-            completionHandler(returnValue)
-        }
-        healthStore.execute(query)
-    }
-    ///Function creating predicate based on HKQuery and input startDate and endDate in this diapason
-    private func preparePredicateHealthData(_ type: FFHealthDateType) -> NSPredicate{
-        let (startDate,endDate) = FFHealthData.dateRangeConfiguration(type)
-        return HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictEndDate)
-    }
-    
-    /// Function creating, check optional and return quantity type
-    /// - Parameter identifier: string identifier of what function must return
-    /// - Returns: return completed quantity type if it not nil or no error. If any error return HKQuantityType.stepCount
-    private func prepareQuantityType(_ identifier: String) -> HKQuantityType {
-        let quantityIdentifier = HKQuantityTypeIdentifier(rawValue: identifier)
-        guard let quantityType = HKQuantityType.quantityType(forIdentifier: quantityIdentifier) else { return HKQuantityType(.stepCount)}
-        return quantityType
     }
     
     //MARK: - Setup Methods
@@ -173,13 +130,43 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     }
     
     private func setupChartView(){
-        FFHealthDataLoading.shared.performQuery { models in
-            let value: [CGFloat] = models.map { CGFloat($0.value) }
-            let series = OCKDataSeries(values: value, title: "Steps",size: 2, color: .black)
-            DispatchQueue.main.async {
-                self.chartView.graphView.dataSeries.append(series)
-            }
+        chartView.delegate = self
+        chartView.isUserInteractionEnabled = true
+        chartView.graphView.isUserInteractionEnabled = true 
+        guard let firstChartData = chartDataProvider.first,
+              let identifier = firstChartData.typeIdentifier else {
+            return
         }
+        for n in chartDataProvider {
+            dump(n.sources)
+        }
+        let chartTitle = getDataTypeName(identifier)
+        chartView.headerView.titleLabel.text = chartTitle
+        let measurementUnitText = getUnitMeasurement(identifier)
+        
+        let value: [CGFloat] = chartDataProvider.map { CGFloat($0.value) }
+        
+        let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: 2, color: .systemIndigo)
+        
+        DispatchQueue.main.async {
+            self.chartView.graphView.dataSeries = [series]
+        }
+    }
+    
+    private func loadChartViewData(type: FFHealthDateType){
+        var value: DateComponents = DateComponents()
+        switch type {
+        case .day:
+            value = DateComponents(day: 1)
+        case .week:
+            value = DateComponents(day: 7)
+        case .month:
+            value = DateComponents(day: 30)
+        case .sixMonth,.year:
+            value = DateComponents(month: 1)
+        }
+        
+        
     }
     
     private func setupScrollView(){
@@ -188,10 +175,9 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     }
     
     func setupNavigationController() {
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "info.circle", action: #selector(didTapOpenFullData), menu: nil)
-        let button = setupNavigationButton()
-        let leftBarButton = UIBarButtonItem(customView: button)
-        navigationItem.leftBarButtonItem = leftBarButton
+        let text  = getDataTypeName(chartDataProvider.first?.typeIdentifier ?? .stepCount)
+        title = text
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapPopToRoot), menu: nil)
         
     }
     
@@ -221,6 +207,18 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     }
     
     
+}
+
+extension FFMainHealthDataViewController: OCKChartViewDelegate {
+    func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
+        guard let chart = chartView as? OCKCartesianChartView else { return }
+        let index = chart.graphView.selectedIndex!
+        print(index)
+        let data = chartDataProvider[index]
+        let valueString = String(describing: data.value) + " "
+        let valueType = getUnitMeasurement(data.typeIdentifier!)
+        alertError(title: "Data value on this day", message: valueString + valueType)
+    }
 }
 
 private extension FFMainHealthDataViewController {

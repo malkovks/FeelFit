@@ -7,20 +7,7 @@
 
 import HealthKit
 
-struct FFUserHealthDataProvider {
-    ///start period of loading data
-    let startDate: Date
-    ///End period of loading. Last time updating current value in HealthKit
-    let endDate: Date
-    ///Inherited and converted data from healthKit
-    let value: Double
-    ///String identifier of loading type data
-    let identifier: String
-    ///unit type include returning type of inherited data
-    let unit: HKUnit
-    ///type of sample searching for
-    let type: HKSampleType
-}
+
 
 class FFHealthDataLoading {
     static let shared = FFHealthDataLoading()
@@ -30,13 +17,14 @@ class FFHealthDataLoading {
     
     func performQuery(
         identifications : [HKQuantityTypeIdentifier] = [.activeEnergyBurned],
-        _ intervalValue: Int = 1,
+        interval dateComponents: DateComponents = DateComponents(day: 1),
+        selectedOptions: HKStatisticsOptions?,
         completion: @escaping (_ models: [FFUserHealthDataProvider])->()) {
             let predicate = preparePredicateHealthData()
             let anchorDate = createAnchorData()
-            let interval = DateComponents(day: intervalValue)
+            let interval = dateComponents
             for iden in identifications {
-                let options: HKStatisticsOptions = prepareStatisticOptions(for: iden.rawValue)
+                let options: HKStatisticsOptions = selectedOptions ?? prepareStatisticOptions(for: iden.rawValue)
                 let id = HKQuantityType.quantityType(forIdentifier: iden)!
                 
                 let query = HKStatisticsCollectionQuery(quantityType: id,
@@ -61,16 +49,22 @@ class FFHealthDataLoading {
                         let startDate = stats.startDate
                         let endDate = stats.endDate
                         let type = stats.quantityType
+                        let sources = stats.sources
+                        
+                        
                         let doubleValue = self?.processingStatistics(statistics: stats, unit: unitQuantityType, value: options) ?? 0.0
                         let value = FFUserHealthDataProvider(startDate: startDate,
                                                              endDate: endDate,
                                                              value: doubleValue,
                                                              identifier: iden.rawValue,
                                                              unit: unitQuantityType,
-                                                             type: type)
+                                                             type: type, 
+                                                             typeIdentifier: iden,
+                                                             sources: sources)
                         returnValue.append(value)
                     }
-                    completion(returnValue)
+                    
+                    completion(returnValue.sorted { $0.identifier < $1.identifier})
                 }
                 healthStore.execute(query)
             }
@@ -82,6 +76,7 @@ class FFHealthDataLoading {
             let cumulativeValue = stats.sumQuantity()?.doubleValue(for: unit)
             return cumulativeValue ?? 0.0
         case .discreteAverage:
+            
             let discreteValue = stats.averageQuantity()?.doubleValue(for: unit)
             return discreteValue ?? 0.0
         default:

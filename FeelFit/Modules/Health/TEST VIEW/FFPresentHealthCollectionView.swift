@@ -60,6 +60,12 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    @objc private func didTapOpenSelectedProvider(selectedItem indexPath: IndexPath){
+        let data = healthData[indexPath.row]
+        let vc = FFMainHealthDataViewController(chartData: data)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     //MARK: - Setup view
     func setupView() {
         setGradientBackground(topColor: FFResources.Colors.activeColor, bottom: .secondarySystemBackground)
@@ -74,12 +80,10 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     private func prepareCollectionViewData(){
         userFavouriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
         healthData.removeAll()
-        loadHealthData.performQuery(identifications: userFavouriteTypes) { models in
+        loadHealthData.performQuery(identifications: userFavouriteTypes,selectedOptions: nil) { models in
             self.healthData.append(models)
             DispatchQueue.main.async { [weak self] in
-                self?.collectionView.performBatchUpdates({
-                    self?.collectionView.reloadSections(IndexSet(integer: 0))
-                })
+                self?.collectionView.reloadData()
             }
         }
     }
@@ -138,6 +142,7 @@ extension FFPresentHealthCollectionView: UICollectionViewDataSource {
 extension FFPresentHealthCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        didTapOpenSelectedProvider(selectedItem: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

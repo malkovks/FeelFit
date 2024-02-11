@@ -8,6 +8,25 @@
 import UIKit
 import HealthKit
 
+struct FFUserHealthDataProvider {
+    ///start period of loading data
+    let startDate: Date
+    ///End period of loading. Last time updating current value in HealthKit
+    let endDate: Date
+    ///Inherited and converted data from healthKit
+    let value: Double
+    ///String identifier of loading type data
+    let identifier: String
+    ///unit type include returning type of inherited data
+    let unit: HKUnit
+    ///type of sample searching for
+    let type: HKSampleType
+    ///health kit quantity type
+    let typeIdentifier: HKQuantityTypeIdentifier?
+    ///Statistics source data which consist all possible data
+    let sources: [HKSource]?
+}
+
 ///Method for getting HKSampleType from gets identifier. Otherwise return nil
 func getSampleType(for identifier: String) -> HKSampleType?{
     if let quantityType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier(rawValue: identifier)) {
@@ -22,22 +41,6 @@ func getSampleType(for identifier: String) -> HKSampleType?{
 
 func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
     switch types {
-    case .stepCount:
-        return "Step Count"
-    case .distanceWalkingRunning:
-        return "Meters"
-    case .activeEnergyBurned:
-        return "Active Energy Burned"
-    case .heartRate:
-        return "Heart Rate"
-    case .activeEnergyBurned:
-        return "Calories"
-    case .height:
-        return "Height"
-    case .bodyMass:
-        return "Weight"
-    case .vo2Max:
-        return "VO 2 Max Comsuption"
     default:
         let text = types.rawValue
         let formattedText = text.replacingOccurrences(of: "HKQuantityTypeIdentifier", with: "")
@@ -55,7 +58,7 @@ func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
 
 
 
-func getUnitMeasurement(_ type: HKQuantityTypeIdentifier,_ value: Double) -> String {
+func getUnitMeasurement(_ type: HKQuantityTypeIdentifier) -> String {
     switch type {
     case .stepCount:
         return "steps"
@@ -84,6 +87,7 @@ func getUnitMeasurement(_ type: HKQuantityTypeIdentifier,_ value: Double) -> Str
     }
 }
 
+///Health class which return requested HealthKit Identifiers to user and return correct types
 class FFHealthData {
     
     static let healthStore: HKHealthStore = HKHealthStore()
@@ -101,7 +105,7 @@ class FFHealthData {
     }
     
     static var allQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
-        return typeIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }
+        return typeIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }.sorted { $0.rawValue < $1.rawValue }
     }
     
     static var favouriteQuantityTypeIdentifier: [HKQuantityTypeIdentifier] {
@@ -112,7 +116,7 @@ class FFHealthData {
             let status = UserDefaults.standard.bool(forKey: keyID)
             return status
         }
-        return identifier
+        return identifier.sorted { $0.rawValue < $1.rawValue }
     }
     
     
@@ -175,17 +179,9 @@ class FFHealthData {
             startDate = calendar.date(byAdding: .month, value: -6, to: endDate)!
         case .year:
             startDate = calendar.date(byAdding: .year, value: -1, to: endDate)!
-        
+            
         }
         return (startDate, endDate)
     }
-    
-//    static let userIdentifiers: [HKCharacteristicType] = [
-//        HKObjectType.characteristicType(forIdentifier: .biologicalSex)!,
-//        HKObjectType.characteristicType(forIdentifier: .dateOfBirth)!,
-//        HKObjectType.characteristicType(forIdentifier: .bloodType)!,
-//        HKObjectType.characteristicType(forIdentifier: .fitzpatrickSkinType)!
-//    ]
-    
     
 }

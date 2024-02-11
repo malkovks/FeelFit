@@ -649,9 +649,9 @@
 		0A63AC652B6D8DB700B32981 /* TEST VIEW */ = {
 			isa = PBXGroup;
 			children = (
-				0AE049A92B77805300697A82 /* FavouriteHealthData */,
-				0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */,
 				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
+				0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */,
+				0AE049A92B77805300697A82 /* FavouriteHealthData */,
 			);
 			path = "TEST VIEW";
 			sourceTree = "<group>";
