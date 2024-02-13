@@ -56,7 +56,7 @@
 		0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */; };
 		0A63AC622B6BB87000B32981 /* FFHealthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */; };
 		0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */; };
-		0A63AC672B6D8DD800B32981 /* FFMainHealthDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */; };
+		0A63AC672B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */; };
 		0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */; };
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
 		0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */; };
@@ -122,6 +122,8 @@
 		0AE0F4F72B06159E00874C0B /* FFFavouriteExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */; };
 		0AE0F4F92B0619E600874C0B /* FFFavouriteExercisesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */; };
 		0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEDA2E22B303A6A0079C564 /* FFPlanDetailTableViewCell.swift */; };
+		0AEE085E2B7B5B250043722B /* AlertTextField+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE085D2B7B5B250043722B /* AlertTextField+UIViewController.swift */; };
+		0AEE08602B7B61960043722B /* HealthPublicMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE085F2B7B61960043722B /* HealthPublicMethods.swift */; };
 		0AF03A612B57D48000715007 /* CareKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A602B57D48000715007 /* CareKit */; };
 		0AF03A632B57D48000715007 /* CareKitStore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A622B57D48000715007 /* CareKitStore */; };
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
@@ -176,7 +178,7 @@
 		0A5C6AD52B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewController.swift; sourceTree = "<group>"; };
 		0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthViewModel.swift; sourceTree = "<group>"; };
 		0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthUserViewModel.swift; sourceTree = "<group>"; };
-		0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMainHealthDataViewController.swift; sourceTree = "<group>"; };
+		0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserDetailCartesianChartViewController.swift; sourceTree = "<group>"; };
 		0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExerciseViewModel.swift; sourceTree = "<group>"; };
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
 		0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewController.swift; sourceTree = "<group>"; };
@@ -243,6 +245,8 @@
 		0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExercisesViewController.swift; sourceTree = "<group>"; };
 		0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFavouriteExercisesModel.swift; sourceTree = "<group>"; };
 		0AEDA2E22B303A6A0079C564 /* FFPlanDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanDetailTableViewCell.swift; sourceTree = "<group>"; };
+		0AEE085D2B7B5B250043722B /* AlertTextField+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertTextField+UIViewController.swift"; sourceTree = "<group>"; };
+		0AEE085F2B7B61960043722B /* HealthPublicMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPublicMethods.swift; sourceTree = "<group>"; };
 		0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataAccess.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -441,7 +445,6 @@
 			isa = PBXGroup;
 			children = (
 				0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */,
-				0A85551A2B72434300B1A7EE /* HealthDataUploading */,
 				0ADB786C2B710B3C00653952 /* CollectionView */,
 				0ADB786B2B710B3500653952 /* TableView */,
 				0A44951E2ABA79120082C909 /* Model */,
@@ -563,8 +566,10 @@
 		0A44951E2ABA79120082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */,
 				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
 				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
+				0AEE085F2B7B61960043722B /* HealthPublicMethods.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -650,7 +655,7 @@
 			isa = PBXGroup;
 			children = (
 				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
-				0A63AC662B6D8DD800B32981 /* FFMainHealthDataViewController.swift */,
+				0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */,
 				0AE049A92B77805300697A82 /* FavouriteHealthData */,
 			);
 			path = "TEST VIEW";
@@ -711,16 +716,9 @@
 				0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */,
 				0A9FF3852B6F7ED700F59714 /* FileManager + UIViewController.swift */,
 				0AE049A32B7760F600697A82 /* Color+UIViewControler.swift */,
+				0AEE085D2B7B5B250043722B /* AlertTextField+UIViewController.swift */,
 			);
 			path = "UIViewController+Extension";
-			sourceTree = "<group>";
-		};
-		0A85551A2B72434300B1A7EE /* HealthDataUploading */ = {
-			isa = PBXGroup;
-			children = (
-				0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */,
-			);
-			path = HealthDataUploading;
 			sourceTree = "<group>";
 		};
 		0A86DED92B23E80800E9DA24 /* Secondary Views */ = {
@@ -1110,7 +1108,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */,
-				0A63AC672B6D8DD800B32981 /* FFMainHealthDataViewController.swift in Sources */,
+				0A63AC672B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift in Sources */,
 				0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
@@ -1136,6 +1134,7 @@
 				0ABDEB012B174E1300BDDAFE /* FFExersiceModelRealm.swift in Sources */,
 				0A4495292ABA79700082C909 /* FFMusclesGroupViewController.swift in Sources */,
 				0A9FF3862B6F7ED700F59714 /* FileManager + UIViewController.swift in Sources */,
+				0AEE08602B7B61960043722B /* HealthPublicMethods.swift in Sources */,
 				0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */,
@@ -1206,6 +1205,7 @@
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
 				0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */,
 				0ABDEB032B18659B00BDDAFE /* FFExerciseModelStoreManager.swift in Sources */,
+				0AEE085E2B7B5B250043722B /* AlertTextField+UIViewController.swift in Sources */,
 				0A7D060C2B688206006FF02A /* FFHealthCartesianChartViewController.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */,

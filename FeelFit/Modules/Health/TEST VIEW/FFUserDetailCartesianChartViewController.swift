@@ -1,5 +1,5 @@
 //
-//  FFMainHealthDataViewController.swift
+//  FFUserDetailCartesianChartViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 02.02.2024.
@@ -11,7 +11,7 @@ import HealthKit
 
 
 
-class FFMainHealthDataViewController: UIViewController, SetupViewController {
+class FFUserDetailCartesianChartViewController: UIViewController, SetupViewController {
     
     private let chartDataProvider: [FFUserHealthDataProvider]
     
@@ -78,6 +78,7 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     }
     //MARK: - Target and action methods
     @objc private func handleRefreshControl(_ sender: UIRefreshControl){
+        updateChartDataSeries()
         DispatchQueue.main.async {
             self.scrollView.refreshControl?.endRefreshing()
         }
@@ -117,6 +118,15 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         present(vc, animated: true)
     }
     
+    @objc private func didTapCreateNewValue(){
+        guard let identifier = chartDataProvider.first?.typeIdentifier else { return }
+        let title = getDataTypeName(identifier)
+        let message = "Enter a value to add a sample to your health data."
+        manualEnterHealthData(title, message) { [weak self] result in
+            self?.didAddNewData(with: result)
+        }
+    }
+    
     //MARK: - Setup Methods
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
@@ -133,12 +143,13 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         chartView.delegate = self
         chartView.isUserInteractionEnabled = true
         chartView.graphView.isUserInteractionEnabled = true 
-        guard let firstChartData = chartDataProvider.first,
+        updateChartDataSeries()
+    }
+    
+    private func updateChartDataSeries(){
+        guard let firstChartData = chartDataProvider.last,
               let identifier = firstChartData.typeIdentifier else {
             return
-        }
-        for n in chartDataProvider {
-            dump(n.sources)
         }
         let chartTitle = getDataTypeName(identifier)
         chartView.headerView.titleLabel.text = chartTitle
@@ -148,11 +159,13 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         
         let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: 2, color: .systemIndigo)
         
-        DispatchQueue.main.async {
-            self.chartView.graphView.dataSeries = [series]
+        DispatchQueue.main.async { [weak self] in
+            self?.chartView.graphView.dataSeries = [series]
         }
     }
     
+    
+    //MARK: - UNUSED
     private func loadChartViewData(type: FFHealthDateType){
         var value: DateComponents = DateComponents()
         switch type {
@@ -165,8 +178,6 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         case .sixMonth,.year:
             value = DateComponents(month: 1)
         }
-        
-        
     }
     
     private func setupScrollView(){
@@ -178,18 +189,7 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
         let text  = getDataTypeName(chartDataProvider.first?.typeIdentifier ?? .stepCount)
         title = text
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapPopToRoot), menu: nil)
-        
-    }
-    
-    private func setupNavigationButton() -> UIButton {
-//        let image = loadUserImageWithFileManager(userImagePartialName)
-        let image = UIImage(systemName: "person.circle")
-        let button = UIButton(type: .custom)
-        button.setImage(image, for: .normal)
-        button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        button.clipsToBounds = true
-        button.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
-        return button
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "plus", action: #selector(didTapCreateNewValue), menu: nil)
     }
     
     private func setupSegmentControl(){
@@ -205,11 +205,60 @@ class FFMainHealthDataViewController: UIViewController, SetupViewController {
     func setupViewModel() {
         
     }
-    
-    
 }
 
-extension FFMainHealthDataViewController: OCKChartViewDelegate {
+private extension FFUserDetailCartesianChartViewController {
+    func didAddNewData(with value: Double) {
+        guard let sample = processHealthSample(with: value, data: chartDataProvider) else { return }
+        FFHealthData.saveHealthData([sample]) { success, error in
+            if let error = error {
+                print("FFUserDetailCartesianChartViewController  didAddNewData error: ",error.localizedDescription)
+            }
+            if success {
+                print("Saved successfully")
+                DispatchQueue.main.async { [weak self] in
+                    self?.updateChartDataSeries()
+                }
+            } else {
+                print("error: could now save new sample", sample)
+            }
+        }
+                
+    }
+    
+    func processHealthSample(with value: Double,data provider: [FFUserHealthDataProvider]) -> HKObject? {
+        guard 
+            let provider = provider.first,
+            let id = provider.typeIdentifier
+        else {
+            return nil
+        }
+        let idString = provider.identifier
+        
+        
+        let sampleType = getSampleType(for: idString)
+        guard let unit = prepareHealthUnit(id) else { return nil }
+        
+        let now = Date()
+        let start = now
+        let end = now
+        
+        var optionalSample: HKObject?
+        if let quantityType = sampleType as? HKQuantityType {
+            let quantity = HKQuantity(unit: unit, doubleValue: value)
+            let quantitySample = HKQuantitySample(type: quantityType, quantity: quantity, start: start, end: end)
+            optionalSample = quantitySample
+        }
+        if let categoryType = sampleType as? HKCategoryType {
+            let categorySample = HKCategorySample(type: categoryType, value: Int(value), start: start, end: end)
+            optionalSample = categorySample
+        }
+        
+        return optionalSample
+    }
+}
+
+extension FFUserDetailCartesianChartViewController: OCKChartViewDelegate {
     func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
         guard let chart = chartView as? OCKCartesianChartView else { return }
         let index = chart.graphView.selectedIndex!
@@ -221,7 +270,7 @@ extension FFMainHealthDataViewController: OCKChartViewDelegate {
     }
 }
 
-private extension FFMainHealthDataViewController {
+private extension FFUserDetailCartesianChartViewController {
     func setupConstraints(){
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in

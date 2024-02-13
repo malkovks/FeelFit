@@ -40,7 +40,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     @objc private func didTapRefreshView(){
-        DispatchQueue.main.asyncAfter(deadline: .now()+2) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now()+1.5) { [weak self] in
             self?.prepareCollectionViewData()
             self?.refreshControl.endRefreshing()
         }
@@ -62,7 +62,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     @objc private func didTapOpenSelectedProvider(selectedItem indexPath: IndexPath){
         let data = healthData[indexPath.row]
-        let vc = FFMainHealthDataViewController(chartData: data)
+        let vc = FFUserDetailCartesianChartViewController(chartData: data)
         navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -27,65 +27,7 @@ struct FFUserHealthDataProvider {
     let sources: [HKSource]?
 }
 
-///Method for getting HKSampleType from gets identifier. Otherwise return nil
-func getSampleType(for identifier: String) -> HKSampleType?{
-    if let quantityType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier(rawValue: identifier)) {
-        return quantityType
-    }
-    if let categoryTime = HKCategoryType.categoryType(forIdentifier: HKCategoryTypeIdentifier(rawValue: identifier)) {
-        return categoryTime
-    }
-    
-    return nil
-}
 
-func getDataTypeName(_ types: HKQuantityTypeIdentifier) -> String{
-    switch types {
-    default:
-        let text = types.rawValue
-        let formattedText = text.replacingOccurrences(of: "HKQuantityTypeIdentifier", with: "")
-        var returnText = ""
-        for (index,char) in formattedText.enumerated() {
-            if index > 0 && char.isUppercase {
-                returnText.append(" ")
-            }
-            returnText.append(char)
-        }
-        
-        return returnText
-    }
-}
-
-
-
-func getUnitMeasurement(_ type: HKQuantityTypeIdentifier) -> String {
-    switch type {
-    case .stepCount:
-        return "steps"
-    case .distanceWalkingRunning,.distanceCycling:
-        return "meters"
-    case .activeEnergyBurned:
-        return "calories"
-    case .heartRate:
-        return "b/m"
-    case .runningPower:
-        return "W"
-    case .runningSpeed:
-        return "m/sec"
-    case .height:
-        return "cm"
-    case .bodyMass:
-        return "kg"
-    case .vo2Max:
-        return "MOC"
-    case .bodyMassIndex:
-        return "count"
-    case .bodyFatPercentage:
-        return "%"
-    default:
-        return "No unit measurement"
-    }
-}
 
 ///Health class which return requested HealthKit Identifiers to user and return correct types
 class FFHealthData {
@@ -184,4 +126,7 @@ class FFHealthData {
         return (startDate, endDate)
     }
     
+    class func saveHealthData(_ data: [HKObject], completion: @escaping (_ success: Bool, _ error: Error?) -> ()){
+        healthStore.save(data, withCompletion: completion)
+    }
 }
