@@ -134,15 +134,20 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     func loadDataMethod(){
+        let id: [HKQuantityTypeIdentifier] = [.stepCount,.activeEnergyBurned,.distanceWalkingRunning]
         loadData.performQuery(identifications: [.stepCount],selectedOptions: nil) { models in
-            self.tableViewModel = models
+            guard let models = models else { return }
+            let arrayModels = Array(models).sorted { $0.identifier < $1.identifier }
+            self.tableViewModel = arrayModels
         }
         loadData.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil) { models in
+            guard let models = models else { return }
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             self.activityChartModel.append(series)
         }
         loadData.performQuery(identifications: [.distanceWalkingRunning],selectedOptions: nil) { models in
+            guard let models = models else { return }
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Meters", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             self.walkingChartModel.append(series)
@@ -224,6 +229,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         walkingMetersChartView.applyConfiguration()
         walkingMetersChartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
         FFHealthDataLoading.shared.performQuery(identifications: [.stepCount],selectedOptions: nil) {[weak self] models in
+            guard let models = models else { return }
             let stepValues: [CGFloat] = models.map { CGFloat($0.value) }
             DispatchQueue.main.async {
                 let series = OCKDataSeries(values: stepValues, title: self?.titleForTable ?? "Default" , color: FFResources.Colors.activeColor)
@@ -244,8 +250,9 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: startDate)
     
-        FFHealthDataLoading.shared.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil) { model in
-            let value: [CGFloat] = model.map { CGFloat($0.value) }
+        FFHealthDataLoading.shared.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil) { models in
+            guard let models = models else { return }
+            let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             DispatchQueue.main.async {
                 self.activityChartView.graphView.dataSeries.append(series)

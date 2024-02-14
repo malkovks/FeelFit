@@ -142,25 +142,24 @@ func getUnitMeasurement(_ type: HKQuantityTypeIdentifier) -> String {
 /// - Parameters:
 ///   - stats: formatted stats with all inputs value
 ///   - unit: HKUnit type of loading data
-///   - options: HKStatisctics options of how convert value
+///   - options: HKStatistics options of how convert value
 /// - Returns: results value
-func processingStatistics(statistics stats: HKStatistics,unit: HKUnit,value options: HKStatisticsOptions) -> Double {
+func processingStatistics(statistics stats: HKStatistics,unit: HKUnit,value options: HKStatisticsOptions) -> Double? {
     switch options {
     case .cumulativeSum:
         let cumulativeValue = stats.sumQuantity()?.doubleValue(for: unit)
-        return cumulativeValue ?? 0.0
+        return cumulativeValue
     case .discreteAverage:
-        
         let discreteValue = stats.averageQuantity()?.doubleValue(for: unit)
-        return discreteValue ?? 0.0
+        return discreteValue
     default:
-        return 0.0
+        return nil
     }
 }
 
 
 /// Method for returning unit corresponding to the identifier
-/// - Parameter identifier: Input HKQUantityTypeIdentifier for process it
+/// - Parameter identifier: Input HKQuantityTypeIdentifier for process it
 /// - Returns: return HKUnit
 func prepareHealthUnit(_ identifier: HKQuantityTypeIdentifier) -> HKUnit?{
     

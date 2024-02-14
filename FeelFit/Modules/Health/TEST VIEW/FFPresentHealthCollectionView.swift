@@ -13,7 +13,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     
-    private var userFavouriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
+    private var userFavoriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
     private let loadHealthData = FFHealthDataLoading.shared
     private var healthData = [[FFUserHealthDataProvider]]()
     
@@ -40,10 +40,9 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     @objc private func didTapRefreshView(){
-        DispatchQueue.main.asyncAfter(deadline: .now()+1.5) { [weak self] in
-            self?.prepareCollectionViewData()
-            self?.refreshControl.endRefreshing()
-        }
+        healthData = []
+        prepareCollectionViewData()
+        refreshControl.endRefreshing()
     }
     
     @objc private func didTapPressChangeFavouriteCollectionView(){
@@ -61,6 +60,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     @objc private func didTapOpenSelectedProvider(selectedItem indexPath: IndexPath){
+        
         let data = healthData[indexPath.row]
         let vc = FFUserDetailCartesianChartViewController(chartData: data)
         navigationController?.pushViewController(vc, animated: true)
@@ -78,13 +78,18 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     private func prepareCollectionViewData(){
-        userFavouriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
+        userFavoriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
         healthData.removeAll()
-        loadHealthData.performQuery(identifications: userFavouriteTypes,selectedOptions: nil) { models in
-            self.healthData.append(models)
-            DispatchQueue.main.async { [weak self] in
-                self?.collectionView.reloadData()
+        loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil) { [weak self] models in
+            if let model = models {
+                self?.healthData.append(model)
+                DispatchQueue.main.async { [weak self] in
+                    self?.collectionView.reloadData()
+                }
+            } else {
+                print("FFPresentHealthCollectionView.prepareCollectionViewData model is empty")
             }
+            
         }
     }
     

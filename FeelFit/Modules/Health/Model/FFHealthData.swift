@@ -8,7 +8,7 @@
 import UIKit
 import HealthKit
 
-struct FFUserHealthDataProvider {
+struct FFUserHealthDataProvider : Hashable{
     ///start period of loading data
     let startDate: Date
     ///End period of loading. Last time updating current value in HealthKit
@@ -73,10 +73,10 @@ class FFHealthData {
     ]
     
     private static var typeIdentifiers: [String] = [
-        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
-        HKQuantityTypeIdentifier.heartRate.rawValue,
+        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue, ///burned kilocalories
+        HKQuantityTypeIdentifier.heartRate.rawValue, ///heart rate
         
-        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
+        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue, ///walked or run meters
         HKQuantityTypeIdentifier.stepCount.rawValue,
         HKQuantityTypeIdentifier.distanceCycling.rawValue,
         HKQuantityTypeIdentifier.runningPower.rawValue,
@@ -88,7 +88,6 @@ class FFHealthData {
         HKQuantityTypeIdentifier.bodyMass.rawValue,
         HKQuantityTypeIdentifier.bodyFatPercentage.rawValue,
         HKQuantityTypeIdentifier.bodyMassIndex.rawValue
-     
     ]
     
     static func dateIntervalConfiguration(_ type: FFHealthDateType = .week) -> DateComponents {
