@@ -44,13 +44,12 @@ class FFHealthDataLoading {
                     let startDate = getLastWeekStartDate()
                     let endDate = Date()
                     var arrayValue = [FFUserHealthDataProvider]()
-                    results.enumerateStatistics(from: startDate, to: endDate) { [weak self] stats, pointer in
+                    results.enumerateStatistics(from: startDate, to: endDate) { stats, pointer in
                         
                         let unitQuantityType = prepareHealthUnit(iden) ?? .count()
                         let startDate = stats.startDate
                         let endDate = stats.endDate
                         let type = stats.quantityType
-                        let sources = stats.sources
                         
                         
                         if let doubleValue = processingStatistics(statistics: stats, unit: unitQuantityType, value: options){
@@ -60,15 +59,9 @@ class FFHealthDataLoading {
                                                                  identifier: iden.rawValue,
                                                                  unit: unitQuantityType,
                                                                  type: type,
-                                                                 typeIdentifier: iden,
-                                                                 sources: sources)
+                                                                 typeIdentifier: iden)
                             arrayValue.append(value)
-                        } else {
-                            self?.loadLastUpdatesResult(identifier: id, completion: { samples in
-//                                let doubleValue = processingStatistics(statistics: samples, unit: <#T##HKUnit#>, value: <#T##HKStatisticsOptions#>)
-                            })
                         }
-                        
                     }
                     if !arrayValue.isEmpty {
                         completion(arrayValue)
@@ -76,31 +69,39 @@ class FFHealthDataLoading {
                 }
                 
                 healthStore.execute(query)
-                
-                let sampleQuery = HKSampleQuery(sampleType: id, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { query, sample, error in
-                    if let sample = sample?.first {
-                        print("performQuery.sampleQuery loading result from id: \(id)",sample.endDate)
-                    } else {
-                        print("performQuery.sampleQuery error getting data")
-                    }
-                }
-                healthStore.execute(sampleQuery)
             }
     }
     
-    func loadLastUpdatesResult(identifier: HKQuantityType,
-                               predicate: NSPredicate? = nil,
-                               limit: Int = HKObjectQueryNoLimit,
-                               sortDescriptors: [NSSortDescriptor]? = nil,
-                               completion handler: @escaping(_ samples: [HKSample]?) -> ()){
-        let sortDescriptorsValue: [NSSortDescriptor] = sortDescriptors ?? [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]
-        let sampleQuery = HKSampleQuery(sampleType: identifier, predicate: predicate, limit: limit, sortDescriptors: sortDescriptorsValue) { query, samples, error in
-            guard error == nil else {
-                print("FFHealthDataLoading.performQuery.loadLastUpdatesResult error getting sample",error?.localizedDescription ?? "")
+    func getSampleQueryResult(identifier: HKQuantityTypeIdentifier,completion handler: @escaping (_ data: FFUserHealthDataProvider) -> ())  {
+        let quantityType = HKQuantityType(identifier)
+        let unit = prepareHealthUnit(identifier)
+        let sortDescriptor = [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]
+        
+        let query = HKSampleQuery(sampleType: quantityType, predicate: nil, limit: 1, sortDescriptors: sortDescriptor) { query, samples, error in
+            
+            guard let samples = samples as? [HKQuantitySample],
+                  !samples.isEmpty else {
+                print("Error getting samples")
                 return
             }
-            handler(samples)
+        
+            if let sample = samples.first {
+                let endDate = sample.endDate
+                let calendar = Calendar.current
+                let startDate = calendar.date(byAdding: .day, value: -1, to: endDate)!
+                let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+                var totalValue: Double = sample.quantity.doubleValue(for: unit ?? .count())
+                let provider = FFUserHealthDataProvider(startDate: sample.startDate,
+                                                        endDate: sample.endDate,
+                                                        value: totalValue,
+                                                        identifier: identifier.rawValue,
+                                                        unit: unit ?? .count(),
+                                                        type: sample.quantityType,
+                                                        typeIdentifier: identifier)
+                handler(provider)
+            }
         }
+        healthStore.execute(query)
     }
 }
 

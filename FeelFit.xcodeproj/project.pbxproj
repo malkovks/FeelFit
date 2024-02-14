@@ -26,6 +26,7 @@
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
 		0A2A03C92B6DA83F00044820 /* CareKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */; };
+		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
 		0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */; };
@@ -150,6 +151,7 @@
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
 		0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CareKit+Extensions.swift"; sourceTree = "<group>"; };
+		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
 		0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthTableViewHeaderFooterView.swift; sourceTree = "<group>"; };
@@ -656,6 +658,7 @@
 			children = (
 				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
 				0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */,
+				0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */,
 				0AE049A92B77805300697A82 /* FavouriteHealthData */,
 			);
 			path = "TEST VIEW";
@@ -1114,6 +1117,7 @@
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
 				0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */,
+				0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A0059252B62B8CB000712D6 /* FFHealthUserProfileViewController.swift in Sources */,

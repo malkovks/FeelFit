@@ -23,8 +23,6 @@ struct FFUserHealthDataProvider : Hashable{
     let type: HKSampleType
     ///health kit quantity type
     let typeIdentifier: HKQuantityTypeIdentifier?
-    ///Statistics source data which consist all possible data
-    let sources: [HKSource]?
 }
 
 

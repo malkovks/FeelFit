@@ -59,8 +59,16 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    @objc private func didTapOpenSettings(){
+        let vc = FFHealthSettingsViewController()
+        let navVC = FFNavigationController(rootViewController: vc)
+        navVC.isNavigationBarHidden = false
+        present(navVC, animated: true) {
+            print("Completion handler exist")
+        }
+    }
+    
     @objc private func didTapOpenSelectedProvider(selectedItem indexPath: IndexPath){
-        
         let data = healthData[indexPath.row]
         let vc = FFUserDetailCartesianChartViewController(chartData: data)
         navigationController?.pushViewController(vc, animated: true)
@@ -86,10 +94,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
                 DispatchQueue.main.async { [weak self] in
                     self?.collectionView.reloadData()
                 }
-            } else {
-                print("FFPresentHealthCollectionView.prepareCollectionViewData model is empty")
             }
-            
         }
     }
     
@@ -154,6 +159,7 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegate {
         if kind == UICollectionView.elementKindSectionHeader {
             let header =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier, for: indexPath) as! FFPresentHealthHeaderCollectionView
             header.setupHeaderFavouritesButton.addTarget(self, action: #selector(didTapPressChangeFavouriteCollectionView), for: .primaryActionTriggered)
+            header.setupPresentHealthControllerButton.addTarget(self, action: #selector(didTapOpenSettings), for: .touchUpInside)
             return header
         }
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView

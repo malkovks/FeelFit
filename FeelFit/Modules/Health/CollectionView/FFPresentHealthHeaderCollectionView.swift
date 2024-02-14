@@ -23,7 +23,17 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
     let setupHeaderFavouritesButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Change", for: .normal)
-        button.setTitleColor(.darkPurple, for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.backgroundColor = .clear
+        button.contentMode = .right
+        button.contentHorizontalAlignment = .right
+        return button
+    }()
+    
+    let setupPresentHealthControllerButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "gearshape.fill"), for: .normal)
+        button.tintColor = .systemBackground
         button.backgroundColor = .clear
         button.contentMode = .right
         button.contentHorizontalAlignment = .right
@@ -47,10 +57,10 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
     }
     
     private func setupHeaderConstraints(){
-        let stackView = UIStackView(arrangedSubviews: [headerLabel,setupHeaderFavouritesButton])
+        let stackView = UIStackView(arrangedSubviews: [headerLabel,setupPresentHealthControllerButton,setupHeaderFavouritesButton])
         stackView.axis = .horizontal
         stackView.alignment = .fill
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         stackView.spacing = 8
         stackView.backgroundColor = .clear
         

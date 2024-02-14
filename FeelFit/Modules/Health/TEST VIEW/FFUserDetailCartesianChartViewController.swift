@@ -13,7 +13,7 @@ import HealthKit
 
 class FFUserDetailCartesianChartViewController: UIViewController, SetupViewController {
     
-    private let chartDataProvider: [FFUserHealthDataProvider]
+    private var chartDataProvider: [FFUserHealthDataProvider]
     
     init(chartData: [FFUserHealthDataProvider]){
         self.chartDataProvider = chartData
@@ -107,6 +107,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         }
         userDefaults.setValue(type.rawValue, forKey: "healthDateType")
         selectedDateType = type.rawValue
+        loadChartViewData(type: type)
     }
     
     @objc private func didTapPopToRoot(){
@@ -157,7 +158,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         
         let value: [CGFloat] = chartDataProvider.map { CGFloat($0.value) }
         
-        let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: 2, color: .systemIndigo)
+        let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: 2.0, color: FFResources.Colors.activeColor)
         
         DispatchQueue.main.async { [weak self] in
             self?.chartView.graphView.dataSeries = [series]
@@ -177,6 +178,14 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
             value = DateComponents(day: 30)
         case .sixMonth,.year:
             value = DateComponents(month: 1)
+        }
+        guard let data = chartDataProvider.first else { return }
+        let id: [HKQuantityTypeIdentifier] = [data.typeIdentifier!]
+        loadUserHealth.performQuery(identifications: id, interval: value, selectedOptions: .cumulativeSum) { models in
+            self.chartDataProvider.removeAll()
+            DispatchQueue.main.async {
+                self.chartDataProvider = models!
+            }
         }
     }
     
