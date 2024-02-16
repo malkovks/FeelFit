@@ -88,7 +88,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     private func prepareCollectionViewData(){
         userFavoriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
         healthData.removeAll()
-        loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil) { [weak self] models in
+        loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil,startDate: nil) { [weak self] models in
             if let model = models {
                 self?.healthData.append(model)
                 DispatchQueue.main.async { [weak self] in
@@ -119,7 +119,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     func setupNavigationController() {
-        let image = loadUserImageWithFileManager(userImagePartialName)!
+        let image = loadUserImageWithFileManager(userImagePartialName)
         let customView = FFNavigationControllerCustomView()
         customView.configureView(title: "Summary",image)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
@@ -192,5 +192,6 @@ private extension FFPresentHealthCollectionView {
         }
     }
 }
+
 
 

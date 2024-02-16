@@ -135,18 +135,18 @@ class FFHealthViewController: UIViewController, SetupViewController {
     
     func loadDataMethod(){
         let id: [HKQuantityTypeIdentifier] = [.stepCount,.activeEnergyBurned,.distanceWalkingRunning]
-        loadData.performQuery(identifications: [.stepCount],selectedOptions: nil) { models in
+        loadData.performQuery(identifications: [.stepCount],selectedOptions: nil,startDate: nil) { models in
             guard let models = models else { return }
             let arrayModels = Array(models).sorted { $0.identifier < $1.identifier }
             self.tableViewModel = arrayModels
         }
-        loadData.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil) { models in
+        loadData.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil,startDate: nil) { models in
             guard let models = models else { return }
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
             self.activityChartModel.append(series)
         }
-        loadData.performQuery(identifications: [.distanceWalkingRunning],selectedOptions: nil) { models in
+        loadData.performQuery(identifications: [.distanceWalkingRunning],selectedOptions: nil,startDate: nil) { models in
             guard let models = models else { return }
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Meters", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
@@ -228,7 +228,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         walkingMetersChartView.applyConfiguration()
         walkingMetersChartView.graphView.horizontalAxisMarkers = FeelFit.createHorizontalAxisMarkers()
-        FFHealthDataLoading.shared.performQuery(identifications: [.stepCount],selectedOptions: nil) {[weak self] models in
+        FFHealthDataLoading.shared.performQuery(identifications: [.stepCount],selectedOptions: nil,startDate: nil) {[weak self] models in
             guard let models = models else { return }
             let stepValues: [CGFloat] = models.map { CGFloat($0.value) }
             DispatchQueue.main.async {
@@ -250,7 +250,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
         
         activityChartView.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: startDate)
     
-        FFHealthDataLoading.shared.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil) { models in
+        FFHealthDataLoading.shared.performQuery(identifications: [.activeEnergyBurned],selectedOptions: nil,startDate: nil) { models in
             guard let models = models else { return }
             let value: [CGFloat] = models.map { CGFloat($0.value) }
             let series = OCKDataSeries(values: value, title: "Calories", gradientStartColor: .systemYellow, gradientEndColor: .systemRed, size: 5)
@@ -264,7 +264,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     //MARK: - UIApplication background task
     func setupBackgroundTask(){
         UIApplication.shared.isIdleTimerDisabled = true
-        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Malkov.KS.FeelFit.fitness.health_data_refresh", expirationHandler: { [weak self] in
+        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Malkov.KS.FeelFit.fitnessApp.health_data_refresh", expirationHandler: { [weak self] in
             self?.stopBackgroundTaskRequest()
         })
         //repeat check value every 10 minutes in background

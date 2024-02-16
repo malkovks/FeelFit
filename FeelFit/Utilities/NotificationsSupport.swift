@@ -43,7 +43,7 @@ class FFSendUserNotifications {
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.fitness.notification", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: "Malkov.KS.FeelFit.fitnessApp.notification", content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {

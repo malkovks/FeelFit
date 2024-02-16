@@ -40,7 +40,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }()
     
     private let segmentControl: UISegmentedControl = {
-        let titles = ["Day","Week","Month","Half Year","Year"]
+        let titles = ["Day","Week","Month","Year"]
         let segmentControl = UISegmentedControl(items: titles)
         segmentControl.apportionsSegmentWidthsByContent = true
         segmentControl.selectedSegmentTintColor = FFResources.Colors.activeColor
@@ -78,7 +78,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }
     //MARK: - Target and action methods
     @objc private func handleRefreshControl(_ sender: UIRefreshControl){
-        updateChartDataSeries()
+        refreshCartesianView()
         DispatchQueue.main.async {
             self.scrollView.refreshControl?.endRefreshing()
         }
@@ -89,25 +89,48 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    ///Сделать отображение выбранной даты формата в лейбл в граф вью
+    ///Разобраться с сортировкой и с тем что и как загружается при выборе секций
+    ///Настроить функцию под универсальное пользование
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
-        var type: FFHealthDateType = .day
+        var calendar: Calendar.Component?
+        var components = DateComponents()
+        var interval: Int = 0
         switch sender.selectedSegmentIndex {
         case 0:
-            type = FFHealthDateType.day
+            calendar = .day
+            interval = -1
+            components.hour = 1
         case 1:
-            type = FFHealthDateType.week
+            calendar = .day
+            interval = -6
+            components.day = 1
         case 2:
-            type = FFHealthDateType.month
-        case 3:
-            type = FFHealthDateType.sixMonth
+            calendar = .day
+            interval = -28
+            components.day = 7
         case 4:
-            type = FFHealthDateType.year
+            calendar = .month
+            interval = -12
+            components.month = 1
         default:
             break
         }
-        userDefaults.setValue(type.rawValue, forKey: "healthDateType")
-        selectedDateType = type.rawValue
-        loadChartViewData(type: type)
+//        let startDate = createLastWeekStartDate(from: Date(), byAdding: calendar ?? .day, value: interval)
+        let startDate = Calendar.current.startOfDay(for: Date())
+        
+        guard let identifier = chartDataProvider.first?.typeIdentifier else { return }
+        loadUserHealth.performQuery(identifications: [identifier],
+                                    value: components,
+                                    interval: interval,
+                                    selectedOptions: nil,
+                                    startDate: startDate,
+                                    currentDate: Date()) { models in
+            self.chartDataProvider = models!
+            self.updateChartDataSeries()
+            
+        }
+        userDefaults.set(sender.selectedSegmentIndex, forKey: "selectedSegmentControl")
     }
     
     @objc private func didTapPopToRoot(){
@@ -147,13 +170,25 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         updateChartDataSeries()
     }
     
+    private func refreshCartesianView(interval dateComponents: DateComponents = DateComponents(day: 1)){
+        guard let identifier = chartDataProvider.first?.typeIdentifier else { return }
+        FFHealthDataLoading.shared.performQuery(identifications: [identifier],value: dateComponents, selectedOptions: nil,startDate: nil) { [weak self] models in
+            if let data = models {
+                self?.chartDataProvider = data
+                self?.updateChartDataSeries()
+            } else {
+                self?.viewAlertController(text: "Error loading selected identifier", startDuration: 0.5, timer: 2, controllerView: self!.view)
+            }
+        }
+    }
+    
     private func updateChartDataSeries(){
         guard let firstChartData = chartDataProvider.last,
               let identifier = firstChartData.typeIdentifier else {
             return
         }
         let chartTitle = getDataTypeName(identifier)
-        chartView.headerView.titleLabel.text = chartTitle
+        
         let measurementUnitText = getUnitMeasurement(identifier)
         
         let value: [CGFloat] = chartDataProvider.map { CGFloat($0.value) }
@@ -162,30 +197,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         
         DispatchQueue.main.async { [weak self] in
             self?.chartView.graphView.dataSeries = [series]
-        }
-    }
-    
-    
-    //MARK: - UNUSED
-    private func loadChartViewData(type: FFHealthDateType){
-        var value: DateComponents = DateComponents()
-        switch type {
-        case .day:
-            value = DateComponents(day: 1)
-        case .week:
-            value = DateComponents(day: 7)
-        case .month:
-            value = DateComponents(day: 30)
-        case .sixMonth,.year:
-            value = DateComponents(month: 1)
-        }
-        guard let data = chartDataProvider.first else { return }
-        let id: [HKQuantityTypeIdentifier] = [data.typeIdentifier!]
-        loadUserHealth.performQuery(identifications: id, interval: value, selectedOptions: .cumulativeSum) { models in
-            self.chartDataProvider.removeAll()
-            DispatchQueue.main.async {
-                self.chartDataProvider = models!
-            }
+            self?.chartView.headerView.titleLabel.text = chartTitle
         }
     }
     
@@ -202,12 +214,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }
     
     private func setupSegmentControl(){
-        if let index = FFHealthDateType.index(forRawValue: selectedDateType) {
-            segmentControl.selectedSegmentIndex = index
-        } else {
-            segmentControl.selectedSegmentIndex = 0
-        }
-        
+        segmentControl.selectedSegmentIndex = userDefaults.value(forKey: "selectedSegmentControl") as? Int ?? 1
         segmentControl.addTarget(self, action: #selector(handlerSegmentController), for: .valueChanged)
     }
     

@@ -50,8 +50,8 @@ func createLastWeekStartDate(from date: Date = Date(),byAdding type: Calendar.Co
 }
 
 ///Function creating predicate based on HKQuery and input startDate and endDate in this diapason
-func preparePredicateHealthData(_ type: FFHealthDateType = .week, from endDate: Date = Date()) -> NSPredicate{
-    let startDate = createLastWeekStartDate()
+func preparePredicateHealthData(value interval: Int, byAdding type: Calendar.Component = .day, from endDate: Date = Date()) -> NSPredicate{
+    let startDate = createLastWeekStartDate(from: endDate, byAdding: type, value: interval)
     return HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
 }
 

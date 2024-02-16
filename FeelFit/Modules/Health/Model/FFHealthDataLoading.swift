@@ -17,11 +17,14 @@ class FFHealthDataLoading {
     
     func performQuery(
         identifications : [HKQuantityTypeIdentifier] = [.activeEnergyBurned],
-        interval dateComponents: DateComponents = DateComponents(day: 1),
+        value dateComponents: DateComponents = DateComponents(day: 1),
+        interval: Int = -6,
         selectedOptions: HKStatisticsOptions?,
+        startDate: Date?,
+        currentDate date: Date = Date(),
         completion: @escaping (_ models: [FFUserHealthDataProvider]? )->()) {
-            let predicate = preparePredicateHealthData()
-            let anchorDate = createAnchorData()
+            let predicate = preparePredicateHealthData(value: interval)
+            let anchorDate = startDate ?? createAnchorData()
             let interval = dateComponents
             
             

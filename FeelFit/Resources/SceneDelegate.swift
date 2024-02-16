@@ -23,19 +23,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillResignActive(_ scene: UIScene) {
         let application = UIApplication.shared
         application.shortcutItems = [
-            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitness.news",
+            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitnessApp.news",
                                       localizedTitle: "News",
                                       localizedSubtitle: "Open News window",
                                       icon: UIApplicationShortcutIcon(systemImageName: "newspaper")),
-            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitness.muscles",
+            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitnessApp.muscles",
                                       localizedTitle: "Muscles",
                                       localizedSubtitle: "Open Muscles window",
                                       icon: UIApplicationShortcutIcon(systemImageName: "figure.strengthtraining.traditional")),
-            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitness.muscles.plan",
+            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitnessApp.muscles.plan",
                                       localizedTitle: "Plan",
                                       localizedSubtitle: "Open Plan window",
                                       icon: UIApplicationShortcutIcon(systemImageName: "checkmark.diamond")),
-            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitness.health",
+            UIApplicationShortcutItem(type: "Malkov.KS.FeelFit.fitnessApp.health",
                                       localizedTitle: "Health",
                                       localizedSubtitle: "Open Health window",
                                       icon: UIApplicationShortcutIcon(systemImageName: "heart.text.square"))
@@ -61,13 +61,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func handleShortcutItem(_ shortcutItemType: String,_ windowScene: UIWindowScene){
         switch shortcutItemType {
           
-        case "Malkov.KS.FeelFit.fitness.news":
+        case "Malkov.KS.FeelFit.fitnessApp.news":
             UserDefaults.standard.set(0, forKey: "viewIndex")
-        case "Malkov.KS.FeelFit.fitness.muscles":
+        case "Malkov.KS.FeelFit.fitnessApp.muscles":
             UserDefaults.standard.set(1, forKey: "viewIndex")
-        case "Malkov.KS.FeelFit.fitness.plan":
+        case "Malkov.KS.FeelFit.fitnessApp.plan":
             UserDefaults.standard.set(2, forKey: "viewIndex")
-        case "Malkov.KS.FeelFit.fitness.health":
+        case "Malkov.KS.FeelFit.fitnessApp.health":
             UserDefaults.standard.set(3, forKey: "viewIndex")
         default:
             break
