@@ -75,7 +75,7 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
     }
     
     func configureCell(_ indexPath: IndexPath, values: [FFUserHealthDataProvider]){
-        guard let data = values.reversed().first else { return }
+        guard let data = values.last else { return }
         let quantityId = HKQuantityTypeIdentifier(rawValue: data.identifier)
         let valueResult = data.value
         let valueType = getUnitMeasurement(quantityId).capitalized
@@ -83,14 +83,12 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         let titleHeaderText = getDataTypeName(quantityId)
         
         let valueArray: [CGFloat] = values.map { CGFloat($0.value) }
-        let dataSource = [OCKDataSeries(values: valueArray, title: "",size: 0.5, color: .systemOrange)]
         
         DispatchQueue.main.async { [weak self] in
             self?.titleHeaderLabel.text = titleHeaderText
             self?.valueResultLabel.text = String(describing: Int(valueResult))
             self?.valueTypeDataLabel.text = valueType
             self?.dataDetailPresentButton.configuration?.title = lastDateUpdate
-            self?.graphView.dataSeries = dataSource
         }
     }
     

@@ -8,18 +8,6 @@
 import Foundation
 import CareKit
 
-//func applyTitleAndAxisMarkersConfiguration(startDate: Date, endDate: Date, dateType: HealthModelDate) {
-//    switch dateType {
-//    case .week:
-//        <#code#>
-//    case .month:
-//        <#code#>
-//    case .sixMonth:
-//        <#code#>
-//    case .year:
-//        <#code#>
-//    }
-//}
 
 func createChartWeeklyDateRangeLabel(startDate: Date?, lastDate: Date = Date()) -> String {
     let calendar: Calendar = .current

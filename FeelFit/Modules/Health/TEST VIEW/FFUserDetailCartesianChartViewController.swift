@@ -8,6 +8,8 @@
 import UIKit
 import CareKit
 import HealthKit
+import Charts
+
 
 
 
@@ -40,7 +42,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }()
     
     private let segmentControl: UISegmentedControl = {
-        let titles = ["Day","Week","Month","Year"]
+        let titles = ["Day","Week","Month"]
         let segmentControl = UISegmentedControl(items: titles)
         segmentControl.apportionsSegmentWidthsByContent = true
         segmentControl.selectedSegmentTintColor = FFResources.Colors.activeColor
@@ -72,6 +74,12 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         return chart
     }()
     
+    private let indicatorView: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = FFResources.Colors.activeColor
+        return indicator
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -89,35 +97,32 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    ///Сделать отображение выбранной даты формата в лейбл в граф вью
-    ///Разобраться с сортировкой и с тем что и как загружается при выборе секций
-    ///Настроить функцию под универсальное пользование
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
-        var calendar: Calendar.Component?
+        isData(loading: true)
         var components = DateComponents()
+        var headerDetailLabelText = ""
+        var startDate: Date?
         var interval: Int = 0
         switch sender.selectedSegmentIndex {
         case 0:
-            calendar = .day
             interval = -1
             components.hour = 1
+            headerDetailLabelText = "24 Hours"
+            startDate = Calendar.current.startOfDay(for: Date())
         case 1:
-            calendar = .day
             interval = -6
             components.day = 1
+            startDate = nil
+            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: nil)
         case 2:
-            calendar = .day
-            interval = -28
-            components.day = 7
-        case 4:
-            calendar = .month
-            interval = -12
-            components.month = 1
+            interval = -30
+            components.day = 1
+            startDate = createLastWeekStartDate(from: Date(), byAdding: .day, value: -30)
+            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: startDate)
         default:
             break
         }
-//        let startDate = createLastWeekStartDate(from: Date(), byAdding: calendar ?? .day, value: interval)
-        let startDate = Calendar.current.startOfDay(for: Date())
+        
         
         guard let identifier = chartDataProvider.first?.typeIdentifier else { return }
         loadUserHealth.performQuery(identifications: [identifier],
@@ -125,10 +130,13 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
                                     interval: interval,
                                     selectedOptions: nil,
                                     startDate: startDate,
-                                    currentDate: Date()) { models in
-            self.chartDataProvider = models!
-            self.updateChartDataSeries()
-            
+                                    currentDate: Date()) { [weak self] models in
+            self?.chartDataProvider = models!
+            self?.updateChartDataSeries()
+            DispatchQueue.main.async {
+                self?.chartView.headerView.detailLabel.text = headerDetailLabelText
+                self?.isData(loading: false)
+            }
         }
         userDefaults.set(sender.selectedSegmentIndex, forKey: "selectedSegmentControl")
     }
@@ -161,6 +169,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         
         setupConstraints()
         setupSegmentControl()
+
     }
     
     private func setupChartView(){
@@ -168,6 +177,16 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         chartView.isUserInteractionEnabled = true
         chartView.graphView.isUserInteractionEnabled = true 
         updateChartDataSeries()
+    }
+    
+    private func isData(loading status: Bool) {
+        if status {
+            chartView.isHidden = true
+            indicatorView.startAnimating()
+        } else {
+            chartView.isHidden = false
+            indicatorView.stopAnimating()
+        }
     }
     
     private func refreshCartesianView(interval dateComponents: DateComponents = DateComponents(day: 1)){
@@ -291,6 +310,12 @@ private extension FFUserDetailCartesianChartViewController {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        scrollView.addSubview(indicatorView)
+        indicatorView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(50)
         }
         
         scrollView.addSubview(segmentControl)

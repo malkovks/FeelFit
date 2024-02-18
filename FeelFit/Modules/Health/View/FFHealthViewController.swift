@@ -109,6 +109,7 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }()
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadDataMethod()
@@ -134,7 +135,6 @@ class FFHealthViewController: UIViewController, SetupViewController {
     }
     
     func loadDataMethod(){
-        let id: [HKQuantityTypeIdentifier] = [.stepCount,.activeEnergyBurned,.distanceWalkingRunning]
         loadData.performQuery(identifications: [.stepCount],selectedOptions: nil,startDate: nil) { models in
             guard let models = models else { return }
             let arrayModels = Array(models).sorted { $0.identifier < $1.identifier }
@@ -516,101 +516,3 @@ extension FFHealthViewController {
     }
 }
 
-
-///uploading VO 2 MAX and convert to average data for every last 6  months and return HealthModelValue array
-/*
-private func uploadAverageOxygenData(completion: @escaping (_ model: [HealthModelValue]) -> ()){
-    let identifier = HKObjectType.quantityType(forIdentifier: .vo2Max)!
-    let startDate = calendar.date(byAdding: .month, value: -6, to: Date())!
-    let endDate = calendar.date(byAdding: .month, value: 1, to: Date())!
-        .startOfMonth()
-        .addingTimeInterval(-1)
-    let interval = DateComponents(month: 1)
-    let kgmin = HKUnit.gramUnit(with: .kilo).unitMultiplied(by: .minute())
-    let mL = HKUnit.literUnit(with: .milli)
-    let vo2unit = mL.unitDivided(by: kgmin)
-    
-    var healthModel: [HealthModelValue] = [HealthModelValue]()
-    let query = HKStatisticsCollectionQuery(quantityType: identifier, quantitySamplePredicate: nil, options: [.discreteAverage], anchorDate: startDate, intervalComponents: interval)
-    
-    
-    query.initialResultsHandler = { query, results, error in
-        guard let results = results else {
-            return
-        }
-        results.enumerateStatistics(from: startDate, to: endDate) { stats, _ in
-            let month = stats.startDate
-            guard let average = stats.averageQuantity()?.doubleValue(for: vo2unit) else {
-                return
-            }
-            healthModel.append(HealthModelValue(date: month, value: average,unit: vo2unit,identifier: identifier.identifier))
-        }
-        completion(healthModel)
-    }
-    healthStore.execute(query)
-}*/
-
-
-/*/
-func uploadSelectedData(id: String = "HKQuantityTypeIdentifierStepCount",dateType: FFHealthDateType = .week,data completion: @escaping (([HealthModelValue]) -> Void)){
-    if isHealthKitAccess {
-        var value: [HealthModelValue] = [HealthModelValue]()
-        let identifier = HKQuantityTypeIdentifier(rawValue: id)
-        guard let quantityType = HKQuantityType.quantityType(forIdentifier: identifier) else { return }
-        let now = Date()
-        let (withStartDate,endDate) = FFHealthData.dateRangeConfiguration(dateType)
-        
-        let interval = FFHealthData.dateIntervalConfiguration(dateType)
-        var options: HKStatisticsOptions = []
-        if id == HKQuantityTypeIdentifier.heartRate.rawValue {
-            options = .discreteAverage
-        } else {
-            options = .cumulativeSum
-        }
-        let predicate = HKQuery.predicateForSamples(withStart: withStartDate, end: now, options: .strictEndDate)
-        let query = HKStatisticsCollectionQuery(quantityType: quantityType,
-                                                quantitySamplePredicate: predicate,
-                                                options: options,
-                                                anchorDate: now,
-                                                intervalComponents: interval)
-        query.initialResultsHandler = { /*[weak self] */ query, results, error in
-            guard error == nil,
-                let results = results else {
-                let title = "Error getting initial results with handler"
-                print(title)
-                return
-            }
-            results.enumerateStatistics(from: withStartDate, to: now) {  stats, stop in
-                let startDate = stats.startDate
-                switch identifier {
-                case .stepCount:
-                    let unit = HKUnit.count()
-                    guard let steps = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                    value.append(HealthModelValue.init(startDate: startDate, value: steps,unit: unit,identifier: id))
-                case .distanceWalkingRunning:
-                    let unit = HKUnit.meter()
-                    guard let meters = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                    value.append(HealthModelValue.init(startDate: startDate, value: meters,unit: unit,identifier: id))
-                case .activeEnergyBurned:
-                    let unit = HKUnit.kilocalorie()
-                    guard let calories = stats.sumQuantity()?.doubleValue(for: unit) else { return }
-                    value.append(HealthModelValue.init(startDate: startDate, value: calories,unit: unit,identifier: id))
-                case .heartRate:
-                    let unit = HKUnit.count().unitDivided(by: .minute())
-                    guard let heartRate = stats.averageQuantity()?.doubleValue(for: unit) else { return }
-                    value.append(HealthModelValue.init(startDate: startDate, value: heartRate,unit: unit,identifier: id))
-                    
-                default: fatalError("Error getting data from health kit")
-                }
-                
-            }
-            //MARK: - Функция добавления данных в OCKStore. Пока не работает, чуть позже будет
-//                self.careKitStore.saveDataToCareKitStore(value)
-            completion(value)
-            
-        }
-        healthStore.execute(query)
-    } else {
-        FFHealthDataAccess.shared.requestForAccessToHealth()
-    }
-} */

@@ -30,16 +30,6 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
         return button
     }()
     
-    let setupPresentHealthControllerButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "gearshape.fill"), for: .normal)
-        button.tintColor = .systemBackground
-        button.backgroundColor = .clear
-        button.contentMode = .right
-        button.contentHorizontalAlignment = .right
-        return button
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupHeaderView()
@@ -57,7 +47,7 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
     }
     
     private func setupHeaderConstraints(){
-        let stackView = UIStackView(arrangedSubviews: [headerLabel,setupPresentHealthControllerButton,setupHeaderFavouritesButton])
+        let stackView = UIStackView(arrangedSubviews: [headerLabel,setupHeaderFavouritesButton])
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fill

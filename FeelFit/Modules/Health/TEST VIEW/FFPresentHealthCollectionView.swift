@@ -24,6 +24,13 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         refresh.tintColor = FFResources.Colors.backgroundColor
         return refresh
     }()
+    
+    private let indicatorView: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = FFResources.Colors.activeColor
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,7 +62,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     @objc private func didTapOpenDetails(){
-        let vc = FFHealthViewController()
+        let vc = FFHealthSettingsViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -85,7 +92,21 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         setupConstraints()
     }
     
+    private func isDataLoading(isLoading status: Bool) {
+        if status {
+            collectionView.isHidden = true
+            indicatorView.isHidden = false
+            indicatorView.startAnimating()
+        } else {
+            collectionView.isHidden = false
+            indicatorView.stopAnimating()
+            indicatorView.isHidden = true
+            healthData.sort { $0[0].identifier < $1[0].identifier }
+        }
+    }
+    
     private func prepareCollectionViewData(){
+        isDataLoading(isLoading: true)
         userFavoriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
         healthData.removeAll()
         loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil,startDate: nil) { [weak self] models in
@@ -93,6 +114,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
                 self?.healthData.append(model)
                 DispatchQueue.main.async { [weak self] in
                     self?.collectionView.reloadData()
+                    self?.isDataLoading(isLoading: false)
                 }
             }
         }
@@ -159,7 +181,6 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegate {
         if kind == UICollectionView.elementKindSectionHeader {
             let header =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier, for: indexPath) as! FFPresentHealthHeaderCollectionView
             header.setupHeaderFavouritesButton.addTarget(self, action: #selector(didTapPressChangeFavouriteCollectionView), for: .primaryActionTriggered)
-            header.setupPresentHealthControllerButton.addTarget(self, action: #selector(didTapOpenSettings), for: .touchUpInside)
             return header
         }
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView
@@ -189,6 +210,12 @@ private extension FFPresentHealthCollectionView {
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        view.addSubview(indicatorView)
+        indicatorView.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+            make.width.height.equalTo(50)
         }
     }
 }

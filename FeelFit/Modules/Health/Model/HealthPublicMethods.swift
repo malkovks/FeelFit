@@ -50,8 +50,8 @@ func createLastWeekStartDate(from date: Date = Date(),byAdding type: Calendar.Co
 }
 
 ///Function creating predicate based on HKQuery and input startDate and endDate in this diapason
-func preparePredicateHealthData(value interval: Int, byAdding type: Calendar.Component = .day, from endDate: Date = Date()) -> NSPredicate{
-    let startDate = createLastWeekStartDate(from: endDate, byAdding: type, value: interval)
+func preparePredicateHealthData(value interval: Int, byAdding type: Calendar.Component? = .day, from endDate: Date = Date()) -> NSPredicate{
+    let startDate = createLastWeekStartDate(from: endDate, byAdding: type ?? .day, value: interval)
     return HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
 }
 
@@ -89,8 +89,7 @@ func prepareStatisticOptions(for dataIdentifier: String) -> HKStatisticsOptions 
         let quantityIdentifier = HKQuantityTypeIdentifier(rawValue: dataIdentifier)
         
         switch quantityIdentifier {
-        case    .heartRate,
-                .bodyMassIndex,
+        case    .bodyMassIndex,
                 .runningPower,
                 .runningSpeed,
                 .bodyFatPercentage,
@@ -98,6 +97,9 @@ func prepareStatisticOptions(for dataIdentifier: String) -> HKStatisticsOptions 
                 .height,
                 .vo2Max:
             options = .discreteAverage
+        case    .heartRate:
+            options = [.discreteMin,.discreteMax]
+            
         default:
             options = .cumulativeSum
         }
@@ -152,6 +154,12 @@ func processingStatistics(statistics stats: HKStatistics,unit: HKUnit,value opti
     case .discreteAverage:
         let discreteValue = stats.averageQuantity()?.doubleValue(for: unit)
         return discreteValue
+    case .discreteMin:
+        let discreteMin = stats.minimumQuantity()?.doubleValue(for: unit)
+        return discreteMin
+    case .discreteMax:
+        let discreteMax = stats.maximumQuantity()?.doubleValue(for: unit)
+        return discreteMax
     default:
         return nil
     }

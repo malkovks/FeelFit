@@ -72,7 +72,6 @@ class FFHealthData {
     
     private static var typeIdentifiers: [String] = [
         HKQuantityTypeIdentifier.activeEnergyBurned.rawValue, ///burned kilocalories
-        HKQuantityTypeIdentifier.heartRate.rawValue, ///heart rate
         
         HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue, ///walked or run meters
         HKQuantityTypeIdentifier.stepCount.rawValue,

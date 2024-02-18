@@ -18,7 +18,7 @@ class FFPresentHealthFooterCollectionView: UICollectionReusableView {
         button.configuration?.image = UIImage(systemName: "heart")?.withTintColor(.systemRed)
         button.configuration?.imagePlacement = .leading
         button.configuration?.imagePadding = 5
-        button.configuration?.title = "Show all medical data"
+        button.configuration?.title = "Set up displayed data"
         button.configuration?.baseBackgroundColor = .systemBackground
         button.configuration?.baseForegroundColor = FFResources.Colors.textColor
         button.contentMode = .left
