@@ -64,6 +64,44 @@ func createHorizontalAxisMarkers(lastDate: Date = Date(), useWeekdays: Bool = tr
     }
 }
 
+func createHorizontalAxisMarkersForDay(endDate: Date = Date()) -> [String]{
+    let calendar = Calendar.current
+    let _ = calendar.startOfDay(for: endDate)
+    
+    let currentHour = calendar.component(.hour, from: endDate)
+    
+    var axisMarkers: [String] = []
+    
+    for hour in 0..<currentHour{
+        axisMarkers.append(String(describing: hour))
+    }
+    
+    return axisMarkers
+}
+
+func generateWeeklyDateIntervals() -> [String] {
+    let calendar = Calendar.current
+    let now = Date()
+    
+    var weeklyDateIntervals: [String] = []
+    
+    for i in 0..<4 {
+        guard let startOfWeek = calendar.date(byAdding: .weekOfYear, value: -i, to: calendar.startOfDay(for: now)) else { continue }
+        guard let endOfWeek = calendar.date(byAdding: .day, value: 6, to: startOfWeek) else { continue }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM"
+        
+        let startDateString = dateFormatter.string(from: startOfWeek)
+        let endDateString = dateFormatter.string(from: endOfWeek)
+        
+        let weekInterval = "\(startDateString)-\(endDateString)"
+        weeklyDateIntervals.append(weekInterval)
+    }
+    
+    return weeklyDateIntervals.reversed()
+}
+
 func createHorizontalAxisMarkersForMonth(startDate: Date, endDate: Date = Date()) -> [String] {
     let calendar = Calendar.current
     var titles: [String] = []

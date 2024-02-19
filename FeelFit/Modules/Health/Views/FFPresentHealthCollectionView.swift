@@ -8,12 +8,12 @@
 import HealthKit
 import UIKit
 
+///Class displaying filtered collection view with main data of users selected information
 class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     
-    private var userFavoriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
     private let loadHealthData = FFHealthDataLoading.shared
     private var healthData = [[FFUserHealthDataProvider]]()
     
@@ -47,18 +47,19 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     @objc private func didTapRefreshView(){
-        healthData = []
+        healthData.removeAll()
         prepareCollectionViewData()
         refreshControl.endRefreshing()
     }
     
     @objc private func didTapPressChangeFavouriteCollectionView(){
         let vc = FFFavouriteHealthDataViewController()
+        vc.isViewDismissed = { [weak self] in
+            self?.prepareCollectionViewData()
+        }
         let navVC = FFNavigationController(rootViewController: vc)
         navVC.isNavigationBarHidden = false
-        present(navVC, animated: true) { [weak self] in
-            self?.didTapRefreshView()
-        }
+        present(navVC, animated: true)
     }
     
     @objc private func didTapOpenDetails(){
@@ -66,18 +67,9 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    @objc private func didTapOpenSettings(){
-        let vc = FFHealthSettingsViewController()
-        let navVC = FFNavigationController(rootViewController: vc)
-        navVC.isNavigationBarHidden = false
-        present(navVC, animated: true) {
-            print("Completion handler exist")
-        }
-    }
-    
     @objc private func didTapOpenSelectedProvider(selectedItem indexPath: IndexPath){
-        let data = healthData[indexPath.row]
-        let vc = FFUserDetailCartesianChartViewController(chartData: data)
+        guard let identifier = healthData[indexPath.row].first?.typeIdentifier else { return }
+        let vc = FFUserDetailCartesianChartViewController(typeIdentifier: identifier)
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -107,15 +99,18 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     private func prepareCollectionViewData(){
         isDataLoading(isLoading: true)
-        userFavoriteTypes = FFHealthData.favouriteQuantityTypeIdentifier
+        let userFavoriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
         healthData.removeAll()
-        loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil,startDate: nil) { [weak self] models in
+        let startDate = Calendar.current.startOfDay(for: Date())
+        loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil,startDate: startDate) { [weak self] models in
             if let model = models {
                 self?.healthData.append(model)
                 DispatchQueue.main.async { [weak self] in
                     self?.collectionView.reloadData()
                     self?.isDataLoading(isLoading: false)
                 }
+            } else {
+                self?.isDataLoading(isLoading: false)
             }
         }
     }

@@ -7,7 +7,10 @@
 
 import UIKit
 
+/// Class displaying table view with all accessed Quantity Type Identifiers and give to user possibility for filter collection view
 class FFFavouriteHealthDataViewController: UIViewController, SetupViewController {
+    
+    var isViewDismissed: (() -> ())?
     
     private let sharedIdentifiers = FFHealthData.allQuantityTypeIdentifiers
     
@@ -19,6 +22,7 @@ class FFFavouriteHealthDataViewController: UIViewController, SetupViewController
     }
     
     @objc private func didTapSave(){
+        self.isViewDismissed?()
         self.dismiss(animated: true)
     }
     

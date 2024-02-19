@@ -7,6 +7,7 @@
 
 import HealthKit
 
+///Class return app's status of access to users health data
 class FFHealthDataAccess {
     
     static let shared = FFHealthDataAccess()

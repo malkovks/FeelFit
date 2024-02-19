@@ -25,7 +25,6 @@
 		0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347E12AF9B2C1002C161C /* Kingfisher */; };
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
-		0A2A03C92B6DA83F00044820 /* CareKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */; };
 		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
@@ -47,7 +46,6 @@
 		0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495152ABA67CE0082C909 /* FFTabBarController.swift */; };
 		0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495182ABA72A90082C909 /* Resources+Enums.swift */; };
 		0A4495292ABA79700082C909 /* FFMusclesGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495282ABA79700082C909 /* FFMusclesGroupViewController.swift */; };
-		0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */; };
 		0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */; };
 		0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952E2ABA7A340082C909 /* FFProfileViewController.swift */; };
 		0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495302ABA863D0082C909 /* FFNavigationController.swift */; };
@@ -72,7 +70,6 @@
 		0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */; };
 		0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */; };
 		0A7D060A2B686CA6006FF02A /* TableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D06092B686CA6006FF02A /* TableView+Extension.swift */; };
-		0A7D060C2B688206006FF02A /* FFHealthCartesianChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7D060B2B688206006FF02A /* FFHealthCartesianChartViewController.swift */; };
 		0A82CD1D2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD1C2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift */; };
 		0A82CD1F2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD1E2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift */; };
 		0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */; };
@@ -150,7 +147,6 @@
 		0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewModel.swift; sourceTree = "<group>"; };
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
-		0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CareKit+Extensions.swift"; sourceTree = "<group>"; };
 		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
@@ -170,7 +166,6 @@
 		0A4495152ABA67CE0082C909 /* FFTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTabBarController.swift; sourceTree = "<group>"; };
 		0A4495182ABA72A90082C909 /* Resources+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Resources+Enums.swift"; sourceTree = "<group>"; };
 		0A4495282ABA79700082C909 /* FFMusclesGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMusclesGroupViewController.swift; sourceTree = "<group>"; };
-		0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthViewController.swift; sourceTree = "<group>"; };
 		0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTRainingPlanViewController.swift; sourceTree = "<group>"; };
 		0A44952E2ABA7A340082C909 /* FFProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFProfileViewController.swift; sourceTree = "<group>"; };
 		0A4495302ABA863D0082C909 /* FFNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNavigationController.swift; sourceTree = "<group>"; };
@@ -196,7 +191,6 @@
 		0A7278AE2B1E408F0055EECD /* FFPlanExercisesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanExercisesViewController.swift; sourceTree = "<group>"; };
 		0A7278B02B1E40D90055EECD /* FFPlanExercisesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanExercisesViewModel.swift; sourceTree = "<group>"; };
 		0A7D06092B686CA6006FF02A /* TableView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TableView+Extension.swift"; sourceTree = "<group>"; };
-		0A7D060B2B688206006FF02A /* FFHealthCartesianChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCartesianChartViewController.swift; sourceTree = "<group>"; };
 		0A82CD1C2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanDetailsViewController.swift; sourceTree = "<group>"; };
 		0A82CD1E2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerTwoActions.swift; sourceTree = "<group>"; };
@@ -279,7 +273,6 @@
 				0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
-				0A2A03C82B6DA83F00044820 /* CareKit+Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -446,13 +439,11 @@
 		0A4495052AB9D11D0082C909 /* Health */ = {
 			isa = PBXGroup;
 			children = (
-				0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */,
 				0ADB786C2B710B3C00653952 /* CollectionView */,
 				0ADB786B2B710B3500653952 /* TableView */,
 				0A44951E2ABA79120082C909 /* Model */,
 				0A4495202ABA79250082C909 /* ViewModel */,
-				0A44951F2ABA79210082C909 /* View */,
-				0A63AC652B6D8DB700B32981 /* TEST VIEW */,
+				0A63AC652B6D8DB700B32981 /* Views */,
 			);
 			path = Health;
 			sourceTree = "<group>";
@@ -522,6 +513,7 @@
 		0A4495172ABA728F0082C909 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
 				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
 				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
 				0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */,
@@ -574,16 +566,6 @@
 				0AEE085F2B7B61960043722B /* HealthPublicMethods.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		0A44951F2ABA79210082C909 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				0A44952A2ABA79B20082C909 /* FFHealthViewController.swift */,
-				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
-				0A7D060B2B688206006FF02A /* FFHealthCartesianChartViewController.swift */,
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		0A4495202ABA79250082C909 /* ViewModel */ = {
@@ -649,19 +631,21 @@
 			children = (
 				0A4495302ABA863D0082C909 /* FFNavigationController.swift */,
 				0A4495152ABA67CE0082C909 /* FFTabBarController.swift */,
+				0ADB786F2B710E7400653952 /* FFNavigationControllerCustomView.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
 		};
-		0A63AC652B6D8DB700B32981 /* TEST VIEW */ = {
+		0A63AC652B6D8DB700B32981 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
 				0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */,
 				0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */,
-				0AE049A92B77805300697A82 /* FavouriteHealthData */,
+				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
+				0AE049A72B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift */,
 			);
-			path = "TEST VIEW";
+			path = Views;
 			sourceTree = "<group>";
 		};
 		0A69AF342B08B4810013FB1B /* View+ViewModel */ = {
@@ -879,8 +863,8 @@
 			isa = PBXGroup;
 			children = (
 				0A8EBE052B51248F007AC52E /* FFHealthTableViewCell.swift */,
-				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
 				0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */,
+				0AE049AA2B77806800697A82 /* FFFavouriteHealthDataTableViewCell.swift */,
 			);
 			path = TableView;
 			sourceTree = "<group>";
@@ -893,15 +877,6 @@
 				0A91E89D2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift */,
 			);
 			path = CollectionView;
-			sourceTree = "<group>";
-		};
-		0AE049A92B77805300697A82 /* FavouriteHealthData */ = {
-			isa = PBXGroup;
-			children = (
-				0AE049A72B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift */,
-				0AE049AA2B77806800697A82 /* FFFavouriteHealthDataTableViewCell.swift */,
-			);
-			path = FavouriteHealthData;
 			sourceTree = "<group>";
 		};
 		0AFC89532AFEC813005ADC17 /* NewsPage */ = {
@@ -1164,7 +1139,6 @@
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
 				0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */,
-				0A2A03C92B6DA83F00044820 /* CareKit+Extensions.swift in Sources */,
 				0A8EBE062B51248F007AC52E /* FFHealthTableViewCell.swift in Sources */,
 				0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */,
 				0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */,
@@ -1210,11 +1184,9 @@
 				0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */,
 				0ABDEB032B18659B00BDDAFE /* FFExerciseModelStoreManager.swift in Sources */,
 				0AEE085E2B7B5B250043722B /* AlertTextField+UIViewController.swift in Sources */,
-				0A7D060C2B688206006FF02A /* FFHealthCartesianChartViewController.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */,
 				0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */,
-				0A44952B2ABA79B20082C909 /* FFHealthViewController.swift in Sources */,
 				0A4495312ABA863D0082C909 /* FFNavigationController.swift in Sources */,
 				0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,

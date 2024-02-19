@@ -9,6 +9,8 @@ import UIKit
 import Photos
 import PhotosUI
 
+
+///Class display main information about user, his basic statistics and some terms about health access and etc
 class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
     private var viewModel: FFHealthUserViewModel!
@@ -81,6 +83,8 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         if sender.state == .began {
             let vc = FFImageDetailsViewController(newsImage: userImage, imageURL: "")
             present(vc, animated: true)
+        } else if sender.state == .ended {
+            
         }
     }
     
@@ -90,7 +94,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
                 setupPhotoPickerView()
                 present(pickerViewController, animated: true)
             }else {
-                self.alertError(message: "You did not give access to camera and media. Allow in system settings.")
+                didTapOpenPickerController()
             }
         }
     }
@@ -111,7 +115,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
             if status {
                 self.present(cameraViewController, animated: true)
             } else {
-                self.alertError(message: "You did not give access to camera and media. Allow in system settings.")
+                openCamera()
             }
         }
     }
@@ -132,7 +136,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
             UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
             userImageFileName = fileName
         } catch {
-            fatalError("Error saving to file url. Check the way to save data")
+            fatalError("FFHealthUserProfileViewController.saveUserImage ==> Error saving to file url. Check the way to save data")
         }
     }
     
@@ -148,7 +152,6 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     private func deleteUserImage() {
-        var image = UIImage()
         let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             try FileManager.default.removeItem(at: fileURL)
@@ -237,7 +240,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         if let image = loadUserImage() {
             userImageView.image = image
         } else {
-            print("error getting image from file path url ")
+            print("FFerror getting image from file path url ")
         }
     }
     

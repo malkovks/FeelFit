@@ -27,7 +27,6 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
     private let dataDetailPresentButton: UIButton = {
         let button = UIButton(type: .custom)
         button.configuration = .tinted()
-        button.configuration?.title = "Data title"
         button.configuration?.image = UIImage(systemName: "chevron.right")
         button.configuration?.imagePadding = 5
         button.configuration?.imagePlacement = .trailing
@@ -62,11 +61,6 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         return chart
     }()
     
-    private let graphView: OCKCartesianGraphView = {
-        let graph = OCKCartesianGraphView(type: .bar)
-        return graph
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCellView()
@@ -79,16 +73,12 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         let quantityId = HKQuantityTypeIdentifier(rawValue: data.identifier)
         let valueResult = data.value
         let valueType = getUnitMeasurement(quantityId).capitalized
-        let lastDateUpdate = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
         let titleHeaderText = getDataTypeName(quantityId)
-        
-        let valueArray: [CGFloat] = values.map { CGFloat($0.value) }
         
         DispatchQueue.main.async { [weak self] in
             self?.titleHeaderLabel.text = titleHeaderText
             self?.valueResultLabel.text = String(describing: Int(valueResult))
             self?.valueTypeDataLabel.text = valueType
-            self?.dataDetailPresentButton.configuration?.title = lastDateUpdate
         }
     }
     
@@ -96,12 +86,6 @@ class FFPresentHealthCollectionViewCell: UICollectionViewCell {
         backgroundColor = .systemBackground
         layer.cornerRadius = 12
         layer.masksToBounds = true
-        
-        let data = OCKDataSeries(values: [1,8,4], title: "", gradientStartColor: .systemOrange, gradientEndColor: .systemRed)
-        graphView.dataSeries = [data]
-        
-        let text = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
-        dataDetailPresentButton.configuration?.title = text
     }
     
     private func setupStackView(){

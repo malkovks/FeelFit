@@ -26,7 +26,10 @@ class FFHealthDataLoading {
         completion: @escaping (_ models: [FFUserHealthDataProvider]? )->()) {
             let _ = preparePredicateHealthData(value: interval, byAdding: calendar, from: Date())
             let anchorDate = startDate ?? createAnchorData()
-            
+            if identifications.isEmpty {
+                completion(nil)
+                return
+            }
             
             for iden in identifications {
                 let options: HKStatisticsOptions = selectedOptions ?? prepareStatisticOptions(for: iden.rawValue)
@@ -42,6 +45,7 @@ class FFHealthDataLoading {
                     guard error == nil,
                           let results = results else {
                         print("FFHealthDataLoading.performQuery = error not nil",String(describing: error?.localizedDescription))
+                        completion(nil)
                         return
                     }
                     
@@ -81,6 +85,8 @@ class FFHealthDataLoading {
                     }
                     if !arrayValue.isEmpty {
                         completion(arrayValue)
+                    } else {
+                        completion(nil)
                     }
                 }
                 

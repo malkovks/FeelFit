@@ -7,6 +7,7 @@
 
 import UIKit
 
+///Class displayed custom label and button with image, using stackView
 class FFNavigationControllerCustomView: UIView {
     let navigationTitleLabel: UILabel = {
         let label = UILabel(frame: .zero)
