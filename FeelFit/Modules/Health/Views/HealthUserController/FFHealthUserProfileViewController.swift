@@ -226,6 +226,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     private func setupUserImageView(){
         
         userImageView = UIImageView(image: userImage)
+        userImageView.setupShadowLayer()
         userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
         userImageView.tintColor = FFResources.Colors.activeColor
         userImageView.isUserInteractionEnabled = true
@@ -346,6 +347,11 @@ extension FFHealthUserProfileViewController: UITableViewDataSource {
 extension FFHealthUserProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let vc = FFHealthUserInformationViewController()
+        vc.userImage = userImageView.image
+        let navVC = FFNavigationController(rootViewController: vc)
+        navVC.isNavigationBarHidden = false
+        present(navVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

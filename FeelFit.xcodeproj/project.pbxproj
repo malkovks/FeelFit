@@ -29,6 +29,9 @@
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
 		0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */; };
+		0A3AECFB2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3AECFA2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift */; };
+		0A3AECFD2B84B20700B2F8F3 /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */; };
+		0A3AECFF2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3AECFE2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift */; };
 		0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
@@ -151,6 +154,9 @@
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
 		0A38936E2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthTableViewHeaderFooterView.swift; sourceTree = "<group>"; };
+		0A3AECFA2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthUserInformationViewController.swift; sourceTree = "<group>"; };
+		0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
+		0A3AECFE2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSubtitleTableViewCell.swift; sourceTree = "<group>"; };
 		0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFilesSupport.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
@@ -344,6 +350,23 @@
 			path = "Exercise Module";
 			sourceTree = "<group>";
 		};
+		0A3AECF92B84A43000B2F8F3 /* HealthUserController */ = {
+			isa = PBXGroup;
+			children = (
+				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
+				0A3AECFA2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift */,
+			);
+			path = HealthUserController;
+			sourceTree = "<group>";
+		};
+		0A3AED002B84B8CE00B2F8F3 /* TableViewSetups */ = {
+			isa = PBXGroup;
+			children = (
+				0A3AECFE2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift */,
+			);
+			path = TableViewSetups;
+			sourceTree = "<group>";
+		};
 		0A4494B32AB821FD0082C909 = {
 			isa = PBXGroup;
 			children = (
@@ -368,6 +391,7 @@
 				0A38936C2B6A3936007FC363 /* discord-notification.mp3 */,
 				0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */,
 				0A4495002AB9CFB40082C909 /* Modules */,
+				0A3AED002B84B8CE00B2F8F3 /* TableViewSetups */,
 				0A4495342ABC3F720082C909 /* APIClient */,
 				0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
@@ -521,6 +545,7 @@
 				0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */,
 				0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */,
 				0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */,
+				0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -639,10 +664,10 @@
 		0A63AC652B6D8DB700B32981 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0A3AECF92B84A43000B2F8F3 /* HealthUserController */,
 				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
 				0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */,
 				0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */,
-				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
 				0AE049A72B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift */,
 			);
 			path = Views;
@@ -1128,7 +1153,9 @@
 				0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */,
 				0A91E89C2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift in Sources */,
 				0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */,
+				0A3AECFF2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift in Sources */,
 				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
+				0A3AECFB2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift in Sources */,
 				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
@@ -1161,6 +1188,7 @@
 				0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */,
 				0ADB786E2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift in Sources */,
 				0A82CD262B2E462400F98D8B /* NavigationItemButton.swift in Sources */,
+				0A3AECFD2B84B20700B2F8F3 /* UIImageView+Extensions.swift in Sources */,
 				0A82CD1D2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
 				0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */,

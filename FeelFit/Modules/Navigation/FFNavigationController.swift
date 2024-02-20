@@ -24,7 +24,7 @@ final class FFNavigationController: UINavigationController {
         navigationBar.compactAppearance = appearance
         navigationBar.compactScrollEdgeAppearance = appearance
         
-        navigationBar.isTranslucent = true 
+        navigationBar.isTranslucent = false
         
         let attributes = [NSAttributedString.Key.font: FFResources.Fonts.futuraFont(size: 28)]
         navigationBar.largeTitleTextAttributes = attributes

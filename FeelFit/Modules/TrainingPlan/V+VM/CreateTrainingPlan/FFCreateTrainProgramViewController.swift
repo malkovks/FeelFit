@@ -313,7 +313,7 @@ extension FFCreateTrainProgramViewController {
         stackView.snp.makeConstraints { make in
             make.top.equalTo(noteTrainingPlanTextView.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-15)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-10)
         }
     }
     //UNUSED
