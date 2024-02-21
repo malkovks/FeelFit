@@ -11,7 +11,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     private let tableViewText: [[String]] = [["Name","Second Name","Birthday","Gender","Blood Type","Phototype"],["Stoller chair"]]
     
-    
+    private var isTableViewIsEditing: Bool = false
     
     var userImage: UIImage? = UIImage(systemName: "person.crop.circle")!
     
@@ -24,6 +24,21 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         
     }
     
+    //MARK: - Action methods
+    @objc private func didTapDismiss(){
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func didTapEditTableView(){
+        isTableViewIsEditing.toggle()
+        if isTableViewIsEditing {
+            tableView.setEditing(true, animated: true)
+        } else {
+            tableView.setEditing(false, animated: true)
+        }
+    }
+    
+    //MARK: - Set up methods
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         setupUserImageView()
@@ -39,10 +54,8 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
 
     func setupNavigationController() {
         title = "Health information"
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        
-        navigationController?.navigationBar.barTintColor = .clear
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapDismiss), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Edit", imageName: "", action: #selector(didTapEditTableView), menu: nil)
     }
 
     private func setupTableView(){

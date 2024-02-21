@@ -51,7 +51,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
+        FFHealthDataAccess.shared.requestAccessToCharactersData()
     }
     
     
@@ -241,7 +241,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         if let image = loadUserImage() {
             userImageView.image = image
         } else {
-            print("FFerror getting image from file path url ")
+            print("FFHealthUserProfileVC.setupUserImageView error getting image from file path url ")
         }
     }
     
@@ -349,9 +349,11 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = FFHealthUserInformationViewController()
         vc.userImage = userImageView.image
-        let navVC = FFNavigationController(rootViewController: vc)
-        navVC.isNavigationBarHidden = false
-        present(navVC, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
+        
+//        let navVC = FFNavigationController(rootViewController: vc)
+//        navVC.isNavigationBarHidden = false
+//        present(navVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

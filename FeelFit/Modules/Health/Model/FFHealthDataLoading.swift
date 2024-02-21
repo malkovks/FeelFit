@@ -16,7 +16,7 @@ class FFHealthDataLoading {
     private let calendar = Calendar.current
     
     func performQuery(
-        identifications : [HKQuantityTypeIdentifier] = [.activeEnergyBurned],
+        identifications : [HKQuantityTypeIdentifier] = [],
         value dateComponents: DateComponents = DateComponents(day: 1),
         calendar: Calendar.Component? = .day,
         interval: Int = -6,
@@ -76,8 +76,6 @@ class FFHealthDataLoading {
                                                                  type: type,
                                                                  typeIdentifier: iden)
                             arrayValue.append(value)
-                            
-                            
                         } else {
                             let nilValue = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: 0.1, identifier: iden.rawValue, unit: unitQuantityType, type: type, typeIdentifier: iden)
                             arrayValue.append(nilValue)
@@ -89,9 +87,23 @@ class FFHealthDataLoading {
                         completion(nil)
                     }
                 }
-                
                 healthStore.execute(query)
             }
+    }
+    
+    func performCharacteristicsQuery(for identifiers: [HKObjectType] = []){
+//        for identifier in identifiers {
+//            let sampleQuery = HKSampleQuery(sampleType: identifier as! HKSampleType, predicate: nil, limit: 1, sortDescriptors: nil) { query, sample, error in
+//                let sample = sample?.first as? HKBloodType
+//                let value = sample.date
+//                
+//                
+//                
+//                
+//            }
+//        }
+
+        
     }
 }
 

@@ -36,8 +36,12 @@ class FFHealthData {
         return allHealthDataTypes
     }
     
-    static  var shareDataTypes: [HKSampleType] {
+    static var shareDataTypes: [HKSampleType] {
         return allHealthDataTypes
+    }
+    
+    static var charDataTypes: [HKObjectType] {
+        return charactersTypes.compactMap { getObjectType(for: $0) }
     }
     
     static var mainQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
@@ -59,6 +63,17 @@ class FFHealthData {
         return identifier
     }
     
+    static var characteristicDataTypes: [HKCharacteristicTypeIdentifier] {
+        return charactersTypes.compactMap { HKCharacteristicTypeIdentifier(rawValue: $0) }
+    }
+    
+    private static var charactersTypes: [String] = [
+        HKCharacteristicTypeIdentifier.bloodType.rawValue,
+        HKCharacteristicTypeIdentifier.biologicalSex.rawValue,
+        HKCharacteristicTypeIdentifier.fitzpatrickSkinType.rawValue,
+        HKCharacteristicTypeIdentifier.wheelchairUse.rawValue,
+        HKCharacteristicTypeIdentifier.dateOfBirth.rawValue,
+    ]
     
     private static var allHealthDataTypes: [HKSampleType] {
         return typeIdentifiers.compactMap { getSampleType(for: $0) }

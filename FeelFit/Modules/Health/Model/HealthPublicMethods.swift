@@ -20,6 +20,13 @@ func getSampleType(for identifier: String) -> HKSampleType?{
     return nil
 }
 
+func getObjectType(for identifier: String) -> HKObjectType? {
+    if let objectType = HKObjectType.characteristicType(forIdentifier: HKCharacteristicTypeIdentifier(rawValue: identifier)){
+        return objectType
+    }
+    return nil
+}
+
 
 /// Method return processed data and return full name of ID in string type
 /// - Parameter types: HKQuantityTypeIdentifier input

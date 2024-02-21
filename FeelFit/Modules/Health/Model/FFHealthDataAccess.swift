@@ -14,6 +14,7 @@ class FFHealthDataAccess {
     
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
+    private let userCharactersTypes = Set(FFHealthData.charDataTypes)
     private let healthStore = HKHealthStore()
     
     ///boolean value necessary for check status of health store if it is available or not
@@ -42,6 +43,44 @@ class FFHealthDataAccess {
             }
         }
         print(textStatus)
+    }
+    
+    
+    /// Making request for getting access to main users data
+    func requestAccessToCharactersData(){
+        healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { status, error in
+            if status {
+                print("FFHealthDataAccess.requestAccesstoCharData completed")
+                let value = try! self.healthStore.biologicalSex()
+                let userGender = GenderTypeResult(rawValue: value.biologicalSex.rawValue)
+                print(userGender?.stringValue)
+                print(try! self.healthStore.dateOfBirthComponents())
+                print(try! self.healthStore.wheelchairUse())
+                print(try! self.healthStore.bloodType())
+                let blood = try! self.healthStore.bloodType()
+                let bloodRawValue = blood.bloodType.rawValue
+                let result = HKBloodType(rawValue: bloodRawValue)
+                print(result!)
+                print(try! self.healthStore.fitzpatrickSkinType())
+            } else {
+                print("FFHealthDataAccess.requestAccessToCharData error getting data. Check samples or try again")
+                print(error!.localizedDescription)
+            }
+        }
+    }
+    
+    enum GenderTypeResult: Int {
+        case notDetected = 0
+        case female = 1
+        case male = 2
+        
+        var stringValue: String {
+            switch self {
+            case .notDetected: return "Not set"
+            case .female: return "Female"
+            case .male: return "Male"
+            }
+        }
     }
     
     ///Function check status authorization to Health Store and return exact boolean value of gets status
