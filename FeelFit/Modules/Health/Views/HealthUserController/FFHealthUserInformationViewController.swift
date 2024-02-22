@@ -21,7 +21,9 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
+        FFHealthDataLoading.shared.loadingCharactersData { text in
+            
+        }
     }
     
     //MARK: - Action methods

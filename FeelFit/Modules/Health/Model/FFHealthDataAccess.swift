@@ -61,7 +61,7 @@ class FFHealthDataAccess {
                 let bloodRawValue = blood.bloodType.rawValue
                 let result = HKBloodType(rawValue: bloodRawValue)
                 print(result!)
-                print(try! self.healthStore.fitzpatrickSkinType())
+                
             } else {
                 print("FFHealthDataAccess.requestAccessToCharData error getting data. Check samples or try again")
                 print(error!.localizedDescription)

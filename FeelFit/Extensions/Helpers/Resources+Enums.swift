@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import HealthKit
 
 enum FFResources {
     enum Colors {
@@ -40,6 +41,87 @@ enum FFResources {
     
     enum Errors: Error {
         case tryingSaveDuplicate
+    }
+}
+
+enum HealthStoreRequest {
+    enum GenderTypeResult: String {
+        case notDetected = "Not indicated"
+        case female = "Female"
+        case male = "Male"
+        
+        init(from biologicalSex: HKBiologicalSexObject){
+            switch biologicalSex.biologicalSex {
+            case .notSet:
+                self = .notDetected
+            case .female:
+                self = .female
+            case .male:
+                self = .male
+            case .other:
+                self = .notDetected
+            default:
+                self = .notDetected
+            }
+        }
+    }
+    
+    enum WheelchairTypeResult: String {
+        case notIndicated = "Not indicated"
+        case noWheelchair = "No"
+        case wheelchair = "Yes"
+        
+        init(from wheelchair: HKWheelchairUseObject){
+            switch wheelchair.wheelchairUse {
+            case .notSet:
+                self = .notIndicated
+            case .no:
+                self = .noWheelchair
+            case .yes:
+                self = .wheelchair
+            default:
+                self = .notIndicated
+            }
+        }
+    }
+    
+    enum BloodTypeResult: String {
+        
+        
+        case notSet = "Not set"
+        case aPositive =  "A(II)Rh+"
+        case aNegative =  "A(II)Rh-"
+        case bPositive = "B(II)Rh+"
+        case bNegative = "B(II)Rh-"
+        case abPositive = "AB(IV)Rh+"
+        case abNegative = "AB(IV)Rh-"
+        case oPositive =  "O(I)Rh+"
+        case oNegative = "O(I)Rh-"
+        
+        init(from bloodType: HKBloodTypeObject) {
+            switch bloodType.bloodType {
+            case .notSet:
+                self = .notSet
+            case .aPositive:
+                self = .aPositive
+            case .aNegative:
+                self = .aNegative
+            case .bPositive:
+                self = .bPositive
+            case .bNegative:
+                self = .bNegative
+            case .abPositive:
+                self = .abPositive
+            case .abNegative:
+                self = .abNegative
+            case .oPositive:
+                self = .oPositive
+            case .oNegative:
+                self = .oNegative
+            default:
+                self = .notSet
+            }
+        }
     }
 }
 

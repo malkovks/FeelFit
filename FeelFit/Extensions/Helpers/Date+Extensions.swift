@@ -25,6 +25,12 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
+    func dateAndYearConverting() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"
+        return dateFormatter.string(from: self)
+    }
+    
     func startOfMonth() -> Date {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year,.month], from: self)

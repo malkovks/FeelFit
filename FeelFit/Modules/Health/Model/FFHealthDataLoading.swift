@@ -14,6 +14,7 @@ class FFHealthDataLoading {
     
     private let healthStore = HKHealthStore()
     private let calendar = Calendar.current
+    private let userCharactersTypes = Set(FFHealthData.charDataTypes)
     
     func performQuery(
         identifications : [HKQuantityTypeIdentifier] = [],
@@ -91,20 +92,28 @@ class FFHealthDataLoading {
             }
     }
     
-    func performCharacteristicsQuery(for identifiers: [HKObjectType] = []){
-//        for identifier in identifiers {
-//            let sampleQuery = HKSampleQuery(sampleType: identifier as! HKSampleType, predicate: nil, limit: 1, sortDescriptors: nil) { query, sample, error in
-//                let sample = sample?.first as? HKBloodType
-//                let value = sample.date
-//                
-//                
-//                
-//                
-//            }
-//        }
-
-        
+    func loadingCharactersData(completion handler: @escaping (_ text: [UserCharactersData]?) -> ()){
+        let type = [HKBloodTypeObject.self,HKWheelchairUseObject.self,HKBiologicalSexObject.self]
+        if !HKHealthStore.isHealthDataAvailable(){
+            handler(nil)
+            return
+        }
+        healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { success, error in
+            if success && error == nil {
+                
+            } else {
+                print("FFHealthDataLoading.loadingCharactersData: \nAccess did not given to users data")
+            }
+        }
     }
+}
+
+struct UserCharactersData {
+    var userGender: String
+    var dateOfBirth: Date
+    var wheelChairUse: Bool
+    var bloodType: String
+    var photoType: String
 }
 
 
