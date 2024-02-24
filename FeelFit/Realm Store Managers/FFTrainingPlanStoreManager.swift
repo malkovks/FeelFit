@@ -63,7 +63,7 @@ class FFTrainingPlanStoreManager {
             }
         })
     }
-    //Добавить функцию в класс и настроить алерты при попытке изменить модель
+    
     func editPlanRealmModel(_ plan: CreateTrainProgram, _ model: [FFExerciseModelRealm],_ trainModel: FFTrainingPlanRealmModel){
         
         let object = realm.objects(FFTrainingPlanRealmModel.self).filter("trainingUniqueID == %@", trainModel.trainingUniqueID).first
@@ -77,6 +77,12 @@ class FFTrainingPlanStoreManager {
     
     
     func deleteModel(_ model: FFTrainingPlanRealmModel){
+        try! realm.write({
+            realm.delete(model)
+        })
+    }
+    
+    func deletePlan(_ model: FFTrainingPlanRealmModel){
         try! realm.write({
             realm.delete(model)
         })
@@ -112,10 +118,6 @@ class FFTrainingPlanStoreManager {
     }
 
     
-    func deletePlan(_ model: FFTrainingPlanRealmModel){
-        try! realm.write({
-            realm.delete(model)
-        })
-    }
+    
     
 }

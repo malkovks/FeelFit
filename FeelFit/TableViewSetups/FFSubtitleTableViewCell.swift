@@ -26,7 +26,8 @@ class FFSubtitleTableViewCell: UITableViewCell {
         field.placeholder = "Not detected"
         field.backgroundColor = .clear
         field.textColor = FFResources.Colors.textColor
-        field.isUserInteractionEnabled = true
+        field.isUserInteractionEnabled = false
+        field.isEnabled = false
         return field
     }()
     
@@ -40,19 +41,37 @@ class FFSubtitleTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(title: String,subtitle: String){
+    func configureView(title: String,textFieldText: String?){
         firstTitleLabel.text = title
-        titleTextField.text = subtitle
+        if textFieldText == "Not set"{
+            titleTextField.textColor = .lightGray
+        }
+        titleTextField.text = textFieldText
+    }
+    
+    func configureEditingCell(_ isEditing: Bool){
+        if isEditing {
+            titleTextField.isUserInteractionEnabled = true
+            titleTextField.isEnabled = true
+            titleTextField.textColor = FFResources.Colors.activeColor
+        } else {
+            titleTextField.isUserInteractionEnabled = false
+            titleTextField.isEnabled = false
+            titleTextField.textColor = FFResources.Colors.textColor
+            titleTextField.resignFirstResponder()
+        }
     }
     
     private func setupContentView(){
         self.backgroundColor = .systemBackground
+        
     }
     
     private func setupCellConstraints(){
         let stackView = UIStackView(arrangedSubviews: [firstTitleLabel,titleTextField])
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
+        stackView.alignment = .fill
         stackView.spacing = 2
         
         self.contentView.addSubview(stackView)

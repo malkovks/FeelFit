@@ -92,28 +92,34 @@ class FFHealthDataLoading {
             }
     }
     
-    func loadingCharactersData(completion handler: @escaping (_ text: [UserCharactersData]?) -> ()){
-        let type = [HKBloodTypeObject.self,HKWheelchairUseObject.self,HKBiologicalSexObject.self]
+    func loadingCharactersData(completion handler: @escaping (_ userDataString: UserCharactersData?) -> ()){
         if !HKHealthStore.isHealthDataAvailable(){
             handler(nil)
             return
         }
-        healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { success, error in
+        healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { [weak self] success, error in
+            guard let self = self else { return }
             if success && error == nil {
-                
+                let gender = HealthStoreRequest.GenderTypeResult(from: try! self.healthStore.biologicalSex()).rawValue
+                let userDateOfBirth: String = try! healthStore.dateOfBirthComponents().convertComponentsToDateString()
+                let wheelChairUse = HealthStoreRequest.WheelchairTypeResult(from: try! self.healthStore.wheelchairUse()).rawValue
+                let bloodType = HealthStoreRequest.BloodTypeResult(from: try! self.healthStore.bloodType()).rawValue
+                let skinType = HealthStoreRequest.FitzpatricSkinTypeResult(from: try! self.healthStore.fitzpatrickSkinType()).rawValue
+                let model = UserCharactersData(userGender: gender, dateOfBirth: userDateOfBirth, wheelChairUse: wheelChairUse, bloodType: bloodType, fitzpatrickSkinType: skinType)
+                handler(model)
             } else {
-                print("FFHealthDataLoading.loadingCharactersData: \nAccess did not given to users data")
+                handler(nil)
             }
         }
     }
 }
 
 struct UserCharactersData {
-    var userGender: String
-    var dateOfBirth: Date
-    var wheelChairUse: Bool
-    var bloodType: String
-    var photoType: String
+    var userGender: String?
+    var dateOfBirth: String?
+    var wheelChairUse: String?
+    var bloodType: String?
+    var fitzpatrickSkinType: String?
 }
 
 

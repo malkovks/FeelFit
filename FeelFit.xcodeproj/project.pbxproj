@@ -25,6 +25,8 @@
 		0A2347E22AF9B2C1002C161C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0A2347E12AF9B2C1002C161C /* Kingfisher */; };
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
+		0A256A642B89DBC000137B6C /* DateComponents+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */; };
+		0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */; };
 		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
@@ -150,6 +152,8 @@
 		0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseDescriptionViewModel.swift; sourceTree = "<group>"; };
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
+		0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extensions.swift"; sourceTree = "<group>"; };
+		0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
 		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
@@ -519,7 +523,8 @@
 		0A44950C2AB9FC310082C909 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0A4495172ABA728F0082C909 /* Helpers */,
+				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
+				0A4495172ABA728F0082C909 /* UIKit extensions  */,
 				0A82CD202B2E459C00F98D8B /* UIViewController+Extension */,
 			);
 			path = Extensions;
@@ -534,20 +539,20 @@
 			path = ImageDetails;
 			sourceTree = "<group>";
 		};
-		0A4495172ABA728F0082C909 /* Helpers */ = {
+		0A4495172ABA728F0082C909 /* UIKit extensions  */ = {
 			isa = PBXGroup;
 			children = (
 				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
 				0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */,
-				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
 				0ADFDE972AC7E31300CF254C /* Date+Extensions.swift */,
 				0ADFDE992AC7E8D800CF254C /* String+Extensions.swift */,
 				0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */,
 				0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */,
 				0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */,
 				0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */,
+				0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */,
 			);
-			path = Helpers;
+			path = "UIKit extensions ";
 			sourceTree = "<group>";
 		};
 		0A44951A2ABA78E30082C909 /* Model */ = {
@@ -872,6 +877,7 @@
 				0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */,
 				0ABDEB022B18659B00BDDAFE /* FFExerciseModelStoreManager.swift */,
 				0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */,
+				0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */,
 			);
 			path = "Realm Store Managers";
 			sourceTree = "<group>";
@@ -1158,6 +1164,7 @@
 				0A3AECFB2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift in Sources */,
 				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
+				0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
 				0AE049A42B7760F600697A82 /* Color+UIViewControler.swift in Sources */,
@@ -1195,6 +1202,7 @@
 				0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */,
 				0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */,
 				0A4495362ABC3F950082C909 /* FFGetNewsRequest.swift in Sources */,
+				0A256A642B89DBC000137B6C /* DateComponents+Extensions.swift in Sources */,
 				0ADFDE982AC7E31300CF254C /* Date+Extensions.swift in Sources */,
 				0ADB78702B710E7400653952 /* FFNavigationControllerCustomView.swift in Sources */,
 				0ACEAA532ADD74EB00899CF6 /* FFNewsFavouriteViewModel.swift in Sources */,

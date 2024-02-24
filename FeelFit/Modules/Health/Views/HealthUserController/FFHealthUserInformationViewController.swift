@@ -9,7 +9,8 @@ import UIKit
 
 class FFHealthUserInformationViewController: UIViewController, SetupViewController {
     
-    private let tableViewText: [[String]] = [["Name","Second Name","Birthday","Gender","Blood Type","Phototype"],["Stoller chair"]]
+    private let tableViewText: [[String]] = [["Name","Second Name","Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)"],["Stoller chair"]]
+    private var usersData: UserCharactersData = UserCharactersData()
     
     private var isTableViewIsEditing: Bool = false
     
@@ -21,8 +22,9 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        FFHealthDataLoading.shared.loadingCharactersData { text in
-            
+        FFHealthDataLoading.shared.loadingCharactersData { [weak self] userDataString in
+            guard let data = userDataString else { return }
+            self?.usersData = data
         }
     }
     
@@ -66,6 +68,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         tableView.dataSource = self
         tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
         tableView.backgroundColor = .clear
+        tableView.contentInsetAdjustmentBehavior = .never
     }
     
     private func setupUserImageView(){
@@ -93,12 +96,47 @@ extension FFHealthUserInformationViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
         let title = tableViewText[indexPath.section][indexPath.row]
-        cell.configureView(title: title, subtitle: "Some result \(indexPath.row)")
-        return cell
+        switch indexPath {
+        case [0,0]:
+            cell.configureView(title: title, textFieldText: "User Name")
+        case [0,1]:
+            cell.configureView(title: title, textFieldText: "User second Name")
+        case [0,2]:
+            cell.configureView(title: title, textFieldText: usersData.dateOfBirth)
+        case [0,3]:
+            cell.configureView(title: title, textFieldText: usersData.userGender)
+        case [0,4]:
+            cell.configureView(title: title, textFieldText: usersData.bloodType)
+        case [0,5]:
+            cell.configureView(title: title, textFieldText: usersData.fitzpatrickSkinType)
+        case [1,0]:
+            cell.configureView(title: title, textFieldText: usersData.wheelChairUse)
+        default:
+            break
+        }
+    return cell
     }
 }
 
 extension FFHealthUserInformationViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        let cell = tableView.cellForRow(at: indexPath) as! FFSubtitleTableViewCell
+        if tableView.isEditing {
+            cell.configureEditingCell(true)
+            return .none
+        } else {
+            cell.configureEditingCell(false)
+            return .none
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+        let cell = tableView.cellForRow(at: indexPath!) as! FFSubtitleTableViewCell
+        if !tableView.isEditing {
+            cell.configureEditingCell(false)
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
