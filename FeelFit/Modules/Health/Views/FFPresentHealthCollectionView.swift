@@ -34,6 +34,9 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let navVC = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        present(navVC, animated: true)
+        
         setupView()
         FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
         FFHealthDataAccess.shared.requestForAccessToHealth()
@@ -86,14 +89,18 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     private func isDataLoading(isLoading status: Bool) {
         if status {
-            collectionView.isHidden = true
-            indicatorView.isHidden = false
-            indicatorView.startAnimating()
+            DispatchQueue.main.async { [self] in
+                collectionView.isHidden = true
+                indicatorView.isHidden = false
+                indicatorView.startAnimating()
+            }
         } else {
-            collectionView.isHidden = false
-            indicatorView.stopAnimating()
-            indicatorView.isHidden = true
-            healthData.sort { $0[0].identifier < $1[0].identifier }
+            DispatchQueue.main.async { [self] in
+                collectionView.isHidden = false
+                indicatorView.stopAnimating()
+                indicatorView.isHidden = true
+                healthData.sort { $0[0].identifier < $1[0].identifier }
+            }
         }
     }
     

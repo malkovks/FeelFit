@@ -34,11 +34,15 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     }
     
     @objc private func didTapEditTableView(){
-        isTableViewIsEditing.toggle()
-        if isTableViewIsEditing {
+        
+        if !isTableViewIsEditing {
+            tableView.isEditing = true
             tableView.setEditing(true, animated: true)
+            isTableViewIsEditing.toggle()
         } else {
+            tableView.isEditing = false
             tableView.setEditing(false, animated: true)
+            isTableViewIsEditing.toggle()
         }
     }
     
@@ -96,44 +100,33 @@ extension FFHealthUserInformationViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
         let title = tableViewText[indexPath.section][indexPath.row]
-        switch indexPath {
-        case [0,0]:
-            cell.configureView(title: title, textFieldText: "User Name")
-        case [0,1]:
-            cell.configureView(title: title, textFieldText: "User second Name")
-        case [0,2]:
-            cell.configureView(title: title, textFieldText: usersData.dateOfBirth)
-        case [0,3]:
-            cell.configureView(title: title, textFieldText: usersData.userGender)
-        case [0,4]:
-            cell.configureView(title: title, textFieldText: usersData.bloodType)
-        case [0,5]:
-            cell.configureView(title: title, textFieldText: usersData.fitzpatrickSkinType)
-        case [1,0]:
-            cell.configureView(title: title, textFieldText: usersData.wheelChairUse)
-        default:
-            break
-        }
-    return cell
+        cell.configureView(title: title, model: usersData, indexPath)
+        return cell
     }
 }
 
 extension FFHealthUserInformationViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        let cell = tableView.cellForRow(at: indexPath) as! FFSubtitleTableViewCell
-        if tableView.isEditing {
-            cell.configureEditingCell(true)
+        let cell = tableView.cellForRow(at: indexPath) as? FFSubtitleTableViewCell
+        if !tableView.isEditing {
+            cell?.configureEditingCell(false)
+            
             return .none
-        } else {
-            cell.configureEditingCell(false)
+        } else if tableView.isEditing == true {
+            cell?.configureEditingCell(true)
             return .none
         }
+        return .none
     }
     
     func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
         let cell = tableView.cellForRow(at: indexPath!) as! FFSubtitleTableViewCell
-        if !tableView.isEditing {
-            cell.configureEditingCell(false)
+        if tableView.isEditing == false {
+            
         }
     }
     

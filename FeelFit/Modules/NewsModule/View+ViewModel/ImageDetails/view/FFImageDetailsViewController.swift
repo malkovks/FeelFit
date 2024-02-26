@@ -62,6 +62,41 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
         viewModel.shareImageView(viewController: self, url: imageURL, title: "Check this picture", image: imageView.image!)
     }
     
+    @objc private func didPinchImageGesture(_ gesture: UIPinchGestureRecognizer){
+        guard let gestureView = gesture.view else { return }
+        if gesture.state == .changed {
+            let scale = gesture.scale
+            let currentTransform = gestureView.transform
+            let newTransform = currentTransform.scaledBy(x: scale, y: scale)
+            let origScale = max(newTransform.a, newTransform.d)
+            
+            if origScale >= 1.0 {
+                gestureView.transform = newTransform
+            }
+            
+            gesture.scale = 1.0
+            
+        }
+//        let currentScale = view.frame.size.width / view.bounds.size.width
+//        var newScale = gesture.scale * currentScale
+//        
+//        
+//        let minimalScale = 0.5
+//        if newScale >= minimalScale {
+//            newScale = minimalScale
+//        }
+//        
+//        gestureView.transform = gestureView.transform.scaledBy(x: gesture.scale, y: gesture.scale)
+//        gesture.scale = 1.0
+    }
+    
+    @objc private func didPanImageGesture(_ gesture: UIPanGestureRecognizer){
+        guard let gestureImage = gesture.view else { return }
+        let translation = gesture.translation(in: gestureImage.superview)
+        gestureImage.center = CGPoint(x: gestureImage.center.x+translation.x, y: gestureImage.center.y+translation.y)
+        gesture.setTranslation(.zero, in: gestureImage.superview)
+    }
+    
     func setupViewModel() {
         viewModel = FFImageDetailsViewModel()
     }
@@ -81,6 +116,13 @@ class FFImageDetailsViewController: UIViewController, SetupViewController {
     }
     
     func setupImageView(){
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPinchImageGesture))
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(pinchGesture)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPanImageGesture))
+        imageView.addGestureRecognizer(panGesture)
+        
         if let image = newsImage {
             imageView.image = image
         } else {

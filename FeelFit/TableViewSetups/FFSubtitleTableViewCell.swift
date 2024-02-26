@@ -41,12 +41,34 @@ class FFSubtitleTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(title: String,textFieldText: String?){
+    func configureView(title: String,model: UserCharactersData,_ indexPath: IndexPath){
+        switch indexPath {
+        case [0,0]:
+            setupInformation(title: title, info: "user name")
+        case [0,1]:
+            setupInformation(title: title, info: "user second name")
+        case [0,2]:
+            setupInformation(title: title, info: model.dateOfBirth)
+        case [0,3]:
+            setupInformation(title: title, info: model.userGender)
+        case [0,4]:
+            setupInformation(title: title, info: model.bloodType)
+        case [0,5]:
+            setupInformation(title: title, info: model.fitzpatrickSkinType)
+        case [1,0]:
+            setupInformation(title: title, info: model.wheelChairUse)
+        default:
+            break
+        }
+        
+    }
+    
+    private func setupInformation(title: String, info: String?){
         firstTitleLabel.text = title
-        if textFieldText == "Not set"{
+        if info == "Not set"{
             titleTextField.textColor = .lightGray
         }
-        titleTextField.text = textFieldText
+        titleTextField.text = info
     }
     
     func configureEditingCell(_ isEditing: Bool){

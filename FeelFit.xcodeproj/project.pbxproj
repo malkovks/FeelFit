@@ -27,6 +27,8 @@
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
 		0A256A642B89DBC000137B6C /* DateComponents+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */; };
 		0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */; };
+		0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */; };
+		0A256A6B2B8CD63B00137B6C /* FFOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */; };
 		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
@@ -154,6 +156,8 @@
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
 		0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extensions.swift"; sourceTree = "<group>"; };
 		0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
+		0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewController.swift; sourceTree = "<group>"; };
+		0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingViewController.swift; sourceTree = "<group>"; };
 		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
@@ -354,6 +358,15 @@
 			path = "Exercise Module";
 			sourceTree = "<group>";
 		};
+		0A256A672B8CD34300137B6C /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */,
+				0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		0A3AECF92B84A43000B2F8F3 /* HealthUserController */ = {
 			isa = PBXGroup;
 			children = (
@@ -409,6 +422,7 @@
 		0A4495002AB9CFB40082C909 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				0A256A672B8CD34300137B6C /* Onboarding */,
 				0A4495032AB9D0D90082C909 /* NewsModule */,
 				0A4495042AB9D0F30082C909 /* Exercises */,
 				0A4495062AB9D1330082C909 /* TrainingPlan */,
@@ -1122,6 +1136,7 @@
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
+				0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */,
 				0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */,
 				0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
@@ -1227,6 +1242,7 @@
 				0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,
 				0ABDEB072B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift in Sources */,
+				0A256A6B2B8CD63B00137B6C /* FFOnboardingViewController.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
