@@ -12,15 +12,21 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     let pageControl = UIPageControl()
     var pages = [UIViewController]()
     let initialPages = 0
+    private let pageProgress = UIPageControlTimerProgress(preferredDuration: 10)
+    private var suspensionTimer: Timer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        pageProgress.resumeTimer()
+    }
+    
     @objc private func didTapPageControl(_ sender: UIPageControl){
-        print("value changed \(sender.currentPage)")
-        pageControl.currentPage = sender.currentPage
+        setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true)
     }
     
    //Сделать фон мутным при помощи UIVisualBlurEffect
@@ -40,22 +46,41 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         pageControl.pageIndicatorTintColor = FFResources.Colors.darkPurple
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = initialPages
+        pageControl.addTarget(self, action: #selector(didTapPageControl), for: .primaryActionTriggered)
+        pageControl.backgroundStyle = .prominent
+        pageControl.direction = .natural
+        
+        pageProgress.delegate = self
+        pageProgress.resetsToInitialPageAfterEnd = true
+        pageControl.progress = pageProgress
     }
     
     func setupPageController(){
         dataSource = self
         delegate = self
         
-        pageControl.addTarget(self, action: #selector(didTapPageControl), for: .primaryActionTriggered)
-        pageControl.backgroundStyle = .prominent
-        pageControl.progress = UIPageControlTimerProgress(preferredDuration: 5)
         
-        let page1 = FFOnboardingViewController(imageName: "newspaper", pageTitle: "News", pageSubtitle: "Some subtitles for news page. will add later")
-        let page2 = FFOnboardingViewController(imageName: "figure.strengthtraining.traditional", pageTitle: "Muscles", pageSubtitle: "Some subtitles for muscles section. Include exercises on primary humans muscles. ")
-        let page3 = FFOnboardingViewController(imageName: "heart.text.square", pageTitle: "Health", pageSubtitle: "In this application, we use your data by importing it from the Health application. This data is primarily intended to more accurately track, regulate and control your health.\nAll data is encrypted and is not distributed anywhere.")
+        
+        let page1 = FFOnboardingViewController(imageName: "newspaper", 
+                                               pageTitle: "News", 
+                                               pageSubtitle: "Some subtitles for news page. will add later",
+                                               type: .notification)
+        let page2 = FFOnboardingViewController(imageName: "photo.on.rectangle",
+                                               pageTitle: "Media",
+                                               pageSubtitle: "It use many files include media files which you especially using and creating. It allow you to use your own photos and creating new",
+                                               type: .cameraAndLibrary)
+        let page3 = FFOnboardingViewController(imageName: "heart.text.square",
+                                               pageTitle: "Health",
+                                               pageSubtitle: "In this application, we use your data by importing it from the Health application. This data is primarily intended to more accurately track, regulate and control your health.\nAll data is encrypted and is not distributed anywhere.",
+                                               type: .health)
+        let page4 = FFOnboardingViewController(imageName: "lock.open.iphone",
+                                               pageTitle: "Background task",
+                                               pageSubtitle: "This page include information about background tasks, for what it necessary and how to use",
+                                               type: .none)
         pages.append(page1)
         pages.append(page2)
         pages.append(page3)
+        pages.append(page4)
         
         setViewControllers([pages[initialPages]], direction: .forward, animated: true)
     }
@@ -68,6 +93,15 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         
     }
 }
+
+extension FFOnboardingPageViewController: UIPageControlTimerProgressDelegate {
+    func pageControlTimerProgress(_ progress: UIPageControlTimerProgress, shouldAdvanceToPage page: Int) -> Bool {
+        let nextPage = pages[page]
+        self.setViewControllers([nextPage], direction: .forward, animated: true)
+        return true
+    }
+}
+
 
 extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
@@ -97,7 +131,16 @@ extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
             guard let currentIndex = pages.firstIndex(of: viewControllers[0]) else { return }
             
             pageControl.currentPage = currentIndex
-        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        pageProgress.pauseTimer()
+        suspensionTimer?.invalidate()
+        
+        suspensionTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: { _ in
+            self.pageProgress.resumeTimer()
+        })
+    }
 }
 
 

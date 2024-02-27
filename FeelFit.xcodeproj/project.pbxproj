@@ -11,7 +11,6 @@
 		0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */; };
 		0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */; };
 		0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */; };
-		0A13D8D82B5A415D00FD8C92 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */; };
 		0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */; };
 		0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */; };
 		0A22BB2B2AC30558004FD282 /* FFNewsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */; };
@@ -29,6 +28,7 @@
 		0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */; };
 		0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */; };
 		0A256A6B2B8CD63B00137B6C /* FFOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */; };
+		0A256A6D2B8D972900137B6C /* BackgroundTasksSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6C2B8D972900137B6C /* BackgroundTasksSupport.swift */; };
 		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
@@ -132,7 +132,7 @@
 		0AF03A612B57D48000715007 /* CareKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A602B57D48000715007 /* CareKit */; };
 		0AF03A632B57D48000715007 /* CareKitStore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A622B57D48000715007 /* CareKitStore */; };
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
-		0AF03A672B58F85200715007 /* FFHealthDataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */; };
+		0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* HealthKitSupport.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -141,7 +141,6 @@
 		0A13D8D02B5A3B0000FD8C92 /* CartesianChartView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CartesianChartView+Extension.swift"; sourceTree = "<group>"; };
 		0A13D8D22B5A3E4600FD8C92 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
 		0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareKitSupport.swift; sourceTree = "<group>"; };
-		0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupport.swift; sourceTree = "<group>"; };
 		0A1BEC702AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertError+UIViewControllerExtensions.swift"; sourceTree = "<group>"; };
 		0A1BEC732AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageTableViewCell.swift; sourceTree = "<group>"; };
 		0A22BB2A2AC30558004FD282 /* FFNewsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsTableViewDataSource.swift; sourceTree = "<group>"; };
@@ -158,6 +157,7 @@
 		0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
 		0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewController.swift; sourceTree = "<group>"; };
 		0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingViewController.swift; sourceTree = "<group>"; };
+		0A256A6C2B8D972900137B6C /* BackgroundTasksSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTasksSupport.swift; sourceTree = "<group>"; };
 		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
@@ -257,7 +257,7 @@
 		0AEDA2E22B303A6A0079C564 /* FFPlanDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanDetailTableViewCell.swift; sourceTree = "<group>"; };
 		0AEE085D2B7B5B250043722B /* AlertTextField+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertTextField+UIViewController.swift"; sourceTree = "<group>"; };
 		0AEE085F2B7B61960043722B /* HealthPublicMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthPublicMethods.swift; sourceTree = "<group>"; };
-		0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataAccess.swift; sourceTree = "<group>"; };
+		0AF03A662B58F85200715007 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthKitSupport.swift; path = ../Modules/Health/Model/HealthKitSupport.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -284,9 +284,10 @@
 			isa = PBXGroup;
 			children = (
 				0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */,
-				0A13D8D72B5A415D00FD8C92 /* HealthKitSupport.swift */,
+				0AF03A662B58F85200715007 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
+				0A256A6C2B8D972900137B6C /* BackgroundTasksSupport.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -606,7 +607,6 @@
 			children = (
 				0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */,
 				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
-				0AF03A662B58F85200715007 /* FFHealthDataAccess.swift */,
 				0AEE085F2B7B61960043722B /* HealthPublicMethods.swift */,
 			);
 			path = Model;
@@ -1172,6 +1172,7 @@
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
 				0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */,
+				0A256A6D2B8D972900137B6C /* BackgroundTasksSupport.swift in Sources */,
 				0A91E89C2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift in Sources */,
 				0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */,
 				0A3AECFF2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift in Sources */,
@@ -1184,7 +1185,6 @@
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
 				0AE049A42B7760F600697A82 /* Color+UIViewControler.swift in Sources */,
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
-				0A13D8D82B5A415D00FD8C92 /* HealthKitSupport.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
 				0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */,
@@ -1227,7 +1227,7 @@
 				0ACBC2682B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift in Sources */,
 				0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */,
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
-				0AF03A672B58F85200715007 /* FFHealthDataAccess.swift in Sources */,
+				0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */,
 				0A85551C2B72436900B1A7EE /* FFHealthDataLoading.swift in Sources */,
 				0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
@@ -1392,7 +1392,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to Camera for taking pictures";
-				INFOPLIST_KEY_NSContactsUsageDescription = "Please allow access to Contacts for getting user's data for detail info";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow application to get access of your health data for importing it for correct work";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow this app to write health data provided from your doctor or clinician.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please give access for taking and using your personal media";
@@ -1430,7 +1429,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to Camera for taking pictures";
-				INFOPLIST_KEY_NSContactsUsageDescription = "Please allow access to Contacts for getting user's data for detail info";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow application to get access of your health data for importing it for correct work";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Allow this app to write health data provided from your doctor or clinician.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please give access for taking and using your personal media";

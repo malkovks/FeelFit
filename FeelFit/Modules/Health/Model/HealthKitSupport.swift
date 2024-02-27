@@ -7,7 +7,7 @@
 
 import HealthKit
 
-///Class return app's status of access to users health data
+///Singleton Class return app's status of access to users health data
 class FFHealthDataAccess {
     
     static let shared = FFHealthDataAccess()
@@ -21,64 +21,44 @@ class FFHealthDataAccess {
     private var isHealthKitAccess: Bool = UserDefaults.standard.bool(forKey: "healthKitAccess")
     
     ///Function for request access to Health Kit. Inherit read and share types
-    func requestForAccessToHealth(){
+    func requestForAccessToHealth(completion: ((Result<Bool, Error>) -> Void)? = nil) {
         var textStatus: String = ""
         
         healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[unowned self] success, error in
             if let error = error {
                 textStatus = "Applications gets error by trying to get access to Health. \(error.localizedDescription)"
-                print(textStatus)
+                completion?(.failure(error))
             } else {
                 if success {
-                    requestAccessToBackgroundMode()
+                    
                     if self.isHealthKitAccess {
                         textStatus = "You already gave full access to Health request"
                     } else {
                         textStatus = "Health kit authorization complete successfully"
                         UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
                     }
+                    requestAccessToBackgroundMode()
+                    
                 } else {
+                    
                     textStatus = "Health kit authorization did not complete successfully"
                 }
+                completion?(.success(success))
             }
         }
         print(textStatus)
     }
     
     
-    /// Making request for getting access to main users data
-    func requestAccessToCharactersData(){
+    /// Making request for getting access to main users data like date of birth, blood type and other quantities types
+    func requestAccessToCharactersData(completion: ((Result<Bool, Error>) -> Void)? = nil){
         healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { status, error in
             if status {
+                completion?(.success(status))
                 print("FFHealthDataAccess.requestAccesstoCharData completed")
-                let value = try! self.healthStore.biologicalSex()
-                let userGender = GenderTypeResult(rawValue: value.biologicalSex.rawValue)
-                print(userGender?.stringValue)
-                print(try! self.healthStore.dateOfBirthComponents())
-                print(try! self.healthStore.wheelchairUse())
-                print(try! self.healthStore.bloodType())
-                let blood = try! self.healthStore.bloodType()
-                let bloodRawValue = blood.bloodType.rawValue
-                let result = HKBloodType(rawValue: bloodRawValue)
-                print(result!)
-                
-            } else {
+            } else if let error = error {
                 print("FFHealthDataAccess.requestAccessToCharData error getting data. Check samples or try again")
-                print(error!.localizedDescription)
-            }
-        }
-    }
-    
-    enum GenderTypeResult: Int {
-        case notDetected = 0
-        case female = 1
-        case male = 2
-        
-        var stringValue: String {
-            switch self {
-            case .notDetected: return "Not set"
-            case .female: return "Female"
-            case .male: return "Male"
+                completion?(.failure(error))
             }
         }
     }

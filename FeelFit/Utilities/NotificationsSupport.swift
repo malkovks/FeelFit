@@ -7,9 +7,25 @@
 
 import UserNotifications
 
+
+/// Class for asking and getting access status of users allowing to use local notification
+
 class FFSendUserNotifications {
     
     static let shared = FFSendUserNotifications()
+    
+    func requestForAccessToLocalNotification(completion: ((Result<Bool, Error>) -> Void)? = nil) {
+        let userNotification = UNUserNotificationCenter.current()
+        let authOptions = UNAuthorizationOptions.init(arrayLiteral: .alert,.badge,.sound)
+        userNotification.requestAuthorization(options: authOptions) { status, error in
+            if let error = error {
+                completion?(.failure(error))
+            } else {
+                completion?(.success(status))
+            }
+        }
+    }
+        
     
     ///Function for sending daily reminder with some random text
     func sendDailyNotification(){

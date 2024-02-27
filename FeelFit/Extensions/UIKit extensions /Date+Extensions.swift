@@ -36,4 +36,8 @@ extension Date {
         let components = calendar.dateComponents([.year,.month], from: self)
         return calendar.date(from: components)!
     }
+    
+    func getLastWeekStartDate(value: Int = -6,from date: Date = Date()) -> Date {
+        return Calendar.current.date(byAdding: .day, value: value, to: date)!
+    }
 }

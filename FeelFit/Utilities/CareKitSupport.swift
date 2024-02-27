@@ -13,7 +13,7 @@ func createChartWeeklyDateRangeLabel(startDate: Date?, lastDate: Date = Date()) 
     let calendar: Calendar = .current
 
     let endOfWeekDate = lastDate
-    let startOfWeekDate = startDate ?? getLastWeekStartDate()
+    let startOfWeekDate = startDate ?? lastDate.getLastWeekStartDate()
     
     let monthDateFormatter = DateFormatter()
     monthDateFormatter.dateFormat = "MMM d"

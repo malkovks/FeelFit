@@ -222,5 +222,12 @@ private extension FFPresentHealthCollectionView {
     }
 }
 
+#Preview {
+    let vc = FFPresentHealthCollectionView()
+    let navVC = FFNavigationController(rootViewController: vc)
+    return navVC
+    
+}
+
 
 
