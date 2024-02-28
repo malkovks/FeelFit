@@ -24,7 +24,8 @@ class FFHealthDataAccess {
     func requestForAccessToHealth(completion: ((Result<Bool, Error>) -> Void)? = nil) {
         var textStatus: String = ""
         
-        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[unowned self] success, error in
+        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[weak self] success, error in
+            guard let self = self else { return }
             if let error = error {
                 textStatus = "Applications gets error by trying to get access to Health. \(error.localizedDescription)"
                 completion?(.failure(error))
@@ -37,8 +38,9 @@ class FFHealthDataAccess {
                         textStatus = "Health kit authorization complete successfully"
                         UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
                     }
-                    requestAccessToBackgroundMode()
-                    
+                    DispatchQueue.global().async {
+                        self.requestAccessToBackgroundMode()
+                    }
                 } else {
                     
                     textStatus = "Health kit authorization did not complete successfully"

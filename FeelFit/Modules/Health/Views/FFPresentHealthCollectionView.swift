@@ -38,8 +38,8 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         present(navVC, animated: true)
         
         setupView()
-        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
-        FFHealthDataAccess.shared.requestForAccessToHealth()
+//        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
+//        FFHealthDataAccess.shared.requestForAccessToHealth()
     }
     
     //MARK: - Target methods

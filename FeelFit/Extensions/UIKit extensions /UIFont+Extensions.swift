@@ -22,30 +22,33 @@ extension UIFont {
     /// Font setup for header or main text
     /// - Parameter size: font size
     /// - Returns: return setups font value
-    static func headerFont(size: CGFloat = 20) -> UIFont {
-        var font = UIFont()
-        font = UIFont(name: fontName, size: size)!
-        return font
+    static func headerFont(size: CGFloat = 20,for textStyle: UIFont.TextStyle = .largeTitle ) -> UIFont {
+        guard let customFont = UIFont(name: fontName, size: size) else { fatalError() }
+        
+        let fontMetrics = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: customFont)
+        return fontMetrics
     }
     
-    static func textLabelFont(size: CGFloat = 16,weight: UIFont.Weight = .init(0.0),width: UIFont.Width = .standard) -> UIFont {
-        var font = UIFont()
+    static func textLabelFont(size: CGFloat = 16, for textStyle: UIFont.TextStyle = .body,weight: UIFont.Weight = .init(0.0),width: UIFont.Width = .standard) -> UIFont {
+        guard let customFont = UIFont(name: fontName, size: size) else { fatalError() }
+        var fontMetrics = UIFont()
         if weight == .init(0.0){
-            font = UIFont(name: fontName, size: size)!
+            fontMetrics = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: customFont)
         } else {
-            font = .systemFont(ofSize: size, weight: weight, width: width)
+            fontMetrics = .systemFont(ofSize: size, weight: weight, width: width)
         }
-        return font
+        return fontMetrics
     }
     
-    static func detailLabelFont(size: CGFloat = 12,weight: UIFont.Weight = .init(0.0),width: UIFont.Width = .standard) -> UIFont {
-        var font = UIFont()
+    static func detailLabelFont(size: CGFloat = 12, for textStyle: UIFont.TextStyle = .title3 ,weight: UIFont.Weight = .init(0.0),width: UIFont.Width = .standard) -> UIFont {
+        guard let customFont = UIFont(name: fontName, size: size) else { fatalError() }
+        var fontMetrics = UIFont()
         if weight == .init(0.0){
-            font = UIFont(name: fontName, size: size)!
+            fontMetrics = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: customFont)
         } else {
-            font = .systemFont(ofSize: size, weight: weight, width: width)
+            fontMetrics = .systemFont(ofSize: size, weight: weight, width: width)
         }
-        return font
+        return fontMetrics
     }
     
     static func textViewFont(size: CGFloat = 16,weight: UIFont.Weight = .init(0.0),width: UIFont.Width = .standard) -> UIFont {

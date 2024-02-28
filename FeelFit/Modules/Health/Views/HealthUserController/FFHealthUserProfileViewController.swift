@@ -51,7 +51,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        FFHealthDataAccess.shared.requestAccessToCharactersData()
+//        FFHealthDataAccess.shared.requestAccessToCharactersData()
     }
     
     

@@ -14,6 +14,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     let initialPages = 0
     private let pageProgress = UIPageControlTimerProgress(preferredDuration: 10)
     private var suspensionTimer: Timer?
+    private var isTimerPaused: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +30,10 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true)
     }
     
+    @objc private func didTapPauseTimer(){
+        print("Timer paused")
+    }
+    
    //Сделать фон мутным при помощи UIVisualBlurEffect
     
     func setupView() {
@@ -39,8 +44,35 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         setupPageController()
         setupConstraints()
         setupStyle()
+        
+        let tapGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapPressedGesture))
+        view.addGestureRecognizer(tapGesture)
     }
     
+    @objc private func didTapPressedGesture(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            pauseTimer()
+            isTimerPaused = true
+        } else if gesture.state == .ended || gesture.state == .cancelled{
+            resumeTimer()
+            isTimerPaused = false
+        }
+        
+    }
+    
+    private func pauseTimer(){
+        if !isTimerPaused {
+            suspensionTimer?.invalidate()
+        } else {
+            suspensionTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(didTapPauseTimer), userInfo: nil, repeats: true)
+        }
+    }
+    
+    private func resumeTimer(){
+        
+    }
+    
+    //MARK: - Setup onboarding page View controller
     func setupStyle(){
         pageControl.currentPageIndicatorTintColor = FFResources.Colors.activeColor
         pageControl.pageIndicatorTintColor = FFResources.Colors.darkPurple
@@ -61,21 +93,21 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         
         
         
-        let page1 = FFOnboardingViewController(imageName: "newspaper", 
-                                               pageTitle: "News", 
-                                               pageSubtitle: "Some subtitles for news page. will add later",
+        let page1 = FFOnboardingViewController(imageName: "app.badge",
+                                               pageTitle: "Notification",
+                                               pageSubtitle: "This function necessary for sending You important system or your custom notifications if you already set up notification timer.",
                                                type: .notification)
         let page2 = FFOnboardingViewController(imageName: "photo.on.rectangle",
-                                               pageTitle: "Media",
+                                               pageTitle: "Media and Camera",
                                                pageSubtitle: "It use many files include media files which you especially using and creating. It allow you to use your own photos and creating new",
                                                type: .cameraAndLibrary)
         let page3 = FFOnboardingViewController(imageName: "heart.text.square",
                                                pageTitle: "Health",
-                                               pageSubtitle: "In this application, we use your data by importing it from the Health application. This data is primarily intended to more accurately track, regulate and control your health.\nAll data is encrypted and is not distributed anywhere.",
+                                               pageSubtitle: "In this application, we use Your data by importing it from the Health application. This data is primarily intended to more accurately track, regulate and control your health.\nAll data is encrypted and is not distributed anywhere.",
                                                type: .health)
         let page4 = FFOnboardingViewController(imageName: "lock.open.iphone",
                                                pageTitle: "Background task",
-                                               pageSubtitle: "This page include information about background tasks, for what it necessary and how to use",
+                                               pageSubtitle: "This page include information about background tasks, it collect some data for fastest and comfortable usage while application is unused or phone is locked",
                                                type: .none)
         pages.append(page1)
         pages.append(page2)
