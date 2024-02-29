@@ -51,11 +51,9 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     
     @objc private func didTapPressedGesture(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
-            pauseTimer()
-            isTimerPaused = true
+            pageProgress.pauseTimer()
         } else if gesture.state == .ended || gesture.state == .cancelled{
-            resumeTimer()
-            isTimerPaused = false
+            pageProgress.resumeTimer()
         }
         
     }
@@ -79,8 +77,8 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = initialPages
         pageControl.addTarget(self, action: #selector(didTapPageControl), for: .primaryActionTriggered)
-        pageControl.backgroundStyle = .prominent
-        pageControl.direction = .natural
+        pageControl.backgroundStyle = .automatic
+        pageControl.direction = .leftToRight
         
         pageProgress.delegate = self
         pageProgress.resetsToInitialPageAfterEnd = true

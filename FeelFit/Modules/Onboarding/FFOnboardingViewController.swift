@@ -27,6 +27,7 @@ class FFOnboardingViewController: UIViewController {
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
+    
     var pageSubtitle: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.textLabelFont(size: 16,for: .title3)
@@ -39,6 +40,7 @@ class FFOnboardingViewController: UIViewController {
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
+    
     var pageImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.contentMode = .scaleAspectFit
@@ -94,23 +96,19 @@ class FFOnboardingViewController: UIViewController {
         FFHealthDataAccess.shared.requestAccessToCharactersData { [weak self] result in
             switch result {
             case .success(_):
-                DispatchQueue.global().async {
-                    FFHealthDataAccess.shared.requestForAccessToHealth { result in
-                        switch result {
-                        case .success(_):
-                            self?.setupButtonConfirm(isAccessed: true)
-                        case .failure(_):
-                            self?.setupButtonConfirm(isAccessed: false)
-                            return
-                        }
+                FFHealthDataAccess.shared.requestForAccessToHealth { result in
+                    switch result {
+                    case .success(_):
+                        self?.setupButtonConfirm(isAccessed: true)
+                    case .failure(_):
+                        self?.setupButtonConfirm(isAccessed: false)
+                        return
                     }
                 }
             case .failure(_):
                 return
             }
         }
-        
-        
     }
     
     @objc private func didTapAskMediaRequest(_ sender: UIButton){
@@ -173,7 +171,6 @@ extension FFOnboardingViewController: SetupViewController {
         setAccessStatusButton.configuration?.baseBackgroundColor = accentColor
         setAccessStatusButton.configuration?.baseForegroundColor = secondaryColor
         pageImageView.tintColor = accentColor
-        
     }
     
     func setupNavigationController() {

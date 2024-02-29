@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>Malkov.KS.FeelFit.fitnessApp.refresh</string>
+		<string>Malkov.KS.FeelFit.fitnessApp.fetch</string>
 		<string>Malkov.KS.FeelFit.fitnessApp.health_data_refresh</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
@@ -92,6 +92,7 @@
 		<string>bluetooth-peripheral</string>
 		<string>fetch</string>
 		<string>processing</string>
+		<string>remote-notification</string>
 	</array>
 </dict>
 </plist>
