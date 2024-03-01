@@ -12,9 +12,30 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     let pageControl = UIPageControl()
     var pages = [UIViewController]()
     let initialPages = 0
+    private var currentIndex = 0
     private let pageProgress = UIPageControlTimerProgress(preferredDuration: 10)
     private var suspensionTimer: Timer?
     private var isTimerPaused: Bool = false
+    
+    private let leftNavigationButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.configuration = .filled()
+        button.configuration?.title = "Close"
+        button.configuration?.titleAlignment = .leading
+        button.configuration?.baseBackgroundColor = .systemFill
+        button.configuration?.baseForegroundColor = .text
+        return button
+    }()
+    
+    private let rightNavigationButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.configuration = .filled()
+        button.configuration?.title = "Skip"
+        button.configuration?.titleAlignment = .leading
+        button.configuration?.baseForegroundColor = .systemRed
+        button.configuration?.baseBackgroundColor = .systemFill
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,9 +50,15 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     @objc private func didTapPageControl(_ sender: UIPageControl){
         setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true)
     }
+
+    @objc private func didTapDismissOnboarding(){
+        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
+        self.dismiss(animated: true)
+    }
     
-    @objc private func didTapPauseTimer(){
-        print("Timer paused")
+    @objc private func didTapSkipOnboarding(){
+        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
+        self.dismiss(animated: true)
     }
     
    //Сделать фон мутным при помощи UIVisualBlurEffect
@@ -57,15 +84,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         }
         
     }
-    
-    private func pauseTimer(){
-        if !isTimerPaused {
-            suspensionTimer?.invalidate()
-        } else {
-            suspensionTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(didTapPauseTimer), userInfo: nil, repeats: true)
-        }
-    }
-    
+        
     private func resumeTimer(){
         
     }
@@ -111,12 +130,19 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         pages.append(page2)
         pages.append(page3)
         pages.append(page4)
+        currentIndex = pages.count
         
         setViewControllers([pages[initialPages]], direction: .forward, animated: true)
     }
     
+    private func setupButtons(){
+        leftNavigationButton.addTarget(self, action: #selector(didTapDismissOnboarding), for: .primaryActionTriggered)
+        rightNavigationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
+    }
+    
     func setupNavigationController() {
-        
+        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Close", imageName: "", action: #selector(didTapDismissOnboarding), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Skip", imageName: "", action: #selector(didTapSkipOnboarding), menu: nil)
     }
     
     func setupViewModel() {
@@ -149,6 +175,7 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
         if index < pages.count - 1  {
             return pages[index + 1]
         } else {
+            
             return pages.first
         }
     }
@@ -158,24 +185,31 @@ extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
             
             guard let viewControllers = pageViewController.viewControllers else { return }
-            guard let currentIndex = pages.firstIndex(of: viewControllers[0]) else { return }
+            guard let currentIndex = pages.lastIndex(of: viewControllers[0]) else { return }
             
             pageControl.currentPage = currentIndex
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        pageProgress.pauseTimer()
-        suspensionTimer?.invalidate()
+        guard let viewControllers = pageViewController.viewControllers else { return }
+            pageProgress.pauseTimer()
+            suspensionTimer?.invalidate()
+            
+            suspensionTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: { _ in
+                self.pageProgress.resumeTimer()
+            })
         
-        suspensionTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: { _ in
-            self.pageProgress.resumeTimer()
-        })
     }
+    
+//    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
+//        return currentIndex
+//    }
 }
 
 
 extension FFOnboardingPageViewController {
     private func setupConstraints(){
+        
         view.addSubview(pageControl)
         pageControl.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
@@ -187,5 +221,9 @@ extension FFOnboardingPageViewController {
 }
 
 #Preview {
-    return FFOnboardingPageViewController()
+    let navVC = FFNavigationController(rootViewController: FFOnboardingPageViewController())
+    navVC.modalTransitionStyle = .coverVertical
+    navVC.isNavigationBarHidden = false
+    navVC.modalPresentationStyle = .fullScreen
+    return navVC
 }

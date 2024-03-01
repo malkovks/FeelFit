@@ -100,17 +100,14 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     private func checkAccessToCameraAndMedia(handler: (_ status: Bool) -> ()){
-//        var status = false
-//        FFMediaDataAccess.shared.returnCameraAccessStatus { success in
-//            <#code#>
-//        }
-//        returnCameraAccessStatus { success in
-//            
-//        }
-//        returnPhotoLibraryAccessStatus { success in
-//            status = success
-//        }
-//        handler(status)
+        var status = false
+        FFMediaDataAccess.shared.returnCameraAccessStatus { success in
+            status = success
+        }
+        FFMediaDataAccess.shared.returnPhotoLibraryAccessStatus { success in
+            status = success
+        }
+        handler(status)
     }
     
     private func openCamera(){

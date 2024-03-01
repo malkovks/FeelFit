@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
+        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
         openViewController(windowScene)
         
         guard let shortcutItem = connectionOptions.shortcutItem else { return }
@@ -54,8 +54,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = tabBar
         window.makeKeyAndVisible()
-        
         self.window = window
+        let isOnboardingOpenedFirst: Bool = UserDefaults.standard.bool(forKey: "isOnboardingOpenedFirst")
+        if isOnboardingOpenedFirst {
+            let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            let navVC = FFNavigationController(rootViewController: vc)
+            navVC.modalPresentationStyle = .fullScreen
+            navVC.modalTransitionStyle = .crossDissolve
+            navVC.isNavigationBarHidden = false
+            tabBar.present(navVC, animated: true)
+        }
     }
     
     private func handleShortcutItem(_ shortcutItemType: String,_ windowScene: UIWindowScene){
@@ -75,7 +83,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         openViewController(windowScene)
     }
-
-
 }
 

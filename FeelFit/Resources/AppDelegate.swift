@@ -21,87 +21,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().delegate = self
-//        convertResult { model in
-//            guard let model = model else { return }
-//            let stepcount: Int = Int(model.last!.value)
-//        }
-        
-        //register handler for task
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { task in
-            //handle the task when its run
-            guard let task = task as? BGProcessingTask else { return }
-            self.handleTask(task: task,taskID: self.taskId)
-        }
-        let count = UserDefaults.standard.integer(forKey: "task_run_count")
-        print("Task ran \(count) times")
-        
-        //submit a task to be scheduled
-        scheduleBackgroundTask(taskID: taskId)
-//        schedule(taskID: taskId)
+        registerBackgroundTask()
         return true
     }
-    //MARK: - Guideline from GTP
-    private func handleTask(task: BGProcessingTask,taskID: String) {
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-        
-        let operation = BlockOperation {
-            //call func every 60 sec
-            self.scheduleBackgroundTask(taskID: taskID)
+    
+    private func registerBackgroundTask() {
+        print("Register is start tasking")
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { task in
+            self.handleAppRefreshTask(for: task as! BGProcessingTask)
         }
-        
-        task.expirationHandler = {
-            queue.cancelAllOperations()
-        }
-        
-        task.setTaskCompleted(success: true)
-        scheduleBackgroundTask(taskID: taskID)
-        let count = UserDefaults.standard.integer(forKey: "task_run_count")
-        UserDefaults.standard.set(count+1, forKey: "task_run_count")
     }
     
-    private func scheduleBackgroundTask(taskID: String){
-        let request = BGProcessingTaskRequest(identifier: taskID)
-        request.requiresNetworkConnectivity = false
-        request.requiresExternalPower = false
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 60)
-        
+    private func scheduleAppRefresh(){
+        let request = BGProcessingTaskRequest(identifier: taskId)
+        request.requiresNetworkConnectivity = true
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 10)
         do {
+            
             try BGTaskScheduler.shared.submit(request)
-            print("Work correct in background")
+            print("request is submitted to task scheduler")
         } catch {
-            print("Error schedule data from background task. \n\(error.localizedDescription)")
+            print("Не удалось запустить BGAppRefreshTask .\n\(error)")
         }
     }
     
-    //MARK: - Guideline from Apple
-    private func handleAppRefresh(task: BGAppRefreshTask){
-        schedule(taskID: taskId)
-        //доделать
+    private func handleAppRefreshTask(for task: BGProcessingTask){
+        scheduleAppRefresh()
+        convertResult { model in
+            guard let model = model else { return }
+            let stepcount: Int = Int(model.last!.value)
+            print("Step count is \(stepcount)")
+            FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
+        }
+        task.setTaskCompleted(success: true)
     }
-    
-    private func schedule(taskID: String) {
-        let request = BGAppRefreshTaskRequest(identifier: taskID)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 61)
-            do {
-                try BGTaskScheduler.shared.submit(request)
-                print("schedule work correct in background ")
-            } catch {
-                //ignore
-                print("Error submiting schedule")
-            }
-    }
-    
-    
-    
+
     private func convertResult(completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
         let intervalDateComponents = DateComponents(day: 1)
         let interval: Int = -1
         let startDate = calendar.startOfDay(for: Date())
         healthDataLoading.performQuery(identifications: [.stepCount], value: intervalDateComponents, interval: interval, selectedOptions: .cumulativeSum, startDate: startDate, completion: completion)
     }
-    
-    
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {

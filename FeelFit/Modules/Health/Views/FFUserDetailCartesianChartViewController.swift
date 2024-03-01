@@ -214,7 +214,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }
     
     func setupNavigationController() {
-        let text  = getDataTypeName(chartDataProvider.first?.typeIdentifier ?? .stepCount)
+        let text  = getDataTypeName(identifier)
         title = text
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapPopToRoot), menu: nil)
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "plus", action: #selector(didTapCreateNewValue), menu: nil)
@@ -328,3 +328,4 @@ private extension FFUserDetailCartesianChartViewController {
         }
     }
 }
+

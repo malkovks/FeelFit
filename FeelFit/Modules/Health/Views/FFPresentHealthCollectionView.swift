@@ -34,12 +34,10 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let navVC = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        present(navVC, animated: true)
+//        let navVC = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+//        present(navVC, animated: true)
         
         setupView()
-//        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus()
-//        FFHealthDataAccess.shared.requestForAccessToHealth()
     }
     
     //MARK: - Target methods
@@ -53,6 +51,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         healthData.removeAll()
         prepareCollectionViewData()
         refreshControl.endRefreshing()
+        setupNavigationController()
     }
     
     @objc private func didTapPressChangeFavouriteCollectionView(){
@@ -186,7 +185,7 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegate {
             return header
         }
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView
-        footer.segueFooterButton.addTarget(self, action: #selector(didTapOpenDetails), for: .primaryActionTriggered)
+        footer.segueFooterButton.addTarget(self, action: #selector(didTapPressChangeFavouriteCollectionView), for: .primaryActionTriggered)
         return  footer
     }
 }
