@@ -23,8 +23,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSWatchKitUsageDescription</key>
-	<string>My app uses WatchKit to communicate with Apple Watch.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

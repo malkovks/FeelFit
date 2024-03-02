@@ -17,26 +17,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     private var suspensionTimer: Timer?
     private var isTimerPaused: Bool = false
     
-    private let leftNavigationButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.configuration = .filled()
-        button.configuration?.title = "Close"
-        button.configuration?.titleAlignment = .leading
-        button.configuration?.baseBackgroundColor = .systemFill
-        button.configuration?.baseForegroundColor = .text
-        return button
-    }()
-    
-    private let rightNavigationButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.configuration = .filled()
-        button.configuration?.title = "Skip"
-        button.configuration?.titleAlignment = .leading
-        button.configuration?.baseForegroundColor = .systemRed
-        button.configuration?.baseBackgroundColor = .systemFill
-        return button
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -110,34 +90,18 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         
         
         
-        let page1 = FFOnboardingViewController(imageName: "app.badge",
-                                               pageTitle: "Notification",
-                                               pageSubtitle: "This function necessary for sending You important system or your custom notifications if you already set up notification timer.",
-                                               type: .notification)
-        let page2 = FFOnboardingViewController(imageName: "photo.on.rectangle",
-                                               pageTitle: "Media and Camera",
-                                               pageSubtitle: "It use many files include media files which you especially using and creating. It allow you to use your own photos and creating new",
-                                               type: .cameraAndLibrary)
-        let page3 = FFOnboardingViewController(imageName: "heart.text.square",
-                                               pageTitle: "Health",
-                                               pageSubtitle: "In this application, we use Your data by importing it from the Health application. This data is primarily intended to more accurately track, regulate and control your health.\nAll data is encrypted and is not distributed anywhere.",
-                                               type: .health)
-        let page4 = FFOnboardingViewController(imageName: "lock.open.iphone",
-                                               pageTitle: "Background task",
-                                               pageSubtitle: "This page include information about background tasks, it collect some data for fastest and comfortable usage while application is unused or phone is locked",
-                                               type: .none)
+        let page1 = FFOnboardingViewController(imageName: "lock.square",
+                                               pageTitle: "Access to sensitive information",
+                                               pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
+        let page2 = FFOnboardingAuthenticationViewController()
+        let page3 = FFOnboardingUserDataViewController()
+        
         pages.append(page1)
         pages.append(page2)
         pages.append(page3)
-        pages.append(page4)
         currentIndex = pages.count
         
         setViewControllers([pages[initialPages]], direction: .forward, animated: true)
-    }
-    
-    private func setupButtons(){
-        leftNavigationButton.addTarget(self, action: #selector(didTapDismissOnboarding), for: .primaryActionTriggered)
-        rightNavigationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
     }
     
     func setupNavigationController() {

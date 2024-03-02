@@ -7,13 +7,6 @@
 
 import UIKit
 
-enum OnboardingTypeStatus: String {
-    case notification = "Access to Notifications"
-    case health = "Access to Health"
-    case cameraAndLibrary = "Access to Media"
-    case none
-}
-
 class FFOnboardingViewController: UIViewController {
     
     var pageTitleLabel: UILabel = {
@@ -48,23 +41,17 @@ class FFOnboardingViewController: UIViewController {
     }()
     
     
-    var setAccessStatusButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.configuration = .filled()
-        button.configuration?.title = "Give access"
-        button.configuration?.baseForegroundColor = FFResources.Colors.textColor
-        button.configuration?.baseBackgroundColor = FFResources.Colors.activeColor
-        return button
-    }()
+    private var healthBackgroundButton = UIButton(type: .custom)
+    private var notificationButton = UIButton(type: .custom)
+    private var healthButton = UIButton(type: .custom)
+    private var mediaButton = UIButton(type: .custom)
     
-    var displayedType: OnboardingTypeStatus
     
-    init(imageName: String, pageTitle: String,pageSubtitle: String, type: OnboardingTypeStatus) {
+    init(imageName: String, pageTitle: String,pageSubtitle: String) {
         let config = UIImage.SymbolConfiguration(pointSize: 120, weight: .regular, scale: .medium)
         self.pageImageView.image = UIImage(systemName: imageName)!.withConfiguration(config)
         self.pageTitleLabel.text = pageTitle
         self.pageSubtitle.text = pageSubtitle
-        self.displayedType = type
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -77,31 +64,41 @@ class FFOnboardingViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .secondarySystemBackground
         setupView()
-        setupButtonConfiguration(selected: displayedType)
+//        setupButtonConfiguration(selected: displayedType)
     }
     
-    @objc private func didTapAskNotificationRequest(_ sender: UIButton){
+    private func didTapAskNotificationRequest(_ button: UIButton){
         FFSendUserNotifications.shared.requestForAccessToLocalNotification { [weak self] result in
             switch result {
-            case .success(_):
-                self?.setupButtonConfirm(isAccessed: true)
-            case .failure(_):
-                self?.setupButtonConfirm(isAccessed: false)
+            case .success(let success):
+                self?.setupButtonConfirm(isAccessed: success,button)
+            case .failure(let error):
+                self?.setupButtonConfirm(isAccessed: false,button, error: error)
             }
         }
     }
 
+    private func didTapAskHealthBackgroundRequest(_ button: UIButton){
+        FFHealthDataAccess.shared.requestAccessToBackgroundMode { result in
+            switch result {
+            case .success(let success):
+                self.setupButtonConfirm(isAccessed: success,button)
+            case .failure(let error):
+                self.setupButtonConfirm(isAccessed: false,button, error: error)
+            }
+        }
+    }
     
-    @objc private func didTapAskHealthRequest(_ sender: UIButton){
+    func didTapAskHealthRequest(_ button: UIButton){
         FFHealthDataAccess.shared.requestAccessToCharactersData { [weak self] result in
             switch result {
             case .success(_):
                 FFHealthDataAccess.shared.requestForAccessToHealth { result in
                     switch result {
-                    case .success(_):
-                        self?.setupButtonConfirm(isAccessed: true)
-                    case .failure(_):
-                        self?.setupButtonConfirm(isAccessed: false)
+                    case .success(let success):
+                        self?.setupButtonConfirm(isAccessed: success,button)
+                    case .failure(let error):
+                        self?.setupButtonConfirm(isAccessed: false,button,error: error)
                         return
                     }
                 }
@@ -111,28 +108,33 @@ class FFOnboardingViewController: UIViewController {
         }
     }
     
-    @objc private func didTapAskMediaRequest(_ sender: UIButton){
+    private func didTapAskMediaRequest(_ button: UIButton){
         let media = FFMediaDataAccess.shared
         media.requestPhotoLibraryAccess { [weak self] success in
             if success {
                 media.requestAccessForCamera { status in
                     if !status {
-                        self?.setupButtonConfirm(isAccessed: false)
+                        self?.setupButtonConfirm(isAccessed: false,button)
                     } else {
-                        self?.setupButtonConfirm(isAccessed: true)
+                        self?.setupButtonConfirm(isAccessed: true,button)
                     }
                 }
             } else {
-                self?.setupButtonConfirm(isAccessed: false)
+                self?.setupButtonConfirm(isAccessed: false,button)
             }
         }
     }
     
-    private func setupButtonConfirm(isAccessed: Bool){
-        DispatchQueue.main.async { [weak self] in
-            self?.setAccessStatusButton.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
-            self?.setAccessStatusButton.configuration?.subtitle = isAccessed ? nil : "For turning on go to System settings"
-            self?.setAccessStatusButton.isEnabled = false
+    private func setupButtonConfirm(isAccessed: Bool,_ button: UIButton,error: Error? = nil){
+        DispatchQueue.main.async {
+            button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
+            button.configuration?.subtitle = isAccessed ? nil : "For turning on go to System settings"
+            button.isEnabled = false
+        }
+        if let error = error {
+            DispatchQueue.main.async { [unowned self] in
+                self.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+            }
         }
     }
 }
@@ -144,34 +146,64 @@ class FFOnboardingViewController: UIViewController {
 extension FFOnboardingViewController: SetupViewController {
     
     func setupView(){
-        setupConstraints()
+        
         setupNavigationController()
         setupViewModel()
+        configureAccessStatusButton()
+        setupConstraints()
     }
     
-    func setupButtonConfiguration(selected type: OnboardingTypeStatus) {
-        switch type {
-        case .notification:
-            configureSelectedType(action: #selector(didTapAskNotificationRequest), buttonTitle: "Give Access to Notification", accentColor: .systemIndigo)
-        case .health:
-            configureSelectedType(action: #selector(didTapAskHealthRequest), buttonTitle: "Give Access to Health", accentColor: .systemRed)
-        case .cameraAndLibrary:
-            configureSelectedType(action: #selector(didTapAskMediaRequest), buttonTitle: "Access to Camera and Media", accentColor: .detailText,secondaryColor: .systemBackground)
-        case .none:
-            configureSelectedType(action: nil, buttonTitle: "", accentColor: .systemBlue)
+    func configureAccessStatusButton(){
+        let healthBackgroundAction = UIAction { [unowned self] _ in
+            didTapAskHealthBackgroundRequest(healthBackgroundButton)
         }
+        
+        healthBackgroundButton = CustomConfigurationButton(primaryAction: healthBackgroundAction, configurationTitle: "Access to Health Background", baseBackgroundColor: .systemIndigo, baseForegroundColor: .systemBackground)
+        
+        let healthAction = UIAction { [unowned self] _ in
+            didTapAskHealthRequest(healthButton)
+        }
+        
+        healthButton = CustomConfigurationButton(primaryAction: healthAction, configurationTitle: "Access to Health", baseBackgroundColor: .systemRed, baseForegroundColor: .systemBackground)
+        
+        let notificationAction = UIAction { [unowned self] _ in
+            didTapAskNotificationRequest(notificationButton)
+        }
+        
+        notificationButton = CustomConfigurationButton(primaryAction: notificationAction, configurationTitle: "Access to Notification", baseBackgroundColor: .systemBlue, baseForegroundColor: .systemBackground)
+        
+        let mediaAction = UIAction { [unowned self] _ in
+            didTapAskMediaRequest(mediaButton)
+        }
+        
+        mediaButton = CustomConfigurationButton(primaryAction: mediaAction, configurationTitle: "Access to Media and Camera", baseBackgroundColor: .darkGray, baseForegroundColor: .systemBackground)
     }
     
-    private func configureSelectedType(action: Selector? = nil,buttonTitle title: String? = nil ,accentColor: UIColor? = FFResources.Colors.activeColor, secondaryColor: UIColor? = nil){
-        guard let action = action else {
-            setAccessStatusButton.isHidden = true
-            return }
-        setAccessStatusButton.addTarget(self, action: action, for: .primaryActionTriggered)
-        setAccessStatusButton.configuration?.title = title
-        setAccessStatusButton.configuration?.baseBackgroundColor = accentColor
-        setAccessStatusButton.configuration?.baseForegroundColor = secondaryColor
-        pageImageView.tintColor = accentColor
-    }
+//    func setupButtonConfiguration(selected type: OnboardingTypeStatus) {
+//        switch type {
+//        case .notification:
+//            configureSelectedType(action: #selector(didTapAskNotificationRequest), buttonTitle: "Give Access to Notification", accentColor: .systemIndigo)
+//        case .health:
+//            configureSelectedType(action: nil, buttonTitle: "Give Access to Health", accentColor: .systemRed)
+//        case .cameraAndLibrary:
+//            configureSelectedType(action: #selector(didTapAskMediaRequest), buttonTitle: "Access to Camera and Media", accentColor: .detailText,secondaryColor: .systemBackground)
+//        case .none:
+//            configureSelectedType(action: nil, buttonTitle: "", accentColor: .systemBlue)
+//        case .some:
+//            configureSelectedType(action: #selector(didTapAskHealthBackgroundRequest), buttonTitle: "Access to Background Health Data", accentColor: .systemIndigo, secondaryColor: .darkPurple)
+//        }
+//    }
+    
+//    private func configureSelectedType(action: Selector? = nil,buttonTitle title: String? = nil ,accentColor: UIColor? = FFResources.Colors.activeColor, secondaryColor: UIColor? = nil){
+//        guard let action = action else {
+//            setAccessStatusButton.isHidden = true
+//            return }
+//        setAccessStatusButton.addTarget(self, action: action, for: .primaryActionTriggered)
+//        setAccessStatusButton.configuration?.title = title
+//        setAccessStatusButton.configuration?.baseBackgroundColor = accentColor
+//        setAccessStatusButton.configuration?.baseForegroundColor = secondaryColor
+//        pageImageView.tintColor = accentColor
+//    }
     
     func setupNavigationController() {
         
@@ -184,26 +216,33 @@ extension FFOnboardingViewController: SetupViewController {
 
 private extension FFOnboardingViewController {
     func setupConstraints(){
-        let stackView = UIStackView(arrangedSubviews: [pageImageView, pageTitleLabel, pageSubtitle])
+        let buttonStackView = UIStackView(arrangedSubviews: [mediaButton,
+                                                             healthButton, healthBackgroundButton, notificationButton])
+        buttonStackView.axis = .vertical
+        buttonStackView.alignment = .fill
+        buttonStackView.distribution = .fillProportionally
+        buttonStackView.spacing = 2
+        
+        let stackView = UIStackView(arrangedSubviews: [pageImageView, pageTitleLabel, pageSubtitle,buttonStackView])
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.distribution = .fillProportionally
+        stackView.distribution = .equalSpacing
         stackView.spacing = 10
+        
+        
         
         view.addSubview(stackView)
         stackView.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.equalToSuperview().dividedBy(1.5)
-            make.height.lessThanOrEqualToSuperview().multipliedBy(0.7)
+            make.height.lessThanOrEqualToSuperview().multipliedBy(0.8)
         }
         
-        view.addSubview(setAccessStatusButton)
-        setAccessStatusButton.snp.makeConstraints { make in
-            make.top.equalTo(stackView.snp.bottom).offset(5)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().dividedBy(1.5)
-            make.height.equalTo(44)
+        buttonStackView.snp.makeConstraints { make in
+            make.width.equalTo(self.view.frame.size.width/1.5)
         }
+        
+        
         
         let imageViewSize = view.frame.size.width / 3.5
         
@@ -214,5 +253,7 @@ private extension FFOnboardingViewController {
 }
 
 #Preview {
-    return FFOnboardingViewController(imageName: "heart.square", pageTitle: "Trash title", pageSubtitle: "Use HealthKit’s clinical record support to read Fast Healthcare Interoperability Resources (FHIR) from the HealthKit store. Users can download their FHIR records from supported healthcare institutions. The system then updates the records in the background on a regular basis.", type: .health)
+    return FFOnboardingViewController(imageName: "lock.square", pageTitle: "Trash title", pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
 }
+
+

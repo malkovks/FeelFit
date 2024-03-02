@@ -38,9 +38,6 @@ class FFHealthDataAccess {
                         textStatus = "Health kit authorization complete successfully"
                         UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
                     }
-                    DispatchQueue.global().async {
-                        self.requestAccessToBackgroundMode()
-                    }
                 } else {
                     
                     textStatus = "Health kit authorization did not complete successfully"
@@ -92,7 +89,7 @@ class FFHealthDataAccess {
     }
     
     ///Function necessary for accessing to steps data and loading it while application in background mode
-    private func requestAccessToBackgroundMode() {
+    func requestAccessToBackgroundMode(completion handler: @escaping (Result<Bool,Error>) -> ()) {
         if !HKHealthStore.isHealthDataAvailable() {
             print("Can't get access to Health Kit")
             return
@@ -101,9 +98,9 @@ class FFHealthDataAccess {
         guard let steps = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
         healthStore.enableBackgroundDelivery(for: steps, frequency: .immediate) { status, error in
             if status {
-                print("Background delivery is enabled")
+                handler(.success(status))
             } else if let error = error {
-                print(error.localizedDescription)
+                handler(.failure(error))
             }
         }
     }

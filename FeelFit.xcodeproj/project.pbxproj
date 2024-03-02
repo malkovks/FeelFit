@@ -102,6 +102,9 @@
 		0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */; };
 		0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */; };
 		0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */; };
+		0AC59C662B931EA00009489E /* TitledRectangleConfiguredButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */; };
+		0AC99D652B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */; };
+		0AC99D672B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */; };
 		0ACBC2662B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */; };
 		0ACBC2682B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */; };
 		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
@@ -230,6 +233,9 @@
 		0ABDEB082B19532100BDDAFE /* FFAddExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseViewModel.swift; sourceTree = "<group>"; };
 		0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewController.swift; sourceTree = "<group>"; };
 		0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewModel.swift; sourceTree = "<group>"; };
+		0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledRectangleConfiguredButton.swift; sourceTree = "<group>"; };
+		0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewController.swift; sourceTree = "<group>"; };
+		0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingUserDataViewController.swift; sourceTree = "<group>"; };
 		0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewModel.swift; sourceTree = "<group>"; };
 		0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingTableViewCell.swift; sourceTree = "<group>"; };
 		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -364,6 +370,8 @@
 			children = (
 				0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */,
 				0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */,
+				0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */,
+				0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -377,12 +385,12 @@
 			path = HealthUserController;
 			sourceTree = "<group>";
 		};
-		0A3AED002B84B8CE00B2F8F3 /* TableViewSetups */ = {
+		0A3AED002B84B8CE00B2F8F3 /* UITableView */ = {
 			isa = PBXGroup;
 			children = (
 				0A3AECFE2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift */,
 			);
-			path = TableViewSetups;
+			path = UITableView;
 			sourceTree = "<group>";
 		};
 		0A4494B32AB821FD0082C909 = {
@@ -409,7 +417,7 @@
 				0A38936C2B6A3936007FC363 /* discord-notification.mp3 */,
 				0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */,
 				0A4495002AB9CFB40082C909 /* Modules */,
-				0A3AED002B84B8CE00B2F8F3 /* TableViewSetups */,
+				0AC59C632B931E420009489E /* UI Elements */,
 				0A4495342ABC3F720082C909 /* APIClient */,
 				0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
@@ -805,6 +813,23 @@
 			path = TableViewHeaderView;
 			sourceTree = "<group>";
 		};
+		0AC59C632B931E420009489E /* UI Elements */ = {
+			isa = PBXGroup;
+			children = (
+				0AC59C642B931E550009489E /* UIButton */,
+				0A3AED002B84B8CE00B2F8F3 /* UITableView */,
+			);
+			path = "UI Elements";
+			sourceTree = "<group>";
+		};
+		0AC59C642B931E550009489E /* UIButton */ = {
+			isa = PBXGroup;
+			children = (
+				0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */,
+			);
+			path = UIButton;
+			sourceTree = "<group>";
+		};
 		0ACBC25D2B47FF770046F83D /* TrainingPlan */ = {
 			isa = PBXGroup;
 			children = (
@@ -1133,6 +1158,7 @@
 				0A13D8D32B5A3E4600FD8C92 /* DateFormatter+Extension.swift in Sources */,
 				0A63AC672B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift in Sources */,
 				0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */,
+				0AC59C662B931EA00009489E /* TitledRectangleConfiguredButton.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
@@ -1142,6 +1168,7 @@
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A0059252B62B8CB000712D6 /* FFHealthUserProfileViewController.swift in Sources */,
+				0AC99D672B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift in Sources */,
 				0ABDEAFF2B173F3100BDDAFE /* FFAddExerciseViewController.swift in Sources */,
 				0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */,
 				0AE049AB2B77806800697A82 /* FFFavouriteHealthDataTableViewCell.swift in Sources */,
@@ -1168,6 +1195,7 @@
 				0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
 				0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */,
+				0AC99D652B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
