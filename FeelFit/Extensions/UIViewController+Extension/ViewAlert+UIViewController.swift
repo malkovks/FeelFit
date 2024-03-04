@@ -15,15 +15,20 @@ extension UIViewController {
     ///   - duration: time duration of presenting alert
     ///   - controllerView: view of UIViewController where this alert will presented
     func viewAlertController(text: String?,startDuration startTime: Double,timer endTime: Double,controllerView: UIView){
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
+        swipeGesture.direction = .up
+        
+        
         let customView = UIView()
         customView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         customView.layer.cornerRadius = 12
+        customView.addGestureRecognizer(swipeGesture)
         self.view.addSubview(customView)
         customView.snp.makeConstraints { make in
             make.top.equalTo(controllerView.safeAreaLayoutGuide.snp.top).offset(10)
             make.centerX.equalToSuperview()
-            make.width.equalTo(view.frame.size.width/2)
-            make.height.equalTo(view.frame.size.height/18)
+            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalToSuperview().multipliedBy(0.1)
             
         }
         
@@ -49,9 +54,19 @@ extension UIViewController {
             UIView.animate(withDuration: 0.5,delay: 0) {
                 customView.alpha = 0.0
                 customView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-            } completion: { success in
+            } completion: { _ in
                 customView.removeFromSuperview()
             }
+        }
+    }
+    
+    @objc private func handleSwipe(_ gesture: UISwipeGestureRecognizer){
+        guard let customView = gesture.view else { return }
+        UIView.animate(withDuration: 0.0) {
+            customView.alpha = 0.0
+            customView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        } completion: { _ in
+            customView.removeFromSuperview()
         }
     }
 }

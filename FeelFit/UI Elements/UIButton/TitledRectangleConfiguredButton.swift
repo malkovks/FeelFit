@@ -10,23 +10,30 @@ import UIKit
 class CustomConfigurationButton: UIButton  {
     
     convenience init(primaryAction action: UIAction,
-                     configurationTitle: String? = nil,
-                     baseBackgroundColor color: UIColor,
-                     baseForegroundColor textColor: UIColor) {
+                     configurationTitle: String? = nil) {
         self.init()
-        
         self.configuration?.title = configurationTitle
-        self.configuration?.baseForegroundColor = textColor
-        self.configuration?.baseBackgroundColor = color
         self.addAction(action, for: .primaryActionTriggered)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.configuration = .filled()
+        self.configuration?.baseForegroundColor = FFResources.Colors.customBlack
+        self.configuration?.baseBackgroundColor = .clear
+        self.configuration?.cornerStyle = .small
+        self.configuration?.background.strokeWidth = 0.5
+        self.configuration?.background.strokeColor = FFResources.Colors.customBlack
+        
         self.configuration?.titleAlignment = .center
         self.contentMode = .center
         self.isHidden = false
+        self.configuration?.image = UIImage(systemName: "lock")
+        self.configuration?.imagePlacement = .trailing
+        self.configuration?.imagePadding = 2
+        self.contentVerticalAlignment = .fill
+        self.contentHorizontalAlignment = .fill
+        self.contentMode = .scaleAspectFill
     }
     
     required init?(coder: NSCoder) {

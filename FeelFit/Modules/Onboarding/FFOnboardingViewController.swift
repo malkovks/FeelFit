@@ -14,8 +14,8 @@ class FFOnboardingViewController: UIViewController {
         label.font = UIFont.headerFont(size: 24, for: .largeTitle)
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .justified
-        label.contentMode = .center
-        label.numberOfLines = 1
+        label.contentMode = .scaleAspectFill
+        label.numberOfLines = 0
         label.setContentHuggingPriority(.required, for: .vertical)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
@@ -41,7 +41,6 @@ class FFOnboardingViewController: UIViewController {
     }()
     
     
-    private var healthBackgroundButton = UIButton(type: .custom)
     private var notificationButton = UIButton(type: .custom)
     private var healthButton = UIButton(type: .custom)
     private var mediaButton = UIButton(type: .custom)
@@ -62,12 +61,13 @@ class FFOnboardingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = FFResources.Colors.backgroundColor
         setupView()
-//        setupButtonConfiguration(selected: displayedType)
     }
     
     private func didTapAskNotificationRequest(_ button: UIButton){
+        
+        
         FFSendUserNotifications.shared.requestForAccessToLocalNotification { [weak self] result in
             switch result {
             case .success(let success):
@@ -76,16 +76,9 @@ class FFOnboardingViewController: UIViewController {
                 self?.setupButtonConfirm(isAccessed: false,button, error: error)
             }
         }
-    }
-
-    private func didTapAskHealthBackgroundRequest(_ button: UIButton){
-        FFHealthDataAccess.shared.requestAccessToBackgroundMode { result in
-            switch result {
-            case .success(let success):
-                self.setupButtonConfirm(isAccessed: success,button)
-            case .failure(let error):
-                self.setupButtonConfirm(isAccessed: false,button, error: error)
-            }
+        
+        DispatchQueue.main.async {
+            button.configuration?.showsActivityIndicator = true
         }
     }
     
@@ -106,6 +99,9 @@ class FFOnboardingViewController: UIViewController {
                 return
             }
         }
+        DispatchQueue.main.async {
+            button.configuration?.showsActivityIndicator = true
+        }
     }
     
     private func didTapAskMediaRequest(_ button: UIButton){
@@ -123,19 +119,28 @@ class FFOnboardingViewController: UIViewController {
                 self?.setupButtonConfirm(isAccessed: false,button)
             }
         }
+        DispatchQueue.main.async {
+            button.configuration?.showsActivityIndicator = true
+        }
     }
     
     private func setupButtonConfirm(isAccessed: Bool,_ button: UIButton,error: Error? = nil){
-        DispatchQueue.main.async {
-            button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
-            button.configuration?.subtitle = isAccessed ? nil : "For turning on go to System settings"
-            button.isEnabled = false
-        }
-        if let error = error {
-            DispatchQueue.main.async { [unowned self] in
-                self.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+        
+        UIView.animate(withDuration: 0.2) {
+            DispatchQueue.main.async {
+                button.configuration?.showsActivityIndicator = false
+                button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
+                button.isEnabled = isAccessed ? true : false
+                button.configuration?.image = isAccessed ? UIImage(systemName: "lock.open") : UIImage(systemName: "lock")
+                button.configuration?.baseBackgroundColor = .systemGreen
+            }
+            if let error = error {
+                DispatchQueue.main.async { [unowned self] in
+                    self.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+                }
             }
         }
+        
     }
 }
 
@@ -154,56 +159,24 @@ extension FFOnboardingViewController: SetupViewController {
     }
     
     func configureAccessStatusButton(){
-        let healthBackgroundAction = UIAction { [unowned self] _ in
-            didTapAskHealthBackgroundRequest(healthBackgroundButton)
-        }
-        
-        healthBackgroundButton = CustomConfigurationButton(primaryAction: healthBackgroundAction, configurationTitle: "Access to Health Background", baseBackgroundColor: .systemIndigo, baseForegroundColor: .systemBackground)
-        
         let healthAction = UIAction { [unowned self] _ in
             didTapAskHealthRequest(healthButton)
         }
         
-        healthButton = CustomConfigurationButton(primaryAction: healthAction, configurationTitle: "Access to Health", baseBackgroundColor: .systemRed, baseForegroundColor: .systemBackground)
+        healthButton = CustomConfigurationButton(primaryAction: healthAction, configurationTitle: "Access to Health")
         
         let notificationAction = UIAction { [unowned self] _ in
             didTapAskNotificationRequest(notificationButton)
         }
         
-        notificationButton = CustomConfigurationButton(primaryAction: notificationAction, configurationTitle: "Access to Notification", baseBackgroundColor: .systemBlue, baseForegroundColor: .systemBackground)
+        notificationButton = CustomConfigurationButton(primaryAction: notificationAction, configurationTitle: "Access to Notification")
         
         let mediaAction = UIAction { [unowned self] _ in
             didTapAskMediaRequest(mediaButton)
         }
         
-        mediaButton = CustomConfigurationButton(primaryAction: mediaAction, configurationTitle: "Access to Media and Camera", baseBackgroundColor: .darkGray, baseForegroundColor: .systemBackground)
+        mediaButton = CustomConfigurationButton(primaryAction: mediaAction, configurationTitle: "Access to Media and Camera")
     }
-    
-//    func setupButtonConfiguration(selected type: OnboardingTypeStatus) {
-//        switch type {
-//        case .notification:
-//            configureSelectedType(action: #selector(didTapAskNotificationRequest), buttonTitle: "Give Access to Notification", accentColor: .systemIndigo)
-//        case .health:
-//            configureSelectedType(action: nil, buttonTitle: "Give Access to Health", accentColor: .systemRed)
-//        case .cameraAndLibrary:
-//            configureSelectedType(action: #selector(didTapAskMediaRequest), buttonTitle: "Access to Camera and Media", accentColor: .detailText,secondaryColor: .systemBackground)
-//        case .none:
-//            configureSelectedType(action: nil, buttonTitle: "", accentColor: .systemBlue)
-//        case .some:
-//            configureSelectedType(action: #selector(didTapAskHealthBackgroundRequest), buttonTitle: "Access to Background Health Data", accentColor: .systemIndigo, secondaryColor: .darkPurple)
-//        }
-//    }
-    
-//    private func configureSelectedType(action: Selector? = nil,buttonTitle title: String? = nil ,accentColor: UIColor? = FFResources.Colors.activeColor, secondaryColor: UIColor? = nil){
-//        guard let action = action else {
-//            setAccessStatusButton.isHidden = true
-//            return }
-//        setAccessStatusButton.addTarget(self, action: action, for: .primaryActionTriggered)
-//        setAccessStatusButton.configuration?.title = title
-//        setAccessStatusButton.configuration?.baseBackgroundColor = accentColor
-//        setAccessStatusButton.configuration?.baseForegroundColor = secondaryColor
-//        pageImageView.tintColor = accentColor
-//    }
     
     func setupNavigationController() {
         
@@ -217,7 +190,7 @@ extension FFOnboardingViewController: SetupViewController {
 private extension FFOnboardingViewController {
     func setupConstraints(){
         let buttonStackView = UIStackView(arrangedSubviews: [mediaButton,
-                                                             healthButton, healthBackgroundButton, notificationButton])
+                                                             healthButton, notificationButton])
         buttonStackView.axis = .vertical
         buttonStackView.alignment = .fill
         buttonStackView.distribution = .fillProportionally
@@ -240,6 +213,7 @@ private extension FFOnboardingViewController {
         
         buttonStackView.snp.makeConstraints { make in
             make.width.equalTo(self.view.frame.size.width/1.5)
+            make.height.equalToSuperview().multipliedBy(0.25)
         }
         
         
@@ -253,7 +227,7 @@ private extension FFOnboardingViewController {
 }
 
 #Preview {
-    return FFOnboardingViewController(imageName: "lock.square", pageTitle: "Trash title", pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
+    return FFOnboardingViewController(imageName: "lock.square", pageTitle: "Access to Sensitive Information", pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
 }
 
 

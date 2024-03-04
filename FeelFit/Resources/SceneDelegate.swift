@@ -55,14 +55,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = tabBar
         window.makeKeyAndVisible()
         self.window = window
-        let isOnboardingOpenedFirst: Bool = UserDefaults.standard.bool(forKey: "isOnboardingOpenedFirst")
-        if isOnboardingOpenedFirst {
+//        let isOnboardingOpenedFirst: Bool = UserDefaults.standard.bool(forKey: "isOnboardingOpenedFirst")
+        if !configureOnboardingValue() {
             let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-            let navVC = FFNavigationController(rootViewController: vc)
-            navVC.modalPresentationStyle = .fullScreen
-            navVC.modalTransitionStyle = .crossDissolve
-            navVC.isNavigationBarHidden = false
-            tabBar.present(navVC, animated: true)
+            let nav = FFNavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            nav.isNavigationBarHidden = true
+            tabBar.present(nav, animated: true)
+            UserDefaults.standard.setValue(false, forKey: "isOnboardingOpenedFirst")
+            
+        }
+    }
+    
+    private func configureOnboardingValue() -> Bool{
+        if UserDefaults.standard.object(forKey: "isOnboardingOpenedFirst") == nil {
+            UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
+            return true
+        } else {
+            return false
         }
     }
     

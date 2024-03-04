@@ -9,13 +9,17 @@ import UIKit
 
 class FFOnboardingPageViewController: UIPageViewController, SetupViewController {
     
-    let pageControl = UIPageControl()
-    var pages = [UIViewController]()
-    let initialPages = 0
+    private let pageControl = UIPageControl()
+    private var nextPageButton = UIButton(type: .custom)
+    
+    private var pages = [UIViewController]()
+    private let initialPages = 0
     private var currentIndex = 0
     private let pageProgress = UIPageControlTimerProgress(preferredDuration: 10)
     private var suspensionTimer: Timer?
     private var isTimerPaused: Bool = false
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,16 +48,28 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
    //Сделать фон мутным при помощи UIVisualBlurEffect
     
     func setupView() {
-        
         view.backgroundColor = .systemBackground
-        setupNavigationController()
-        setupViewModel()
-        setupPageController()
-        setupConstraints()
-        setupStyle()
-        
         let tapGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapPressedGesture))
         view.addGestureRecognizer(tapGesture)
+        
+        setupNavigationController()
+        setupViewModel()
+        setupPageViewController()
+        setupPageControl()
+        setupNextPageButton()
+        setupConstraints()
+        
+    }
+    //Доделать функцию переключения страницы по кнопке
+    @objc private func didTapNextPage(_ sender: AnyObject) {
+        let currentIndex = pageControl.currentPage
+        if currentIndex != (pages.count+1){
+            pages[currentIndex+1]
+            pageControl.currentPage = currentIndex+1
+        } else {
+            nextPageButton.configuration?.title = "Let's start"
+        }
+        
     }
     
     @objc private func didTapPressedGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -62,15 +78,17 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         } else if gesture.state == .ended || gesture.state == .cancelled{
             pageProgress.resumeTimer()
         }
-        
-    }
-        
-    private func resumeTimer(){
-        
     }
     
     //MARK: - Setup onboarding page View controller
-    func setupStyle(){
+    private func setupNextPageButton(){
+        nextPageButton.configuration = .filled()
+        nextPageButton.configuration?.baseBackgroundColor = .systemBlue
+        nextPageButton.configuration?.title = "Next"
+        nextPageButton.addTarget(self, action: #selector(didTapNextPage), for: .primaryActionTriggered)
+    }
+    
+    private func setupPageControl(){
         pageControl.currentPageIndicatorTintColor = FFResources.Colors.activeColor
         pageControl.pageIndicatorTintColor = FFResources.Colors.darkPurple
         pageControl.numberOfPages = pages.count
@@ -84,7 +102,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         pageControl.progress = pageProgress
     }
     
-    func setupPageController(){
+    private func setupPageViewController(){
         dataSource = self
         delegate = self
         
@@ -104,14 +122,9 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         setViewControllers([pages[initialPages]], direction: .forward, animated: true)
     }
     
-    func setupNavigationController() {
-        navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Close", imageName: "", action: #selector(didTapDismissOnboarding), menu: nil)
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Skip", imageName: "", action: #selector(didTapSkipOnboarding), menu: nil)
-    }
+    func setupNavigationController() { }
     
-    func setupViewModel() {
-        
-    }
+    func setupViewModel() {}
 }
 
 extension FFOnboardingPageViewController: UIPageControlTimerProgressDelegate {
@@ -155,7 +168,7 @@ extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-        guard let viewControllers = pageViewController.viewControllers else { return }
+//        guard let viewControllers = pageViewController.viewControllers else { return }
             pageProgress.pauseTimer()
             suspensionTimer?.invalidate()
             
@@ -173,13 +186,17 @@ extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
 
 extension FFOnboardingPageViewController {
     private func setupConstraints(){
+        let userInterfaceStackView = UIStackView(arrangedSubviews: [pageControl, nextPageButton])
+        userInterfaceStackView.axis = .vertical
+        userInterfaceStackView.spacing = 10
+        userInterfaceStackView.alignment = .center
+        userInterfaceStackView.distribution = .fillProportionally
         
-        view.addSubview(pageControl)
-        pageControl.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20)
+        view.addSubview(userInterfaceStackView)
+        userInterfaceStackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(20)
+            make.bottom.equalToSuperview().multipliedBy(0.95)
+            make.width.equalToSuperview().dividedBy(2)
         }
     }
 }
@@ -187,7 +204,7 @@ extension FFOnboardingPageViewController {
 #Preview {
     let navVC = FFNavigationController(rootViewController: FFOnboardingPageViewController())
     navVC.modalTransitionStyle = .coverVertical
-    navVC.isNavigationBarHidden = false
+    navVC.isNavigationBarHidden = true
     navVC.modalPresentationStyle = .fullScreen
     return navVC
 }

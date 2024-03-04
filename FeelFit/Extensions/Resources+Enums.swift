@@ -30,6 +30,8 @@ enum FFResources {
         static var darkPurple = UIColor(named: "dark_purpleAsset") ?? .systemPurple
         /// very light pink color for background color
         static var lightBackgroundColor = UIColor(named: "healthBackground") ?? .systemBackground
+        /// black adaptive color for working with different system themes
+        static var customBlack = UIColor(named: "customBlack)") ?? .black
         
     }
     
