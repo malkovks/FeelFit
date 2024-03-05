@@ -62,12 +62,19 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     }
     //Доделать функцию переключения страницы по кнопке
     @objc private func didTapNextPage(_ sender: AnyObject) {
-        let currentIndex = pageControl.currentPage
-        if currentIndex != (pages.count+1){
+        var currentIndex = pageControl.currentPage
+        let nextPage = pages[currentIndex]
+        let pagesCount = pages.count-1
+            
+        
+        if currentIndex != pagesCount {
             pages[currentIndex+1]
-            pageControl.currentPage = currentIndex+1
-        } else {
-            nextPageButton.configuration?.title = "Let's start"
+            currentIndex += 1
+            pageControl.currentPage = currentIndex
+            self.setViewControllers([pages[currentIndex]], direction: .forward, animated: true)
+            if currentIndex == pagesCount {
+                nextPageButton.configuration?.title = "Let's start"
+            }
         }
         
     }
