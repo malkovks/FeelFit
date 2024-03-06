@@ -15,7 +15,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     private var pages = [UIViewController]()
     private let initialPages = 0
     private var currentIndex = 0
-    private let pageProgress = UIPageControlTimerProgress(preferredDuration: 10)
     private var suspensionTimer: Timer?
     private var isTimerPaused: Bool = false
     
@@ -28,7 +27,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        pageProgress.resumeTimer()
     }
     
     @objc private func didTapPageControl(_ sender: UIPageControl){
@@ -49,8 +47,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     
     func setupView() {
         view.backgroundColor = .systemBackground
-        let tapGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapPressedGesture))
-        view.addGestureRecognizer(tapGesture)
         
         setupNavigationController()
         setupViewModel()
@@ -63,12 +59,10 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     //Доделать функцию переключения страницы по кнопке
     @objc private func didTapNextPage(_ sender: AnyObject) {
         var currentIndex = pageControl.currentPage
-        let nextPage = pages[currentIndex]
         let pagesCount = pages.count-1
             
         
         if currentIndex != pagesCount {
-            pages[currentIndex+1]
             currentIndex += 1
             pageControl.currentPage = currentIndex
             self.setViewControllers([pages[currentIndex]], direction: .forward, animated: true)
@@ -77,14 +71,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
             }
         }
         
-    }
-    
-    @objc private func didTapPressedGesture(_ gesture: UILongPressGestureRecognizer) {
-        if gesture.state == .began {
-            pageProgress.pauseTimer()
-        } else if gesture.state == .ended || gesture.state == .cancelled{
-            pageProgress.resumeTimer()
-        }
     }
     
     //MARK: - Setup onboarding page View controller
@@ -103,10 +89,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         pageControl.addTarget(self, action: #selector(didTapPageControl), for: .primaryActionTriggered)
         pageControl.backgroundStyle = .automatic
         pageControl.direction = .leftToRight
-        
-        pageProgress.delegate = self
-        pageProgress.resetsToInitialPageAfterEnd = true
-        pageControl.progress = pageProgress
     }
     
     private func setupPageViewController(){
@@ -173,21 +155,6 @@ extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
             
             pageControl.currentPage = currentIndex
     }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-//        guard let viewControllers = pageViewController.viewControllers else { return }
-            pageProgress.pauseTimer()
-            suspensionTimer?.invalidate()
-            
-            suspensionTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: { _ in
-                self.pageProgress.resumeTimer()
-            })
-        
-    }
-    
-//    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-//        return currentIndex
-//    }
 }
 
 

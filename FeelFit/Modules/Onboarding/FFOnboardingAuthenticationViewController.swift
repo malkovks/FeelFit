@@ -9,6 +9,8 @@ import UIKit
 
 class FFOnboardingAuthenticationViewController: UIViewController, SetupViewController {
     
+    private var isPasswordHidden: Bool = true
+    
     private let loginUserLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.text = "Login"
@@ -41,6 +43,8 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         textfield.adjustsFontForContentSizeCategory = true
         textfield.textColor = FFResources.Colors.customBlack
         textfield.borderStyle = .roundedRect
+        textfield.keyboardType = .emailAddress
+        textfield.returnKeyType = .continue
         return textfield
     }()
     
@@ -49,6 +53,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         let textfield = UITextField(frame: .zero)
         textfield.leftView = leftCustomView
         textfield.leftViewMode = .always
+        textfield.rightViewMode = .always
         textfield.placeholder = "Your Password"
         textfield.clearButtonMode = .whileEditing
         textfield.textAlignment = .left
@@ -56,19 +61,45 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         textfield.adjustsFontForContentSizeCategory = true
         textfield.textColor = FFResources.Colors.customBlack
         textfield.borderStyle = .roundedRect
+        textfield.keyboardType = .default
+        textfield.isSecureTextEntry = true
+        textfield.returnKeyType = .done
         return textfield
     }()
     
-    private var userConfirmPassword = UIButton(type: .custom)
+    private let changePasswordSecureButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 30))
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = FFResources.Colors.customBlack
+        button.contentMode = .left
+        return button
+    }()
+    
+    private var userConfirmPassword = CustomConfigurationButton(
+        configurationTitle: "Continue",
+        configurationImagePlacement: .leading)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
+        userEmailTextField.becomeFirstResponder()
     }
     
     private func confirmUserAccount(){
         print("Register")
+    }
+    
+    private func changePasswordSecureAction(){
+        if isPasswordHidden {
+            isPasswordHidden.toggle()
+            userPasswordTextField.isSecureTextEntry = false
+            changePasswordSecureButton.setImage(UIImage(systemName: "eye"), for: .normal)
+        } else {
+            isPasswordHidden.toggle()
+            userPasswordTextField.isSecureTextEntry = true
+            changePasswordSecureButton.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        }
+        
     }
 }
 
@@ -78,6 +109,7 @@ extension FFOnboardingAuthenticationViewController {
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         setupUserConfirmButton()
+        setupTextFields()
         setupNavigationController()
         setupViewModel()
         setupConstraints()
@@ -87,8 +119,17 @@ extension FFOnboardingAuthenticationViewController {
         let confirmUserAccountAction = UIAction { [weak self] _ in
             self?.confirmUserAccount()
         }
-        
-        userConfirmPassword = CustomConfigurationButton(primaryAction: confirmUserAccountAction, configurationTitle: "Continue")
+        userConfirmPassword.addAction(confirmUserAccountAction, for: .primaryActionTriggered)
+    }
+    
+    private func setupTextFields(){
+        userEmailTextField.delegate = self
+        userPasswordTextField.delegate = self
+        let changePasswordSecureAction = UIAction { [weak self] _ in
+            self?.changePasswordSecureAction()
+        }
+        changePasswordSecureButton.addAction(changePasswordSecureAction, for: .primaryActionTriggered)
+        userPasswordTextField.rightView = changePasswordSecureButton
     }
     
     
@@ -98,6 +139,20 @@ extension FFOnboardingAuthenticationViewController {
     
     func setupViewModel() {
         
+    }
+}
+
+extension FFOnboardingAuthenticationViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == userEmailTextField {
+            userPasswordTextField.becomeFirstResponder()
+            return true
+        } else if textField == userPasswordTextField {
+            textField.resignFirstResponder()
+            return true
+        }
+        
+        return true
     }
 }
 
@@ -120,7 +175,7 @@ private extension FFOnboardingAuthenticationViewController {
             make.top.equalTo(loginUserLabel.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.85)
-            make.height.equalToSuperview().multipliedBy(0.5)
+            make.height.equalToSuperview().multipliedBy(0.3)
         }
     }
 }
