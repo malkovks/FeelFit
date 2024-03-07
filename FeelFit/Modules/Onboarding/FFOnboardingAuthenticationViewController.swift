@@ -10,6 +10,7 @@ import UIKit
 class FFOnboardingAuthenticationViewController: UIViewController, SetupViewController {
     
     private var isPasswordHidden: Bool = true
+    private let accountManager = FFUserAccountManager.shared
     
     private let loginUserLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -27,7 +28,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         stackView.spacing = 20
         stackView.alignment = .fill
         stackView.contentMode = .scaleAspectFit
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         return stackView
     }()
     
@@ -36,6 +37,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         let textfield = UITextField(frame: .zero)
         textfield.leftView = leftCustomView
         textfield.leftViewMode = .always
+        textfield.autocapitalizationType = .none
         textfield.placeholder = "Your Email"
         textfield.clearButtonMode = .whileEditing
         textfield.textAlignment = .left
@@ -43,7 +45,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         textfield.adjustsFontForContentSizeCategory = true
         textfield.textColor = FFResources.Colors.customBlack
         textfield.borderStyle = .roundedRect
-        textfield.keyboardType = .emailAddress
+        textfield.keyboardType = .asciiCapable
         textfield.returnKeyType = .continue
         return textfield
     }()
@@ -54,6 +56,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         textfield.leftView = leftCustomView
         textfield.leftViewMode = .always
         textfield.rightViewMode = .always
+        textfield.autocapitalizationType = .none
         textfield.placeholder = "Your Password"
         textfield.clearButtonMode = .whileEditing
         textfield.textAlignment = .left
@@ -61,7 +64,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         textfield.adjustsFontForContentSizeCategory = true
         textfield.textColor = FFResources.Colors.customBlack
         textfield.borderStyle = .roundedRect
-        textfield.keyboardType = .default
+        textfield.keyboardType = .asciiCapable
         textfield.isSecureTextEntry = true
         textfield.returnKeyType = .done
         return textfield
@@ -77,16 +80,71 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
     
     private var userConfirmPassword = CustomConfigurationButton(
         configurationTitle: "Continue",
-        configurationImagePlacement: .leading)
+        configurationImagePlacement: .leading
+    )
+    
+    private let savePasswordButton = CustomConfigurationButton(configurationTitle: "Save account")
+    private let readAccount = CustomConfigurationButton(configurationTitle: "Check account")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        userEmailTextField.becomeFirstResponder()
     }
     
     private func confirmUserAccount(){
         print("Register")
+    }
+    
+    @objc private func didTapSave(){
+        guard let email = userEmailTextField.text else {
+            return
+        }
+        
+        guard let password = userPasswordTextField.text else {
+            return
+        }
+        do {
+            try accountManager.save(userData: CredentialUser(email: email, password: password))
+            confirmButton(savePasswordButton, completed: true)
+        } catch let error as KeychainError {
+            viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+        } catch {
+            viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
+            confirmButton(savePasswordButton, completed: false)
+        }
+    }
+    
+    
+    
+    @objc private func didTapRead(){
+        guard let email = userEmailTextField.text else {
+            return
+        }
+        
+        guard let password = userPasswordTextField.text else {
+            return
+        }
+        
+        do {
+            try accountManager.read(userData: CredentialUser(email: email, password: password))
+            confirmButton(readAccount, completed: true)
+        } catch let error as KeychainError {
+            viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+        } catch {
+            viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
+        }
+    }
+    
+    private func confirmButton(_ button: UIButton,completed: Bool){
+        if completed {
+            button.configuration?.baseBackgroundColor = .systemGreen
+            button.configuration?.title = "Success"
+            button.isEnabled = false
+        } else {
+            button.configuration?.baseBackgroundColor = .systemRed
+            button.configuration?.title = "Error. Try again"
+            button.isEnabled = true
+        }
     }
     
     private func changePasswordSecureAction(){
@@ -99,7 +157,6 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
             userPasswordTextField.isSecureTextEntry = true
             changePasswordSecureButton.setImage(UIImage(systemName: "eye.slash"), for: .normal)
         }
-        
     }
 }
 
@@ -119,7 +176,11 @@ extension FFOnboardingAuthenticationViewController {
         let confirmUserAccountAction = UIAction { [weak self] _ in
             self?.confirmUserAccount()
         }
+        
         userConfirmPassword.addAction(confirmUserAccountAction, for: .primaryActionTriggered)
+        
+        savePasswordButton.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
+        readAccount.addTarget(self, action: #selector(didTapRead), for: .primaryActionTriggered)
     }
     
     private func setupTextFields(){
@@ -161,6 +222,8 @@ private extension FFOnboardingAuthenticationViewController {
         authStackView.addArrangedSubview(userEmailTextField)
         authStackView.addArrangedSubview(userPasswordTextField)
         authStackView.addArrangedSubview(userConfirmPassword)
+        authStackView.addArrangedSubview(savePasswordButton)
+        authStackView.addArrangedSubview(readAccount)
         
         view.addSubview(loginUserLabel)
         loginUserLabel.snp.makeConstraints { make in

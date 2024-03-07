@@ -17,7 +17,10 @@ extension UIViewController {
     func viewAlertController(text: String?,startDuration startTime: Double,timer endTime: Double,controllerView: UIView){
         let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
         swipeGesture.direction = .up
-        
+        let swipeButton = UIButton(type: .custom)
+        swipeButton.configuration = .tinted()
+        swipeButton.configuration?.baseBackgroundColor = .darkGray
+        swipeButton.addGestureRecognizer(swipeGesture)
         
         let customView = UIView()
         customView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
@@ -29,7 +32,13 @@ extension UIViewController {
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalToSuperview().multipliedBy(0.1)
-            
+        }
+        customView.addSubview(swipeButton)
+        swipeButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.4)
+            make.height.equalToSuperview().multipliedBy(0.1)
+            make.bottom.equalToSuperview().offset(-5)
         }
         
         let label = UILabel()

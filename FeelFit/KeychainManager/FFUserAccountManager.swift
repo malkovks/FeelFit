@@ -7,16 +7,50 @@
 
 import Foundation
 import AuthenticationServices
+import Security
 
 struct CredentialUser {
-    let user: String
+    let email: String
     let password: String
 }
 
 enum KeychainError: Error {
     case noPassword
+    case noEmail
     case unexpectedPasswordData
+    case incorrectEmailOrPassword
+    case incorrectOrEmptyEmail
+    case incorrectOrEmptyPassword
+    case emptyItem
     case unhandledError(status: OSStatus)
+}
+
+extension KeychainError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .noPassword:
+            return "Enter the password"
+        case .noEmail:
+            return "Enter the email"
+        case .unexpectedPasswordData:
+            return "Incorrect password. Please enter correct or try to reset password."
+        case .incorrectEmailOrPassword:
+            return "This account is not created or you input incorrect email or password. Please try again."
+        case .incorrectOrEmptyEmail:
+            return "Please enter correct login."
+        case .incorrectOrEmptyPassword:
+            return "Please enter correct password."
+        case .emptyItem:
+            return "Can't check inputs data. Try again later."
+        case .unhandledError(let status):
+            if let errorMessage = SecCopyErrorMessageString(status, nil){
+                return errorMessage as String
+            } else {
+                return "Unhandled error \(status.description)"
+            }
+            
+        }
+    }
 }
 
 class FFUserAccountManager {
@@ -24,12 +58,46 @@ class FFUserAccountManager {
     
     
     
-    func save(){
-        
+    func save(userData: CredentialUser) throws {
+        let email = userData.email
+        let passwordText = userData.password
+        guard !email.isEmpty else { throw KeychainError.noEmail }
+        guard !passwordText.isEmpty else { throw KeychainError.noPassword}
+        guard let password = passwordText.data(using: .utf8) else { throw KeychainError.unexpectedPasswordData }
+        let query: [String:Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: email,
+            kSecValueData as String: password
+        ]
+        let status = SecItemAdd(query as CFDictionary, nil)
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status)}
     }
     
-    func read(){
+    func read(userData: CredentialUser) throws  {
+        let enteredEmail = userData.email
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: enteredEmail,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecReturnAttributes as String: true,
+            kSecReturnData as String: true
+        ]
         
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        guard status != errSecItemNotFound else { throw KeychainError.noPassword}
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status )}
+        guard let existingItem = item as? [String: Any] else { throw KeychainError.emptyItem }
+        guard let email = existingItem[kSecAttrAccount as String] as? String 
+        else {
+            throw KeychainError.incorrectOrEmptyEmail
+        }
+        
+        guard let passwordData = existingItem[kSecValueData as String] as? Data,
+              let password = String(data: passwordData, encoding: .utf8)
+        else {
+            throw KeychainError.incorrectOrEmptyPassword
+        }
     }
     
     func edit(){
