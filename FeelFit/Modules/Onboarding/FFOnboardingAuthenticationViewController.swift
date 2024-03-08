@@ -11,6 +11,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
     
     private var isPasswordHidden: Bool = true
     private let accountManager = FFUserAccountManager.shared
+    private var accountCredential: CredentialUser?
     
     private let loginUserLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -27,8 +28,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         stackView.axis = .vertical
         stackView.spacing = 20
         stackView.alignment = .fill
-        stackView.contentMode = .scaleAspectFit
-        stackView.distribution = .fillProportionally
+        stackView.distribution = .fillEqually
         return stackView
     }()
     
@@ -78,24 +78,17 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
         return button
     }()
     
-    private var userConfirmPassword = CustomConfigurationButton(
-        configurationTitle: "Continue",
-        configurationImagePlacement: .leading
-    )
-    
-    private let savePasswordButton = CustomConfigurationButton(configurationTitle: "Save account")
-    private let readAccount = CustomConfigurationButton(configurationTitle: "Check account")
+    private let logoutAccountButton = CustomConfigurationButton(configurationTitle: "Log out")
+    private let createAccountButton = CustomConfigurationButton(configurationTitle: "Create Account")
+    private let loginAccountButton = CustomConfigurationButton(configurationTitle: "Login")
+    private let skipRegistrationButton = CustomConfigurationButton(configurationTitle: "Skip registration")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
-    private func confirmUserAccount(){
-        print("Register")
-    }
-    
-    @objc private func didTapSave(){
+    @objc private func didTapCreateNewAccount(){
         guard let email = userEmailTextField.text else {
             return
         }
@@ -104,47 +97,84 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
             return
         }
         do {
-            try accountManager.save(userData: CredentialUser(email: email, password: password))
-            confirmButton(savePasswordButton, completed: true)
+            let userAccount = CredentialUser(email: email, password: password)
+            try accountManager.save(userData: userAccount)
+            confirmButton(completed: true)
+            accountCredential = userAccount
         } catch let error as KeychainError {
             viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
         } catch {
             viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
-            confirmButton(savePasswordButton, completed: false)
+            confirmButton(completed: false)
         }
     }
     
     
     
-    @objc private func didTapRead(){
-        guard let email = userEmailTextField.text else {
-            return
-        }
+    @objc private func didTapLogin(){
         
-        guard let password = userPasswordTextField.text else {
-            return
-        }
-        
-        do {
-            try accountManager.read(userData: CredentialUser(email: email, password: password))
-            confirmButton(readAccount, completed: true)
-        } catch let error as KeychainError {
-            viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
-        } catch {
-            viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
+        confirmButton(completed: true)
+//        guard let email = userEmailTextField.text else {
+//            return
+//        }
+//        
+//        guard let password = userPasswordTextField.text else {
+//            return
+//        }
+//        
+//        do {
+//            let credentialUserID = try accountManager.read(userData: CredentialUser(email: email, password: password))
+//            accountCredential = credentialUserID
+//            confirmButton(completed: true)
+//        } catch let error as KeychainError {
+//            viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+//        } catch {
+//            viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
+//        }
+    }
+    
+    @objc private func didTapDismissKeyboard(){
+        view.endEditing(true)
+    }
+     
+    @objc private func didTapSkipOnboarding(){
+        alertControllerActionConfirm(title: nil, message: "Do you want to skip registration and entering your Anthropometric indicators. Just in case you can do it later", confirmActionTitle: "Skip", secondTitleAction: nil, style: .alert) {
+            self.dismiss(animated: true)
+        } secondAction: {
         }
     }
     
-    private func confirmButton(_ button: UIButton,completed: Bool){
+    @objc private func didTapLogout(){
+        print("Log out")
+        logoutFromAccount()
+//        alertControllerActionConfirm(title: nil, message: "Do you want to log out?", confirmActionTitle: "Log out", secondTitleAction: nil, style: .alert, action: { [weak self] _ in
+//            self?.logoutFromAccount()
+//        }, secondAction: nil)
+
+    }
+    
+    private func logoutFromAccount(){
+        userEmailTextField.text = ""
+        userPasswordTextField.text = ""
+        accountCredential = nil
+        confirmButton(completed: false)
+    }
+    
+    private func confirmButton(completed: Bool){
         if completed {
-            button.configuration?.baseBackgroundColor = .systemGreen
-            button.configuration?.title = "Success"
-            button.isEnabled = false
+            skipRegistrationButton.configuration?.title = "Continue"
+            skipRegistrationButton.configuration?.baseBackgroundColor = .lightGray
+            loginAccountButton.isHidden = true
+            createAccountButton.isHidden = true
+            logoutAccountButton.isHidden = false
         } else {
-            button.configuration?.baseBackgroundColor = .systemRed
-            button.configuration?.title = "Error. Try again"
-            button.isEnabled = true
+            skipRegistrationButton.configuration?.title = "Skip Registration"
+            skipRegistrationButton.configuration?.baseBackgroundColor = .clear
+            loginAccountButton.isHidden = false
+            createAccountButton.isHidden = false
+            logoutAccountButton.isHidden = true
         }
+        authStackView.layoutIfNeeded()
     }
     
     private func changePasswordSecureAction(){
@@ -173,24 +203,36 @@ extension FFOnboardingAuthenticationViewController {
     }
     
     private func setupUserConfirmButton(){
-        let confirmUserAccountAction = UIAction { [weak self] _ in
-            self?.confirmUserAccount()
-        }
-        
-        userConfirmPassword.addAction(confirmUserAccountAction, for: .primaryActionTriggered)
-        
-        savePasswordButton.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
-        readAccount.addTarget(self, action: #selector(didTapRead), for: .primaryActionTriggered)
+        logoutAccountButton.isHidden = true
+        logoutAccountButton.addTarget(self, action: #selector(didTapLogout), for: .primaryActionTriggered)
+        createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
+        loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
+        skipRegistrationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
     }
     
     private func setupTextFields(){
-        userEmailTextField.delegate = self
-        userPasswordTextField.delegate = self
+        let arrayTextFields = [userEmailTextField, userPasswordTextField]
+        arrayTextFields.forEach { textField in
+            textField.delegate = self
+            textField.inputAccessoryView = setupToolBar()
+        }
         let changePasswordSecureAction = UIAction { [weak self] _ in
             self?.changePasswordSecureAction()
         }
         changePasswordSecureButton.addAction(changePasswordSecureAction, for: .primaryActionTriggered)
         userPasswordTextField.rightView = changePasswordSecureButton
+    }
+    
+    private func setupToolBar() -> UIToolbar {
+        let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
+        toolBar.sizeToFit()
+        toolBar.barStyle = .default
+        toolBar.sizeToFit()
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapDismissKeyboard))
+        let items = [flexibleSpace,doneButtonItem]
+        toolBar.setItems(items, animated: true)
+        return toolBar
     }
     
     
@@ -209,7 +251,7 @@ extension FFOnboardingAuthenticationViewController: UITextFieldDelegate {
             userPasswordTextField.becomeFirstResponder()
             return true
         } else if textField == userPasswordTextField {
-            textField.resignFirstResponder()
+            view.endEditing(true)
             return true
         }
         
@@ -221,9 +263,9 @@ private extension FFOnboardingAuthenticationViewController {
     func setupConstraints(){
         authStackView.addArrangedSubview(userEmailTextField)
         authStackView.addArrangedSubview(userPasswordTextField)
-        authStackView.addArrangedSubview(userConfirmPassword)
-        authStackView.addArrangedSubview(savePasswordButton)
-        authStackView.addArrangedSubview(readAccount)
+        authStackView.addArrangedSubview(logoutAccountButton)
+        authStackView.addArrangedSubview(loginAccountButton)
+        authStackView.addArrangedSubview(createAccountButton)
         
         view.addSubview(loginUserLabel)
         loginUserLabel.snp.makeConstraints { make in
@@ -238,8 +280,32 @@ private extension FFOnboardingAuthenticationViewController {
             make.top.equalTo(loginUserLabel.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.85)
-            make.height.equalToSuperview().multipliedBy(0.3)
+            make.height.lessThanOrEqualToSuperview().multipliedBy(0.3)
         }
+        
+        logoutAccountButton.snp.makeConstraints { make in
+            make.height.equalTo(55)
+        }
+        
+        createAccountButton.snp.makeConstraints { make in
+            make.height.equalTo(55)
+        }
+        
+        loginAccountButton.snp.makeConstraints { make in
+            make.height.equalTo(55)
+        }
+        
+        view.addSubview(skipRegistrationButton)
+        skipRegistrationButton.snp.makeConstraints { make in
+            let skipButtonY = view.frame.size.height*0.75
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(skipButtonY)
+            
+            make.width.equalToSuperview().multipliedBy(0.85)
+            make.height.equalTo(55)
+        }
+        
+        
     }
 }
 

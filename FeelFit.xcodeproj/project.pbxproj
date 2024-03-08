@@ -106,6 +106,8 @@
 		0AC99D652B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */; };
 		0AC99D672B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */; };
 		0AC99D6C2B97F666000AAAD1 /* FFUserAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D6B2B97F666000AAAD1 /* FFUserAccountManager.swift */; };
+		0AC99D6F2B9AF5E3000AAAD1 /* TextFieldToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D6E2B9AF5E3000AAAD1 /* TextFieldToolBar.swift */; };
+		0AC99D712B9B0B08000AAAD1 /* FFEditOrDeleteAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D702B9B0B08000AAAD1 /* FFEditOrDeleteAccountViewController.swift */; };
 		0ACBC2662B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */; };
 		0ACBC2682B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */; };
 		0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */; };
@@ -238,6 +240,8 @@
 		0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewController.swift; sourceTree = "<group>"; };
 		0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingUserDataViewController.swift; sourceTree = "<group>"; };
 		0AC99D6B2B97F666000AAAD1 /* FFUserAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserAccountManager.swift; sourceTree = "<group>"; };
+		0AC99D6E2B9AF5E3000AAAD1 /* TextFieldToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldToolBar.swift; sourceTree = "<group>"; };
+		0AC99D702B9B0B08000AAAD1 /* FFEditOrDeleteAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFEditOrDeleteAccountViewController.swift; sourceTree = "<group>"; };
 		0ACBC2652B4801AA0046F83D /* FFPlanCompletedTrainingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingViewModel.swift; sourceTree = "<group>"; };
 		0ACBC2672B480B390046F83D /* FFPlanCompletedTrainingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanCompletedTrainingTableViewCell.swift; sourceTree = "<group>"; };
 		0ACEA9D72ACD341D00899CF6 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -373,6 +377,7 @@
 				0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */,
 				0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */,
 				0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */,
+				0AC99D702B9B0B08000AAAD1 /* FFEditOrDeleteAccountViewController.swift */,
 				0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */,
 			);
 			path = Onboarding;
@@ -819,6 +824,7 @@
 		0AC59C632B931E420009489E /* UI Elements */ = {
 			isa = PBXGroup;
 			children = (
+				0AC99D6D2B9AF5CE000AAAD1 /* UIToolBar */,
 				0AC59C642B931E550009489E /* UIButton */,
 				0A3AED002B84B8CE00B2F8F3 /* UITableView */,
 			);
@@ -839,6 +845,14 @@
 				0AC99D6B2B97F666000AAAD1 /* FFUserAccountManager.swift */,
 			);
 			path = KeychainManager;
+			sourceTree = "<group>";
+		};
+		0AC99D6D2B9AF5CE000AAAD1 /* UIToolBar */ = {
+			isa = PBXGroup;
+			children = (
+				0AC99D6E2B9AF5E3000AAAD1 /* TextFieldToolBar.swift */,
+			);
+			path = UIToolBar;
 			sourceTree = "<group>";
 		};
 		0ACBC25D2B47FF770046F83D /* TrainingPlan */ = {
@@ -1172,6 +1186,7 @@
 				0AC59C662B931EA00009489E /* TitledRectangleConfiguredButton.swift in Sources */,
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
+				0AC99D712B9B0B08000AAAD1 /* FFEditOrDeleteAccountViewController.swift in Sources */,
 				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
 				0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */,
 				0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */,
@@ -1239,6 +1254,7 @@
 				0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */,
 				0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */,
 				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,
+				0AC99D6F2B9AF5E3000AAAD1 /* TextFieldToolBar.swift in Sources */,
 				0ACEAA552ADD754C00899CF6 /* FFNewsSettingViewModel.swift in Sources */,
 				0A2347BC2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift in Sources */,
 				0AE0F4F72B06159E00874C0B /* FFFavouriteExercisesViewController.swift in Sources */,

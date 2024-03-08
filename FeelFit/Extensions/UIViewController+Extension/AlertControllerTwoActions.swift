@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIViewController {
-    /// Function for presenting alert with inheriting two action
+    /// Function for presenting alert with inheriting two action.Cancel button almost added and dont need to setup it
     /// - Parameters:
     ///   - title: title message
     ///   - message: subtitle
@@ -17,17 +17,17 @@ extension UIViewController {
     ///   - style: style of alert
     ///   - action: first action method for positive action
     ///   - secondAction: second action method for negative action
-    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,secondTitleAction: String?,style: UIAlertController.Style,action: @escaping () -> (), secondAction: @escaping () -> ()?){
+    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,secondTitleAction: String?,style: UIAlertController.Style,action: @escaping () -> (), secondAction: (() -> Void)?){
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         let confirmAction = UIAlertAction(title: confirmActionTitle, style: .default) { _ in
             action()
         }
         let clearAction = UIAlertAction(title: secondTitleAction, style: .destructive) { _ in
-            secondAction()
+            secondAction?()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(confirmAction)
-        if secondTitleAction != "" {
+        if secondTitleAction != "" || secondTitleAction != nil {
             alert.addAction(clearAction)
         }
         

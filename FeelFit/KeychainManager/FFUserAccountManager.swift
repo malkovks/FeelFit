@@ -73,7 +73,7 @@ class FFUserAccountManager {
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status)}
     }
     
-    func read(userData: CredentialUser) throws  {
+    func read(userData: CredentialUser) throws -> CredentialUser {
         let enteredEmail = userData.email
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -85,19 +85,22 @@ class FFUserAccountManager {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status != errSecItemNotFound else { throw KeychainError.noPassword}
+        guard status != errSecItemNotFound else { throw KeychainError.incorrectEmailOrPassword }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status )}
         guard let existingItem = item as? [String: Any] else { throw KeychainError.emptyItem }
-        guard let email = existingItem[kSecAttrAccount as String] as? String 
+        guard let email = existingItem[kSecAttrAccount as String] as? String,
+              !email.isEmpty
         else {
             throw KeychainError.incorrectOrEmptyEmail
         }
         
         guard let passwordData = existingItem[kSecValueData as String] as? Data,
-              let password = String(data: passwordData, encoding: .utf8)
+              let password = String(data: passwordData, encoding: .utf8),
+              !password.isEmpty
         else {
             throw KeychainError.incorrectOrEmptyPassword
         }
+        return CredentialUser(email: email, password: password)
     }
     
     func edit(){
