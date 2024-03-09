@@ -9,7 +9,7 @@ import UIKit
 
 class FFHealthUserInformationViewController: UIViewController, SetupViewController {
     
-    private let tableViewText: [[String]] = [["Name","Second Name","Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)"],["Stoller chair"]]
+    private let tableViewText: [[String]] = [["Name","Second Name"],["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)"],["Stoller chair"]]
     private var usersData: UserCharactersData = UserCharactersData()
     
     private var isTableViewIsEditing: Bool = false

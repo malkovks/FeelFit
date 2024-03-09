@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FFOnboardingAuthenticationViewController: UIViewController, SetupViewController {
+class FFOnboardingAuthenticationViewController: UIViewController {
     
     private var isPasswordHidden: Bool = true
     private let accountManager = FFUserAccountManager.shared
@@ -138,19 +138,15 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
     }
      
     @objc private func didTapSkipOnboarding(){
-        alertControllerActionConfirm(title: nil, message: "Do you want to skip registration and entering your Anthropometric indicators. Just in case you can do it later", confirmActionTitle: "Skip", secondTitleAction: nil, style: .alert) {
-            self.dismiss(animated: true)
-        } secondAction: {
+        defaultAlertController(message: "Do you want to skip registration and entering Your anthropometric indicators. Just in case you can do it later", actionTitle: "Skip", style: .alert) { [weak self] in
+            self?.dismiss(animated: true)
         }
     }
     
     @objc private func didTapLogout(){
-        print("Log out")
-        logoutFromAccount()
-//        alertControllerActionConfirm(title: nil, message: "Do you want to log out?", confirmActionTitle: "Log out", secondTitleAction: nil, style: .alert, action: { [weak self] _ in
-//            self?.logoutFromAccount()
-//        }, secondAction: nil)
-
+        defaultAlertController(message: "Do you want to log out from account?", actionTitle: "Log out", style: .alert) { [weak self] in
+            self?.logoutFromAccount()
+        }
     }
     
     private func logoutFromAccount(){
@@ -190,7 +186,7 @@ class FFOnboardingAuthenticationViewController: UIViewController, SetupViewContr
     }
 }
 
-extension FFOnboardingAuthenticationViewController {
+extension FFOnboardingAuthenticationViewController: SetupViewController {
     
     
     func setupView() {

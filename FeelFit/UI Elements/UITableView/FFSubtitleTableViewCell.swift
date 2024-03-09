@@ -8,6 +8,7 @@
 import UIKit
 
 class FFSubtitleTableViewCell: UITableViewCell {
+    
     static let identifier = "FFSubtitleTableViewCell"
     
     private let firstTitleLabel: UILabel = {
@@ -41,21 +42,23 @@ class FFSubtitleTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(title: String,model: UserCharactersData,_ indexPath: IndexPath){
+    func configureView(title: String,model: UserCharactersData?,_ indexPath: IndexPath){
+        guard let model = model else { return }
         switch indexPath {
         case [0,0]:
             setupInformation(title: title, info: "user name")
         case [0,1]:
             setupInformation(title: title, info: "user second name")
-        case [0,2]:
-            setupInformation(title: title, info: model.dateOfBirth)
-        case [0,3]:
-            setupInformation(title: title, info: model.userGender)
-        case [0,4]:
-            setupInformation(title: title, info: model.bloodType)
-        case [0,5]:
-            setupInformation(title: title, info: model.fitzpatrickSkinType)
         case [1,0]:
+            
+            setupInformation(title: title, info: model.dateOfBirth?.convertComponentsToDateString())
+        case [1,1]:
+            setupInformation(title: title, info: model.userGender)
+        case [1,2]:
+            setupInformation(title: title, info: model.bloodType)
+        case [1,3]:
+            setupInformation(title: title, info: model.fitzpatrickSkinType)
+        case [2,0]:
             setupInformation(title: title, info: model.wheelChairUse)
         default:
             break

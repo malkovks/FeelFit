@@ -17,13 +17,13 @@ extension UIViewController {
     ///   - style: style of alert
     ///   - action: first action method for positive action
     ///   - secondAction: second action method for negative action
-    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,secondTitleAction: String?,style: UIAlertController.Style,action: @escaping () -> (), secondAction: (() -> Void)?){
+    func alertControllerActionConfirm(title: String?, message: String?,confirmActionTitle: String,secondTitleAction: String?,style: UIAlertController.Style,action: @escaping () -> (), secondAction: @escaping ()->()) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         let confirmAction = UIAlertAction(title: confirmActionTitle, style: .default) { _ in
             action()
         }
         let clearAction = UIAlertAction(title: secondTitleAction, style: .destructive) { _ in
-            secondAction?()
+            secondAction()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(confirmAction)
@@ -34,4 +34,14 @@ extension UIViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
+    
+    func defaultAlertController(title: String? = nil, message: String? = nil, actionTitle: String = "OK", style: UIAlertController.Style = .alert, action: @escaping () -> ()){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: style)
+        alert.addAction(UIAlertAction(title: actionTitle, style: .default, handler: { _ in
+            action()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
 }
+

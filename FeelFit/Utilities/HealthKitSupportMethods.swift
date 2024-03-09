@@ -1,5 +1,5 @@
 //
-//  HealthPublicMethods.swift
+//  HealthKitSupportMethods.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 13.02.2024.

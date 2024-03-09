@@ -14,16 +14,7 @@ struct CredentialUser {
     let password: String
 }
 
-enum KeychainError: Error {
-    case noPassword
-    case noEmail
-    case unexpectedPasswordData
-    case incorrectEmailOrPassword
-    case incorrectOrEmptyEmail
-    case incorrectOrEmptyPassword
-    case emptyItem
-    case unhandledError(status: OSStatus)
-}
+
 
 extension KeychainError: LocalizedError {
     public var errorDescription: String? {

@@ -7,7 +7,14 @@
 
 import HealthKit
 
-
+struct UserCharactersData {
+    
+    var userGender: String?
+    var dateOfBirth: DateComponents?
+    var wheelChairUse: String?
+    var bloodType: String?
+    var fitzpatrickSkinType: String?
+}
 
 class FFHealthDataLoading {
     static let shared = FFHealthDataLoading()
@@ -97,11 +104,12 @@ class FFHealthDataLoading {
             handler(nil)
             return
         }
+        //оптимизировать код и добавить отладку ошибок
         healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { [weak self] success, error in
             guard let self = self else { return }
             if success && error == nil {
                 let gender = HealthStoreRequest.GenderTypeResult(from: try! self.healthStore.biologicalSex()).rawValue
-                let userDateOfBirth: String = try! healthStore.dateOfBirthComponents().convertComponentsToDateString()
+                let userDateOfBirth: DateComponents = try! healthStore.dateOfBirthComponents()
                 let wheelChairUse = HealthStoreRequest.WheelchairTypeResult(from: try! self.healthStore.wheelchairUse()).rawValue
                 let bloodType = HealthStoreRequest.BloodTypeResult(from: try! self.healthStore.bloodType()).rawValue
                 let skinType = HealthStoreRequest.FitzpatricSkinTypeResult(from: try! self.healthStore.fitzpatrickSkinType()).rawValue
@@ -114,12 +122,8 @@ class FFHealthDataLoading {
     }
 }
 
-struct UserCharactersData {
-    var userGender: String?
-    var dateOfBirth: String?
-    var wheelChairUse: String?
-    var bloodType: String?
-    var fitzpatrickSkinType: String?
-}
+
+
+
 
 
