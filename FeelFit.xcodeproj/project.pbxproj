@@ -445,8 +445,6 @@
 				0A4495062AB9D1330082C909 /* TrainingPlan */,
 				0A4495052AB9D11D0082C909 /* Health */,
 				0A4495072AB9D1460082C909 /* Profile */,
-				0A4495082AB9D1630082C909 /* Information */,
-				0A4495092AB9D16D0082C909 /* Terms */,
 				0A4495372ABC43150082C909 /* Navigation */,
 			);
 			path = Modules;
@@ -527,20 +525,6 @@
 				0A4495212ABA792B0082C909 /* Model */,
 			);
 			path = Profile;
-			sourceTree = "<group>";
-		};
-		0A4495082AB9D1630082C909 /* Information */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Information;
-			sourceTree = "<group>";
-		};
-		0A4495092AB9D16D0082C909 /* Terms */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Terms;
 			sourceTree = "<group>";
 		};
 		0A44950B2AB9FC260082C909 /* Managers */ = {
