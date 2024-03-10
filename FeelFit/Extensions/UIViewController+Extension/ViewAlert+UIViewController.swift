@@ -15,6 +15,8 @@ extension UIViewController {
     ///   - duration: time duration of presenting alert
     ///   - controllerView: view of UIViewController where this alert will presented
     func viewAlertController(text: String?,startDuration startTime: Double,timer endTime: Double,controllerView: UIView){
+        
+        
         let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
         swipeGesture.direction = .up
         let swipeButton = UIButton(type: .custom)
@@ -26,33 +28,45 @@ extension UIViewController {
         customView.backgroundColor = FFResources.Colors.tabBarBackgroundColor
         customView.layer.cornerRadius = 12
         customView.addGestureRecognizer(swipeGesture)
-        self.view.addSubview(customView)
+        controllerView.addSubview(customView)
         customView.snp.makeConstraints { make in
             make.top.equalTo(controllerView.safeAreaLayoutGuide.snp.top).offset(10)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
-            make.height.equalToSuperview().multipliedBy(0.1)
+            make.width.greaterThanOrEqualToSuperview().multipliedBy(0.2)
+            make.width.lessThanOrEqualToSuperview().multipliedBy(0.9)
+            make.height.greaterThanOrEqualToSuperview().multipliedBy(0.05)
+            make.height.lessThanOrEqualToSuperview().multipliedBy(0.3)
         }
         customView.addSubview(swipeButton)
         swipeButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.4)
-            make.height.equalToSuperview().multipliedBy(0.1)
-            make.bottom.equalToSuperview().offset(-5)
+            make.width.equalTo(55)
+            make.height.equalTo(5)
+            make.bottom.equalToSuperview().offset(-2)
         }
         
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .medium, width: .standard)
+        label.font = UIFont.textLabelFont(size: 12,for: .largeTitle)
         label.text = text
         label.numberOfLines = 0
         label.textColor = FFResources.Colors.activeColor
         label.textAlignment = .center
+        label.lineBreakMode = .byWordWrapping
         customView.addSubview(label)
         label.snp.makeConstraints { make in
-            make.top.equalTo(customView.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview().inset(2)
-            make.bottom.equalTo(customView.safeAreaLayoutGuide.snp.bottom)
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.width.lessThanOrEqualToSuperview()
+            make.height.lessThanOrEqualToSuperview().offset(-15)
         }
+        
+//        let existViews = self.view.subviews
+//        for view in existViews {
+//            if view == customView {
+//                view.removeFromSuperview()
+//            }
+//        }
+
         
         UIView.animate(withDuration: startTime) {
             label.alpha = 1.0
@@ -71,7 +85,7 @@ extension UIViewController {
     
     @objc private func handleSwipe(_ gesture: UISwipeGestureRecognizer){
         guard let customView = gesture.view else { return }
-        UIView.animate(withDuration: 0.0) {
+        UIView.animate(withDuration: 0.5) {
             customView.alpha = 0.0
             customView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
         } completion: { _ in

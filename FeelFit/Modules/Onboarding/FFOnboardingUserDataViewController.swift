@@ -36,6 +36,7 @@ class FFOnboardingUserDataViewController: UIViewController {
     @objc private func didTapLoadHealthData(){
         defaultAlertController(title: nil, message: "Do you want to download medical data from Health?", actionTitle: "Download", style: .alert) {
             FFHealthDataLoading.shared.loadingCharactersData { [weak self] userDataString in
+                self?.tableView.reloadData()
                 self?.userData = userDataString ?? nil
             }
         }
@@ -46,6 +47,7 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     func setupView() {
         view.backgroundColor = .secondarySystemGroupedBackground
         setupTableView()
+        setupButtons()
         setupNavigationController()
         setupViewModel()
         setupConstraints()
@@ -57,7 +59,7 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         tableView.rowHeight = UITableView.automaticDimension
     }
     
-    private func setuputtons(){
+    private func setupButtons(){
         downloadDataButton.addTarget(self, action: #selector(didTapLoadHealthData), for: .primaryActionTriggered)
     }
     

@@ -11,14 +11,18 @@ extension DateComponents {
     
     /// Function gets date components and convert them to string which include format like "dd MMM yyyy. (age)"
     /// - Returns: return date with age
-    func convertComponentsToDateString() -> String{
+    func convertComponentsToDateString() -> String {
         let calendar = Calendar.current
-        let date = (calendar.date(from: self))!
-        let datestring = date.dateAndYearConverting()
-        
-        let age = calendar.dateComponents([.year], from: date,to: Date()).year!
+        if let date = (calendar.date(from: self)){
+            let datestring = date.dateAndYearConverting()
+            
+            let age = calendar.dateComponents([.year], from: date,to: Date()).year!
 
-        let result = datestring + " (\(age))"
-        return result
+            let result = datestring + " (\(age))"
+            return result
+        } else {
+            return "Not set"
+        }
+        
     }
 }

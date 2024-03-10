@@ -44,11 +44,11 @@ class FFHealthDataLoading {
                 let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
                 let id = HKQuantityType.quantityType(forIdentifier: iden)!
                 let query = HKStatisticsCollectionQuery(quantityType: id,
-                                                    quantitySamplePredicate: predicate,
-                                                    options: options,
-                                                    anchorDate: anchorDate,
-                                                    intervalComponents: dateComponents)
-            
+                                                        quantitySamplePredicate: predicate,
+                                                        options: options,
+                                                        anchorDate: anchorDate,
+                                                        intervalComponents: dateComponents)
+                
                 query.initialResultsHandler = { queries, results, error in
                     guard error == nil,
                           let results = results else {
@@ -68,7 +68,7 @@ class FFHealthDataLoading {
                         
                         
                         if var doubleValue = processingStatistics(statistics: stats, unit: unitQuantityType, value: options){
-
+                            
                             switch unitQuantityType {
                             case .meter().unitDivided(by: .second()):
                                 doubleValue *= 3.6
@@ -97,17 +97,16 @@ class FFHealthDataLoading {
                 }
                 healthStore.execute(query)
             }
-    }
+        }
     
-    func loadingCharactersData(completion handler: @escaping (_ userDataString: UserCharactersData?) -> ()){
-        if !HKHealthStore.isHealthDataAvailable(){
-            handler(nil)
+    func loadingCharactersData(completion handler: @escaping (_ userDataString: UserCharactersData?) -> ()) {
+        if !HKHealthStore.isHealthDataAvailable() {
             return
         }
-        //оптимизировать код и добавить отладку ошибок
+        
         healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { [weak self] success, error in
             guard let self = self else { return }
-            if success && error == nil {
+            if success {
                 let gender = HealthStoreRequest.GenderTypeResult(from: try! self.healthStore.biologicalSex()).rawValue
                 let userDateOfBirth: DateComponents = try! healthStore.dateOfBirthComponents()
                 let wheelChairUse = HealthStoreRequest.WheelchairTypeResult(from: try! self.healthStore.wheelchairUse()).rawValue
@@ -121,6 +120,7 @@ class FFHealthDataLoading {
         }
     }
 }
+
 
 
 

@@ -67,6 +67,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         textfield.keyboardType = .asciiCapable
         textfield.isSecureTextEntry = true
         textfield.returnKeyType = .done
+        textfield.passwordRules = nil
         return textfield
     }()
     
@@ -83,54 +84,50 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     private let loginAccountButton = CustomConfigurationButton(configurationTitle: "Login")
     private let skipRegistrationButton = CustomConfigurationButton(configurationTitle: "Skip registration")
     
+    private let updateOrDeleteAccountButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("Edit or delete account", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.isHidden = true
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
     @objc private func didTapCreateNewAccount(){
-        guard let email = userEmailTextField.text else {
+        guard let email = userEmailTextField.text,
+              let password = userPasswordTextField.text
+        else {
             return
         }
         
-        guard let password = userPasswordTextField.text else {
-            return
-        }
-        do {
-            let userAccount = CredentialUser(email: email, password: password)
-            try accountManager.save(userData: userAccount)
-            confirmButton(completed: true)
-            accountCredential = userAccount
-        } catch let error as KeychainError {
-            viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
-        } catch {
-            viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
-            confirmButton(completed: false)
+        let data = CredentialUser(email: email, password: password)
+        self.accountCredential = data
+        
+        performKeychainRequest(completed: true) { [weak self] userData in
+            try self?.accountManager.createNewUserAccount(userData: userData)
         }
     }
     
     
     
     @objc private func didTapLogin(){
+        guard let email = userEmailTextField.text,
+              let password = userPasswordTextField.text
+        else {
+            return
+        }
         
-        confirmButton(completed: true)
-//        guard let email = userEmailTextField.text else {
-//            return
-//        }
-//        
-//        guard let password = userPasswordTextField.text else {
-//            return
-//        }
-//        
-//        do {
-//            let credentialUserID = try accountManager.read(userData: CredentialUser(email: email, password: password))
-//            accountCredential = credentialUserID
-//            confirmButton(completed: true)
-//        } catch let error as KeychainError {
-//            viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
-//        } catch {
-//            viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
-//        }
+        let data = CredentialUser(email: email, password: password)
+        self.accountCredential = data
+        
+        performKeychainRequest(completed: true) { [weak self] userData in
+            try self?.accountManager.checkForCreatedUserAccount(userData: userData)
+            self?.confirmButton(completed: true)
+        }
     }
     
     @objc private func didTapDismissKeyboard(){
@@ -145,15 +142,32 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     
     @objc private func didTapLogout(){
         defaultAlertController(message: "Do you want to log out from account?", actionTitle: "Log out", style: .alert) { [weak self] in
-            self?.logoutFromAccount()
+            self?.confirmButton(completed: false)
         }
     }
     
-    private func logoutFromAccount(){
-        userEmailTextField.text = ""
-        userPasswordTextField.text = ""
-        accountCredential = nil
-        confirmButton(completed: false)
+    @objc private func didTapUpdateOrDeleteAccount(){
+        alertControllerActionConfirm(title: "Warning", message: "Do you want to update your email or password or delete account?", confirmActionTitle: "Update", secondTitleAction: "Delete", style: .alert) { [weak self] in
+            self?.performKeychainRequest(completed: false, requestFunction: { userData in
+                try self?.accountManager.updateUserAccountData(userData: userData)
+            })
+        } secondAction: { [weak self] in
+            self?.performKeychainRequest(completed: false, requestFunction: { userData in
+                try self?.accountManager.deleteUserAccountData(userData: userData)
+            })
+        }
+    }
+    
+    private func performKeychainRequest(completed status : Bool,requestFunction: (_ userData: CredentialUser?) throws -> Void ){
+        do {
+            try requestFunction(accountCredential)
+            confirmButton(completed: status)
+            viewAlertController(text: "Successfully", startDuration: 0.5, timer: 4, controllerView: self.view)
+        } catch let error as KeychainError {
+            self.viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+        } catch {
+            self.viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
+        }
     }
     
     private func confirmButton(completed: Bool){
@@ -163,12 +177,21 @@ class FFOnboardingAuthenticationViewController: UIViewController {
             loginAccountButton.isHidden = true
             createAccountButton.isHidden = true
             logoutAccountButton.isHidden = false
+            updateOrDeleteAccountButton.isHidden = false
+            userEmailTextField.isEnabled = false
+            userPasswordTextField.isEnabled = false
         } else {
             skipRegistrationButton.configuration?.title = "Skip Registration"
             skipRegistrationButton.configuration?.baseBackgroundColor = .clear
             loginAccountButton.isHidden = false
             createAccountButton.isHidden = false
             logoutAccountButton.isHidden = true
+            updateOrDeleteAccountButton.isHidden = true
+            userEmailTextField.isEnabled = true
+            userPasswordTextField.isEnabled = true
+            userEmailTextField.text = ""
+            userPasswordTextField.text = ""
+            accountCredential = nil
         }
         authStackView.layoutIfNeeded()
     }
@@ -204,6 +227,7 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
         createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
         loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
         skipRegistrationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
+        updateOrDeleteAccountButton.addTarget(self, action: #selector(didTapUpdateOrDeleteAccount), for: .primaryActionTriggered)
     }
     
     private func setupTextFields(){
@@ -262,6 +286,7 @@ private extension FFOnboardingAuthenticationViewController {
         authStackView.addArrangedSubview(logoutAccountButton)
         authStackView.addArrangedSubview(loginAccountButton)
         authStackView.addArrangedSubview(createAccountButton)
+        authStackView.addArrangedSubview(updateOrDeleteAccountButton)
         
         view.addSubview(loginUserLabel)
         loginUserLabel.snp.makeConstraints { make in

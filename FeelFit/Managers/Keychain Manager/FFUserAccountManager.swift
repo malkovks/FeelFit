@@ -15,43 +15,17 @@ struct CredentialUser {
 }
 
 
-
-extension KeychainError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .noPassword:
-            return "Enter the password"
-        case .noEmail:
-            return "Enter the email"
-        case .unexpectedPasswordData:
-            return "Incorrect password. Please enter correct or try to reset password."
-        case .incorrectEmailOrPassword:
-            return "This account is not created or you input incorrect email or password. Please try again."
-        case .incorrectOrEmptyEmail:
-            return "Please enter correct login."
-        case .incorrectOrEmptyPassword:
-            return "Please enter correct password."
-        case .emptyItem:
-            return "Can't check inputs data. Try again later."
-        case .unhandledError(let status):
-            if let errorMessage = SecCopyErrorMessageString(status, nil){
-                return errorMessage as String
-            } else {
-                return "Unhandled error \(status.description)"
-            }
-            
-        }
-    }
-}
-
 class FFUserAccountManager {
     static let shared = FFUserAccountManager()
     
     
     
-    func save(userData: CredentialUser) throws {
-        let email = userData.email
-        let passwordText = userData.password
+    func createNewUserAccount(userData: CredentialUser?) throws {
+        guard let data = userData else {
+            throw KeychainError.emptyModel
+        }
+        let email = data.email
+        let passwordText = data.password
         guard !email.isEmpty else { throw KeychainError.noEmail }
         guard !passwordText.isEmpty else { throw KeychainError.noPassword}
         guard let password = passwordText.data(using: .utf8) else { throw KeychainError.unexpectedPasswordData }
@@ -64,8 +38,12 @@ class FFUserAccountManager {
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status)}
     }
     
-    func read(userData: CredentialUser) throws -> CredentialUser {
-        let enteredEmail = userData.email
+    func checkForCreatedUserAccount(userData: CredentialUser?) throws  {
+        guard let data = userData else {
+            throw KeychainError.emptyModel
+        }
+        
+        let enteredEmail = data.email
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: enteredEmail,
@@ -91,14 +69,52 @@ class FFUserAccountManager {
         else {
             throw KeychainError.incorrectOrEmptyPassword
         }
-        return CredentialUser(email: email, password: password)
     }
     
-    func edit(){
+    func updateUserAccountData(userData: CredentialUser?) throws {
+        guard let data = userData else {
+            throw KeychainError.emptyModel
+        }
+        let email = data.email
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: email
+        ]
+        
+        let password = data.password
+        guard !password.isEmpty
+        else {
+            throw KeychainError.incorrectOrEmptyPassword
+        }
+        
+        let passwordData = password.data(using: String.Encoding.utf8)!
+        
+        let attribute: [String:Any] = [
+            kSecAttrAccount as String: email,
+            kSecValueData as String: passwordData
+        ]
+        
+        let status = SecItemUpdate(query as CFDictionary, attribute as CFDictionary)
+        guard status != errSecItemNotFound else { throw KeychainError.incorrectEmailOrPassword }
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status )}
         
     }
     
-    func delete(){
+    func deleteUserAccountData(userData: CredentialUser?) throws {
+        guard let data = userData else {
+            throw KeychainError.emptyModel
+        }
+        
+        let email = data.email
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: email
+        ]
+    
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw KeychainError.unhandledError(status: status)
+        }
         
     }
 }

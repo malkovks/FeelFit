@@ -43,7 +43,11 @@ class FFSubtitleTableViewCell: UITableViewCell {
     }
     
     func configureView(title: String,model: UserCharactersData?,_ indexPath: IndexPath){
-        guard let model = model else { return }
+        let dateOfBirth = model?.dateOfBirth?.convertComponentsToDateString() ?? "Not set"
+        let userGender = model?.userGender ?? "Not set"
+        let bloodType = model?.bloodType ?? " Not set"
+        let skinType = model?.fitzpatrickSkinType ?? "Not set"
+        let wheelChairUse = model?.wheelChairUse ?? "Not set"
         switch indexPath {
         case [0,0]:
             setupInformation(title: title, info: "user name")
@@ -51,15 +55,15 @@ class FFSubtitleTableViewCell: UITableViewCell {
             setupInformation(title: title, info: "user second name")
         case [1,0]:
             
-            setupInformation(title: title, info: model.dateOfBirth?.convertComponentsToDateString())
+            setupInformation(title: title, info: dateOfBirth)
         case [1,1]:
-            setupInformation(title: title, info: model.userGender)
+            setupInformation(title: title, info: userGender)
         case [1,2]:
-            setupInformation(title: title, info: model.bloodType)
+            setupInformation(title: title, info: bloodType)
         case [1,3]:
-            setupInformation(title: title, info: model.fitzpatrickSkinType)
+            setupInformation(title: title, info: skinType)
         case [2,0]:
-            setupInformation(title: title, info: model.wheelChairUse)
+            setupInformation(title: title, info: wheelChairUse)
         default:
             break
         }
