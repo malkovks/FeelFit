@@ -14,7 +14,7 @@ extension UIViewController {
     ///   - text: custom text variations
     ///   - duration: time duration of presenting alert
     ///   - controllerView: view of UIViewController where this alert will presented
-    func viewAlertController(text: String?,startDuration startTime: Double,timer endTime: Double,controllerView: UIView){
+    func viewAlertController(text: String?,startDuration startTime: Double = 0.5,timer endTime: Double = 4,controllerView: UIView){
         
         
         let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
@@ -59,14 +59,6 @@ extension UIViewController {
             make.width.lessThanOrEqualToSuperview()
             make.height.lessThanOrEqualToSuperview().offset(-15)
         }
-        
-//        let existViews = self.view.subviews
-//        for view in existViews {
-//            if view == customView {
-//                view.removeFromSuperview()
-//            }
-//        }
-
         
         UIView.animate(withDuration: startTime) {
             label.alpha = 1.0

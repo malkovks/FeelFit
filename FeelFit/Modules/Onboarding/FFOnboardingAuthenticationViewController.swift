@@ -47,6 +47,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         textfield.borderStyle = .roundedRect
         textfield.keyboardType = .asciiCapable
         textfield.returnKeyType = .continue
+        textfield.textContentType = .emailAddress
         return textfield
     }()
     
@@ -68,6 +69,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         textfield.isSecureTextEntry = true
         textfield.returnKeyType = .done
         textfield.passwordRules = nil
+        textfield.textContentType = .oneTimeCode
         return textfield
     }()
     
@@ -98,32 +100,14 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     }
     
     @objc private func didTapCreateNewAccount(){
-        guard let email = userEmailTextField.text,
-              let password = userPasswordTextField.text
-        else {
-            return
-        }
-        
-        let data = CredentialUser(email: email, password: password)
-        self.accountCredential = data
-        
         performKeychainRequest(completed: true) { [weak self] userData in
-            try self?.accountManager.createNewUserAccount(userData: userData)
+            if self!.evaluateEmailAndPasswordValidation(userData){
+                try self?.accountManager.createNewUserAccount(userData: userData)
+            }
         }
     }
     
-    
-    
     @objc private func didTapLogin(){
-        guard let email = userEmailTextField.text,
-              let password = userPasswordTextField.text
-        else {
-            return
-        }
-        
-        let data = CredentialUser(email: email, password: password)
-        self.accountCredential = data
-        
         performKeychainRequest(completed: true) { [weak self] userData in
             try self?.accountManager.checkForCreatedUserAccount(userData: userData)
             self?.confirmButton(completed: true)
@@ -148,8 +132,11 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     
     @objc private func didTapUpdateOrDeleteAccount(){
         alertControllerActionConfirm(title: "Warning", message: "Do you want to update your email or password or delete account?", confirmActionTitle: "Update", secondTitleAction: "Delete", style: .alert) { [weak self] in
+            
             self?.performKeychainRequest(completed: false, requestFunction: { userData in
-                try self?.accountManager.updateUserAccountData(userData: userData)
+                if self!.evaluateEmailAndPasswordValidation(userData) {
+                    try self?.accountManager.updateUserAccountData(userData: userData)
+                }
             })
         } secondAction: { [weak self] in
             self?.performKeychainRequest(completed: false, requestFunction: { userData in
@@ -159,8 +146,10 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     }
     
     private func performKeychainRequest(completed status : Bool,requestFunction: (_ userData: CredentialUser?) throws -> Void ){
+        let userData = checkEmailAndPasswordRules()
+        accountCredential = userData
         do {
-            try requestFunction(accountCredential)
+            try requestFunction(userData)
             confirmButton(completed: status)
             viewAlertController(text: "Successfully", startDuration: 0.5, timer: 4, controllerView: self.view)
         } catch let error as KeychainError {
@@ -168,6 +157,42 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         } catch {
             self.viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
         }
+    }
+    
+    private func checkEmailAndPasswordRules() -> (CredentialUser?) {
+        guard let email = userEmailTextField.text,
+              let password = userPasswordTextField.text
+        else {
+            viewAlertController(text: "Enter value in email or password in text fields", startDuration: 0.5, timer: 4, controllerView: view)
+            return nil
+        }
+        
+        let value: CredentialUser? = CredentialUser(email: email, password: password)
+        return value
+    }
+    
+    private func evaluateEmailAndPasswordValidation(_ userData: CredentialUser?) -> Bool {
+        guard let email = userData?.email,
+              email.isValidEmailText() else {
+            viewAlertController(text:
+                    """
+                    You entered invalid characters. The register must contain only alphabetic characters, "." and "_".
+                    """
+                                , startDuration: 0.5, timer: 4, controllerView: view)
+            return false
+        }
+        
+        guard let password = userData?.password,
+              password.isValidPasswordText() else {
+            viewAlertController(text:
+                    """
+                    Error. Your password must contains 1 uppercase alphabet character, one special symbol or number. Password must contains at least 8 elements.
+                    """
+                                , controllerView: view)
+            return false
+        }
+        
+        return true
     }
     
     private func confirmButton(completed: Bool){
@@ -178,8 +203,6 @@ class FFOnboardingAuthenticationViewController: UIViewController {
             createAccountButton.isHidden = true
             logoutAccountButton.isHidden = false
             updateOrDeleteAccountButton.isHidden = false
-            userEmailTextField.isEnabled = false
-            userPasswordTextField.isEnabled = false
         } else {
             skipRegistrationButton.configuration?.title = "Skip Registration"
             skipRegistrationButton.configuration?.baseBackgroundColor = .clear
@@ -187,8 +210,6 @@ class FFOnboardingAuthenticationViewController: UIViewController {
             createAccountButton.isHidden = false
             logoutAccountButton.isHidden = true
             updateOrDeleteAccountButton.isHidden = true
-            userEmailTextField.isEnabled = true
-            userPasswordTextField.isEnabled = true
             userEmailTextField.text = ""
             userPasswordTextField.text = ""
             accountCredential = nil

@@ -12,6 +12,18 @@ extension String {
         return self.replacingOccurrences(of: of, with: with).capitalized
     }
     
+    func isValidEmailText() -> Bool {
+        let emailRegix = "[A-Z0-9a-z._]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegix)
+        return emailPredicate.evaluate(with: self)
+    }
+    
+    func isValidPasswordText() -> Bool {
+        let passwordRegix = "^(?=.*[A-Z])(?=.*[0-9!@#$&*)[A-Za-z0-9!@#$%^&*]{6,}$"
+        let passwordPredicate = NSPredicate(format: "SELF MATHES %@", passwordRegix)
+        return passwordPredicate.evaluate(with: self)
+    }
+    
     func convertToStringData() -> Self {
         let currentLocale = Locale.current
         var calendar = Calendar.current
