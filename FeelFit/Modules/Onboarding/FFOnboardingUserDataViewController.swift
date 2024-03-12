@@ -18,6 +18,12 @@ class FFOnboardingUserDataViewController: UIViewController {
         bloodType: "Not set",
         fitzpatrickSkinType: "Not set")
     
+    private var userDataDictionary: [[String: String]] = [
+        ["Name":"Kostia","Second Name": "Malkov"],
+        ["Birthday":"21.10.1995","Gender":"Male","Blood Type":"A+","Skin Type(Fitzpatrick Type)":"Not Set"],
+        ["Stoller chair":"Not Set"]
+    ]
+    
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero,style: .insetGrouped)
         tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
@@ -34,10 +40,30 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didTapLoadHealthData(){
+        var dict = userDataDictionary[1]
+        
+        
         defaultAlertController(title: nil, message: "Do you want to download medical data from Health?", actionTitle: "Download", style: .alert) {
-            FFHealthDataLoading.shared.loadingCharactersData { [weak self] userDataString in
-                self?.tableView.reloadData()
-                self?.userData = userDataString ?? nil
+            FFHealthDataLoading.shared.loadingCharactersData { [unowned self] userDataString in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+                for (key,_) in dict {
+                    switch key{
+                    case "Birthday":
+                        dict[key] = userDataString?.dateOfBirth?.convertComponentsToDateString() ?? "Not Set"
+                    case "Gender":
+                        dict[key] = userDataString?.userGender ?? "Not Set"
+                    case "Blood Type":
+                        dict[key] = userDataString?.bloodType ?? "Not Set"
+                    case "Skin Type(Fitzpatrick Type)":
+                        dict[key] = userDataString?.fitzpatrickSkinType ?? "Not Set"
+                    default:
+                        dict[key] = "Not Set"
+                        break
+                    }
+                }
+                self.userDataDictionary[1] = dict
             }
         }
     }
@@ -70,17 +96,16 @@ extension FFOnboardingUserDataViewController: SetupViewController {
 
 extension FFOnboardingUserDataViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return tableViewText.count
+        return userDataDictionary.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableViewText[section].count
+        return userDataDictionary[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-        let text = tableViewText[indexPath.section][indexPath.row]
-        cell.configureView(title: text, model: userData, indexPath)
+        cell.configureView(userDictionary: userDataDictionary, indexPath)
         return cell
     }
 }

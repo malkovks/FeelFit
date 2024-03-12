@@ -29,7 +29,31 @@ class FFSubtitleTableViewCell: UITableViewCell {
         field.textColor = FFResources.Colors.textColor
         field.isUserInteractionEnabled = false
         field.isEnabled = false
+        
         return field
+    }()
+    
+    private let pickerTargetButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.configuration = .tinted()
+        button.configuration?.titleAlignment = .trailing
+        button.configuration?.imagePlacement = .leading
+        button.configuration?.imagePadding = 2
+        button.configuration?.baseBackgroundColor = .lightGray
+        button.configuration?.title = "Some text"
+        button.configuration?.baseForegroundColor = FFResources.Colors.customBlack
+        button.isHidden = true
+        return button
+    }()
+    
+    
+    private let stackView: UIStackView = {
+        let stackView = UIStackView(frame: .zero)
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.alignment = .fill
+        stackView.spacing = 2
+        return stackView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -42,32 +66,35 @@ class FFSubtitleTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(title: String,model: UserCharactersData?,_ indexPath: IndexPath){
-        let dateOfBirth = model?.dateOfBirth?.convertComponentsToDateString() ?? "Not set"
-        let userGender = model?.userGender ?? "Not set"
-        let bloodType = model?.bloodType ?? " Not set"
-        let skinType = model?.fitzpatrickSkinType ?? "Not set"
-        let wheelChairUse = model?.wheelChairUse ?? "Not set"
-        switch indexPath {
-        case [0,0]:
-            setupInformation(title: title, info: "user name")
-        case [0,1]:
-            setupInformation(title: title, info: "user second name")
-        case [1,0]:
-            
-            setupInformation(title: title, info: dateOfBirth)
-        case [1,1]:
-            setupInformation(title: title, info: userGender)
-        case [1,2]:
-            setupInformation(title: title, info: bloodType)
-        case [1,3]:
-            setupInformation(title: title, info: skinType)
-        case [2,0]:
-            setupInformation(title: title, info: wheelChairUse)
+    func configureView(userDictionary data: [[String:String]],_ indexPath: IndexPath){
+        let dictionary = data[indexPath.section]
+        let key: String = Array(dictionary.keys).sorted()[indexPath.row]
+        let value: String = Array(dictionary.values).sorted()[indexPath.row]
+        
+        
+//        setupConfiguration(indexPath)
+        setupInformation(title: key, info: value)
+    }
+    
+    func setupConfiguration(_ indexPath: IndexPath){
+        switch indexPath.section {
+        case 0:
+            configureEditingCell(true)
+        case 1,2:
+            let text = titleTextField.text
+            titleTextField.isHidden = false
+            pickerTargetButton.isHidden = false
+            pickerTargetButton.configuration?.title = text
+            configureEditingCell(false)
         default:
             break
         }
         
+    }
+    
+    enum TableViewCellValue {
+        case textField
+        case picker
     }
     
     private func setupInformation(title: String, info: String?){
@@ -81,13 +108,16 @@ class FFSubtitleTableViewCell: UITableViewCell {
     func configureEditingCell(_ isEditing: Bool){
         if isEditing {
             titleTextField.isUserInteractionEnabled = true
+            titleTextField.isHidden = false
             titleTextField.isEnabled = true
             titleTextField.textColor = FFResources.Colors.activeColor
+            titleTextField.backgroundColor = .secondarySystemBackground
         } else {
             titleTextField.isUserInteractionEnabled = false
             titleTextField.isEnabled = false
             titleTextField.textColor = FFResources.Colors.textColor
             titleTextField.resignFirstResponder()
+            titleTextField.backgroundColor = .clear
         }
     }
     
@@ -97,11 +127,9 @@ class FFSubtitleTableViewCell: UITableViewCell {
     }
     
     private func setupCellConstraints(){
-        let stackView = UIStackView(arrangedSubviews: [firstTitleLabel,titleTextField])
-        stackView.axis = .horizontal
-        stackView.distribution = .fill
-        stackView.alignment = .fill
-        stackView.spacing = 2
+        stackView.addArrangedSubview(firstTitleLabel)
+        stackView.addArrangedSubview(titleTextField)
+        stackView.addArrangedSubview(pickerTargetButton)
         
         self.contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in

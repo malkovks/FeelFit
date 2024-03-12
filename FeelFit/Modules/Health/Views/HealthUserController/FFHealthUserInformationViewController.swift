@@ -12,6 +12,12 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     private let tableViewText: [[String]] = [["Name","Second Name"],["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)"],["Stoller chair"]]
     private var usersData: UserCharactersData = UserCharactersData()
     
+    private var userDataDictionary: [[String: String]] = [
+        ["Name":"Kostia","Second Name": "Malkov"],
+        ["Birthday":"21.10.1995","Gender":"Male","Blood Type":"A+","Skin Type(Fitzpatrick Type)":"Not Set"],
+        ["Stoller chair":"Not Set"]
+    ]
+    
     private var isTableViewIsEditing: Bool = false
     
     var userImage: UIImage? = UIImage(systemName: "person.crop.circle")!
@@ -90,17 +96,16 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
 
 extension FFHealthUserInformationViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        tableViewText.count
+        return userDataDictionary.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableViewText[section].count
+        return userDataDictionary[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-        let title = tableViewText[indexPath.section][indexPath.row]
-        cell.configureView(title: title, model: usersData, indexPath)
+        cell.configureView(userDictionary: userDataDictionary, indexPath)
         return cell
     }
 }
@@ -170,4 +175,8 @@ private extension FFHealthUserInformationViewController {
             make.edges.equalToSuperview()
         }
     }
+}
+
+#Preview {
+    return FFHealthUserInformationViewController()
 }
