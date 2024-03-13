@@ -63,7 +63,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             nav.isNavigationBarHidden = true
             tabBar.present(nav, animated: true)
             UserDefaults.standard.setValue(false, forKey: "isOnboardingOpenedFirst")
-            
+
         }
     }
     

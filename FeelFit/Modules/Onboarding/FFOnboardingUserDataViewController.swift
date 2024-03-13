@@ -9,8 +9,6 @@ import UIKit
 
 class FFOnboardingUserDataViewController: UIViewController {
     
-    private let tableViewText: [[String]] = [["Name","Second Name"],["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)"],["Stoller chair"]]
-    
     private var userData: UserCharactersData? = UserCharactersData(
         userGender: "Male",
         dateOfBirth: nil,
@@ -19,9 +17,13 @@ class FFOnboardingUserDataViewController: UIViewController {
         fitzpatrickSkinType: "Not set")
     
     private var userDataDictionary: [[String: String]] = [
-        ["Name":"Kostia","Second Name": "Malkov"],
-        ["Birthday":"21.10.1995","Gender":"Male","Blood Type":"A+","Skin Type(Fitzpatrick Type)":"Not Set"],
-        ["Stoller chair":"Not Set"]
+        ["Name":"Enter Name",
+         "Second Name": "Enter Second Name"],
+        ["Birthday":"Not Set",
+         "Gender":"Not Set",
+         "Blood Type":"Not Set",
+         "Skin Type(Fitzpatrick Type)":"Not Set",
+         "Stoller chair":"Not Set"]
     ]
     
     private let tableView: UITableView = {
@@ -40,16 +42,14 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didTapLoadHealthData(){
-        var dict = userDataDictionary[1]
+        guard var dict = userDataDictionary.last else { return }
         
         
         defaultAlertController(title: nil, message: "Do you want to download medical data from Health?", actionTitle: "Download", style: .alert) {
             FFHealthDataLoading.shared.loadingCharactersData { [unowned self] userDataString in
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+                
                 for (key,_) in dict {
-                    switch key{
+                    switch key {
                     case "Birthday":
                         dict[key] = userDataString?.dateOfBirth?.convertComponentsToDateString() ?? "Not Set"
                     case "Gender":
@@ -64,8 +64,32 @@ class FFOnboardingUserDataViewController: UIViewController {
                     }
                 }
                 self.userDataDictionary[1] = dict
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
         }
+    }
+    
+    @objc private func didEnterTextInTextField(_ textField: UITextField){
+        if let text = textField.text{
+            let index = textField.tag
+            
+        }
+    }
+    
+    @objc private func didTapOpenPickerView(_ sender: UIButton){
+        print(sender.tag)
+        let vc = FFPickerViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .formSheet
+        nav.sheetPresentationController?.detents = [.custom(resolver: { context in
+            return self.view.frame.size.height/2
+        })]
+        nav.sheetPresentationController?.prefersGrabberVisible = true
+        
+        present(nav,animated: true)
     }
 }
 
@@ -83,6 +107,7 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.isScrollEnabled = false
     }
     
     private func setupButtons(){
@@ -105,6 +130,10 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
+        cell.titleTextField.addTarget(self, action: #selector(didEnterTextInTextField), for: .editingDidEnd)
+        cell.titleTextField.tag = indexPath.row
+        cell.pickerTargetButton.tag = indexPath.row
+        cell.pickerTargetButton.addTarget(self, action: #selector(didTapOpenPickerView), for: .primaryActionTriggered)
         cell.configureView(userDictionary: userDataDictionary, indexPath)
         return cell
     }
@@ -120,14 +149,14 @@ extension FFOnboardingUserDataViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview()
             make.height.greaterThanOrEqualToSuperview().multipliedBy(0.7)
         }
         
         view.addSubview(downloadDataButton)
         downloadDataButton.snp.makeConstraints { make in
-            make.top.equalTo(tableView.snp.bottom).offset(50)
+            make.top.equalTo(tableView.snp.bottom)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(55)
@@ -136,7 +165,7 @@ extension FFOnboardingUserDataViewController {
 }
 
 #Preview {
-    let nav = UINavigationController(rootViewController: FFOnboardingUserDataViewController())
+    let nav = FFNavigationController(rootViewController: FFOnboardingUserDataViewController())
     nav.modalPresentationStyle = .fullScreen
     return nav
 }
