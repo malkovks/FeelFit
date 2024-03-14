@@ -73,15 +73,15 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didEnterTextInTextField(_ textField: UITextField){
-        if let text = textField.text{
-            let index = textField.tag
-            
-        }
+//        if let text = textField.text{
+//            let index = textField.tag
+//            
+//        }
     }
     
-    @objc private func didTapOpenPickerView(_ sender: UIButton){
-        print(sender.tag)
-        let vc = FFPickerViewController()
+    @objc func didTapOpenPickerView(_ sender: UIButton){
+        let index = sender.tag
+        let vc = FFPickerViewController(tableViewIndex: index, blurEffectStyle: .dark, vibrancyEffect: .none)
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .formSheet
         nav.sheetPresentationController?.detents = [.custom(resolver: { context in
@@ -131,6 +131,7 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
         cell.titleTextField.addTarget(self, action: #selector(didEnterTextInTextField), for: .editingDidEnd)
+        cell.firstTitleLabel.textColor = .customBlack
         cell.titleTextField.tag = indexPath.row
         cell.pickerTargetButton.tag = indexPath.row
         cell.pickerTargetButton.addTarget(self, action: #selector(didTapOpenPickerView), for: .primaryActionTriggered)

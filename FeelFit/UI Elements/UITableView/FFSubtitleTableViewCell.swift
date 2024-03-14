@@ -11,12 +11,12 @@ class FFSubtitleTableViewCell: UITableViewCell {
     
     static let identifier = "FFSubtitleTableViewCell"
     
-    private let firstTitleLabel: UILabel = {
+    let firstTitleLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.numberOfLines = 1
         label.font = UIFont.textLabelFont(size: 16,weight: .heavy)
         label.textAlignment = .left
-        label.textColor =  FFResources.Colors.customBlack
+        
         return label
     }()
     

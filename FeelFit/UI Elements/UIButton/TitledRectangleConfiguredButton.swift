@@ -26,11 +26,11 @@ class CustomConfigurationButton: UIButton  {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.configuration = .filled()
-        self.configuration?.baseForegroundColor = FFResources.Colors.customBlack
+        self.configuration?.baseForegroundColor = .customBlack
         self.configuration?.baseBackgroundColor = .clear
         self.configuration?.cornerStyle = .small
         self.configuration?.background.strokeWidth = 0.5
-        self.configuration?.background.strokeColor = FFResources.Colors.customBlack
+        self.configuration?.background.strokeColor = .customBlack
         
         self.configuration?.titleAlignment = .center
         self.contentMode = .center

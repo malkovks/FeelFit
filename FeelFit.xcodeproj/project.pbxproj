@@ -52,7 +52,7 @@
 		0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */; };
 		0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44950F2ABA031B0082C909 /* SetupProtocol.swift */; };
 		0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495152ABA67CE0082C909 /* FFTabBarController.swift */; };
-		0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495182ABA72A90082C909 /* Resources+Enums.swift */; };
+		0A4495192ABA72A90082C909 /* FFResources+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495182ABA72A90082C909 /* FFResources+Enum.swift */; };
 		0A4495292ABA79700082C909 /* FFMusclesGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4495282ABA79700082C909 /* FFMusclesGroupViewController.swift */; };
 		0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */; };
 		0A44952F2ABA7A340082C909 /* FFProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A44952E2ABA7A340082C909 /* FFProfileViewController.swift */; };
@@ -107,6 +107,10 @@
 		0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */; };
 		0AC145F32BA1CBDA00C8544A /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F22BA1CBDA00C8544A /* UIButton+Extension.swift */; };
 		0AC145F52BA21BD400C8544A /* UIBlurEffect+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F42BA21BD400C8544A /* UIBlurEffect+Extension.swift */; };
+		0AC145F72BA271B700C8544A /* HealthStoreRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */; };
+		0AC145F92BA2729700C8544A /* FFTabBarIndex+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */; };
+		0AC145FB2BA272BA00C8544A /* NewsSelection+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */; };
+		0AC145FD2BA2A78400C8544A /* Sounds.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AC145FC2BA2A78400C8544A /* Sounds.xcassets */; };
 		0AC59C662B931EA00009489E /* TitledRectangleConfiguredButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */; };
 		0AC99D652B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */; };
 		0AC99D672B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */; };
@@ -190,7 +194,7 @@
 		0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageViewModel.swift; sourceTree = "<group>"; };
 		0A44950F2ABA031B0082C909 /* SetupProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupProtocol.swift; sourceTree = "<group>"; };
 		0A4495152ABA67CE0082C909 /* FFTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTabBarController.swift; sourceTree = "<group>"; };
-		0A4495182ABA72A90082C909 /* Resources+Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Resources+Enums.swift"; sourceTree = "<group>"; };
+		0A4495182ABA72A90082C909 /* FFResources+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFResources+Enum.swift"; sourceTree = "<group>"; };
 		0A4495282ABA79700082C909 /* FFMusclesGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMusclesGroupViewController.swift; sourceTree = "<group>"; };
 		0A44952C2ABA79FB0082C909 /* FFTRainingPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTRainingPlanViewController.swift; sourceTree = "<group>"; };
 		0A44952E2ABA7A340082C909 /* FFProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFProfileViewController.swift; sourceTree = "<group>"; };
@@ -246,6 +250,10 @@
 		0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewModel.swift; sourceTree = "<group>"; };
 		0AC145F22BA1CBDA00C8544A /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
 		0AC145F42BA21BD400C8544A /* UIBlurEffect+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBlurEffect+Extension.swift"; sourceTree = "<group>"; };
+		0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthStoreRequest.swift; sourceTree = "<group>"; };
+		0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFTabBarIndex+Enum.swift"; sourceTree = "<group>"; };
+		0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewsSelection+Enum.swift"; sourceTree = "<group>"; };
+		0AC145FC2BA2A78400C8544A /* Sounds.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sounds.xcassets; sourceTree = "<group>"; };
 		0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledRectangleConfiguredButton.swift; sourceTree = "<group>"; };
 		0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewController.swift; sourceTree = "<group>"; };
 		0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingUserDataViewController.swift; sourceTree = "<group>"; };
@@ -477,6 +485,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4494C82AB822000082C909 /* Assets.xcassets */,
+				0AC145FC2BA2A78400C8544A /* Sounds.xcassets */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -549,7 +558,10 @@
 		0A44950C2AB9FC310082C909 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0A4495182ABA72A90082C909 /* Resources+Enums.swift */,
+				0A4495182ABA72A90082C909 /* FFResources+Enum.swift */,
+				0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */,
+				0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */,
+				0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */,
 				0A4495172ABA728F0082C909 /* UIKit extensions  */,
 				0A82CD202B2E459C00F98D8B /* UIViewController+Extension */,
 			);
@@ -1128,7 +1140,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A4494D02AB822000082C909 /* Build configuration list for PBXNativeTarget "FeelFit" */;
 			buildPhases = (
-				0ABB7BF52BA030F70096BCA4 /* ShellScript */,
 				0A4494B82AB821FD0082C909 /* Sources */,
 				0A4494B92AB821FD0082C909 /* Frameworks */,
 				0A4494BA2AB821FD0082C909 /* Resources */,
@@ -1198,6 +1209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0AD8F4322B29C65200A40C4B /* ding.mp3 in Resources */,
+				0AC145FD2BA2A78400C8544A /* Sounds.xcassets in Resources */,
 				0AD8F4302B29C2CC00A40C4B /* arnold_run.jpeg in Resources */,
 				0A4494CC2AB822000082C909 /* LaunchScreen.storyboard in Resources */,
 				0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */,
@@ -1206,26 +1218,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		0ABB7BF52BA030F70096BCA4 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint autocorrect --format\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0A4494B82AB821FD0082C909 /* Sources */ = {
@@ -1269,6 +1261,7 @@
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */,
 				0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */,
+				0AC145F72BA271B700C8544A /* HealthStoreRequest.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
 				0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
@@ -1301,11 +1294,12 @@
 				0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */,
 				0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */,
 				0A63AC622B6BB87000B32981 /* FFHealthViewModel.swift in Sources */,
-				0A4495192ABA72A90082C909 /* Resources+Enums.swift in Sources */,
+				0A4495192ABA72A90082C909 /* FFResources+Enum.swift in Sources */,
 				0ACEA9DD2ACF1B9800899CF6 /* FFNewsStoreManager.swift in Sources */,
 				0AC145F52BA21BD400C8544A /* UIBlurEffect+Extension.swift in Sources */,
 				0A86DEDB2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift in Sources */,
 				0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */,
+				0AC145F92BA2729700C8544A /* FFTabBarIndex+Enum.swift in Sources */,
 				0A69AF362B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift in Sources */,
 				0A2347B72AF11046002C161C /* FFExercisesMuscleGroupViewController.swift in Sources */,
 				0AC99D6F2B9AF5E3000AAAD1 /* TextFieldToolBar.swift in Sources */,
@@ -1348,6 +1342,7 @@
 				0AEE085E2B7B5B250043722B /* AlertTextField+UIViewController.swift in Sources */,
 				0AC99D6C2B97F666000AAAD1 /* FFUserAccountManager.swift in Sources */,
 				0A634C882B9CC1230068E544 /* Health Data Error Handler.swift in Sources */,
+				0AC145FB2BA272BA00C8544A /* NewsSelection+Enum.swift in Sources */,
 				0A4495392ABC43B70082C909 /* FFNewsModel.swift in Sources */,
 				0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */,
 				0A9151A52B037AB200FE5E41 /* FFCreateHeaderView.swift in Sources */,
