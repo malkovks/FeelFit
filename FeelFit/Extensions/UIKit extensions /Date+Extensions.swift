@@ -9,6 +9,15 @@ import UIKit
 
 extension Date {
     
+    
+    
+    /// Function converting self Date to DateComponents with year,month and day
+    /// - Returns: return DateComponents include year,month and day
+    func convertDateToDateComponents() -> DateComponents {
+        let calendar = Calendar.current
+        return calendar.dateComponents([.year,.month,.day], from: self)
+    }
+    
     /// Converting input Date to String format.
     /// - Returns: Return string format. Example 2023-12-31
     func shortConvertString() -> String {

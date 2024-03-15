@@ -65,6 +65,7 @@ class FFSubtitleTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         titleTextField.text = nil
+        firstTitleLabel.text = nil
         pickerTargetButton.configuration?.title = nil
     }
     

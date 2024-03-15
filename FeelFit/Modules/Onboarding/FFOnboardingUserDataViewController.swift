@@ -9,6 +9,8 @@ import UIKit
 
 class FFOnboardingUserDataViewController: UIViewController {
     
+    private let calendar = Calendar.current
+    
     private var userData: UserCharactersData? = UserCharactersData(
         userGender: "Male",
         dateOfBirth: nil,
@@ -82,13 +84,13 @@ class FFOnboardingUserDataViewController: UIViewController {
     @objc func didTapOpenPickerView(_ sender: UIButton){
         let index = sender.tag
         let vc = FFPickerViewController(tableViewIndex: index, blurEffectStyle: .dark, vibrancyEffect: .none)
+        vc.delegate = self
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .formSheet
         nav.sheetPresentationController?.detents = [.custom(resolver: { context in
-            return self.view.frame.size.height/2
+            return self.view.frame.size.height * 0.5
         })]
         nav.sheetPresentationController?.prefersGrabberVisible = true
-        
         present(nav,animated: true)
     }
 }
@@ -117,6 +119,29 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     func setupNavigationController() { }
     
     func setupViewModel() { }
+}
+
+extension FFOnboardingUserDataViewController: FFPickerViewDelegate {
+    func didReceiveSelectedData(selectedDate: Date?, selectedValue: String?, selectedIndex: Int) {
+        let indexPath = IndexPath(row: selectedIndex, section: 1)
+        let date = selectedDate
+        
+        if date != nil {
+            let dateComponents = date?.convertDateToDateComponents()
+            let dateString = dateComponents?.convertComponentsToDateString()
+            changeDictionaryKeyValue(selectedIndex, text: dateString)
+        } else {
+            changeDictionaryKeyValue(selectedIndex, text: selectedValue)
+        }
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    private func changeDictionaryKeyValue(_ index: Int,text value: String?){
+        let text = value ?? "Not Set"
+        var dictionary = userDataDictionary[1]
+        let key: String = Array(dictionary.keys).sorted()[index]
+        userDataDictionary[1][key] = text
+    }
 }
 
 extension FFOnboardingUserDataViewController: UITableViewDataSource {

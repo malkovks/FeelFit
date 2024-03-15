@@ -111,6 +111,7 @@
 		0AC145F92BA2729700C8544A /* FFTabBarIndex+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */; };
 		0AC145FB2BA272BA00C8544A /* NewsSelection+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */; };
 		0AC145FD2BA2A78400C8544A /* Sounds.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AC145FC2BA2A78400C8544A /* Sounds.xcassets */; };
+		0AC145FF2BA43D4700C8544A /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */; };
 		0AC59C662B931EA00009489E /* TitledRectangleConfiguredButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */; };
 		0AC99D652B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */; };
 		0AC99D672B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */; };
@@ -254,6 +255,7 @@
 		0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFTabBarIndex+Enum.swift"; sourceTree = "<group>"; };
 		0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewsSelection+Enum.swift"; sourceTree = "<group>"; };
 		0AC145FC2BA2A78400C8544A /* Sounds.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sounds.xcassets; sourceTree = "<group>"; };
+		0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
 		0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledRectangleConfiguredButton.swift; sourceTree = "<group>"; };
 		0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewController.swift; sourceTree = "<group>"; };
 		0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingUserDataViewController.swift; sourceTree = "<group>"; };
@@ -590,6 +592,7 @@
 				0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */,
 				0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */,
 				0AC145F22BA1CBDA00C8544A /* UIButton+Extension.swift */,
+				0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */,
 			);
 			path = "UIKit extensions ";
 			sourceTree = "<group>";
@@ -1235,6 +1238,7 @@
 				0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */,
 				0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */,
 				0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */,
+				0AC145FF2BA43D4700C8544A /* UILabel+Extension.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
 				0ADFDE9A2AC7E8D800CF254C /* String+Extensions.swift in Sources */,
 				0A0059252B62B8CB000712D6 /* FFHealthUserProfileViewController.swift in Sources */,
