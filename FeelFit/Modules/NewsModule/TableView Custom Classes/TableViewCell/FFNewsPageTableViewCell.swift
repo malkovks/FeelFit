@@ -145,7 +145,7 @@ class FFNewsPageTableViewCell: UITableViewCell {
         titleLabel.text = model?.title ?? nil
         contentLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
-        publishDateLabel.text = "Published: " + (model?.publishedAt.convertToStringData() ?? "")
+        publishDateLabel.text = "Published: " + (model?.publishedAt.convertDateToString() ?? "")
         
         guard let model = model,
               let imageUrl = model.urlToImage else {

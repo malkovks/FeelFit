@@ -8,33 +8,34 @@
 import UIKit
 
 protocol FFPickerViewDelegate: AnyObject {
-    func didReceiveSelectedData(selectedDate: Date?,selectedValue: String?,selectedIndex: Int)
+    func didReceiveSelectedDate(selectedDate: Date?, index: Int)
+    func didReceiveSelectedValue(selectedValue: String?,index: Int)
 }
 
 class FFPickerViewController: UIViewController {
     
     weak var delegate: FFPickerViewDelegate?
-    
-//    var completionText: ((String) -> Void)?
-//    var completionDate: ((Date) -> Void)?
+
     
     private var pickerData: [String]?
     private var tableViewIndex: Int
     private var blurEffect: UIBlurEffect.Style?
     private var vibrancyEffect: UIVibrancyEffectStyle?
     
-    private var selectedValue: String = ""
+    private var selectedValue: String?
     
     //Доделать инициализатор
     //Должен брать на вход опциональные данные в случае если они имеются и выбирать уже существующий кейс из enum
     init(
+        selectedValue: String,
         tableViewIndex: Int,
         blurEffectStyle: UIBlurEffect.Style?,
         vibrancyEffect: UIVibrancyEffectStyle?) {
-        self.tableViewIndex = tableViewIndex
-        self.blurEffect = blurEffectStyle
-        self.vibrancyEffect = vibrancyEffect
-        super.init(nibName: nil, bundle: nil)
+            self.selectedValue = selectedValue
+            self.tableViewIndex = tableViewIndex
+            self.blurEffect = blurEffectStyle
+            self.vibrancyEffect = vibrancyEffect
+            super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -70,28 +71,50 @@ class FFPickerViewController: UIViewController {
         enumProvider(tableViewIndex)
     }
     
+    //MARK: - Action methods
+    
+    /// Function prepare visual part of view and process input index and return converted index
+    /// - Parameter index: selected index of table view
     func enumProvider(_ index: Int) {
         switch index {
         case 0:
             setupDisplayDatePickerView(true)
+            if selectedValue != nil {
+                let value: Date = selectedValue?.convertStringToDate() ?? Date()
+                datePickerView.setDate(value, animated: true)
+            }
             pickerData = nil
         case 1:
-            setupDisplayDatePickerView(false)
-            pickerData = HealthStoreRequest.BloodTypeResult.allCases.compactMap({ $0.rawValue })
+            setupPickerData(HealthStoreRequest.BloodTypeResult.self)
         case 2:
-            setupDisplayDatePickerView(false)
-            pickerData = HealthStoreRequest.GenderTypeResult.allCases.compactMap({ $0.rawValue })
+            setupPickerData(HealthStoreRequest.GenderTypeResult.self)
         case 3:
-            setupDisplayDatePickerView(false)
-            pickerData = HealthStoreRequest.FitzpatricSkinTypeResult.allCases.compactMap({ $0.rawValue })
+            setupPickerData(HealthStoreRequest.FitzpatricSkinTypeResult.self)
         case 4:
-            setupDisplayDatePickerView(false)
-            pickerData = HealthStoreRequest.WheelchairTypeResult.allCases.compactMap({ $0.rawValue })
+            setupPickerData(HealthStoreRequest.WheelchairTypeResult.self)
         default:
             setupDisplayDatePickerView(false)
             fatalError("Invalid index. Try again later")
         }
     }
+    
+    
+    /// Function take as input value enum type for processing data, convert to array, return as data for displaying in picker view and select row of picker view if value is not equal nil
+    /// - Parameter cases: Enum cases types where enum.rawValue == String
+    func setupPickerData<T: RawRepresentable & CaseIterable>(_ cases: T.Type) where T.RawValue == String {
+            setupDisplayDatePickerView(false)
+            let data = cases.allCases.compactMap({ $0.rawValue })
+            pickerData = data
+            guard let value = selectedValue,
+                  !value.isEmpty,
+                  let index = data.firstIndex(where: { $0 == value })
+            else {
+                return
+            }
+            pickerView.selectRow(index, inComponent: 0, animated: true)
+            
+        }
+
     
     private func setupDisplayDatePickerView(_ isDatePickerPresented: Bool) {
         if isDatePickerPresented {
@@ -107,11 +130,12 @@ class FFPickerViewController: UIViewController {
         
         if tableViewIndex == 0 {
             let selectedDate = datePickerView.date
-            delegate?.didReceiveSelectedData(selectedDate: selectedDate, selectedValue: nil, selectedIndex: tableViewIndex)
-        } else {
-            let selectedText = selectedRowLabel.text
-            delegate?.didReceiveSelectedData(selectedDate: nil, selectedValue: selectedText, selectedIndex: tableViewIndex)
+            delegate?.didReceiveSelectedDate(selectedDate: selectedDate, index: tableViewIndex)
         }
+//        } else {
+////            let selectedText = selectedRowLabel.text ?? selectedValue
+////            delegate?.didReceiveSelectedValue(selectedValue: selectedText, index: tableViewIndex)
+//        }
         self.dismiss(animated: true)
     }
     
@@ -125,6 +149,7 @@ class FFPickerViewController: UIViewController {
     }
 }
 
+//MARK: - Setup methods
 extension FFPickerViewController: SetupViewController {
     func setupView() {
         setupNavigationController()
@@ -179,6 +204,7 @@ extension FFPickerViewController: UIPickerViewDelegate {
         guard let value = pickerData?[row] else { return }
         selectedRowLabel.text = value
         selectedValue = value
+        delegate?.didReceiveSelectedValue(selectedValue: value, index: tableViewIndex)
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
@@ -233,7 +259,7 @@ extension FFPickerViewController {
 }
 
 #Preview {
-    let navVC = UINavigationController(rootViewController: FFPickerViewController(tableViewIndex: 3, blurEffectStyle: .regular, vibrancyEffect: .fill))
+    let navVC = UINavigationController(rootViewController: FFPickerViewController(selectedValue: "Not Set", tableViewIndex: 3, blurEffectStyle: .regular, vibrancyEffect: .fill))
     navVC.modalPresentationStyle = .pageSheet
     navVC.sheetPresentationController?.detents = [.custom(resolver: { context in
         return 300.0

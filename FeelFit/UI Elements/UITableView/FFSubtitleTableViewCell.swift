@@ -24,26 +24,22 @@ class FFSubtitleTableViewCell: UITableViewCell {
         let field = UITextField(frame: .zero)
         field.textAlignment = .right
         field.font = UIFont.textLabelFont(size: 16,weight: .regular)
-        field.placeholder = "Not detected"
+        field.placeholder = "Enter value"
         field.backgroundColor = .clear
-        field.textColor = FFResources.Colors.textColor
-        field.isUserInteractionEnabled = false
+        field.textColor = .main
+        field.isUserInteractionEnabled = true
         field.isEnabled = false
         return field
     }()
     
-    let pickerTargetButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.configuration = .tinted()
-        button.configuration?.titleTextAttributesTransformer = UIButton.setupCustomFont()
-        button.configuration?.titleAlignment = .trailing
-        button.configuration?.imagePlacement = .leading
-        button.configuration?.imagePadding = 2
-        button.configuration?.baseBackgroundColor = .clear
-        button.configuration?.title = "Some text"
-        button.configuration?.baseForegroundColor = FFResources.Colors.customBlack
-        button.isHidden = true
-        return button
+    let subtitleResultLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.numberOfLines = 1
+        label.textAlignment = .right
+        label.font = UIFont.textLabelFont(size: 16, for: .body, weight: .regular)
+        label.textColor = .customBlack
+        label.isHidden = true
+        return label
     }()
     
     
@@ -66,7 +62,7 @@ class FFSubtitleTableViewCell: UITableViewCell {
         super.prepareForReuse()
         titleTextField.text = nil
         firstTitleLabel.text = nil
-        pickerTargetButton.configuration?.title = nil
+        subtitleResultLabel.text = nil
     }
     
     required init?(coder: NSCoder) {
@@ -80,39 +76,27 @@ class FFSubtitleTableViewCell: UITableViewCell {
         
         
         setupConfiguration(indexPath,titleLabel: key,info: value)
-        setupInformation(title: key, info: value)
     }
     
     func setupConfiguration(_ indexPath: IndexPath,titleLabel: String, info: String?){
         firstTitleLabel.text = titleLabel
         switch indexPath.section {
         case 0:
-            configureEditingCell(true)
-            
-            titleTextField.text = info
-        case 1,2:
+            firstTitleLabel.text = titleLabel
+            titleTextField.text = info ?? ""
+            titleTextField.isHidden = false
+            subtitleResultLabel.isHidden = true
+        case 1:
             titleTextField.isHidden = true
-            pickerTargetButton.isHidden = false
-            pickerTargetButton.configuration?.title = info
-            pickerTargetButton.configuration?.baseForegroundColor = FFResources.Colors.activeColor
-            configureEditingCell(false)
+            subtitleResultLabel.isHidden = false
+            subtitleResultLabel.text = info
+            subtitleResultLabel.textColor = .main
         default:
+            titleTextField.text = nil
+            subtitleResultLabel.text = nil
+            firstTitleLabel.text = nil
             break
         }
-        
-    }
-    
-    enum TableViewCellValue {
-        case textField
-        case picker
-    }
-    
-    private func setupInformation(title: String, info: String?){
-        firstTitleLabel.text = title
-        if info == "Not set"{
-            titleTextField.textColor = .lightGray
-        }
-        titleTextField.text = info
     }
     
     func configureEditingCell(_ isEditing: Bool){
@@ -138,7 +122,7 @@ class FFSubtitleTableViewCell: UITableViewCell {
     private func setupCellConstraints(){
         stackView.addArrangedSubview(firstTitleLabel)
         stackView.addArrangedSubview(titleTextField)
-        stackView.addArrangedSubview(pickerTargetButton)
+        stackView.addArrangedSubview(subtitleResultLabel)
         
         self.contentView.addSubview(stackView)
         stackView.snp.makeConstraints { make in

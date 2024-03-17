@@ -14,6 +14,17 @@ enum HealthStoreRequest {
         case female = "Female"
         case male = "Male"
         
+        init(rawValue: String) {
+            switch rawValue {
+            case "Male":
+                self = .male
+            case "Female":
+                self = .female
+            default:
+                self = .notSet
+            }
+        }
+        
         init(from biologicalSex: HKBiologicalSexObject){
             switch biologicalSex.biologicalSex {
             case .notSet:
@@ -34,6 +45,17 @@ enum HealthStoreRequest {
         case notSet = "Not set"
         case noWheelchair = "No"
         case wheelchair = "Yes"
+        
+        init(rawValue: String) {
+            switch rawValue{
+            case "No":
+                self = .noWheelchair
+            case "Yes":
+                self = .wheelchair
+            default:
+                self = .notSet
+            }
+        }
         
         init(from wheelchair: HKWheelchairUseObject){
             switch wheelchair.wheelchairUse {
@@ -57,6 +79,19 @@ enum HealthStoreRequest {
         case IV = "Phototype IV"
         case V = "Phototype V"
         case VI = "Phototype VI"
+        
+        init(rawValue: String) {
+            switch rawValue {
+            case "Phototype I" : self = .I
+            case "Phototype II" : self = .II
+            case "Phototype III" : self = .III
+            case "Phototype IV" : self = .IV
+            case "Phototype V" : self = .V
+            case "Phototype VI" : self = .VI
+            default:
+                self = .notSet
+            }
+        }
         
         init(from skinType: HKFitzpatrickSkinTypeObject){
             switch skinType.skinType {
@@ -90,6 +125,24 @@ enum HealthStoreRequest {
         case abNegative = "AB(IV)Rh-"
         case oPositive =  "O(I)Rh+"
         case oNegative = "O(I)Rh-"
+        
+        init(rawValue: String){
+            switch rawValue {
+            case "Not set" :
+                self = .notSet
+            case "A(II)Rh+" :
+                self = .aPositive
+            case "A(II)Rh-": self = .aNegative
+            case "B(II)Rh+": self = .bPositive
+            case "B(II)Rh-": self = .bNegative
+            case "AB(IV)Rh+": self = .abPositive
+            case "AB(IV)Rh-": self = .abNegative
+            case "O(I)Rh+": self = .oPositive
+            case "O(I)Rh-": self = .oNegative
+            default:
+                self = .notSet
+            }
+        }
         
         init(from bloodType: HKBloodTypeObject) {
             switch bloodType.bloodType {

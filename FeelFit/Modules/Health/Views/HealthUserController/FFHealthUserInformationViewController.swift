@@ -129,7 +129,7 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
-        let cell = tableView.cellForRow(at: indexPath!) as! FFSubtitleTableViewCell
+        let _ = tableView.cellForRow(at: indexPath!) as! FFSubtitleTableViewCell
         if tableView.isEditing == false {
             
         }

@@ -8,6 +8,8 @@
 import UIKit
 
 extension String {
+    
+    
     func formatArrayText(of: String = "_",with: String = " ") -> Self {
         return self.replacingOccurrences(of: of, with: with).capitalized
     }
@@ -24,7 +26,18 @@ extension String {
         return passwordPredicate.evaluate(with: self)
     }
     
-    func convertToStringData() -> Self {
+    
+    /// Function process string date, input format style and return formatted date
+    /// - Parameter format: iso format value
+    /// - Returns: return formatted date
+    func convertStringToDate(to format: String = "dd MMM yyyy") -> Date? {
+        let onlyDateValue = self.replacingOccurrences(of: "\\(\\d+\\)", with: "", options: .regularExpression)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: onlyDateValue)
+    }
+    
+    func convertDateToString() -> Self {
         let currentLocale = Locale.current
         var calendar = Calendar.current
         let dateFormatter = DateFormatter()

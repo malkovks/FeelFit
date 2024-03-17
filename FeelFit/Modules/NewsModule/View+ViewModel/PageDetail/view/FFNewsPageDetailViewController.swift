@@ -166,7 +166,7 @@ class FFNewsPageDetailViewController: UIViewController, SetupViewController {
     
     func setupDetailNews(){
         let author = String(describing: model.author ?? "")
-        let publishedAt = String(describing: model.publishedAt.convertToStringData())
+        let publishedAt = String(describing: model.publishedAt.convertDateToString())
         guard var description = model.content else { return }
         
         if description.suffix(1) == "]" {

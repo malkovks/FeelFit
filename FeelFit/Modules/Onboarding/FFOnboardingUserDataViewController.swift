@@ -11,13 +11,6 @@ class FFOnboardingUserDataViewController: UIViewController {
     
     private let calendar = Calendar.current
     
-    private var userData: UserCharactersData? = UserCharactersData(
-        userGender: "Male",
-        dateOfBirth: nil,
-        wheelChairUse: "Not set",
-        bloodType: "Not set",
-        fitzpatrickSkinType: "Not set")
-    
     private var userDataDictionary: [[String: String]] = [
         ["Name":"Enter Name",
          "Second Name": "Enter Second Name"],
@@ -43,6 +36,7 @@ class FFOnboardingUserDataViewController: UIViewController {
         setupView()
     }
     
+    //MARK: - Actions methods
     @objc private func didTapLoadHealthData(){
         guard var dict = userDataDictionary.last else { return }
         
@@ -75,15 +69,17 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didEnterTextInTextField(_ textField: UITextField){
-//        if let text = textField.text{
-//            let index = textField.tag
-//            
-//        }
+        
     }
     
-    @objc func didTapOpenPickerView(_ sender: UIButton){
-        let index = sender.tag
-        let vc = FFPickerViewController(tableViewIndex: index, blurEffectStyle: .dark, vibrancyEffect: .none)
+    @objc func didTapOpenPickerView(_ indexPath: IndexPath){
+        view.endEditing(true)
+        let index = indexPath.row
+        let value: String = returnSelectedValueFromDictionary(index)
+        let vc = FFPickerViewController(selectedValue: value,
+                                        tableViewIndex: index,
+                                        blurEffectStyle: .dark,
+                                        vibrancyEffect: .none)
         vc.delegate = self
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .formSheet
@@ -95,6 +91,8 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
 }
 
+
+//MARK: - Setup methods
 extension FFOnboardingUserDataViewController: SetupViewController {
     func setupView() {
         view.backgroundColor = .secondarySystemGroupedBackground
@@ -110,6 +108,7 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         tableView.dataSource = self
         tableView.rowHeight = UITableView.automaticDimension
         tableView.isScrollEnabled = false
+        tableView.allowsSelection = true
     }
     
     private func setupButtons(){
@@ -119,28 +118,37 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     func setupNavigationController() { }
     
     func setupViewModel() { }
-}
-
-extension FFOnboardingUserDataViewController: FFPickerViewDelegate {
-    func didReceiveSelectedData(selectedDate: Date?, selectedValue: String?, selectedIndex: Int) {
-        let indexPath = IndexPath(row: selectedIndex, section: 1)
-        let date = selectedDate
+    
+    private func changeUserDataValue(_ index: Int,text value: String?){
+        let indexPath = IndexPath(row: index, section: 1)
         
-        if date != nil {
-            let dateComponents = date?.convertDateToDateComponents()
-            let dateString = dateComponents?.convertComponentsToDateString()
-            changeDictionaryKeyValue(selectedIndex, text: dateString)
-        } else {
-            changeDictionaryKeyValue(selectedIndex, text: selectedValue)
+        if let text = value {
+            guard let dictionary = userDataDictionary.last else { return }
+            let keys: [String] = Array(dictionary.keys).sorted()
+            let keyDictionary: String = keys[index]
+            userDataDictionary[1][keyDictionary] = text
         }
+        
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
-    private func changeDictionaryKeyValue(_ index: Int,text value: String?){
-        let text = value ?? "Not Set"
-        var dictionary = userDataDictionary[1]
-        let key: String = Array(dictionary.keys).sorted()[index]
-        userDataDictionary[1][key] = text
+    private func returnSelectedValueFromDictionary(_ index: Int) -> String {
+        let dictionary = userDataDictionary[1]
+        let value: String = Array(dictionary.values).sorted()[index]
+        return value
+    }
+}
+
+//Delegate method returning selected result from FFPickerViewDelegate
+extension FFOnboardingUserDataViewController: FFPickerViewDelegate {
+    func didReceiveSelectedDate(selectedDate: Date?, index: Int) {
+        let dateComponents = selectedDate?.convertDateToDateComponents()
+        let dateString = dateComponents?.convertComponentsToDateString()
+        changeUserDataValue(index, text: dateString)
+    }
+    
+    func didReceiveSelectedValue(selectedValue: String?, index: Int) {
+        changeUserDataValue(index, text: selectedValue)
     }
 }
 
@@ -158,8 +166,6 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
         cell.titleTextField.addTarget(self, action: #selector(didEnterTextInTextField), for: .editingDidEnd)
         cell.firstTitleLabel.textColor = .customBlack
         cell.titleTextField.tag = indexPath.row
-        cell.pickerTargetButton.tag = indexPath.row
-        cell.pickerTargetButton.addTarget(self, action: #selector(didTapOpenPickerView), for: .primaryActionTriggered)
         cell.configureView(userDictionary: userDataDictionary, indexPath)
         return cell
     }
@@ -169,13 +175,20 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 55
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 1 {
+            didTapOpenPickerView(indexPath)
+        }
+    }
 }
 
 extension FFOnboardingUserDataViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.greaterThanOrEqualToSuperview().multipliedBy(0.7)
         }
@@ -187,6 +200,29 @@ extension FFOnboardingUserDataViewController {
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(55)
         }
+    }
+}
+
+extension FFOnboardingUserDataViewController {
+    func presentTextFieldAlertController(placeholder: String? = "Enter value", text: String?, alertTitle: String? = nil, message: String? = nil, completion handler: @escaping (String) -> ()){
+        let alertController = UIAlertController(title: alertTitle, message: message, preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.placeholder = placeholder
+            textField.borderStyle = .roundedRect
+            textField.text = text
+            textField.enablesReturnKeyAutomatically = true
+            textField.textColor = .customBlack
+            textField.textAlignment = .left
+            textField.autocapitalizationType = .words
+        }
+        
+        let saveAction = UIAlertAction(title: "Save", style: .default) { alertAction in
+            if let textField = alertController.textFields?.first,
+               let text = textField.text {
+                
+            }
+        }
+        
     }
 }
 
