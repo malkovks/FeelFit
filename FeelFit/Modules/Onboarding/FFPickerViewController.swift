@@ -132,10 +132,6 @@ class FFPickerViewController: UIViewController {
             let selectedDate = datePickerView.date
             delegate?.didReceiveSelectedDate(selectedDate: selectedDate, index: tableViewIndex)
         }
-//        } else {
-////            let selectedText = selectedRowLabel.text ?? selectedValue
-////            delegate?.didReceiveSelectedValue(selectedValue: selectedText, index: tableViewIndex)
-//        }
         self.dismiss(animated: true)
     }
     

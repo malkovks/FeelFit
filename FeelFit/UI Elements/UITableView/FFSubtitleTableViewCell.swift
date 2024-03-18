@@ -72,7 +72,7 @@ class FFSubtitleTableViewCell: UITableViewCell {
     func configureView(userDictionary data: [[String:String]],_ indexPath: IndexPath){
         let dictionary = data[indexPath.section]
         let key: String = Array(dictionary.keys).sorted()[indexPath.row]
-        let value: String = Array(dictionary.values).sorted()[indexPath.row]
+        let value: String = dictionary[key] ?? ""
         
         
         setupConfiguration(indexPath,titleLabel: key,info: value)

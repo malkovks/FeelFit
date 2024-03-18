@@ -30,6 +30,7 @@ class FFOnboardingUserDataViewController: UIViewController {
     }()
     
     private let downloadDataButton = CustomConfigurationButton(configurationTitle: "Download From Health")
+    private let saveDataButton = CustomConfigurationButton(configurationTitle: "Save Data")
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,12 +69,7 @@ class FFOnboardingUserDataViewController: UIViewController {
         }
     }
     
-    @objc private func didEnterTextInTextField(_ textField: UITextField){
-        
-    }
-    
     @objc func didTapOpenPickerView(_ indexPath: IndexPath){
-        view.endEditing(true)
         let index = indexPath.row
         let value: String = returnSelectedValueFromDictionary(index)
         let vc = FFPickerViewController(selectedValue: value,
@@ -88,6 +84,11 @@ class FFOnboardingUserDataViewController: UIViewController {
         })]
         nav.sheetPresentationController?.prefersGrabberVisible = true
         present(nav,animated: true)
+    }
+    
+    @objc private func didTapSaveUserData(){
+        let manager = FFUserHealthDataStoreManager.shared
+        manager.saveNewUserData(userDataDictionary)
     }
 }
 
@@ -113,21 +114,25 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     
     private func setupButtons(){
         downloadDataButton.addTarget(self, action: #selector(didTapLoadHealthData), for: .primaryActionTriggered)
+        saveDataButton.addTarget(self, action: #selector(didTapSaveUserData), for: .primaryActionTriggered)
     }
     
     func setupNavigationController() { }
     
     func setupViewModel() { }
     
-    private func changeUserDataValue(_ index: Int,text value: String?){
-        let indexPath = IndexPath(row: index, section: 1)
+    private func changeUserDataValue(_ index: Int, section: Int = 1,text value: String?){
+        let indexPath = IndexPath(row: index, section: section)
         
-        if let text = value {
-            guard let dictionary = userDataDictionary.last else { return }
-            let keys: [String] = Array(dictionary.keys).sorted()
-            let keyDictionary: String = keys[index]
-            userDataDictionary[1][keyDictionary] = text
+        guard let text = value else {
+            viewAlertController(text: "Value is empty", controllerView: view)
+            return
         }
+
+        let dictionary = userDataDictionary[section]
+        let keys: [String] = Array(dictionary.keys).sorted()
+        let keyDictionary: String = keys[index]
+        userDataDictionary[section][keyDictionary] = text
         
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
@@ -163,9 +168,6 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-        cell.titleTextField.addTarget(self, action: #selector(didEnterTextInTextField), for: .editingDidEnd)
-        cell.firstTitleLabel.textColor = .customBlack
-        cell.titleTextField.tag = indexPath.row
         cell.configureView(userDictionary: userDataDictionary, indexPath)
         return cell
     }
@@ -178,8 +180,19 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 1 {
+        let dictionary = userDataDictionary[indexPath.section]
+        let key: String = Array(dictionary.keys).sorted()[indexPath.row]
+        let value: String = dictionary[key] ?? ""
+        
+        switch indexPath.section {
+        case 0:
+            presentTextFieldAlertController(placeholder: "Enter value",text: value,alertTitle: "Enter User Data",message: "Write Your Name and Second Name") { [unowned self] text in
+                self.changeUserDataValue(indexPath.row, section: indexPath.section, text: text)
+            }
+        case 1:
             didTapOpenPickerView(indexPath)
+        default:
+            break
         }
     }
 }
@@ -200,28 +213,66 @@ extension FFOnboardingUserDataViewController {
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(55)
         }
+        
+        view.addSubview(saveDataButton)
+        saveDataButton.snp.makeConstraints { make in
+            make.top.equalTo(downloadDataButton.snp.bottom).offset(5)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalTo(55)
+        }
     }
 }
 
 extension FFOnboardingUserDataViewController {
-    func presentTextFieldAlertController(placeholder: String? = "Enter value", text: String?, alertTitle: String? = nil, message: String? = nil, completion handler: @escaping (String) -> ()){
+    
+    func presentTextFieldAlertController(placeholder: String? = "Enter value",
+                                         text: String? = nil,
+                                         alertTitle: String? = nil,
+                                         message: String? = nil,
+                                         completion handler: @escaping (_ text: String) -> () ){
         let alertController = UIAlertController(title: alertTitle, message: message, preferredStyle: .alert)
+        
+        
+        
         alertController.addTextField { textField in
             textField.placeholder = placeholder
-            textField.borderStyle = .roundedRect
             textField.text = text
             textField.enablesReturnKeyAutomatically = true
             textField.textColor = .customBlack
             textField.textAlignment = .left
             textField.autocapitalizationType = .words
+            textField.clearButtonMode = .always
+            textField.font = UIFont.textLabelFont(for: .body, weight: .light)
+            textField.keyboardType = .default
+            textField.returnKeyType = .go
         }
         
-        let saveAction = UIAlertAction(title: "Save", style: .default) { alertAction in
+        let saveAction = (UIAlertAction(title: "Save", style: .default) { action in
+            
+            
             if let textField = alertController.textFields?.first,
-               let text = textField.text {
-                
+               let text = textField.text,
+               !text.isEmpty {
+                handler(text)
             }
-        }
+        })
+        alertController.addAction(saveAction)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        let titleFont = UIFont.textLabelFont(size: 20,for: .title1, weight: .semibold)
+        let attributedTitle = NSAttributedString(string: alertTitle ?? "", attributes: [.font: titleFont])
+        let messageFont = UIFont.textLabelFont(size: 14,for: .body,weight: .thin)
+        let attributedMessage = NSAttributedString(string: message ?? "", attributes: [.font: messageFont])
+        let imageSave = UIImage(systemName: "square.and.arrow.down.fill")
+        
+        
+        saveAction.setValue(imageSave, forKey: "image")
+        
+        alertController.setValue(attributedTitle, forKey: "attributedTitle")
+        alertController.setValue(attributedMessage, forKey: "attributedMessage")
+        
+        present(alertController,animated: true)
         
     }
 }

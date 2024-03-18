@@ -16,8 +16,6 @@ class FFUserHealthDataModelRealm: Object {
     @Persisted var userBloodType: String = HealthStoreRequest.BloodTypeResult.notSet.rawValue
     @Persisted var userFitzpatrickSkinType: String = HealthStoreRequest.FitzpatricSkinTypeResult.notSet.rawValue
     @Persisted var userWheelchairType: String = HealthStoreRequest.WheelchairTypeResult.notSet.rawValue
-    @Persisted var userCalciumChannelBlockers: Bool = false
-    @Persisted var userBetaBlockers: Bool = false
     
     convenience init(userFirstName: String, userSecondName: String, userBirthOfDate: Date, userBiologicalSex: String, userBloodType: String, userFitzpatrickSkinType: String, userWheelchairType: String, userCalciumChannelBlockers: Bool, userBetaBlockers: Bool) {
         self.init()
@@ -28,8 +26,6 @@ class FFUserHealthDataModelRealm: Object {
         self.userBloodType = userBloodType
         self.userFitzpatrickSkinType = userFitzpatrickSkinType
         self.userWheelchairType = userWheelchairType
-        self.userCalciumChannelBlockers = userCalciumChannelBlockers
-        self.userBetaBlockers = userBetaBlockers
     }
 }
 
@@ -40,9 +36,48 @@ class FFUserHealthDataStoreManager {
     
     private init() {}
     
-    func saveNewUserData(){
+    func saveNewUserData(_ userDataDictionary: [[String:String]]){
+        let futureModel = FFUserHealthDataModelRealm()
+        
+        let userDataCount = userDataDictionary.count
+        for index in 0..<userDataCount {
+            let dictionary = userDataDictionary[index]
+            let keys: [String] = Array(dictionary.keys).sorted()
+            for key in keys {
+                let value = dictionary[key] ?? "Not Set"
+                switch key {
+                case "Name":
+                    futureModel.userFirstName = value
+                case "Second Name":
+                    futureModel.userSecondName = value
+                case "Birthday":
+                    futureModel.userBirthOfDate = value.convertStringToDate() ?? Date()
+                case "Gender":
+                    futureModel.userBiologicalSex = value
+                case "Blood Type":
+                    futureModel.userBloodType = value
+                case "Skin Type(Fitzpatrick Type)":
+                    futureModel.userFitzpatrickSkinType = value
+                case "Stoller chair":
+                    futureModel.userFitzpatrickSkinType = value
+                    
+                default:
+                    break
+                }
+            }
+        }
+        
+        try! realm.write({
+            realm.add(futureModel)
+        })
+        
+        dump(futureModel)
         
     }
+    
+//    func loadUserData() -> [[String:String]]{
+//        
+//    }
     
     func editUserData(){
         
