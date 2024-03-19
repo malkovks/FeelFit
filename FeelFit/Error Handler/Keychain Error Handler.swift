@@ -11,6 +11,7 @@ enum KeychainError: Error {
     case noPassword
     case noEmail
     case emptyModel
+    case duplicateAccount
     case unexpectedPasswordData
     case incorrectEmailOrPassword
     case incorrectOrEmptyEmail
@@ -39,6 +40,8 @@ extension KeychainError: LocalizedError {
             return "Please enter correct password."
         case .emptyItem:
             return "Can't check inputs data. Try again later."
+        case .duplicateAccount:
+            return "You are trying to create almost created account. Try another login"
         case .unavailableToDeleteAccount:
             return "Unavailable to delete this account. Try again later."
         case .unhandledError(let status):
@@ -47,7 +50,6 @@ extension KeychainError: LocalizedError {
             } else {
                 return "Unhandled error \(status.description)"
             }
-            
         }
     }
 }

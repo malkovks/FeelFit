@@ -9,13 +9,15 @@ import UIKit
 import RealmSwift
 
 class FFUserHealthDataModelRealm: Object {
-    @Persisted var userFirstName: String
-    @Persisted var userSecondName: String
-    @Persisted var userBirthOfDate: Date
-    @Persisted var userBiologicalSex: String = HealthStoreRequest.GenderTypeResult.notSet.rawValue
-    @Persisted var userBloodType: String = HealthStoreRequest.BloodTypeResult.notSet.rawValue
-    @Persisted var userFitzpatrickSkinType: String = HealthStoreRequest.FitzpatricSkinTypeResult.notSet.rawValue
-    @Persisted var userWheelchairType: String = HealthStoreRequest.WheelchairTypeResult.notSet.rawValue
+    @Persisted var userFirstName: String?
+    @Persisted var userSecondName: String?
+    @Persisted var userAccountLogin: String?
+    @Persisted var userLoginAccount: Bool
+    @Persisted var userBirthOfDate: Date?
+    @Persisted var userBiologicalSex: String? = HealthStoreRequest.GenderTypeResult.notSet.rawValue
+    @Persisted var userBloodType: String? = HealthStoreRequest.BloodTypeResult.notSet.rawValue
+    @Persisted var userFitzpatrickSkinType: String? = HealthStoreRequest.FitzpatricSkinTypeResult.notSet.rawValue
+    @Persisted var userWheelchairType: String? = HealthStoreRequest.WheelchairTypeResult.notSet.rawValue
     
     convenience init(userFirstName: String, userSecondName: String, userBirthOfDate: Date, userBiologicalSex: String, userBloodType: String, userFitzpatrickSkinType: String, userWheelchairType: String, userCalciumChannelBlockers: Bool, userBetaBlockers: Bool) {
         self.init()

@@ -7,6 +7,15 @@
 
 import UIKit
 
+class DataManager {
+    static let shared = DataManager()
+    
+    var isLoggedIn: Bool = false
+    var loginEmail: String?
+    
+    private init() {}
+}
+
 class FFOnboardingAuthenticationViewController: UIViewController {
     
     private var isPasswordHidden: Bool = true
@@ -97,20 +106,24 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        //функция каждый раз будет удалять все аккаунты из keychain. На время теста
+        accountManager.deleteAllAccountsFromKeychain()
     }
     
     @objc private func didTapCreateNewAccount(){
         performKeychainRequest(completed: true) { [weak self] userData in
-            if self!.evaluateEmailAndPasswordValidation(userData){
-                try self?.accountManager.createNewUserAccount(userData: userData)
+            guard let strongSelf = self else { return }
+            if strongSelf.evaluateEmailAndPasswordValidation(userData){
+                try strongSelf.accountManager.createNewUserAccount(userData: userData)
+                DataManager.shared.isLoggedIn = true
+                DataManager.shared.loginEmail = userData!.email
             }
         }
     }
     
     @objc private func didTapLogin(){
         performKeychainRequest(completed: true) { [weak self] userData in
-            try self?.accountManager.checkForCreatedUserAccount(userData: userData)
-            self?.confirmButton(completed: true)
+            try self?.accountManager.loginToCreatedAccount(userData: userData)
         }
     }
     
@@ -150,11 +163,13 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         accountCredential = userData
         do {
             try requestFunction(userData)
-            confirmButton(completed: status)
+            confirmButton(completed: true)
             viewAlertController(text: "Successfully", startDuration: 0.5, timer: 4, controllerView: self.view)
         } catch let error as KeychainError {
+            confirmButton(completed: false)
             self.viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
         } catch {
+            confirmButton(completed: false)
             self.viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
         }
     }
@@ -199,17 +214,43 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         if completed {
             skipRegistrationButton.configuration?.title = "Continue"
             skipRegistrationButton.configuration?.baseBackgroundColor = .lightGray
-            loginAccountButton.isHidden = true
-            createAccountButton.isHidden = true
-            logoutAccountButton.isHidden = false
-            updateOrDeleteAccountButton.isHidden = false
+            UIView.animate(withDuration: 0.2) { [unowned self] in
+                loginAccountButton.alpha = 0
+                createAccountButton.alpha = 0
+                logoutAccountButton.alpha = 1
+                updateOrDeleteAccountButton.alpha = 1
+            } completion: { [unowned self] _ in
+                loginAccountButton.isHidden = true
+                createAccountButton.isHidden = true
+                logoutAccountButton.isHidden = false
+                updateOrDeleteAccountButton.isHidden = false
+            }
+
+//            loginAccountButton.isHidden = true
+//            createAccountButton.isHidden = true
+//            logoutAccountButton.isHidden = false
+//            updateOrDeleteAccountButton.isHidden = false
         } else {
             skipRegistrationButton.configuration?.title = "Skip Registration"
             skipRegistrationButton.configuration?.baseBackgroundColor = .clear
-            loginAccountButton.isHidden = false
-            createAccountButton.isHidden = false
-            logoutAccountButton.isHidden = true
-            updateOrDeleteAccountButton.isHidden = true
+            
+            UIView.animate(withDuration: 0.2) { [unowned self] in
+                loginAccountButton.alpha = 1
+                createAccountButton.alpha = 1
+                logoutAccountButton.alpha = 0
+                updateOrDeleteAccountButton.alpha = 0
+            } completion: { [unowned self] _ in
+                loginAccountButton.isHidden = false
+                createAccountButton.isHidden = false
+                logoutAccountButton.isHidden = true
+                updateOrDeleteAccountButton.isHidden = true
+            }
+            
+            
+//            loginAccountButton.isHidden = false
+//            createAccountButton.isHidden = false
+//            logoutAccountButton.isHidden = true
+//            updateOrDeleteAccountButton.isHidden = true
             userEmailTextField.text = ""
             userPasswordTextField.text = ""
             accountCredential = nil

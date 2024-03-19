@@ -15,14 +15,15 @@ extension String {
     }
     
     func isValidEmailText() -> Bool {
-        let emailRegix = "[A-Z0-9a-z._]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegix)
+        let emailRegex = "[A-Z0-9a-z._]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         return emailPredicate.evaluate(with: self)
     }
     
     func isValidPasswordText() -> Bool {
-        let passwordRegix = "^(?=.*[A-Z])(?=.*[0-9!@#$&*)[A-Za-z0-9!@#$%^&*]{6,}$"
-        let passwordPredicate = NSPredicate(format: "SELF MATHES %@", passwordRegix)
+//        let passwordRegix = "^(?=.*[A-Z])(?=.*[0-9!@#$&*)[A-Za-z0-9!@#$%^&*]{6,}$"
+        let passwordRegex = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$"
+        let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
         return passwordPredicate.evaluate(with: self)
     }
     

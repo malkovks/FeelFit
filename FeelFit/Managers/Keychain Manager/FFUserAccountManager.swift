@@ -8,17 +8,41 @@
 import Foundation
 import AuthenticationServices
 import Security
+import CryptoKit
+
 
 struct CredentialUser {
     let email: String
     let password: String
+    
 }
+
+
 
 
 class FFUserAccountManager {
     static let shared = FFUserAccountManager()
     
+    private func hashPassword(_ password: String) -> String {
+        let inputData = Data(password.utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
+    }
     
+    func deleteAllAccountsFromKeychain(){
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword
+        ]
+        
+        let status = SecItemDelete(query as CFDictionary)
+        if status == errSecSuccess {
+            
+        } else if status == errSecItemNotFound {
+            
+        } else {
+            
+        }
+    }
     
     func createNewUserAccount(userData: CredentialUser?) throws {
         guard let data = userData else {
@@ -34,11 +58,35 @@ class FFUserAccountManager {
             kSecAttrAccount as String: email,
             kSecValueData as String: password
         ]
-        let status = SecItemAdd(query as CFDictionary, nil)
+        
+        var item: CFTypeRef?
+        try checkDuplicateAccount(userData: data)
+        let status = SecItemAdd(query as CFDictionary, &item)
+//        guard status == errSecItemNotFound else { throw KeychainError.duplicateAccount }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status)}
     }
     
-    func checkForCreatedUserAccount(userData: CredentialUser?) throws  {
+    private func checkDuplicateAccount(userData: CredentialUser) throws {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: userData.email,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecReturnAttributes as String: false,
+            kSecReturnData as String: false
+        ]
+        
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        if status == errSecItemNotFound {
+            print("Дубликатов не найдено")
+        } else if status == errSecSuccess {
+            throw KeychainError.duplicateAccount
+        } else {
+            throw KeychainError.unhandledError(status: status)
+        }
+    }
+    
+    func loginToCreatedAccount(userData: CredentialUser?) throws  {
         guard let data = userData else {
             throw KeychainError.emptyModel
         }
@@ -54,15 +102,17 @@ class FFUserAccountManager {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status != errSecItemNotFound else { throw KeychainError.incorrectEmailOrPassword }
-        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status )}
+        //check item and status error
         guard let existingItem = item as? [String: Any] else { throw KeychainError.emptyItem }
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status )}
+        //email check
         guard let email = existingItem[kSecAttrAccount as String] as? String,
               !email.isEmpty
         else {
             throw KeychainError.incorrectOrEmptyEmail
         }
         
+        //password check
         guard let passwordData = existingItem[kSecValueData as String] as? Data,
               let password = String(data: passwordData, encoding: .utf8),
               !password.isEmpty

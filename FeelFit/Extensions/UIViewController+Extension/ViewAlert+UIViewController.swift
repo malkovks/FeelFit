@@ -32,8 +32,7 @@ extension UIViewController {
         customView.snp.makeConstraints { make in
             make.top.equalTo(controllerView.safeAreaLayoutGuide.snp.top).offset(10)
             make.centerX.equalToSuperview()
-            make.width.greaterThanOrEqualToSuperview().multipliedBy(0.2)
-            make.width.lessThanOrEqualToSuperview().multipliedBy(0.9)
+            make.width.equalToSuperview().multipliedBy(0.7)
             make.height.greaterThanOrEqualToSuperview().multipliedBy(0.05)
             make.height.lessThanOrEqualToSuperview().multipliedBy(0.3)
         }
@@ -56,7 +55,7 @@ extension UIViewController {
         label.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.width.lessThanOrEqualToSuperview()
+            make.width.lessThanOrEqualToSuperview().inset(20)
             make.height.lessThanOrEqualToSuperview().offset(-15)
         }
         

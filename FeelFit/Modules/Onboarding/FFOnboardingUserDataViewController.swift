@@ -35,6 +35,7 @@ class FFOnboardingUserDataViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        
     }
     
     //MARK: - Actions methods
@@ -87,8 +88,10 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didTapSaveUserData(){
-        let manager = FFUserHealthDataStoreManager.shared
-        manager.saveNewUserData(userDataDictionary)
+//Решить как передавать данные вошел ли пользователь и как сохранять их в модель realm
+        
+//        let manager = FFUserHealthDataStoreManager.shared
+//        manager.saveNewUserData(userDataDictionary)
     }
 }
 
