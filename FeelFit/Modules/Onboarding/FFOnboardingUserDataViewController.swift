@@ -88,11 +88,10 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didTapSaveUserData(){
-//Решить как передавать данные вошел ли пользователь и как сохранять их в модель realm
-        
-//        let manager = FFUserHealthDataStoreManager.shared
-//        manager.saveNewUserData(userDataDictionary)
+        let manager = FFUserHealthDataStoreManager.shared
+        manager.saveNewUserData(userDataDictionary)
     }
+
 }
 
 
@@ -202,6 +201,13 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
 
 extension FFOnboardingUserDataViewController {
     private func setupConstraints(){
+        
+        let horizontalStackView = UIStackView(arrangedSubviews: [downloadDataButton,saveDataButton])
+        horizontalStackView.axis = .horizontal
+        horizontalStackView.alignment = .fill
+        horizontalStackView.spacing = 5
+        horizontalStackView.distribution = .fillEqually
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
@@ -209,21 +215,28 @@ extension FFOnboardingUserDataViewController {
             make.height.greaterThanOrEqualToSuperview().multipliedBy(0.7)
         }
         
-        view.addSubview(downloadDataButton)
-        downloadDataButton.snp.makeConstraints { make in
+        view.addSubview(horizontalStackView)
+        horizontalStackView.snp.makeConstraints { make in
             make.top.equalTo(tableView.snp.bottom)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(55)
         }
-        
-        view.addSubview(saveDataButton)
-        saveDataButton.snp.makeConstraints { make in
-            make.top.equalTo(downloadDataButton.snp.bottom).offset(5)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
-            make.height.equalTo(55)
-        }
+//        view.addSubview(downloadDataButton)
+//        downloadDataButton.snp.makeConstraints { make in
+//            make.top.equalTo(tableView.snp.bottom)
+//            make.centerX.equalToSuperview()
+//            make.width.equalToSuperview().multipliedBy(0.8)
+//            make.height.equalTo(55)
+//        }
+//        
+//        view.addSubview(saveDataButton)
+//        saveDataButton.snp.makeConstraints { make in
+//            make.top.equalTo(downloadDataButton.snp.bottom).offset(5)
+//            make.centerX.equalToSuperview()
+//            make.width.equalToSuperview().multipliedBy(0.8)
+//            make.height.equalTo(55)
+//        }
     }
 }
 

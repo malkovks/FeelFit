@@ -103,8 +103,8 @@ class FFUserAccountManager {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         //check item and status error
-        guard let existingItem = item as? [String: Any] else { throw KeychainError.emptyItem }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status )}
+        guard let existingItem = item as? [String: Any] else { throw KeychainError.emptyItem }
         //email check
         guard let email = existingItem[kSecAttrAccount as String] as? String,
               !email.isEmpty

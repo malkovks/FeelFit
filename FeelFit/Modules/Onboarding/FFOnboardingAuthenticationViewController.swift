@@ -7,20 +7,16 @@
 
 import UIKit
 
-class DataManager {
-    static let shared = DataManager()
-    
-    var isLoggedIn: Bool = false
-    var loginEmail: String?
-    
-    private init() {}
+protocol FFOnboardingActionsDelegate: AnyObject {
+    func didTapSkipRegistration()
 }
 
 class FFOnboardingAuthenticationViewController: UIViewController {
     
+    weak var delegate: FFOnboardingActionsDelegate?
+    
     private var isPasswordHidden: Bool = true
     private let accountManager = FFUserAccountManager.shared
-    private var accountCredential: CredentialUser?
     
     private let loginUserLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -47,6 +43,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         textfield.leftView = leftCustomView
         textfield.leftViewMode = .always
         textfield.autocapitalizationType = .none
+        textfield.autocorrectionType = .no
         textfield.placeholder = "Your Email"
         textfield.clearButtonMode = .whileEditing
         textfield.textAlignment = .left
@@ -67,6 +64,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         textfield.leftViewMode = .always
         textfield.rightViewMode = .always
         textfield.autocapitalizationType = .none
+        textfield.autocorrectionType = .no
         textfield.placeholder = "Your Password"
         textfield.clearButtonMode = .whileEditing
         textfield.textAlignment = .left
@@ -106,27 +104,9 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        //функция каждый раз будет удалять все аккаунты из keychain. На время теста
-        accountManager.deleteAllAccountsFromKeychain()
     }
     
-    @objc private func didTapCreateNewAccount(){
-        performKeychainRequest(completed: true) { [weak self] userData in
-            guard let strongSelf = self else { return }
-            if strongSelf.evaluateEmailAndPasswordValidation(userData){
-                try strongSelf.accountManager.createNewUserAccount(userData: userData)
-                DataManager.shared.isLoggedIn = true
-                DataManager.shared.loginEmail = userData!.email
-            }
-        }
-    }
-    
-    @objc private func didTapLogin(){
-        performKeychainRequest(completed: true) { [weak self] userData in
-            try self?.accountManager.loginToCreatedAccount(userData: userData)
-        }
-    }
-    
+    //MARK: - Target methods
     @objc private func didTapDismissKeyboard(){
         view.endEditing(true)
     }
@@ -134,86 +114,90 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     @objc private func didTapSkipOnboarding(){
         defaultAlertController(message: "Do you want to skip registration and entering Your anthropometric indicators. Just in case you can do it later", actionTitle: "Skip", style: .alert) { [weak self] in
             self?.dismiss(animated: true)
+            self?.saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
+            self?.delegate?.didTapSkipRegistration()
         }
     }
     
     @objc private func didTapLogout(){
         defaultAlertController(message: "Do you want to log out from account?", actionTitle: "Log out", style: .alert) { [weak self] in
+            self?.saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
             self?.confirmButton(completed: false)
         }
     }
     
+    @objc private func didTapContinue(){
+        saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
+        delegate?.didTapSkipRegistration()
+    }
+    
+    //Create account
+    @objc private func didTapCreateNewAccount(){
+        performKeychainRequest() { [weak self] userData in
+            try self?.accountManager.createNewUserAccount(userData: userData)
+        }
+    }
+    //Log in to account
+    @objc private func didTapLogin(){
+        performKeychainRequest() { [weak self] userData in
+            try self?.accountManager.loginToCreatedAccount(userData: userData)
+            
+        }
+    }
+    
+    //Update password or delete account
     @objc private func didTapUpdateOrDeleteAccount(){
         alertControllerActionConfirm(title: "Warning", message: "Do you want to update your email or password or delete account?", confirmActionTitle: "Update", secondTitleAction: "Delete", style: .alert) { [weak self] in
             
-            self?.performKeychainRequest(completed: false, requestFunction: { userData in
-                if self!.evaluateEmailAndPasswordValidation(userData) {
+            self?.performKeychainRequest(requestFunction: { userData in
                     try self?.accountManager.updateUserAccountData(userData: userData)
-                }
             })
         } secondAction: { [weak self] in
-            self?.performKeychainRequest(completed: false, requestFunction: { userData in
+            self?.performKeychainRequest(requestFunction: { userData in
                 try self?.accountManager.deleteUserAccountData(userData: userData)
             })
         }
     }
     
-    private func performKeychainRequest(completed status : Bool,requestFunction: (_ userData: CredentialUser?) throws -> Void ){
-        let userData = checkEmailAndPasswordRules()
-        accountCredential = userData
+    //MARK: - Action setups methods
+    private func checkFieldsEmptyStatus() -> CredentialUser? {
+        guard let emailText = userEmailTextField.text,
+              let password = userPasswordTextField.text else {
+            viewAlertController(text: "Fill all fields correctly", controllerView: self.view)
+            return nil
+        }
+        return CredentialUser(email: emailText, password: password)
+    }
+    
+    
+    private func performKeychainRequest(requestFunction: (_ userData: CredentialUser?) throws -> Void ){
+        let data = checkFieldsEmptyStatus()
         do {
-            try requestFunction(userData)
+            try requestFunction(data)
             confirmButton(completed: true)
+            saveUserLoggedInStatus(isLoggedIn: true, userAccount: data?.email)
             viewAlertController(text: "Successfully", startDuration: 0.5, timer: 4, controllerView: self.view)
         } catch let error as KeychainError {
             confirmButton(completed: false)
+            saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
             self.viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
         } catch {
             confirmButton(completed: false)
+            saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
             self.viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
         }
     }
     
-    private func checkEmailAndPasswordRules() -> (CredentialUser?) {
-        guard let email = userEmailTextField.text,
-              let password = userPasswordTextField.text
-        else {
-            viewAlertController(text: "Enter value in email or password in text fields", startDuration: 0.5, timer: 4, controllerView: view)
-            return nil
-        }
-        
-        let value: CredentialUser? = CredentialUser(email: email, password: password)
-        return value
-    }
-    
-    private func evaluateEmailAndPasswordValidation(_ userData: CredentialUser?) -> Bool {
-        guard let email = userData?.email,
-              email.isValidEmailText() else {
-            viewAlertController(text:
-                    """
-                    You entered invalid characters. The register must contain only alphabetic characters, "." and "_".
-                    """
-                                , startDuration: 0.5, timer: 4, controllerView: view)
-            return false
-        }
-        
-        guard let password = userData?.password,
-              password.isValidPasswordText() else {
-            viewAlertController(text:
-                    """
-                    Error. Your password must contains 1 uppercase alphabet character, one special symbol or number. Password must contains at least 8 elements.
-                    """
-                                , controllerView: view)
-            return false
-        }
-        
-        return true
+    private func saveUserLoggedInStatus(isLoggedIn: Bool, userAccount: String?){
+        UserDefaults.standard.setValue(isLoggedIn, forKey: "userLoggedIn")
+        UserDefaults.standard.setValue(userAccount, forKey: "userAccount")
     }
     
     private func confirmButton(completed: Bool){
         if completed {
             skipRegistrationButton.configuration?.title = "Continue"
-            skipRegistrationButton.configuration?.baseBackgroundColor = .lightGray
+            skipRegistrationButton.addTarget(self, action: #selector(didTapContinue), for: .primaryActionTriggered)
+            skipRegistrationButton.configuration?.baseBackgroundColor = .mintGreen
             UIView.animate(withDuration: 0.2) { [unowned self] in
                 loginAccountButton.alpha = 0
                 createAccountButton.alpha = 0
@@ -225,13 +209,9 @@ class FFOnboardingAuthenticationViewController: UIViewController {
                 logoutAccountButton.isHidden = false
                 updateOrDeleteAccountButton.isHidden = false
             }
-
-//            loginAccountButton.isHidden = true
-//            createAccountButton.isHidden = true
-//            logoutAccountButton.isHidden = false
-//            updateOrDeleteAccountButton.isHidden = false
         } else {
             skipRegistrationButton.configuration?.title = "Skip Registration"
+            skipRegistrationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
             skipRegistrationButton.configuration?.baseBackgroundColor = .clear
             
             UIView.animate(withDuration: 0.2) { [unowned self] in
@@ -245,15 +225,8 @@ class FFOnboardingAuthenticationViewController: UIViewController {
                 logoutAccountButton.isHidden = true
                 updateOrDeleteAccountButton.isHidden = true
             }
-            
-            
-//            loginAccountButton.isHidden = false
-//            createAccountButton.isHidden = false
-//            logoutAccountButton.isHidden = true
-//            updateOrDeleteAccountButton.isHidden = true
             userEmailTextField.text = ""
             userPasswordTextField.text = ""
-            accountCredential = nil
         }
         authStackView.layoutIfNeeded()
     }
@@ -281,6 +254,8 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
         setupNavigationController()
         setupViewModel()
         setupConstraints()
+        let accountLoggedIn = UserDefaults.standard.object(forKey: "userLoggedIn")
+        saveUserLoggedInStatus(isLoggedIn: (accountLoggedIn != nil), userAccount: nil)
     }
     
     private func setupUserConfirmButton(){

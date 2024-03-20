@@ -57,7 +57,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         
     }
     //Доделать функцию переключения страницы по кнопке
-    @objc private func didTapNextPage(_ sender: AnyObject) {
+    @objc private func didTapNextPage() {
         var currentIndex = pageControl.currentPage
         let pagesCount = pages.count-1
             
@@ -70,7 +70,6 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
                 nextPageButton.configuration?.title = "Let's start"
             }
         }
-        
     }
     
     //MARK: - Setup onboarding page View controller
@@ -89,6 +88,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         pageControl.addTarget(self, action: #selector(didTapPageControl), for: .primaryActionTriggered)
         pageControl.backgroundStyle = .automatic
         pageControl.direction = .leftToRight
+        
     }
     
     private func setupPageViewController(){
@@ -101,6 +101,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
                                                pageTitle: "Access to sensitive information",
                                                pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
         let page2 = FFOnboardingAuthenticationViewController()
+        page2.delegate = self
         let page3 = FFOnboardingUserDataViewController()
         
         pages.append(page1)
@@ -114,6 +115,13 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     func setupNavigationController() { }
     
     func setupViewModel() {}
+}
+
+extension FFOnboardingPageViewController: FFOnboardingActionsDelegate {
+    
+    func didTapSkipRegistration() {
+        dismiss(animated: true)
+    }
 }
 
 extension FFOnboardingPageViewController: UIPageControlTimerProgressDelegate {
@@ -140,10 +148,8 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
         guard let index = pages.firstIndex(of: viewController) else { return nil}
         if index < pages.count - 1  {
             return pages[index + 1]
-        } else {
-            
-            return pages.first
         }
+        return nil
     }
 }
 

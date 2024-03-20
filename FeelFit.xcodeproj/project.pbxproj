@@ -110,7 +110,6 @@
 		0AC145F72BA271B700C8544A /* HealthStoreRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */; };
 		0AC145F92BA2729700C8544A /* FFTabBarIndex+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */; };
 		0AC145FB2BA272BA00C8544A /* NewsSelection+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */; };
-		0AC145FD2BA2A78400C8544A /* Sounds.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AC145FC2BA2A78400C8544A /* Sounds.xcassets */; };
 		0AC145FF2BA43D4700C8544A /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */; };
 		0AC59C662B931EA00009489E /* TitledRectangleConfiguredButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */; };
 		0AC99D652B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */; };
@@ -254,7 +253,6 @@
 		0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthStoreRequest.swift; sourceTree = "<group>"; };
 		0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFTabBarIndex+Enum.swift"; sourceTree = "<group>"; };
 		0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewsSelection+Enum.swift"; sourceTree = "<group>"; };
-		0AC145FC2BA2A78400C8544A /* Sounds.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sounds.xcassets; sourceTree = "<group>"; };
 		0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
 		0AC59C652B931EA00009489E /* TitledRectangleConfiguredButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledRectangleConfiguredButton.swift; sourceTree = "<group>"; };
 		0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewController.swift; sourceTree = "<group>"; };
@@ -487,7 +485,6 @@
 			isa = PBXGroup;
 			children = (
 				0A4494C82AB822000082C909 /* Assets.xcassets */,
-				0AC145FC2BA2A78400C8544A /* Sounds.xcassets */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -1212,7 +1209,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0AD8F4322B29C65200A40C4B /* ding.mp3 in Resources */,
-				0AC145FD2BA2A78400C8544A /* Sounds.xcassets in Resources */,
 				0AD8F4302B29C2CC00A40C4B /* arnold_run.jpeg in Resources */,
 				0A4494CC2AB822000082C909 /* LaunchScreen.storyboard in Resources */,
 				0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */,

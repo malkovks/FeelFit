@@ -34,6 +34,13 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
+    func dateAndUserAgeConverting() -> String {
+        let dateFormattedString = self.dateAndYearConverting()
+        let calendar = Calendar.current
+        let ageComponents = calendar.dateComponents([.year], from: self).year!
+        return dateFormattedString + " " + "\(ageComponents)"
+    }
+    
     func dateAndYearConverting() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"

@@ -30,7 +30,7 @@ extension UIViewController {
         customView.addGestureRecognizer(swipeGesture)
         controllerView.addSubview(customView)
         customView.snp.makeConstraints { make in
-            make.top.equalTo(controllerView.safeAreaLayoutGuide.snp.top).offset(10)
+            make.top.equalTo(controllerView.safeAreaLayoutGuide.snp.top).offset(20)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.7)
             make.height.greaterThanOrEqualToSuperview().multipliedBy(0.05)
@@ -55,6 +55,7 @@ extension UIViewController {
         label.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
+            make.centerX.equalToSuperview()
             make.width.lessThanOrEqualToSuperview().inset(20)
             make.height.lessThanOrEqualToSuperview().offset(-15)
         }
