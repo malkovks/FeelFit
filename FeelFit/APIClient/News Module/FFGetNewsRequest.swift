@@ -23,6 +23,8 @@ class FFGetNewsRequest {
     
     static var shared = FFGetNewsRequest()
     
+    private init() {}
+    
     //Функция работает ,данные возвращает
     func getRequestResult(numberOfPage: Int = 1,requestType: String,requestSortType: String,locale: String,completion: @escaping (Result<[Articles],Error>) -> ()){
         

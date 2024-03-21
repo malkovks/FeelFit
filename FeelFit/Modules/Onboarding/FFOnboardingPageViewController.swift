@@ -175,6 +175,7 @@ extension FFOnboardingPageViewController {
         view.addSubview(userInterfaceStackView)
         userInterfaceStackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.1)
             make.bottom.equalToSuperview().multipliedBy(0.95)
             make.width.equalToSuperview().dividedBy(2)
         }

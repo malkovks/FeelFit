@@ -19,6 +19,8 @@ struct UserCharactersData {
 class FFHealthDataLoading {
     static let shared = FFHealthDataLoading()
     
+    private init() {}
+    
     private let healthStore = HKHealthStore()
     private let calendar = Calendar.current
     private let userCharactersTypes = Set(FFHealthData.charDataTypes)

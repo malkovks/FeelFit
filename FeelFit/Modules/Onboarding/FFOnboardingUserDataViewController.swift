@@ -89,7 +89,20 @@ class FFOnboardingUserDataViewController: UIViewController {
     
     @objc private func didTapSaveUserData(){
         let manager = FFUserHealthDataStoreManager.shared
-        manager.saveNewUserData(userDataDictionary)
+        let resultSavingData = manager.saveNewUserData(userDataDictionary)
+        switch resultSavingData {
+            
+        case .success(_):
+            saveDataButton.configuration?.title = "Saved"
+            saveDataButton.configuration?.baseBackgroundColor = .mintGreen
+            saveDataButton.isEnabled = false
+        case .failure(let error):
+            let textError = error.localizedDescription
+            saveDataButton.configuration?.title = "Error"
+            saveDataButton.configuration?.baseBackgroundColor = .systemRed
+            viewAlertController(text: textError, controllerView: self.view)
+            
+        }
     }
 
 }
@@ -217,26 +230,11 @@ extension FFOnboardingUserDataViewController {
         
         view.addSubview(horizontalStackView)
         horizontalStackView.snp.makeConstraints { make in
-            make.top.equalTo(tableView.snp.bottom)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
-            make.height.equalTo(55)
+            make.height.equalToSuperview().multipliedBy(0.08)
+            make.bottom.equalToSuperview().multipliedBy(0.8)
         }
-//        view.addSubview(downloadDataButton)
-//        downloadDataButton.snp.makeConstraints { make in
-//            make.top.equalTo(tableView.snp.bottom)
-//            make.centerX.equalToSuperview()
-//            make.width.equalToSuperview().multipliedBy(0.8)
-//            make.height.equalTo(55)
-//        }
-//        
-//        view.addSubview(saveDataButton)
-//        saveDataButton.snp.makeConstraints { make in
-//            make.top.equalTo(downloadDataButton.snp.bottom).offset(5)
-//            make.centerX.equalToSuperview()
-//            make.width.equalToSuperview().multipliedBy(0.8)
-//            make.height.equalTo(55)
-//        }
     }
 }
 

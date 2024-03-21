@@ -11,6 +11,8 @@ import Kingfisher
 class FFLoadAnimatedImage {
     static let shared = FFLoadAnimatedImage()
     
+    private init() {}
+    
     private var imageView = UIImageView()
     
     func loadingAnimateImage(exercise: FFExerciseModelRealm,animated: Bool = true ,completion: @escaping (UIImageView) -> ()) {

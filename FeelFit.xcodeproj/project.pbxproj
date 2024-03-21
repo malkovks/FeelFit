@@ -29,7 +29,6 @@
 		0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */; };
 		0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */; };
 		0A256A6B2B8CD63B00137B6C /* FFOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */; };
-		0A256A6D2B8D972900137B6C /* BackgroundTasksSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6C2B8D972900137B6C /* BackgroundTasksSupport.swift */; };
 		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
@@ -173,7 +172,6 @@
 		0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
 		0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewController.swift; sourceTree = "<group>"; };
 		0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingViewController.swift; sourceTree = "<group>"; };
-		0A256A6C2B8D972900137B6C /* BackgroundTasksSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTasksSupport.swift; sourceTree = "<group>"; };
 		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
@@ -316,7 +314,6 @@
 				0AF03A662B58F85200715007 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
-				0A256A6C2B8D972900137B6C /* BackgroundTasksSupport.swift */,
 			);
 			path = Authorizations;
 			sourceTree = "<group>";
@@ -1272,7 +1269,6 @@
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
 				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
 				0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */,
-				0A256A6D2B8D972900137B6C /* BackgroundTasksSupport.swift in Sources */,
 				0A91E89C2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift in Sources */,
 				0A63AC642B6BB89F00B32981 /* FFHealthUserViewModel.swift in Sources */,
 				0A3AECFF2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift in Sources */,

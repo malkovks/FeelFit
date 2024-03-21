@@ -14,6 +14,8 @@ class FFSendUserNotifications {
     
     static let shared = FFSendUserNotifications()
     
+    private init() {}
+    
     func requestForAccessToLocalNotification(completion: ((Result<Bool, Error>) -> Void)? = nil) {
         let userNotification = UNUserNotificationCenter.current()
         let authOptions = UNAuthorizationOptions.init(arrayLiteral: .alert,.badge,.sound)

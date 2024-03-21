@@ -14,6 +14,8 @@ class FFMediaDataAccess {
     
     static let shared = FFMediaDataAccess()
     
+    private init() {}
+    
     ///Function check access status to photo library and could request access to it. Return boolean status of requesting
     func returnPhotoLibraryAccessStatus(completionHandler: @escaping (_ success:Bool) -> ()){
         switch PHPhotoLibrary.authorizationStatus(for: .readWrite){

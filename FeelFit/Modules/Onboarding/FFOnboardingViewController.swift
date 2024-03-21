@@ -9,7 +9,10 @@ import UIKit
 
 class FFOnboardingViewController: UIViewController {
     
-    var pageTitleLabel: UILabel = {
+    
+    private var accessToServicesBoolean: [Bool] = [false,false,false,false]
+    
+    private let pageTitleLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.headerFont(size: 24, for: .largeTitle)
         label.adjustsFontForContentSizeCategory = true
@@ -21,7 +24,7 @@ class FFOnboardingViewController: UIViewController {
         return label
     }()
     
-    var pageSubtitle: UILabel = {
+    private let pageSubtitle: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.textLabelFont(size: 16,for: .title3)
         label.adjustsFontForContentSizeCategory = true
@@ -34,16 +37,48 @@ class FFOnboardingViewController: UIViewController {
         return label
     }()
     
-    var pageImageView: UIImageView = {
+    private let pageImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
+    private let buttonsStackView: UIStackView = {
+        let stackView = UIStackView(frame: .zero)
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillProportionally
+        stackView.spacing = 2
+        return stackView
+    }()
     
+    private let stackView: UIStackView = {
+        let stackView = UIStackView(frame: .zero)
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+        stackView.spacing = 10
+        return stackView
+    }()
+    
+    private let successStatusLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.setupLabelShadowColor()
+        label.font = UIFont.textLabelFont(size: 18, for: .body, weight: .medium, width: .compressed)
+        label.numberOfLines = 1
+        label.textColor = .mintGreen
+        label.backgroundColor = .clear
+        label.text = "Success"
+        label.isHidden = true
+        return label
+    }()
+
     private var notificationButton = UIButton(type: .custom)
     private var healthButton = UIButton(type: .custom)
+    private var userHealthButton = UIButton(type: .custom)
     private var mediaButton = UIButton(type: .custom)
+    
+    
     
     
     init(imageName: String, pageTitle: String,pageSubtitle: String) {
@@ -66,8 +101,6 @@ class FFOnboardingViewController: UIViewController {
     }
     
     private func didTapAskNotificationRequest(_ button: UIButton){
-        
-        
         FFSendUserNotifications.shared.requestForAccessToLocalNotification { [weak self] result in
             switch result {
             case .success(let success):
@@ -82,20 +115,28 @@ class FFOnboardingViewController: UIViewController {
         }
     }
     
-    func didTapAskHealthRequest(_ button: UIButton){
+    func didTapAskUserHealthRequest(_ button: UIButton){
         FFHealthDataAccess.shared.requestAccessToCharactersData { [weak self] result in
             switch result {
-            case .success(_):
-                FFHealthDataAccess.shared.requestForAccessToHealth { result in
-                    switch result {
-                    case .success(let success):
-                        self?.setupButtonConfirm(isAccessed: success,button)
-                    case .failure(let error):
-                        self?.setupButtonConfirm(isAccessed: false,button,error: error)
-                        return
-                    }
-                }
-            case .failure(_):
+            case .success(let success):
+                self?.setupButtonConfirm(isAccessed: success,button)
+            case .failure(let error):
+                self?.setupButtonConfirm(isAccessed: false,button,error: error)
+                return
+            }
+        }
+        DispatchQueue.main.async {
+            button.configuration?.showsActivityIndicator = true
+        }
+    }
+    
+    func didTapAskHealthRequest(_ button: UIButton){
+        FFHealthDataAccess.shared.requestForAccessToHealth { [weak self] result in
+            switch result {
+            case .success(let success):
+                self?.setupButtonConfirm(isAccessed: success,button)
+            case .failure(let error):
+                self?.setupButtonConfirm(isAccessed: false,button,error: error)
                 return
             }
         }
@@ -125,28 +166,39 @@ class FFOnboardingViewController: UIViewController {
     }
     
     private func setupButtonConfirm(isAccessed: Bool,_ button: UIButton,error: Error? = nil){
-        
-        UIView.animate(withDuration: 0.2) {
-            DispatchQueue.main.async {
-                button.configuration?.showsActivityIndicator = false
-                button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
-                button.isEnabled = isAccessed ? true : false
-                button.configuration?.image = isAccessed ? UIImage(systemName: "lock.open") : UIImage(systemName: "lock")
-                button.configuration?.baseBackgroundColor = .systemGreen
-            }
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else { return }
             if let error = error {
-                DispatchQueue.main.async { [unowned self] in
-                    self.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+                strongSelf.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: strongSelf.view)
+                button.configuration?.showsActivityIndicator = false
+            } else {
+                strongSelf.accessToServicesBoolean[button.tag] = isAccessed
+                UIView.animate(withDuration: 0.2) {
+                    button.configuration?.showsActivityIndicator = !isAccessed
+                    button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
+                    button.isEnabled = isAccessed ? true : false
+                    button.configuration?.image = isAccessed ? UIImage(systemName: "lock.open") : UIImage(systemName: "lock")
+                    button.configuration?.baseBackgroundColor = .systemGreen
+                    strongSelf.view.layoutIfNeeded()
                 }
             }
+            
+            if strongSelf.accessToServicesBoolean.allSatisfy({ $0 }) {
+                strongSelf.successStatusLabel.isHidden = false
+                strongSelf.notificationButton.isHidden = true
+                strongSelf.userHealthButton.isHidden = true
+                strongSelf.healthButton.isHidden = true
+                strongSelf.mediaButton.isHidden = true
+                strongSelf.buttonsStackView.alignment = .center
+                strongSelf.buttonsStackView.distribution = .equalCentering
+                strongSelf.view.layoutIfNeeded()
+            } else {
+                print("Some values are false")
+                dump(strongSelf.accessToServicesBoolean)
+            }
         }
-        
     }
 }
-
-
-
-
 
 extension FFOnboardingViewController: SetupViewController {
     
@@ -159,23 +211,29 @@ extension FFOnboardingViewController: SetupViewController {
     }
     
     func configureAccessStatusButton(){
-        let healthAction = UIAction { [unowned self] _ in
-            didTapAskHealthRequest(healthButton)
-        }
-        
-        healthButton = CustomConfigurationButton(primaryAction: healthAction, configurationTitle: "Access to Health")
-        
         let notificationAction = UIAction { [unowned self] _ in
             didTapAskNotificationRequest(notificationButton)
         }
         
-        notificationButton = CustomConfigurationButton(primaryAction: notificationAction, configurationTitle: "Access to Notification")
+        notificationButton = CustomConfigurationButton(primaryAction: notificationAction,buttonTag: 0, configurationTitle: "Access to Notification")
+        
+        let healthAction = UIAction { [unowned self] _ in
+            didTapAskHealthRequest(healthButton)
+        }
+        
+        healthButton = CustomConfigurationButton(primaryAction: healthAction,buttonTag: 1, configurationTitle: "Access to Health")
+        
+        let userHealthAction = UIAction { [unowned self] _ in
+            didTapAskUserHealthRequest(userHealthButton)
+        }
+        
+        userHealthButton = CustomConfigurationButton(primaryAction: userHealthAction,buttonTag: 2, configurationTitle: "Access to User's Health")
         
         let mediaAction = UIAction { [unowned self] _ in
             didTapAskMediaRequest(mediaButton)
         }
         
-        mediaButton = CustomConfigurationButton(primaryAction: mediaAction, configurationTitle: "Access to Media and Camera")
+        mediaButton = CustomConfigurationButton(primaryAction: mediaAction,buttonTag: 3, configurationTitle: "Access to Media and Camera")
     }
     
     func setupNavigationController() {
@@ -189,20 +247,16 @@ extension FFOnboardingViewController: SetupViewController {
 
 private extension FFOnboardingViewController {
     func setupConstraints(){
-        let buttonStackView = UIStackView(arrangedSubviews: [mediaButton,
-                                                             healthButton, notificationButton])
-        buttonStackView.axis = .vertical
-        buttonStackView.alignment = .fill
-        buttonStackView.distribution = .fillProportionally
-        buttonStackView.spacing = 2
+        let buttons = [notificationButton, healthButton, userHealthButton, mediaButton]
+        buttons.forEach { button in
+            buttonsStackView.addArrangedSubview(button)
+        }
+        buttonsStackView.addArrangedSubview(successStatusLabel)
         
-        let stackView = UIStackView(arrangedSubviews: [pageImageView, pageTitleLabel, pageSubtitle,buttonStackView])
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 10
-        
-        
+        let subviews = [pageImageView, pageTitleLabel, pageSubtitle,buttonsStackView]
+        subviews.forEach { subview in
+            stackView.addArrangedSubview(subview)
+        }
         
         view.addSubview(stackView)
         stackView.snp.makeConstraints { make in
@@ -211,7 +265,7 @@ private extension FFOnboardingViewController {
             make.height.lessThanOrEqualToSuperview().multipliedBy(0.8)
         }
         
-        buttonStackView.snp.makeConstraints { make in
+        buttonsStackView.snp.makeConstraints { make in
             make.width.equalTo(self.view.frame.size.width/1.5)
             make.height.equalToSuperview().multipliedBy(0.25)
         }

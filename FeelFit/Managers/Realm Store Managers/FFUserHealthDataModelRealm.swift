@@ -9,6 +9,7 @@ import UIKit
 import RealmSwift
 
 class FFUserHealthDataModelRealm: Object {
+    @Persisted var userID: Int = 1
     @Persisted var userFirstName: String?
     @Persisted var userSecondName: String?
     @Persisted var userAccountLogin: String?
@@ -49,7 +50,7 @@ class FFUserHealthDataStoreManager {
         return (isLoggedIn, userAccount)
     }
     
-    func saveNewUserData(_ userDataDictionary: [[String:String]]){
+    func saveNewUserData(_ userDataDictionary: [[String:String]]) -> Result <Bool,Error> {
         let futureModel = FFUserHealthDataModelRealm()
         let authData = loadUserAuthenticationStatus()
         futureModel.userLoginStatus = authData.status
@@ -83,9 +84,26 @@ class FFUserHealthDataStoreManager {
             }
         }
         
-        try! realm.write({
-            realm.add(futureModel)
-        })
+        if let existedData = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: futureModel.userID) {
+            do {
+                try realm.write({
+                    realm.delete(existedData)
+                    realm.add(futureModel)
+                })
+                return .success(true)
+            } catch {
+                return .failure(error)
+            }
+        } else {
+            do {
+                try realm.write({
+                    realm.add(futureModel)
+                })
+                return .success(true)
+            } catch {
+                return .failure(error)
+            }
+        }
     }
     
     func loadUserData() -> [[String:String]]?{

@@ -12,40 +12,22 @@ class FFHealthDataAccess {
     
     static let shared = FFHealthDataAccess()
     
+    private init() {}
+    
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
     private let userCharactersTypes = Set(FFHealthData.charDataTypes)
     private let healthStore = HKHealthStore()
     
-    ///boolean value necessary for check status of health store if it is available or not
-    private var isHealthKitAccess: Bool = UserDefaults.standard.bool(forKey: "healthKitAccess")
-    
     ///Function for request access to Health Kit. Inherit read and share types
     func requestForAccessToHealth(completion: ((Result<Bool, Error>) -> Void)? = nil) {
-        var textStatus: String = ""
-        
-        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {[weak self] success, error in
-            guard let self = self else { return }
+        healthStore.requestAuthorization(toShare: shareTypes, read: readTypes) {success, error in
             if let error = error {
-                textStatus = "Applications gets error by trying to get access to Health. \(error.localizedDescription)"
                 completion?(.failure(error))
             } else {
-                if success {
-                    
-                    if self.isHealthKitAccess {
-                        textStatus = "You already gave full access to Health request"
-                    } else {
-                        textStatus = "Health kit authorization complete successfully"
-                        UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
-                    }
-                } else {
-                    
-                    textStatus = "Health kit authorization did not complete successfully"
-                }
                 completion?(.success(success))
             }
         }
-        print(textStatus)
     }
     
     
@@ -54,9 +36,7 @@ class FFHealthDataAccess {
         healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { status, error in
             if status {
                 completion?(.success(status))
-                print("FFHealthDataAccess.requestAccesstoCharData completed")
             } else if let error = error {
-                print("FFHealthDataAccess.requestAccessToCharData error getting data. Check samples or try again")
                 completion?(.failure(error))
             }
         }
@@ -65,11 +45,10 @@ class FFHealthDataAccess {
     ///Function check status authorization to Health Store and return exact boolean value of gets status
     func getHealthAuthorizationRequestStatus(){
         if !HKHealthStore.isHealthDataAvailable()  {
-            print("Health Data is unavailable. Try again later")
             return
         }
         var textStatus: String = ""
-        healthStore.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes) { authStatus, error in
+        healthStore.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes) { [weak self] authStatus, error in
             switch authStatus {
             case .unknown:
                 UserDefaults.standard.setValue(false, forKey: "healthKitAccess")
@@ -78,7 +57,7 @@ class FFHealthDataAccess {
                 UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
                 textStatus = " Unnecessary .You have already allow all data for using "
             case .shouldRequest:
-                self.requestForAccessToHealth()
+                self?.requestForAccessToHealth()
                 UserDefaults.standard.setValue(false, forKey: "healthKitAccess")
                 textStatus = "Should request .The app does not requested for all specific data yet"
             @unknown default:

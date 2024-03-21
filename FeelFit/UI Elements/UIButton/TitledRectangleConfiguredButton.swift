@@ -10,6 +10,7 @@ import UIKit
 class CustomConfigurationButton: UIButton  {
     
     convenience init(primaryAction action: UIAction? = nil,
+                     buttonTag: Int? = nil,
                      configurationTitle: String? = nil,
                      configurationImage image: UIImage? = nil,
                      configurationImagePlacement placement: NSDirectionalRectEdge? = .trailing
@@ -19,6 +20,8 @@ class CustomConfigurationButton: UIButton  {
         self.configuration?.title = configurationTitle
         self.configuration?.image = image
         self.configuration?.imagePlacement = placement ?? .all
+        
+        guard let tag = buttonTag else { return }
         guard let action = action else { return }
         self.addAction(action, for: .primaryActionTriggered)
     }
