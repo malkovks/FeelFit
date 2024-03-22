@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FFOnboardingViewController: UIViewController {
+class FFOnboardingAccessViewController: UIViewController {
     
     
     private var accessToServicesBoolean: [Bool] = [false,false,false,false]
@@ -64,7 +64,7 @@ class FFOnboardingViewController: UIViewController {
     private let successStatusLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.setupLabelShadowColor()
-        label.font = UIFont.textLabelFont(size: 18, for: .body, weight: .medium, width: .compressed)
+        label.font = UIFont.textLabelFont(size: 24, for: .body, weight: .medium, width: .compressed)
         label.numberOfLines = 1
         label.textColor = .mintGreen
         label.backgroundColor = .clear
@@ -101,8 +101,10 @@ class FFOnboardingViewController: UIViewController {
     }
     
     private func didTapAskNotificationRequest(_ button: UIButton){
+        
         FFSendUserNotifications.shared.requestForAccessToLocalNotification { [weak self] result in
             switch result {
+                
             case .success(let success):
                 self?.setupButtonConfirm(isAccessed: success,button)
             case .failure(let error):
@@ -192,15 +194,12 @@ class FFOnboardingViewController: UIViewController {
                 strongSelf.buttonsStackView.alignment = .center
                 strongSelf.buttonsStackView.distribution = .equalCentering
                 strongSelf.view.layoutIfNeeded()
-            } else {
-                print("Some values are false")
-                dump(strongSelf.accessToServicesBoolean)
             }
         }
     }
 }
 
-extension FFOnboardingViewController: SetupViewController {
+extension FFOnboardingAccessViewController: SetupViewController {
     
     func setupView(){
         
@@ -245,7 +244,7 @@ extension FFOnboardingViewController: SetupViewController {
     }
 }
 
-private extension FFOnboardingViewController {
+private extension FFOnboardingAccessViewController {
     func setupConstraints(){
         let buttons = [notificationButton, healthButton, userHealthButton, mediaButton]
         buttons.forEach { button in
@@ -281,7 +280,7 @@ private extension FFOnboardingViewController {
 }
 
 #Preview {
-    return FFOnboardingViewController(imageName: "lock.square", pageTitle: "Access to Sensitive Information", pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
+    return FFOnboardingAccessViewController(imageName: "lock.square", pageTitle: "Access to Sensitive Information", pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
 }
 
 

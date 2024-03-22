@@ -28,7 +28,7 @@
 		0A256A642B89DBC000137B6C /* DateComponents+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */; };
 		0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */; };
 		0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */; };
-		0A256A6B2B8CD63B00137B6C /* FFOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */; };
+		0A256A6B2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6A2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift */; };
 		0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
 		0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A38936C2B6A3936007FC363 /* discord-notification.mp3 */; };
@@ -171,7 +171,7 @@
 		0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extensions.swift"; sourceTree = "<group>"; };
 		0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
 		0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewController.swift; sourceTree = "<group>"; };
-		0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingViewController.swift; sourceTree = "<group>"; };
+		0A256A6A2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewController.swift; sourceTree = "<group>"; };
 		0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthSettingsViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
 		0A38936C2B6A3936007FC363 /* discord-notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "discord-notification.mp3"; sourceTree = "<group>"; };
@@ -389,7 +389,7 @@
 			isa = PBXGroup;
 			children = (
 				0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */,
-				0A256A6A2B8CD63B00137B6C /* FFOnboardingViewController.swift */,
+				0A256A6A2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift */,
 				0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */,
 				0AC99D662B932F0C000AAAD1 /* FFOnboardingUserDataViewController.swift */,
 				0AC99D702B9B0B08000AAAD1 /* FFEditOrDeleteAccountViewController.swift */,
@@ -1346,7 +1346,7 @@
 				0AE0F4F52B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift in Sources */,
 				0ACEAA572ADD757900899CF6 /* FFNewsDetailViewModel.swift in Sources */,
 				0ABDEB072B1952CA00BDDAFE /* FFCreateTrainProgramViewModel.swift in Sources */,
-				0A256A6B2B8CD63B00137B6C /* FFOnboardingViewController.swift in Sources */,
+				0A256A6B2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

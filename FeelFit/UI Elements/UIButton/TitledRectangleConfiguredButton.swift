@@ -22,6 +22,7 @@ class CustomConfigurationButton: UIButton  {
         self.configuration?.imagePlacement = placement ?? .all
         
         guard let tag = buttonTag else { return }
+        self.tag = tag
         guard let action = action else { return }
         self.addAction(action, for: .primaryActionTriggered)
     }

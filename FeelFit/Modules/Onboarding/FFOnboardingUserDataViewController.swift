@@ -45,7 +45,7 @@ class FFOnboardingUserDataViewController: UIViewController {
         
         defaultAlertController(title: nil, message: "Do you want to download medical data from Health?", actionTitle: "Download", style: .alert) {
             FFHealthDataLoading.shared.loadingCharactersData { [unowned self] userDataString in
-                
+                guard let data = userDataString else { return }
                 for (key,_) in dict {
                     switch key {
                     case "Birthday":
@@ -96,15 +96,31 @@ class FFOnboardingUserDataViewController: UIViewController {
             saveDataButton.configuration?.title = "Saved"
             saveDataButton.configuration?.baseBackgroundColor = .mintGreen
             saveDataButton.isEnabled = false
+            downloadDataButton.isHidden = true
         case .failure(let error):
             let textError = error.localizedDescription
             saveDataButton.configuration?.title = "Error"
             saveDataButton.configuration?.baseBackgroundColor = .systemRed
+            downloadDataButton.isHidden = false
             viewAlertController(text: textError, controllerView: self.view)
-            
         }
     }
+    
+    private func changeUserDataValue(_ index: Int, section: Int = 1,text value: String?){
+        let indexPath = IndexPath(row: index, section: section)
+        
+        guard let text = value else {
+            viewAlertController(text: "Value is empty", controllerView: view)
+            return
+        }
 
+        let dictionary = userDataDictionary[section]
+        let keys: [String] = Array(dictionary.keys).sorted()
+        let keyDictionary: String = keys[index]
+        userDataDictionary[section][keyDictionary] = text
+        
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
 }
 
 
@@ -136,21 +152,7 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     
     func setupViewModel() { }
     
-    private func changeUserDataValue(_ index: Int, section: Int = 1,text value: String?){
-        let indexPath = IndexPath(row: index, section: section)
-        
-        guard let text = value else {
-            viewAlertController(text: "Value is empty", controllerView: view)
-            return
-        }
-
-        let dictionary = userDataDictionary[section]
-        let keys: [String] = Array(dictionary.keys).sorted()
-        let keyDictionary: String = keys[index]
-        userDataDictionary[section][keyDictionary] = text
-        
-        tableView.reloadRows(at: [indexPath], with: .automatic)
-    }
+    
     
     private func returnSelectedValueFromDictionary(_ index: Int) -> String {
         let dictionary = userDataDictionary[1]

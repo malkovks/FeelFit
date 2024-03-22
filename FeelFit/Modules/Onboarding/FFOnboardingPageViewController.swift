@@ -7,10 +7,20 @@
 
 import UIKit
 
-class FFOnboardingPageViewController: UIPageViewController, SetupViewController {
+class FFOnboardingPageViewController: UIPageViewController {
     
     private let pageControl = UIPageControl()
     private var nextPageButton = UIButton(type: .custom)
+    private var skipOnboardingButton = UIButton(type: .custom)
+    
+    private let onboardingStackView: UIStackView = {
+        let userInterfaceStackView = UIStackView(frame: .zero)
+        userInterfaceStackView.axis = .vertical
+        userInterfaceStackView.spacing = 10
+        userInterfaceStackView.alignment = .center
+        userInterfaceStackView.distribution = .fillProportionally
+        return userInterfaceStackView
+    }()
     
     private var pages = [UIViewController]()
     private let initialPages = 0
@@ -32,19 +42,39 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
     @objc private func didTapPageControl(_ sender: UIPageControl){
         setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true)
     }
-
+    
     @objc private func didTapDismissOnboarding(){
         UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
         self.dismiss(animated: true)
     }
     
-    @objc private func didTapSkipOnboarding(){
-        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
-        self.dismiss(animated: true)
+    @objc private func didTapNextPage() {
+        var currentIndex = pageControl.currentPage
+        let pagesCount = pages.count-1
+        
+        
+        if currentIndex != pagesCount {
+            currentIndex += 1
+            pageControl.currentPage = currentIndex
+            self.setViewControllers([pages[currentIndex]], direction: .forward, animated: true)
+            if currentIndex == pagesCount {
+                toggleButtonsHidden()
+            }
+        }
     }
     
-   //Сделать фон мутным при помощи UIVisualBlurEffect
-    
+    private func toggleButtonsHidden(){
+        DispatchQueue.main.async { [unowned self ] in
+            UIView.animate(withDuration: 0.2) {
+                self.nextPageButton.isHidden.toggle()
+                self.skipOnboardingButton.isHidden.toggle()
+            }
+        }
+    }
+}
+
+    //MARK: - Setup onboarding page View controller
+extension FFOnboardingPageViewController: SetupViewController {
     func setupView() {
         view.backgroundColor = .systemBackground
         
@@ -53,31 +83,24 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         setupPageViewController()
         setupPageControl()
         setupNextPageButton()
+        setupSkipOnboardingPageButton()
         setupConstraints()
-        
-    }
-    //Доделать функцию переключения страницы по кнопке
-    @objc private func didTapNextPage() {
-        var currentIndex = pageControl.currentPage
-        let pagesCount = pages.count-1
-            
-        
-        if currentIndex != pagesCount {
-            currentIndex += 1
-            pageControl.currentPage = currentIndex
-            self.setViewControllers([pages[currentIndex]], direction: .forward, animated: true)
-            if currentIndex == pagesCount {
-                nextPageButton.configuration?.title = "Let's start"
-            }
-        }
     }
     
-    //MARK: - Setup onboarding page View controller
     private func setupNextPageButton(){
+        nextPageButton.isHidden = false
         nextPageButton.configuration = .filled()
         nextPageButton.configuration?.baseBackgroundColor = .systemBlue
         nextPageButton.configuration?.title = "Next"
         nextPageButton.addTarget(self, action: #selector(didTapNextPage), for: .primaryActionTriggered)
+    }
+    
+    private func setupSkipOnboardingPageButton(){
+        skipOnboardingButton.isHidden = true
+        skipOnboardingButton.configuration = .filled()
+        skipOnboardingButton.configuration?.baseBackgroundColor = .griRed
+        skipOnboardingButton.configuration?.title = "Lets Start"
+        skipOnboardingButton.addTarget(self, action: #selector(didTapDismissOnboarding), for: .primaryActionTriggered)
     }
     
     private func setupPageControl(){
@@ -97,7 +120,7 @@ class FFOnboardingPageViewController: UIPageViewController, SetupViewController 
         
         
         
-        let page1 = FFOnboardingViewController(imageName: "lock.square",
+        let page1 = FFOnboardingAccessViewController(imageName: "lock.square",
                                                pageTitle: "Access to sensitive information",
                                                pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
         let page2 = FFOnboardingAuthenticationViewController()
@@ -138,7 +161,11 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
         guard let index = pages.firstIndex(of: viewController) else { return nil}
         
         if index == 0 {
-            return pages.last
+            return nil
+        } else if index != pages.count {
+            nextPageButton.isHidden = false
+            skipOnboardingButton.isHidden = true
+            return pages[index-1]
         } else {
             return pages[index-1]
         }
@@ -147,9 +174,18 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil}
         if index < pages.count - 1  {
+            nextPageButton.isHidden = false
+            skipOnboardingButton.isHidden = true
             return pages[index + 1]
+//        } else if index == pages.count {
+//            
+//            return pages.last
+        } else {
+            nextPageButton.isHidden = true
+            skipOnboardingButton.isHidden = false
+            return nil
         }
-        return nil
+        
     }
 }
 
@@ -166,14 +202,13 @@ extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
 
 extension FFOnboardingPageViewController {
     private func setupConstraints(){
-        let userInterfaceStackView = UIStackView(arrangedSubviews: [pageControl, nextPageButton])
-        userInterfaceStackView.axis = .vertical
-        userInterfaceStackView.spacing = 10
-        userInterfaceStackView.alignment = .center
-        userInterfaceStackView.distribution = .fillProportionally
+        let userElements = [pageControl, nextPageButton, skipOnboardingButton]
+        userElements.forEach { controls in
+            onboardingStackView.addArrangedSubview(controls)
+        }
         
-        view.addSubview(userInterfaceStackView)
-        userInterfaceStackView.snp.makeConstraints { make in
+        view.addSubview(onboardingStackView)
+        onboardingStackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.1)
             make.bottom.equalToSuperview().multipliedBy(0.95)
