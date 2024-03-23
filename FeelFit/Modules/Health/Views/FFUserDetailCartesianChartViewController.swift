@@ -138,9 +138,12 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     
     @objc private func didTapCreateNewValue(){
         let title = getDataTypeName(self.identifier)
+        
         let message = "Enter a value to add a sample to your health data."
-        manualEnterHealthData(title, message) { [weak self] result in
-            self?.didAddNewData(with: result)
+        
+        presentTextFieldAlertController(placeholder: title, keyboardType: .numberPad, alertTitle: title,message: message) { [weak self] text in
+            guard let doubleValue = Double(text) else { return }
+            self?.didAddNewData(with: doubleValue)
         }
     }
     
@@ -329,3 +332,6 @@ private extension FFUserDetailCartesianChartViewController {
     }
 }
 
+#Preview {
+    return FFUserDetailCartesianChartViewController(typeIdentifier: .activeEnergyBurned)
+}

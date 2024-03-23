@@ -195,19 +195,19 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     
     private func confirmButton(completed: Bool){
         if completed {
-            skipRegistrationButton.configuration?.title = "Continue"
-            skipRegistrationButton.addTarget(self, action: #selector(didTapContinue), for: .primaryActionTriggered)
-            skipRegistrationButton.configuration?.baseBackgroundColor = .mintGreen
             UIView.animate(withDuration: 0.2) { [unowned self] in
                 loginAccountButton.alpha = 0
                 createAccountButton.alpha = 0
                 logoutAccountButton.alpha = 1
                 updateOrDeleteAccountButton.alpha = 1
+                skipRegistrationButton.alpha = 0
             } completion: { [unowned self] _ in
+                skipRegistrationButton.isHidden = true
                 loginAccountButton.isHidden = true
                 createAccountButton.isHidden = true
                 logoutAccountButton.isHidden = false
                 updateOrDeleteAccountButton.isHidden = false
+                view.layoutIfNeeded()
             }
         } else {
             skipRegistrationButton.configuration?.title = "Skip Registration"
@@ -219,16 +219,19 @@ class FFOnboardingAuthenticationViewController: UIViewController {
                 createAccountButton.alpha = 1
                 logoutAccountButton.alpha = 0
                 updateOrDeleteAccountButton.alpha = 0
+                skipRegistrationButton.alpha = 1
             } completion: { [unowned self] _ in
                 loginAccountButton.isHidden = false
                 createAccountButton.isHidden = false
+                skipRegistrationButton.isHidden = false
                 logoutAccountButton.isHidden = true
                 updateOrDeleteAccountButton.isHidden = true
+                view.layoutIfNeeded()
             }
             userEmailTextField.text = ""
             userPasswordTextField.text = ""
         }
-        authStackView.layoutIfNeeded()
+        
     }
     
     private func changePasswordSecureAction(){

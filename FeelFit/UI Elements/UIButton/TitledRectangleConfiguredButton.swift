@@ -33,7 +33,7 @@ class CustomConfigurationButton: UIButton  {
         self.configuration?.baseForegroundColor = .customBlack
         self.configuration?.baseBackgroundColor = .clear
         self.configuration?.cornerStyle = .small
-        self.configuration?.background.strokeWidth = 0.5
+        self.configuration?.background.strokeWidth = 1
         self.configuration?.background.strokeColor = .customBlack
         
         self.configuration?.titleAlignment = .center

@@ -49,13 +49,13 @@ class FFOnboardingUserDataViewController: UIViewController {
                 for (key,_) in dict {
                     switch key {
                     case "Birthday":
-                        dict[key] = userDataString?.dateOfBirth?.convertComponentsToDateString() ?? "Not Set"
+                        dict[key] = data.dateOfBirth?.convertComponentsToDateString() ?? "Not Set"
                     case "Gender":
-                        dict[key] = userDataString?.userGender ?? "Not Set"
+                        dict[key] = data.userGender ?? "Not Set"
                     case "Blood Type":
-                        dict[key] = userDataString?.bloodType ?? "Not Set"
+                        dict[key] = data.bloodType ?? "Not Set"
                     case "Skin Type(Fitzpatrick Type)":
-                        dict[key] = userDataString?.fitzpatrickSkinType ?? "Not Set"
+                        dict[key] = data.fitzpatrickSkinType ?? "Not Set"
                     default:
                         dict[key] = "Not Set"
                         break
@@ -97,6 +97,7 @@ class FFOnboardingUserDataViewController: UIViewController {
             saveDataButton.configuration?.baseBackgroundColor = .mintGreen
             saveDataButton.isEnabled = false
             downloadDataButton.isHidden = true
+            didTapOpenWelcomeView()
         case .failure(let error):
             let textError = error.localizedDescription
             saveDataButton.configuration?.title = "Error"
@@ -120,6 +121,15 @@ class FFOnboardingUserDataViewController: UIViewController {
         userDataDictionary[section][keyDictionary] = text
         
         tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    @objc private func didTapOpenWelcomeView(){
+        let name = userDataDictionary[0]["Name"]
+        let vc = FFWelcomeViewController(welcomeLabelText: name)
+        vc.modalPresentationStyle = .fullScreen
+        UIView.transition(with: view, duration: 1, options: .transitionFlipFromTop, animations: {
+            self.present(vc, animated: true)
+        }, completion: nil)
     }
 }
 
@@ -223,6 +233,9 @@ extension FFOnboardingUserDataViewController {
         horizontalStackView.spacing = 5
         horizontalStackView.distribution = .fillEqually
         
+        let button = CustomConfigurationButton(configurationTitle: "Check transition view")
+        button.addTarget(self, action: #selector(didTapOpenWelcomeView), for: .primaryActionTriggered)
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
@@ -237,59 +250,13 @@ extension FFOnboardingUserDataViewController {
             make.height.equalToSuperview().multipliedBy(0.08)
             make.bottom.equalToSuperview().multipliedBy(0.8)
         }
-    }
-}
-
-extension FFOnboardingUserDataViewController {
-    
-    func presentTextFieldAlertController(placeholder: String? = "Enter value",
-                                         text: String? = nil,
-                                         alertTitle: String? = nil,
-                                         message: String? = nil,
-                                         completion handler: @escaping (_ text: String) -> () ){
-        let alertController = UIAlertController(title: alertTitle, message: message, preferredStyle: .alert)
         
-        
-        
-        alertController.addTextField { textField in
-            textField.placeholder = placeholder
-            textField.text = text
-            textField.enablesReturnKeyAutomatically = true
-            textField.textColor = .customBlack
-            textField.textAlignment = .left
-            textField.autocapitalizationType = .words
-            textField.clearButtonMode = .always
-            textField.font = UIFont.textLabelFont(for: .body, weight: .light)
-            textField.keyboardType = .default
-            textField.returnKeyType = .go
+        view.addSubview(button)
+        button.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(horizontalStackView.snp.bottom).offset(10)
+            make.width.equalToSuperview().multipliedBy(0.8)
         }
-        
-        let saveAction = (UIAlertAction(title: "Save", style: .default) { action in
-            
-            
-            if let textField = alertController.textFields?.first,
-               let text = textField.text,
-               !text.isEmpty {
-                handler(text)
-            }
-        })
-        alertController.addAction(saveAction)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
-        let titleFont = UIFont.textLabelFont(size: 20,for: .title1, weight: .semibold)
-        let attributedTitle = NSAttributedString(string: alertTitle ?? "", attributes: [.font: titleFont])
-        let messageFont = UIFont.textLabelFont(size: 14,for: .body,weight: .thin)
-        let attributedMessage = NSAttributedString(string: message ?? "", attributes: [.font: messageFont])
-        let imageSave = UIImage(systemName: "square.and.arrow.down.fill")
-        
-        
-        saveAction.setValue(imageSave, forKey: "image")
-        
-        alertController.setValue(attributedTitle, forKey: "attributedTitle")
-        alertController.setValue(attributedMessage, forKey: "attributedMessage")
-        
-        present(alertController,animated: true)
-        
     }
 }
 

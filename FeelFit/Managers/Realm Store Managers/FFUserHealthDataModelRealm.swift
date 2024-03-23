@@ -9,10 +9,10 @@ import UIKit
 import RealmSwift
 
 class FFUserHealthDataModelRealm: Object {
-    @Persisted(primaryKey: true) var userID = UUID().uuidString
+    @Persisted(primaryKey: true) var userAccountLogin: String = UUID().uuidString
     @Persisted var userFirstName: String?
     @Persisted var userSecondName: String?
-    @Persisted var userAccountLogin: String?
+
     @Persisted var userLoginStatus: Bool
     @Persisted var userBirthOfDate: Date?
     @Persisted var userBiologicalSex: String? = HealthStoreRequest.GenderTypeResult.notSet.rawValue
@@ -45,7 +45,7 @@ class FFUserHealthDataStoreManager {
         let isLoggedIn = UserDefaults.standard.bool(forKey: "userLoggedIn")
         guard let userAccount = UserDefaults.standard.string(forKey: "userAccount")
         else {
-            return (false, "Default")
+            return (false, UUID().uuidString)
         }
         return (isLoggedIn, userAccount)
     }
@@ -86,7 +86,7 @@ class FFUserHealthDataStoreManager {
             }
         }
         
-        if let existedData = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: futureModel.userID) {
+        if let existedData = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: futureModel.userAccountLogin) {
             do {
                 try realm.write({
                     realm.delete(existedData)
