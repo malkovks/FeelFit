@@ -34,6 +34,9 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        FFHealthDataAccess.shared.requestForAccessToHealth()
+        FFHealthDataAccess.shared.requestAccessToCharactersData()
+        
 //        let navVC = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
 //        present(navVC, animated: true)
         

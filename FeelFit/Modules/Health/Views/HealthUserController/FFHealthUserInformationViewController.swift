@@ -144,18 +144,10 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4))
-            headerView.addSubview(userImageView)
-            userImageView.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.height.width.equalTo(view.frame.size.width/5)
-            }
-            
-            return headerView
-        } else {
-            return nil
-        }
+        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4)
+        let customView = UserImageTableViewHeaderView(frame: frameRect)
+        customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true)
+        return customView
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -178,5 +170,6 @@ private extension FFHealthUserInformationViewController {
 }
 
 #Preview {
-    return FFHealthUserInformationViewController()
+    let navVC = UINavigationController(rootViewController: FFHealthUserInformationViewController())
+    return navVC
 }

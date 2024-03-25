@@ -13,6 +13,8 @@ import PhotosUI
 ///Class display main information about user, his basic statistics and some terms about health access and etc
 class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    
     private var viewModel: FFHealthUserViewModel!
     
     private let headerTextSections = [
@@ -30,7 +32,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
          "Notification"],
         ["Application and services",
          "Scientific Research",
-        "Devices"],
+         "Devices"],
         ["Export Medical Data"]
     ]
     
@@ -41,17 +43,14 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     private let cameraViewController = UIImagePickerController()
     private var pickerViewController : PHPickerViewController!
     
-    private var scrollView: UIScrollView = UIScrollView(frame: .zero)
-    private var userImageView: UIImageView = UIImageView(frame: .zero)
-    private var userFullNameLabel: UILabel = UILabel(frame: .zero)
     private var tableView: UITableView = UITableView(frame: .zero)
     
-
-
+    private var managedUserImage: UIImage?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        FFHealthDataAccess.shared.requestAccessToCharactersData()
+        
     }
     
     
@@ -64,12 +63,15 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
         let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self] _ in
+            self?.feedbackGenerator.impactOccurred()
             self?.openCamera()
         }))
         alertController.addAction(UIAlertAction(title: "Open Library", style: .default,handler: { [weak self] _ in
+            self?.feedbackGenerator.impactOccurred()
             self?.didTapOpenPickerController()
         }))
         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+            self?.feedbackGenerator.impactOccurred()
             self?.deleteUserImage()
             
         }))
@@ -79,9 +81,9 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
     ///Method for opening user image with long press gesture
     @objc private func didTapOpenUserImage(_ sender: UILongPressGestureRecognizer){
-        guard let userImage = userImageView.image else { return }
         if sender.state == .began {
-            let vc = FFImageDetailsViewController(newsImage: userImage, imageURL: "")
+            let vc = FFImageDetailsViewController(newsImage: managedUserImage, imageURL: "")
+            self.feedbackGenerator.impactOccurred()
             present(vc, animated: true)
         } else if sender.state == .ended {
             
@@ -155,9 +157,8 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             try FileManager.default.removeItem(at: fileURL)
-            DispatchQueue.main.async {
-                self.userImageView = UIImageView(image: UIImage(systemName: "person.crop.circle"))
-            }
+            managedUserImage = UIImage(systemName: "person.crop.circle")!
+            reloadTableViewSection()
         } catch {
             print("Error deleting image " + error.localizedDescription)
         }
@@ -178,17 +179,25 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         }
     }
     
+    private func reloadTableViewSection(){
+        DispatchQueue.main.async { [weak self] in
+            let indexSet = IndexSet(integer: 0)
+            self?.tableView.reloadSections(indexSet, with: .fade)
+        }
+        
+    }
+}
+
     //MARK: Set up methods
-    
-    
+extension FFHealthUserProfileViewController {
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
+        feedbackGenerator.prepare()
+        FFHealthDataAccess.shared.requestAccessToCharactersData()
+        setupUserImageView()
         setupNavigationController()
         setupViewModel()
         setupTableView()
-        setupUserLabel()
-        setupUserImageView()
-        setupScrollView()
         setupPhotoPickerView()
         setupConstraints()
         setupCameraViewController()
@@ -224,45 +233,25 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     private func setupUserImageView(){
-        
-        userImageView = UIImageView(image: userImage)
-        userImageView.setupShadowLayer()
-        userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
-        userImageView.tintColor = FFResources.Colors.activeColor
-        userImageView.isUserInteractionEnabled = true
-        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
-        userImageView.layer.masksToBounds = true
-        userImageView.contentMode = .scaleAspectFill
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
-        userImageView.addGestureRecognizer(tapGesture)
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapOpenUserImage))
-        longPressGesture.minimumPressDuration = 0.3
-        userImageView.addGestureRecognizer(longPressGesture)
-        if let image = loadUserImage() {
-            userImageView.image = image
-        } else {
-            print("FFHealthUserProfileVC.setupUserImageView error getting image from file path url ")
-        }
-    }
-    
-    
-    
-    private func setupUserLabel(){
-        userFullNameLabel = UILabel(frame: .zero)
-        userFullNameLabel.text = "Malkov Konstantin"
-        userFullNameLabel.font = UIFont.headerFont(size: 24)
-        userFullNameLabel.textAlignment = .center
-        userFullNameLabel.numberOfLines = 1
-    }
-    
-    private func setupScrollView(){
-        scrollView = UIScrollView(frame: .zero)
-        scrollView.alwaysBounceHorizontal = false
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.showsVerticalScrollIndicator = true
-        scrollView.isDirectionalLockEnabled = true
-        scrollView.isScrollEnabled = true
-        scrollView.alwaysBounceVertical = true
+        managedUserImage = loadUserImage()
+//        userImageView = UIImageView(image: userImage)
+//        userImageView.setupShadowLayer()
+//        userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
+//        userImageView.tintColor = FFResources.Colors.activeColor
+//        userImageView.isUserInteractionEnabled = true
+//        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
+//        userImageView.layer.masksToBounds = true
+//        userImageView.contentMode = .scaleAspectFill
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
+//        userImageView.addGestureRecognizer(tapGesture)
+//        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapOpenUserImage))
+//        longPressGesture.minimumPressDuration = 0.3
+//        userImageView.addGestureRecognizer(longPressGesture)
+//        if let image = loadUserImage() {
+//            userImageView.image = image
+//        } else {
+//            print("FFHealthUserProfileVC.setupUserImageView error getting image from file path url ")
+//        }
     }
     
     private func setupTableView(){
@@ -270,9 +259,9 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "userHealthCell")
-        tableView.isScrollEnabled = false
+        tableView.isScrollEnabled = true
         tableView.backgroundColor = .clear
-        tableView.bounces = false
+        tableView.bounces = true
         tableView.estimatedSectionFooterHeight = 0
         tableView.estimatedSectionHeaderHeight = 44
     }
@@ -280,11 +269,13 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
 
 extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[UIImagePickerController.InfoKey.livePhoto] as? UIImage else { print("Error getting image from camera");self.dismiss(animated: true);  return }
-        DispatchQueue.main.async {
-            self.userImageView.image = image
-            
+        guard let image = info[UIImagePickerController.InfoKey.livePhoto] as? UIImage 
+        else {
+            print("Error getting image from camera");self.dismiss(animated: true)
+            return
         }
+        self.managedUserImage = image
+        reloadTableViewSection()
     }
 }
 
@@ -292,8 +283,6 @@ extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
     
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true)
-        
-        //Разобраться с закрытием и добавлением фото в userImageView
        convertSelectedImage(results)
     }
     
@@ -311,16 +300,13 @@ extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
                 if !self!.isUserImageSavedInDirectory() {
                     self?.deleteUserImage()
                     self?.saveUserImage(image, fileName: fileName)
-                    DispatchQueue.main.async {
-                        self?.userImageView.image = image
-                    }
+                    self?.managedUserImage = image
+                    self?.reloadTableViewSection()
                 } else {
                     self?.saveUserImage(image, fileName: fileName)
-                    DispatchQueue.main.async {
-                        self?.userImageView.image = image
-                    }
+                    self?.managedUserImage = image
+                    self?.reloadTableViewSection()
                 }
-                self?.userImage = image
             }
         }
     }
@@ -348,12 +334,8 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = FFHealthUserInformationViewController()
-        vc.userImage = userImageView.image
+        vc.userImage = managedUserImage
         navigationController?.pushViewController(vc, animated: true)
-        
-//        let navVC = FFNavigationController(rootViewController: vc)
-//        navVC.isNavigationBarHidden = false
-//        present(navVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -361,7 +343,12 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 44
+        if section != 0 {
+            return 44
+        } else {
+            return view.frame.size.height / 5
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -369,54 +356,37 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel(frame: CGRect(x: 5, y: 5, width: tableView.frame.width-10, height: 34))
-        label.font = UIFont.textLabelFont(size: 24)
-        label.text = headerTextSections[section]
-        label.textAlignment = .left
-        let customView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 44))
-        customView.addSubview(label)
-        return customView
+        if section == 0 {
+            let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4)
+            let customView = UserImageTableViewHeaderView(frame: frameRect)
+            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: "Malkov Konstantin")
+            customView.configureImageTarget(selector: #selector(didTapOpenImagePicker), target: self)
+            customView.configureLongGestureImageTarget(target: self, selector: #selector(didTapOpenUserImage))
+            return customView
+        } else {
+            let label = UILabel(frame: CGRect(x: 5, y: 5, width: tableView.frame.width-10, height: 34))
+            label.font = UIFont.textLabelFont(size: 24)
+            label.text = headerTextSections[section]
+            label.textAlignment = .left
+            let customView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 44))
+            customView.addSubview(label)
+            return customView
+        }
+        
+        
     }
 }
 
 extension FFHealthUserProfileViewController {
     private func setupConstraints(){
-        view.addSubview(scrollView)
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        let imageSize = view.frame.size.width/5
-        
-        
-        scrollView.addSubview(userImageView)
-        userImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(10)
-            make.centerX.equalToSuperview()
-            make.height.width.equalTo(imageSize)
-        }
-        
-        scrollView.addSubview(userFullNameLabel)
-        userFullNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(userImageView.snp.bottom)
-            make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9)
-            make.height.equalToSuperview().multipliedBy(0.1)
-        }
-        
-        scrollView.addSubview(tableView)
+        view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(userFullNameLabel.snp.bottom)
+            make.top.equalToSuperview()
             make.centerX.equalToSuperview()
-            make.height.greaterThanOrEqualToSuperview().multipliedBy(0.8)
-            make.height.lessThanOrEqualToSuperview().multipliedBy(2)
+            make.height.equalToSuperview()
             make.width.equalToSuperview()
         }
-        
-        scrollView.snp.makeConstraints { make in
-            make.bottom.equalTo(tableView.snp.bottom).offset(10)
-            make.width.equalTo(view.snp.width)
-        }
+
         
     }
     
@@ -425,6 +395,7 @@ extension FFHealthUserProfileViewController {
 }
 
 #Preview {
-    return FFHealthUserProfileViewController()
+    let navVC = UINavigationController(rootViewController: FFHealthUserProfileViewController())
+    return navVC
 }
 

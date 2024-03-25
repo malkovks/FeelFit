@@ -29,8 +29,8 @@ class FFOnboardingUserDataViewController: UIViewController {
         return tableView
     }()
     
-    private let downloadDataButton = CustomConfigurationButton(configurationTitle: "Download From Health")
-    private let saveDataButton = CustomConfigurationButton(configurationTitle: "Save Data")
+    private let downloadDataButton = CustomConfigurationButton(configurationTitle: "Download From Health",baseBackgroundColor: .systemBackground)
+    private let saveDataButton = CustomConfigurationButton(configurationTitle: "Save Data",baseBackgroundColor: .systemBackground)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,6 +124,7 @@ class FFOnboardingUserDataViewController: UIViewController {
     }
     
     @objc private func didTapOpenWelcomeView(){
+        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
         let name = userDataDictionary[0]["Name"]
         let vc = FFWelcomeViewController(welcomeLabelText: name)
         vc.modalPresentationStyle = .fullScreen
@@ -205,6 +206,25 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
         return 55
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return view.frame.size.height / 5
+        } else {
+            return 0.0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4)
+        let customView = UserImageTableViewHeaderView(frame: frameRect)
+        customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true, labelText: nil)
+        return customView
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let dictionary = userDataDictionary[indexPath.section]
@@ -233,29 +253,20 @@ extension FFOnboardingUserDataViewController {
         horizontalStackView.spacing = 5
         horizontalStackView.distribution = .fillEqually
         
-        let button = CustomConfigurationButton(configurationTitle: "Check transition view")
-        button.addTarget(self, action: #selector(didTapOpenWelcomeView), for: .primaryActionTriggered)
-        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
-            make.leading.trailing.equalToSuperview()
-            make.height.greaterThanOrEqualToSuperview().multipliedBy(0.7)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.greaterThanOrEqualToSuperview().multipliedBy(0.75)
         }
         
         view.addSubview(horizontalStackView)
         horizontalStackView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
+            make.top.equalTo(tableView.snp.bottom).offset(5)
             make.width.equalToSuperview().multipliedBy(0.9)
-            make.height.equalToSuperview().multipliedBy(0.08)
-            make.bottom.equalToSuperview().multipliedBy(0.8)
-        }
-        
-        view.addSubview(button)
-        button.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(horizontalStackView.snp.bottom).offset(10)
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalToSuperview().multipliedBy(0.05)
         }
     }
 }
