@@ -132,7 +132,7 @@ class FFTrainingPlanCollectionViewCell: UICollectionViewCell {
         self.layer.cornerRadius = 12
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1
-        self.layer.borderColor = FFResources.Colors.griRed.cgColor
+        self.layer.borderColor = FFResources.Colors.activeColor.cgColor
         completeStatusButton.addTarget(self, action: #selector(didTapSave), for: .primaryActionTriggered)
         
     }

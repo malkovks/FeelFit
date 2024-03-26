@@ -15,7 +15,7 @@ extension UILabel {
     
     func setupLabelGradient(){
         let gradientColor = CAGradientLayer()
-        gradientColor.colors = [UIColor.griRed.cgColor, UIColor.systemBlue.cgColor]
+        gradientColor.colors = [UIColor.main.cgColor, UIColor.systemBlue.cgColor]
         self.layer.addSublayer(gradientColor)
         
     }

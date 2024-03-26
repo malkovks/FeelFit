@@ -219,9 +219,9 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4)
+        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
         let customView = UserImageTableViewHeaderView(frame: frameRect)
-        customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true, labelText: nil)
+        customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true)
         return customView
     }
     

@@ -24,8 +24,6 @@ enum FFResources {
         static var textColor = UIColor(named: "textColor") ?? .black
         /// dark gray color
         static var detailTextColor = UIColor(named: "detailTextColor") ?? .black
-        /// gri background red
-        static var griRed = UIColor(named: "gri_red") ?? .systemRed
         /// dark purple
         static var darkPurple = UIColor(named: "dark_purpleAsset") ?? .systemPurple
         /// very light pink color for background color

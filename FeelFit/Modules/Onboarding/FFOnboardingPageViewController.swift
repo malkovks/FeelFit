@@ -98,7 +98,7 @@ extension FFOnboardingPageViewController: SetupViewController {
     private func setupSkipOnboardingPageButton(){
         skipOnboardingButton.isHidden = true
         skipOnboardingButton.configuration = .filled()
-        skipOnboardingButton.configuration?.baseBackgroundColor = .griRed
+        skipOnboardingButton.configuration?.baseBackgroundColor = .main
         skipOnboardingButton.configuration?.title = "Lets Start"
         skipOnboardingButton.addTarget(self, action: #selector(didTapDismissOnboarding), for: .primaryActionTriggered)
     }

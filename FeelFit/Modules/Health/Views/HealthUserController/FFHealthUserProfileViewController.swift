@@ -15,6 +15,8 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     
+    private let userImageManager = FFUserImageManager.shared
+    
     private var viewModel: FFHealthUserViewModel!
     
     private let headerTextSections = [
@@ -61,6 +63,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     
     ///method for displaying actions with users image
     @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
+        let fileName = userImageFileName
         let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self] _ in
             self?.feedbackGenerator.impactOccurred()
@@ -71,8 +74,10 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
             self?.didTapOpenPickerController()
         }))
         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            self?.feedbackGenerator.impactOccurred()
-            self?.deleteUserImage()
+            guard let strongSelf = self else { return }
+            strongSelf.feedbackGenerator.impactOccurred()
+//            self?.deleteUserImage()
+            strongSelf.managedUserImage = strongSelf.userImageManager.deleteUserImage(fileName)
             
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -121,63 +126,55 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
             }
         }
     }
+   //
+//    private func saveUserImage(_ image: UIImage,fileName: String){
+//        guard let data = image.jpegData(compressionQuality: 1.0) else { return }
+//        let filesURL = getDocumentaryURL().appendingPathComponent(fileName)
+//        do {
+//            try data.write(to: filesURL)
+//            UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
+//            userImageFileName = fileName
+//        } catch {
+//            fatalError("FFHealthUserProfileViewController.saveUserImage ==> Error saving to file url. Check the way to save data")
+//        }
+//    }
     
-    // Не нужен
-    private func compressImageWeight(_ image: UIImage,_ size: CGFloat) {
-        guard let data = image.jpegData(compressionQuality: size) else { return }
-        let nsImageData = NSData(data: data)
-        let imageSize: Int = nsImageData.count
-        print("Image size \(Double(imageSize)/1000)")
-    }
+//    private func loadUserImage() -> UIImage? {
+//        let filesURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
+//        do {
+//            let imageData = try Data(contentsOf: filesURL)
+//            return UIImage(data: imageData)
+//        } catch {
+//            print(error.localizedDescription)
+//            return nil
+//        }
+//    }
     
-    private func saveUserImage(_ image: UIImage,fileName: String){
-        guard let data = image.jpegData(compressionQuality: 1.0) else { return }
-        let filesURL = getDocumentaryURL().appendingPathComponent(fileName)
-        do {
-            try data.write(to: filesURL)
-            UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
-            userImageFileName = fileName
-        } catch {
-            fatalError("FFHealthUserProfileViewController.saveUserImage ==> Error saving to file url. Check the way to save data")
-        }
-    }
+//    private func deleteUserImage() {
+//        let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
+//        do {
+//            try FileManager.default.removeItem(at: fileURL)
+//            managedUserImage = UIImage(systemName: "person.crop.circle")!
+//            reloadTableViewSection()
+//        } catch {
+//            print("Error deleting image " + error.localizedDescription)
+//        }
+//    }
     
-    private func loadUserImage() -> UIImage? {
-        let filesURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
-        do {
-            let imageData = try Data(contentsOf: filesURL)
-            return UIImage(data: imageData)
-        } catch {
-            print(error.localizedDescription)
-            return nil
-        }
-    }
+//    func getDocumentaryURL() -> URL {
+//        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//        let directory = paths.first!
+//        return directory
+//    }
     
-    private func deleteUserImage() {
-        let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
-        do {
-            try FileManager.default.removeItem(at: fileURL)
-            managedUserImage = UIImage(systemName: "person.crop.circle")!
-            reloadTableViewSection()
-        } catch {
-            print("Error deleting image " + error.localizedDescription)
-        }
-    }
-    
-    func getDocumentaryURL() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let directory = paths.first!
-        return directory
-    }
-    
-    private func isUserImageSavedInDirectory() -> Bool {
-        let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            return true
-        } else {
-            return false
-        }
-    }
+//    private func isUserImageSavedInDirectory() -> Bool {
+//        let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
+//        if FileManager.default.fileExists(atPath: fileURL.path) {
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
     
     private func reloadTableViewSection(){
         DispatchQueue.main.async { [weak self] in
@@ -233,25 +230,7 @@ extension FFHealthUserProfileViewController {
     }
     
     private func setupUserImageView(){
-        managedUserImage = loadUserImage()
-//        userImageView = UIImageView(image: userImage)
-//        userImageView.setupShadowLayer()
-//        userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
-//        userImageView.tintColor = FFResources.Colors.activeColor
-//        userImageView.isUserInteractionEnabled = true
-//        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
-//        userImageView.layer.masksToBounds = true
-//        userImageView.contentMode = .scaleAspectFill
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenImagePicker))
-//        userImageView.addGestureRecognizer(tapGesture)
-//        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didTapOpenUserImage))
-//        longPressGesture.minimumPressDuration = 0.3
-//        userImageView.addGestureRecognizer(longPressGesture)
-//        if let image = loadUserImage() {
-//            userImageView.image = image
-//        } else {
-//            print("FFHealthUserProfileVC.setupUserImageView error getting image from file path url ")
-//        }
+        managedUserImage = userImageManager.loadUserImage(userImageFileName)
     }
     
     private func setupTableView(){
@@ -264,14 +243,17 @@ extension FFHealthUserProfileViewController {
         tableView.bounces = true
         tableView.estimatedSectionFooterHeight = 0
         tableView.estimatedSectionHeaderHeight = 44
+        tableView.setupAppearanceShadow()
     }
 }
 
 extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[UIImagePickerController.InfoKey.livePhoto] as? UIImage 
+        #error("Фиксить")
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         else {
-            print("Error getting image from camera");self.dismiss(animated: true)
+            alertError(title: "Can't get image from camera. Try again!")
+            self.dismiss(animated: true)
             return
         }
         self.managedUserImage = image
@@ -288,26 +270,38 @@ extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
     
     private func convertSelectedImage(_ results: [PHPickerResult]){
         let fileName = "userImage.jpeg"
+        
         guard let result = results.first else { return }
         let itemProvider = result.itemProvider
         if itemProvider.canLoadObject(ofClass: UIImage.self) {
             itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                guard let image = image as? UIImage else {
-                    self?.dismiss(animated: true)
+                guard let self = self else {
                     return
                 }
                 
-                if !self!.isUserImageSavedInDirectory() {
-                    self?.deleteUserImage()
-                    self?.saveUserImage(image, fileName: fileName)
-                    self?.managedUserImage = image
-                    self?.reloadTableViewSection()
-                } else {
-                    self?.saveUserImage(image, fileName: fileName)
-                    self?.managedUserImage = image
-                    self?.reloadTableViewSection()
+                guard let image = image as? UIImage else {
+                    self.dismiss(animated: true)
+                    return
                 }
+                
+                let saveStatus = userImageManager.isUserImageSavedInDirectory(userImageFileName)
+                checkIsImageSaved(saveStatus, fileName: fileName, image: image)
             }
+        }
+    }
+    
+    private func checkIsImageSaved(_ boolean: Bool,fileName: String,image: UIImage) {
+        if boolean {
+            _ = userImageManager.deleteUserImage(userImageFileName)
+           userImageFileName = fileName
+           userImageManager.saveUserImage(image, fileName: fileName)
+           managedUserImage = image
+           reloadTableViewSection()
+        } else {
+           userImageFileName = fileName
+           userImageManager.saveUserImage(image, fileName: fileName)
+           managedUserImage = image
+           reloadTableViewSection()
         }
     }
 }
@@ -357,9 +351,9 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0 {
-            let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4)
+            let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
             let customView = UserImageTableViewHeaderView(frame: frameRect)
-            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: "Malkov Konstantin")
+            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: "Some Name")
             customView.configureImageTarget(selector: #selector(didTapOpenImagePicker), target: self)
             customView.configureLongGestureImageTarget(target: self, selector: #selector(didTapOpenUserImage))
             return customView
@@ -372,8 +366,6 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
             customView.addSubview(label)
             return customView
         }
-        
-        
     }
 }
 
@@ -386,8 +378,6 @@ extension FFHealthUserProfileViewController {
             make.height.equalToSuperview()
             make.width.equalToSuperview()
         }
-
-        
     }
     
     

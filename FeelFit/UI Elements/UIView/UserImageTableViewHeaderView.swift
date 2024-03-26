@@ -9,14 +9,15 @@ import UIKit
 
 class UserImageTableViewHeaderView: UIView {
     
-    
-    
     private var userImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "person.crop.circle")!)
-        imageView.tintColor = .griRed
+        imageView.tintColor = .main
         imageView.setupShadowLayer()
         imageView.isUserInteractionEnabled = true
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.customBlack.cgColor
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
@@ -33,52 +34,38 @@ class UserImageTableViewHeaderView: UIView {
         let stackView = UIStackView(frame: .zero)
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fill
         stackView.spacing = 5
         return stackView
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupImageView()
         setupHeaderViewConstraints()
     }
     
-    @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
-        
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        userImageView.layer.cornerRadius = userImageView.frame.size.height / 2
     }
     
     private func setupHeaderViewConstraints(){
-        stackView.addArrangedSubview(userImageView)
-        stackView.addArrangedSubview(userFullNameLabel)
+        let imageSize = self.frame.size.height * 0.8
         
-        self.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.width.equalToSuperview()
-            make.centerX.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.95)
-        }
+        self.addSubview(userImageView)
         userImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.greaterThanOrEqualToSuperview()
-            make.height.greaterThanOrEqualToSuperview().multipliedBy(0.8)
+            make.top.equalToSuperview()
+            make.width.height.equalTo(imageSize)
         }
         
+        self.addSubview(userFullNameLabel)
         userFullNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(userImageView.snp.bottom).offset(5)
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.2)
-            make.bottom.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(30)
         }
-    }
-    //Доделать изображение чтобы было круглым после присвоения нового
-    private func setupImageView(){
-        userImageView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.width)
-        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
-        userImageView.layer.masksToBounds = true
-        
-        
     }
     
     func configureImageTarget(selector: Selector,target: Any?){
@@ -90,6 +77,15 @@ class UserImageTableViewHeaderView: UIView {
         self.userImageView.image = userImage ?? UIImage(systemName: "person.crop.circle")!
         self.userFullNameLabel.isHidden = isLabelHidden
         self.userFullNameLabel.text = labelText
+        if isLabelHidden {
+            userImageView.snp.updateConstraints { make in
+                make.width.height.equalTo(self.frame.size.height * 0.8)
+            }
+        } else {
+            userImageView.snp.updateConstraints { make in
+                make.width.height.equalTo(self.frame.size.height * 0.6)
+            }
+        }
     }
     
     func configureLongGestureImageTarget(target: Any?, selector: Selector){

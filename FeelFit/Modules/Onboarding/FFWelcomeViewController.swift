@@ -25,7 +25,7 @@ class FFWelcomeViewController: UIViewController {
         label.font = UIFont.textLabelFont(size: 32,for: .extraLargeTitle,weight: .semibold)
         label.numberOfLines = 2
         label.textAlignment = .center
-        label.textColor = .griRed
+        label.textColor = .main
         return label
     }()
 
