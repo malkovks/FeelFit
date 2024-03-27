@@ -25,10 +25,6 @@ class FFOnboardingPageViewController: UIPageViewController {
     private var pages = [UIViewController]()
     private let initialPages = 0
     private var currentIndex = 0
-    private var suspensionTimer: Timer?
-    private var isTimerPaused: Bool = false
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -177,9 +173,10 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
             nextPageButton.isHidden = false
             skipOnboardingButton.isHidden = true
             return pages[index + 1]
-//        } else if index == pages.count {
-//            
-//            return pages.last
+        } else if index == pages.count-1 {
+            nextPageButton.isHidden = true
+            skipOnboardingButton.isHidden = false
+            return nil
         } else {
             nextPageButton.isHidden = true
             skipOnboardingButton.isHidden = false

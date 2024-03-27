@@ -10,6 +10,7 @@ import UIKit
 class FFOnboardingUserDataViewController: UIViewController {
     
     private let calendar = Calendar.current
+    private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     private var userDataDictionary: [[String: String]] = [
         ["Name":"Enter Name",
@@ -172,6 +173,28 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     }
 }
 
+extension FFOnboardingUserDataViewController: ActionsWithUserImageView {
+    func openCamera() {
+        
+    }
+    
+    func checkAccessToCameraAndMedia(handler: (Bool) -> ()) {
+        
+    }
+    
+    func didTapOpenUserImage(_ longGesture: UILongPressGestureRecognizer) {
+        
+    }
+    
+    
+    
+    @objc private func didTapOpenImage(_ sender: UITapGestureRecognizer){
+        didTapOpenImagePicker(userImageFileName, sender)
+    }
+    
+    
+}
+
 //Delegate method returning selected result from FFPickerViewDelegate
 extension FFOnboardingUserDataViewController: FFPickerViewDelegate {
     func didReceiveSelectedDate(selectedDate: Date?, index: Int) {
@@ -215,14 +238,35 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0.0
+        if section == 1 {
+            return 55
+        } else {
+            return 5
+        }
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
         let customView = UserImageTableViewHeaderView(frame: frameRect)
         customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true)
+        customView.configureImageTarget(selector: #selector(didTapOpenImage), target: self)
         return customView
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+        let horizontalStackView = UIStackView(arrangedSubviews: [downloadDataButton,saveDataButton])
+        horizontalStackView.axis = .horizontal
+        horizontalStackView.alignment = .fill
+        horizontalStackView.spacing = 5
+        horizontalStackView.distribution = .fillEqually
+        footerView.addSubview(horizontalStackView)
+        horizontalStackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(5)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        return footerView
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -242,17 +286,12 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
             break
         }
     }
+    
+
 }
 
 extension FFOnboardingUserDataViewController {
     private func setupConstraints(){
-        
-        let horizontalStackView = UIStackView(arrangedSubviews: [downloadDataButton,saveDataButton])
-        horizontalStackView.axis = .horizontal
-        horizontalStackView.alignment = .fill
-        horizontalStackView.spacing = 5
-        horizontalStackView.distribution = .fillEqually
-        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
@@ -260,19 +299,9 @@ extension FFOnboardingUserDataViewController {
             make.width.equalToSuperview()
             make.height.greaterThanOrEqualToSuperview().multipliedBy(0.75)
         }
-        
-        view.addSubview(horizontalStackView)
-        horizontalStackView.snp.makeConstraints { make in
-            make.top.equalTo(tableView.snp.bottom).offset(5)
-            make.width.equalToSuperview().multipliedBy(0.9)
-            make.centerX.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.05)
-        }
     }
 }
 
 #Preview {
-    let nav = FFNavigationController(rootViewController: FFOnboardingUserDataViewController())
-    nav.modalPresentationStyle = .fullScreen
-    return nav
+    return FFOnboardingUserDataViewController()
 }

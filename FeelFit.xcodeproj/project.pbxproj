@@ -87,6 +87,7 @@
 		0A82CD1F2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD1E2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift */; };
 		0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */; };
 		0A82CD262B2E462400F98D8B /* NavigationItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD252B2E462400F98D8B /* NavigationItemButton.swift */; };
+		0A8479B52BB41C0300C0F8EE /* ActionsWithUserImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */; };
 		0A85551C2B72436900B1A7EE /* FFHealthDataLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */; };
 		0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */; };
 		0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */; };
@@ -230,6 +231,7 @@
 		0A82CD1E2B2C3B3900F98D8B /* FFPlanDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPlanDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerTwoActions.swift; sourceTree = "<group>"; };
 		0A82CD252B2E462400F98D8B /* NavigationItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationItemButton.swift; sourceTree = "<group>"; };
+		0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsWithUserImageView.swift; sourceTree = "<group>"; };
 		0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataLoading.swift; sourceTree = "<group>"; };
 		0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseTableViewCell.swift; sourceTree = "<group>"; };
 		0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFDatePickerViewController.swift; sourceTree = "<group>"; };
@@ -456,6 +458,7 @@
 				0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */,
 				0A4495002AB9CFB40082C909 /* Modules */,
 				0A634C812B9CB53D0068E544 /* Managers */,
+				0A8479B32BB41BD600C0F8EE /* Multi-using Methods */,
 				0AC59C632B931E420009489E /* UI Elements */,
 				0A4495342ABC3F720082C909 /* APIClient */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
@@ -824,6 +827,14 @@
 				0A1A9E002BAED96300FC0884 /* AlertTextField+UIViewController.swift */,
 			);
 			path = "UIViewController+Extension";
+			sourceTree = "<group>";
+		};
+		0A8479B32BB41BD600C0F8EE /* Multi-using Methods */ = {
+			isa = PBXGroup;
+			children = (
+				0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */,
+			);
+			path = "Multi-using Methods";
 			sourceTree = "<group>";
 		};
 		0A86DED92B23E80800E9DA24 /* Secondary Views */ = {
@@ -1258,6 +1269,7 @@
 				0A2347D32AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift in Sources */,
 				0AE049AB2B77806800697A82 /* FFFavouriteHealthDataTableViewCell.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
+				0A8479B52BB41C0300C0F8EE /* ActionsWithUserImageView.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */,
 				0A1A9E012BAED96300FC0884 /* AlertTextField+UIViewController.swift in Sources */,
