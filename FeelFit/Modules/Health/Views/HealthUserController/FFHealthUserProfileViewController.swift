@@ -39,12 +39,11 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         ["Export Medical Data"]
     ]
     
-    private var userImage: UIImage = UIImage(systemName: "person.crop.circle")!
     private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     private var pickerConfiguration: PHPickerConfiguration = PHPickerConfiguration(photoLibrary: .shared())
-    private let cameraViewController = UIImagePickerController()
-    private var pickerViewController : PHPickerViewController!
+    private var cameraPickerController: UIImagePickerController!
+    private var pickerViewController: PHPickerViewController!
     
     private var tableView: UITableView = UITableView(frame: .zero)
     
@@ -90,15 +89,12 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
             let vc = FFImageDetailsViewController(newsImage: managedUserImage, imageURL: "")
             self.feedbackGenerator.impactOccurred()
             present(vc, animated: true)
-        } else if sender.state == .ended {
-            
         }
     }
     
     private func didTapOpenPickerController(){
         checkAccessToCameraAndMedia { status in
             if status {
-                setupPhotoPickerView()
                 present(pickerViewController, animated: true)
             }else {
                 didTapOpenPickerController()
@@ -124,7 +120,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
                     alertError(title: "Error to open Camera",message: "Check access status in System Settings")
                     return
                 }
-                self.present(cameraViewController, animated: true)
+                self.present(cameraPickerController, animated: true)
             } else {
                 openCamera()
             }
@@ -142,12 +138,13 @@ extension FFHealthUserProfileViewController {
         setupNavigationController()
         setupViewModel()
         setupTableView()
-        setupPhotoPickerView()
+        setupMediaPickerController()
+        setupCameraPickerController()
         setupConstraints()
-        setupCameraViewController()
+        
     }
     
-    private func setupPhotoPickerView(){
+    private func setupMediaPickerController(){
         let newFilter = PHPickerFilter.any(of: [.images,.livePhotos])
         pickerConfiguration.filter = newFilter
         pickerConfiguration.preferredAssetRepresentationMode = .current
@@ -159,12 +156,13 @@ extension FFHealthUserProfileViewController {
         pickerViewController.delegate = self
     }
     
-    private func setupCameraViewController(){
-        cameraViewController.delegate = self
-        cameraViewController.sourceType = .camera
-        cameraViewController.allowsEditing = true
-        cameraViewController.showsCameraControls = true
-        cameraViewController.cameraCaptureMode = .photo
+    private func setupCameraPickerController(){
+        cameraPickerController = UIImagePickerController()
+        cameraPickerController.delegate = self
+        cameraPickerController.sourceType = .camera
+        cameraPickerController.allowsEditing = true
+        cameraPickerController.showsCameraControls = true
+        cameraPickerController.cameraCaptureMode = .photo
     }
     
     func setupNavigationController() {

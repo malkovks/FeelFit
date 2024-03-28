@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import PhotosUI
 
-class FFOnboardingUserDataViewController: UIViewController {
+class FFOnboardingUserDataViewController: UIViewController, ActionsWithUserImageView {
     
     private let calendar = Calendar.current
-    private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    //    private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    
+    var cameraPickerController: UIImagePickerController!
+    var pickerViewController: PHPickerViewController!
     
     private var userDataDictionary: [[String: String]] = [
         ["Name":"Enter Name",
@@ -32,11 +36,22 @@ class FFOnboardingUserDataViewController: UIViewController {
     
     private let downloadDataButton = CustomConfigurationButton(configurationTitle: "Download From Health",baseBackgroundColor: .systemBackground)
     private let saveDataButton = CustomConfigurationButton(configurationTitle: "Save Data",baseBackgroundColor: .systemBackground)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         
+    }
+    
+}
+
+extension FFOnboardingUserDataViewController {
+    @objc private func didTapOpenImage(_ sender: UITapGestureRecognizer){
+        didTapOpenImagePicker(userImageFileName, cameraPickerController, pickerViewController, animated: true, sender)
+    }
+    
+    @objc private func didTapLongPress(_ longGesture: UILongPressGestureRecognizer){
+        didTapLongPressOnImage(longGesture)
     }
     
     //MARK: - Actions methods
@@ -144,6 +159,8 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         setupButtons()
         setupNavigationController()
         setupViewModel()
+        setupCameraPickerController()
+        setupPickerViewController()
         setupConstraints()
     }
     
@@ -173,26 +190,31 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     }
 }
 
-extension FFOnboardingUserDataViewController: ActionsWithUserImageView {
-    func openCamera() {
-        
+extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        if let image = info[.editedImage] as? UIImage {
+            managedUserImage = image
+            tableView.reloadData()
+        } else if let image = info[.originalImage] as? UIImage {
+            managedUserImage = image
+            tableView.reloadData()
+        } else {
+            print("value nil")
+        }
     }
     
-    func checkAccessToCameraAndMedia(handler: (Bool) -> ()) {
-        
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
     }
-    
-    func didTapOpenUserImage(_ longGesture: UILongPressGestureRecognizer) {
-        
+}
+
+extension FFOnboardingUserDataViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+//        managedUserImage
+        print("User picker something")
     }
-    
-    
-    
-    @objc private func didTapOpenImage(_ sender: UITapGestureRecognizer){
-        didTapOpenImagePicker(userImageFileName, sender)
-    }
-    
-    
 }
 
 //Delegate method returning selected result from FFPickerViewDelegate
@@ -248,7 +270,7 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
         let customView = UserImageTableViewHeaderView(frame: frameRect)
-        customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true)
+        customView.configureCustomHeaderView(userImage: managedUserImage ,isLabelHidden: true)
         customView.configureImageTarget(selector: #selector(didTapOpenImage), target: self)
         return customView
     }

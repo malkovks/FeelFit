@@ -26,6 +26,7 @@ class FFUserImageManager {
         do {
             try data.write(to: filesURL)
             UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
+            print("Saved successfully")
         } catch {
             fatalError("FFHealthUserProfileViewController.saveUserImage ==> Error saving to file url. Check the way to save data")
         }

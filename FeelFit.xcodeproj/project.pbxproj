@@ -565,6 +565,7 @@
 		0A44950B2AB9FC260082C909 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */,
 				0A44950F2ABA031B0082C909 /* SetupProtocol.swift */,
 			);
 			path = Protocols;
@@ -832,7 +833,6 @@
 		0A8479B32BB41BD600C0F8EE /* Multi-using Methods */ = {
 			isa = PBXGroup;
 			children = (
-				0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */,
 			);
 			path = "Multi-using Methods";
 			sourceTree = "<group>";
