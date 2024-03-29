@@ -58,11 +58,7 @@ class FFNewsPageViewController: UIViewController,SetupViewController {
         setupView()
         setupViewModel()
         setupNavigationController()
-        contentUnavailableConfiguration = viewModel.setupConfig(action: { [unowned self] in
-            self.didLoadView()
-            self.contentUnavailableConfiguration = nil
-        })
-        
+        didLoadView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -177,10 +173,10 @@ extension FFNewsPageViewController: UITableViewDataSourcePrefetching {
 ///view model delegate
 extension FFNewsPageViewController: FFGetRequestDelegate {
     func willLoadData() {
-        spinner.startAnimating()
+        contentUnavailableConfiguration = UIContentUnavailableConfiguration.loading()
         refreshControll.beginRefreshing()
     }
-    //доделать запрос чтобы он не добавлял по 20 новых запросов одинаково, удалял старые и добавлял новые
+
     func didLoadData(model: Result<[Articles],Error>) {
         switch model {
         case .success(let model):
@@ -197,15 +193,20 @@ extension FFNewsPageViewController: FFGetRequestDelegate {
             DispatchQueue.main.async { [unowned self ] in
                 self.model = uniqueItems
                 self.reloadTableView(models: self.model)
-                self.spinner.stopAnimating()
-                self.refreshControll.endRefreshing()
+                contentUnavailableConfiguration = nil
+                refreshControll.endRefreshing()
             }
             
         case .failure(let failure):
-            alertError(title: "Error!", message: failure.localizedDescription, style: .alert, cancelTitle: "OK")
-            spinner.stopAnimating()
-            refreshControll.endRefreshing()
+            DispatchQueue.main.async { [unowned self] in
+                contentUnavailableConfiguration = UIContentUnavailableConfiguration.error(message: failure.localizedDescription,action: {
+                    self.didTapRefreshData()
+                })
+                refreshControll.endRefreshing()
+            }
         }  
+        
+        
     }
     
     func selectedCell(indexPath: IndexPath, model: Articles, selectedCase: NewsTableViewSelectedConfiguration?,image: UIImage?) {
@@ -242,7 +243,9 @@ extension FFNewsPageViewController {
     }
 }
 
-
+#Preview {
+    return UINavigationController(rootViewController: FFNewsPageViewController())
+}
 
 
 

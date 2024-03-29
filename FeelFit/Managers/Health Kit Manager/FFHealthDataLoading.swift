@@ -54,7 +54,6 @@ class FFHealthDataLoading {
                 query.initialResultsHandler = { queries, results, error in
                     guard error == nil,
                           let results = results else {
-                        print("FFHealthDataLoading.performQuery = error not nil",String(describing: error?.localizedDescription))
                         completion(nil)
                         return
                     }

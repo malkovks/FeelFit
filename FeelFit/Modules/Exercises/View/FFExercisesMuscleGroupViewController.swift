@@ -84,7 +84,7 @@ class FFExercisesMuscleGroupViewController: UIViewController,SetupViewController
 
 extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
     func viewWillLoadData() {
-        spinner.startAnimating()
+        contentUnavailableConfiguration = UIContentUnavailableConfiguration.loading()
     }
     
     func viewDidLoadData(result: Result<[Exercise], Error>) {
@@ -98,6 +98,7 @@ extension FFExercisesMuscleGroupViewController: FFExerciseProtocol {
             }
         }
         DispatchQueue.main.async { [unowned self] in
+            contentUnavailableConfiguration = nil
             tableView.reloadData()
             refreshController.endRefreshing()
             spinner.stopAnimating()
@@ -162,4 +163,8 @@ extension FFExercisesMuscleGroupViewController {
         ]
         return model
     }
+}
+
+#Preview {
+    return FFExercisesMuscleGroupViewController(muscleGroupName: "lats")
 }

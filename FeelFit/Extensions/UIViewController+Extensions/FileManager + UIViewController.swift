@@ -14,7 +14,6 @@ extension UIViewController {
             let imageData = try Data(contentsOf: fileURL)
             return UIImage(data: imageData)
         } catch {
-            print(error.localizedDescription)
             return nil
         }
     }

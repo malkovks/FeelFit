@@ -30,7 +30,6 @@ class FFNewsStoreManager {
         DispatchQueue.main.async {
             try! self.realm.write({
                 self.realm.add(newsModel)
-                print("saved")
             })
         }
     }
@@ -43,7 +42,6 @@ class FFNewsStoreManager {
         DispatchQueue.main.async {
             try! self.realm.write {
                 self.realm.delete(newsModel)
-                print("Deleted")
             }
         }
     }

@@ -77,6 +77,8 @@
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
+		0A705BC42BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A705BC32BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift */; };
+		0A705BC72BB6C4D1006BC6BF /* ProcessUserProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A705BC62BB6C4D1006BC6BF /* ProcessUserProfileImage.swift */; };
 		0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */; };
 		0A7278AA2B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */; };
 		0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */; };
@@ -110,7 +112,7 @@
 		0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */; };
 		0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */; };
 		0AC145F32BA1CBDA00C8544A /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F22BA1CBDA00C8544A /* UIButton+Extension.swift */; };
-		0AC145F72BA271B700C8544A /* HealthStoreRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */; };
+		0AC145F72BA271B700C8544A /* HealthStoreRequest+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F62BA271B700C8544A /* HealthStoreRequest+Enum.swift */; };
 		0AC145F92BA2729700C8544A /* FFTabBarIndex+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */; };
 		0AC145FB2BA272BA00C8544A /* NewsSelection+Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */; };
 		0AC145FF2BA43D4700C8544A /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */; };
@@ -221,6 +223,8 @@
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		0A705BC32BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIContentUnavailableConfiguration+Extension.swift"; sourceTree = "<group>"; };
+		0A705BC62BB6C4D1006BC6BF /* ProcessUserProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessUserProfileImage.swift; sourceTree = "<group>"; };
 		0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFLoadAnimatedImage.swift; sourceTree = "<group>"; };
 		0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewCell.swift; sourceTree = "<group>"; };
 		0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewDataSource.swift; sourceTree = "<group>"; };
@@ -254,7 +258,7 @@
 		0ABDEB0A2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewController.swift; sourceTree = "<group>"; };
 		0ABDEB0C2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupSelectionViewModel.swift; sourceTree = "<group>"; };
 		0AC145F22BA1CBDA00C8544A /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
-		0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthStoreRequest.swift; sourceTree = "<group>"; };
+		0AC145F62BA271B700C8544A /* HealthStoreRequest+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthStoreRequest+Enum.swift"; sourceTree = "<group>"; };
 		0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFTabBarIndex+Enum.swift"; sourceTree = "<group>"; };
 		0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewsSelection+Enum.swift"; sourceTree = "<group>"; };
 		0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
@@ -312,14 +316,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0A13D8D42B5A408900FD8C92 /* Authorizations */ = {
+		0A13D8D42B5A408900FD8C92 /* Authorization To Services */ = {
 			isa = PBXGroup;
 			children = (
 				0AF03A662B58F85200715007 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
 			);
-			path = Authorizations;
+			path = "Authorization To Services";
 			sourceTree = "<group>";
 		};
 		0A1A9E022BB160BF00FC0884 /* UIView */ = {
@@ -462,8 +466,9 @@
 				0AC59C632B931E420009489E /* UI Elements */,
 				0A4495342ABC3F720082C909 /* APIClient */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
+				0A705BC52BB6BE78006BC6BF /* Enums */,
 				0A634C832B9CB8DB0068E544 /* Utilities */,
-				0A13D8D42B5A408900FD8C92 /* Authorizations */,
+				0A13D8D42B5A408900FD8C92 /* Authorization To Services */,
 				0A44950B2AB9FC260082C909 /* Protocols */,
 				0A634C842B9CC0E00068E544 /* Error Handler */,
 				0A4495012AB9CFDF0082C909 /* Resources */,
@@ -567,6 +572,7 @@
 			children = (
 				0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */,
 				0A44950F2ABA031B0082C909 /* SetupProtocol.swift */,
+				0A705BC62BB6C4D1006BC6BF /* ProcessUserProfileImage.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -574,12 +580,8 @@
 		0A44950C2AB9FC310082C909 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0A4495182ABA72A90082C909 /* FFResources+Enum.swift */,
-				0AC145F62BA271B700C8544A /* HealthStoreRequest.swift */,
-				0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */,
-				0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */,
-				0A4495172ABA728F0082C909 /* UIKit extensions  */,
-				0A82CD202B2E459C00F98D8B /* UIViewController+Extension */,
+				0A4495172ABA728F0082C909 /* UIKit+Extensions  */,
+				0A82CD202B2E459C00F98D8B /* UIViewController+Extensions */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -593,7 +595,7 @@
 			path = ImageDetails;
 			sourceTree = "<group>";
 		};
-		0A4495172ABA728F0082C909 /* UIKit extensions  */ = {
+		0A4495172ABA728F0082C909 /* UIKit+Extensions  */ = {
 			isa = PBXGroup;
 			children = (
 				0A7D06092B686CA6006FF02A /* TableView+Extension.swift */,
@@ -607,8 +609,9 @@
 				0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */,
 				0AC145F22BA1CBDA00C8544A /* UIButton+Extension.swift */,
 				0AC145FE2BA43D4700C8544A /* UILabel+Extension.swift */,
+				0A705BC32BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift */,
 			);
-			path = "UIKit extensions ";
+			path = "UIKit+Extensions ";
 			sourceTree = "<group>";
 		};
 		0A44951A2ABA78E30082C909 /* Model */ = {
@@ -799,6 +802,17 @@
 			path = SearchTrainingPlan;
 			sourceTree = "<group>";
 		};
+		0A705BC52BB6BE78006BC6BF /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				0A4495182ABA72A90082C909 /* FFResources+Enum.swift */,
+				0AC145F62BA271B700C8544A /* HealthStoreRequest+Enum.swift */,
+				0AC145F82BA2729700C8544A /* FFTabBarIndex+Enum.swift */,
+				0AC145FA2BA272BA00C8544A /* NewsSelection+Enum.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
 		0A7158092B359AEC00FBCF72 /* Animated Image */ = {
 			isa = PBXGroup;
 			children = (
@@ -815,7 +829,7 @@
 			path = TableViewDataSource;
 			sourceTree = "<group>";
 		};
-		0A82CD202B2E459C00F98D8B /* UIViewController+Extension */ = {
+		0A82CD202B2E459C00F98D8B /* UIViewController+Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */,
@@ -827,7 +841,7 @@
 				0AE049A32B7760F600697A82 /* Color+UIViewControler.swift */,
 				0A1A9E002BAED96300FC0884 /* AlertTextField+UIViewController.swift */,
 			);
-			path = "UIViewController+Extension";
+			path = "UIViewController+Extensions";
 			sourceTree = "<group>";
 		};
 		0A8479B32BB41BD600C0F8EE /* Multi-using Methods */ = {
@@ -1289,9 +1303,10 @@
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */,
 				0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */,
-				0AC145F72BA271B700C8544A /* HealthStoreRequest.swift in Sources */,
+				0AC145F72BA271B700C8544A /* HealthStoreRequest+Enum.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
 				0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */,
+				0A705BC72BB6C4D1006BC6BF /* ProcessUserProfileImage.swift in Sources */,
 				0A1A9DFF2BAECC8F00FC0884 /* FFWelcomeViewController.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
 				0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */,
@@ -1336,6 +1351,7 @@
 				0AE0F4F72B06159E00874C0B /* FFFavouriteExercisesViewController.swift in Sources */,
 				0ACEA9E62AD5CC6E00899CF6 /* FFNewsSettingViewController.swift in Sources */,
 				0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */,
+				0A705BC42BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift in Sources */,
 				0A634C862B9CC1000068E544 /* Keychain Error Handler.swift in Sources */,
 				0A69E0D32B4E26F10023487B /* FFHealthData.swift in Sources */,
 				0AE049A82B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift in Sources */,

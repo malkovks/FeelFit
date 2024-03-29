@@ -73,7 +73,6 @@ class FFExerciseStoreManager {
                 duplicatesCount += 1
             }
         }
-        print("Duplicates for key:\(filterName) -- \(duplicatesCount)")
         
         for exercise in uniqueValue {
             try! realm.write({

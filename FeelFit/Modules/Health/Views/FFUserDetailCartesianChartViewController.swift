@@ -92,10 +92,6 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         }
     }
     
-    @objc private func didTapOpenFullData(){
-        print("didTapOpenFullData button")
-    }
-    
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
         isData(loading: true)
         var components = DateComponents()

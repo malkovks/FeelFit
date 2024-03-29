@@ -47,24 +47,19 @@ class FFHealthDataAccess {
         if !HKHealthStore.isHealthDataAvailable()  {
             return
         }
-        var textStatus: String = ""
         healthStore.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes) { [weak self] authStatus, error in
             switch authStatus {
             case .unknown:
                 UserDefaults.standard.setValue(false, forKey: "healthKitAccess")
-                textStatus = "Unknowned error occurred. Try again later."
             case .unnecessary:
                 UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
-                textStatus = " Unnecessary .You have already allow all data for using "
             case .shouldRequest:
                 self?.requestForAccessToHealth()
                 UserDefaults.standard.setValue(false, forKey: "healthKitAccess")
-                textStatus = "Should request .The app does not requested for all specific data yet"
             @unknown default:
                 break
             }
         }
-        print(textStatus)
     }
     
     ///Function necessary for accessing to steps data and loading it while application in background mode

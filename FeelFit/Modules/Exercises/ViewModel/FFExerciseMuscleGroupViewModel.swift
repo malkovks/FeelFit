@@ -21,14 +21,17 @@ class FFExerciseMuscleGroupViewModel {
     
     func loadData(name: String,filter: String = "exerciseMuscle"){
         delegate?.viewWillLoadData()
-        FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name,filter: filter) { result in
-            switch result {
-            case .success(let data):
-                self.delegate?.viewDidLoadData(result: .success(data))
-            case .failure(let error):
-                self.delegate?.viewDidLoadData(result: .failure(error))
+        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+            FFGetExercisesDataBase.shared.getMuscleDatabase(muscle: name,filter: filter) { result in
+                switch result {
+                case .success(let data):
+                    self.delegate?.viewDidLoadData(result: .success(data))
+                case .failure(let error):
+                    self.delegate?.viewDidLoadData(result: .failure(error))
+                }
             }
         }
+        
     }
     
     func didSelectRowAt(_ tableView: UITableView, indexPath: IndexPath,viewController: UIViewController,model: [Exercise]) {

@@ -20,11 +20,8 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
         setupViewModel()
         setupView()
         setupNavigationController()
-        contentUnavailableConfiguration = viewModel.setupConfiguration { [unowned self] in
-            setupCollectionView()
-            setupConstraints()
-            contentUnavailableConfiguration = nil
-        }
+        setupCollectionView()
+        setupConstraints()
     }
     //MARK: - Action method
     @objc private func didTapOpenFavourite(){
@@ -92,4 +89,8 @@ extension FFMusclesGroupViewController {
             make.edges.equalToSuperview()
         }
     }
+}
+
+#Preview {
+    return FFMusclesGroupViewController()
 }

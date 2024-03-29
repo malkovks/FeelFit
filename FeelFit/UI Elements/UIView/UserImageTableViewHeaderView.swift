@@ -9,8 +9,12 @@ import UIKit
 
 class UserImageTableViewHeaderView: UIView {
     
+    private let defaultImage: UIImage = UIImage(systemName: "person.crop.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
+    
     private var userImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "person.crop.circle")!)
+        let image = UIImage(systemName: "person.crop.circle")!
+        let scaledImage = image.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
+        let imageView = UIImageView(image: scaledImage )
         imageView.tintColor = .main
         imageView.setupShadowLayer()
         imageView.isUserInteractionEnabled = true
@@ -74,7 +78,7 @@ class UserImageTableViewHeaderView: UIView {
     }
     
     func configureCustomHeaderView(userImage: UIImage?,isLabelHidden: Bool = false, labelText: String? = "Malkov Konstantin"){
-        self.userImageView.image = userImage ?? UIImage(systemName: "person.crop.circle")!
+        self.userImageView.image = userImage ?? defaultImage
         self.userFullNameLabel.isHidden = isLabelHidden
         self.userFullNameLabel.text = labelText
         if isLabelHidden {

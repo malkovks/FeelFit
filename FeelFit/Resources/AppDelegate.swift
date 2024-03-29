@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func registerBackgroundTask() {
-        print("Register is start tasking")
         BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { task in
             self.handleAppRefreshTask(for: task as! BGProcessingTask)
         }
@@ -39,9 +38,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
             
             try BGTaskScheduler.shared.submit(request)
-            print("request is submitted to task scheduler")
         } catch {
-            print("Не удалось запустить BGAppRefreshTask .\n\(error)")
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -50,7 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         convertResult { model in
             guard let model = model else { return }
             let stepcount: Int = Int(model.last!.value)
-            print("Step count is \(stepcount)")
             FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
         }
         task.setTaskCompleted(success: true)
@@ -72,11 +69,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let identifier = response.notification.request.identifier
         guard let object = getRealmModel(identifier) else {
-            print("error getting object")
             return
         }
         guard let rootVC = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController else {
-            print("Error getting rootVC")
             return
         }
         let vc = FFTRainingPlanViewController()
@@ -89,10 +84,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             nav.modalPresentationStyle = .fullScreen
             nav.present(vc, animated: true)
             
-        } else {
-            print("Error getting tab bar or nav bar")
-        }
-        
+        }        
         completionHandler()
         
     }

@@ -11,7 +11,6 @@ import PhotosUI
 class FFOnboardingUserDataViewController: UIViewController, ActionsWithUserImageView {
     
     private let calendar = Calendar.current
-    //    private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     var cameraPickerController: UIImagePickerController!
     var pickerViewController: PHPickerViewController!
@@ -47,7 +46,7 @@ class FFOnboardingUserDataViewController: UIViewController, ActionsWithUserImage
 
 extension FFOnboardingUserDataViewController {
     @objc private func didTapOpenImage(_ sender: UITapGestureRecognizer){
-        didTapOpenImagePicker(userImageFileName, cameraPickerController, pickerViewController, animated: true, sender)
+        didTapOpenImagePicker(tableView, cameraPickerController, pickerViewController, animated: true, sender)
     }
     
     @objc private func didTapLongPress(_ longGesture: UILongPressGestureRecognizer){
@@ -200,7 +199,7 @@ extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & 
             managedUserImage = image
             tableView.reloadData()
         } else {
-            print("value nil")
+            viewAlertController(text: "Error getting image. Try again!", controllerView: self.view)
         }
     }
     

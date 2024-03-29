@@ -42,11 +42,11 @@ protocol ActionsWithUserImageView: AnyObject {
     ///   - pickerViewController: property of PHPickerViewController
     ///   - animated: animation boolean value
     ///   - gesture: tap gesture value
-    func didTapOpenImagePicker(_ fileName: String,_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool ,_ gesture: UITapGestureRecognizer)
+    func didTapOpenImagePicker(_ tableView: UITableView,_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool ,_ gesture: UITapGestureRecognizer)
     
     func openMedia(_ pickerViewController: PHPickerViewController, animated: Bool)
     func openCamera(_ cameraPickerController: UIImagePickerController, animated: Bool)
-    func deleteCurrentImage(_ fileName: String)
+    func deleteCurrentImage(_ tableView: UITableView)
 }
 
 extension ActionsWithUserImageView where Self: UIViewController {
@@ -73,16 +73,8 @@ extension ActionsWithUserImageView where Self: UIViewController {
             FFUserImageManager.shared.saveUserImage(image, fileName: userImageFileName)
         }
     }
-//    
-//    func setupUserImage(_ info: UIImagePickerControllerDelegate & UINavigationControllerDelegate){
-//        guard let image = info[.editedImage] as? UIImage else {
-//            print("Edited image is empty")
-//            return
-//        }
-//        managedUserImage = image
-//    }
-    
-    func didTapOpenImagePicker(_ fileName: String,_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool,_ gesture: UITapGestureRecognizer){
+
+    func didTapOpenImagePicker(_ tableView: UITableView,_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool,_ gesture: UITapGestureRecognizer){
         feedbackGenerator.prepare()
         let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self]  _ in
@@ -92,9 +84,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
             self?.openMedia(pickerViewController, animated: animated)
         }))
         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            //доделать удаление
-//            self?.deleteCurrentImage(<#T##fileName: String##String#>)
-            print("Попытка удалить")
+            self?.deleteCurrentImage(tableView)
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alertController, animated: true)
@@ -136,9 +126,12 @@ extension ActionsWithUserImageView where Self: UIViewController {
         present(cameraPickerController, animated: true)
     }
     
-    func deleteCurrentImage(_ fileName: String){
+    func deleteCurrentImage(_ tableView: UITableView){
         feedbackGenerator.impactOccurred()
-        managedUserImage = FFUserImageManager.shared.deleteUserImage(fileName)
+        managedUserImage = FFUserImageManager.shared.deleteUserImage(userImageFileName)
+        DispatchQueue.main.async {
+            tableView.reloadData()
+        }
     }
     
     func didTapLongPressOnImage(_ longGesture: UILongPressGestureRecognizer){

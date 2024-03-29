@@ -79,9 +79,7 @@ class FFUserAccountManager {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        if status == errSecItemNotFound {
-            print("Дубликатов не найдено")
-        } else if status == errSecSuccess {
+        if status == errSecSuccess {
             throw KeychainError.duplicateAccount
         } else {
             throw KeychainError.unhandledError(status: status)

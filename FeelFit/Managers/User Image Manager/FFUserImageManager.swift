@@ -26,7 +26,6 @@ class FFUserImageManager {
         do {
             try data.write(to: filesURL)
             UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
-            print("Saved successfully")
         } catch {
             fatalError("FFHealthUserProfileViewController.saveUserImage ==> Error saving to file url. Check the way to save data")
         }
@@ -38,7 +37,6 @@ class FFUserImageManager {
             let imageData = try Data(contentsOf: filesURL)
             return UIImage(data: imageData)
         } catch {
-            print(error.localizedDescription)
             return nil
         }
     }
@@ -49,7 +47,6 @@ class FFUserImageManager {
             try FileManager.default.removeItem(at: fileURL)
             return UIImage(systemName: "person.crop.circle")!
         } catch {
-            print("Error deleting image " + error.localizedDescription)
             return nil
         }
     }
