@@ -41,6 +41,7 @@
 		0A3AECFD2B84B20700B2F8F3 /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */; };
 		0A3AECFF2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3AECFE2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift */; };
 		0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */; };
+		0A3CFE742BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3CFE732BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift */; };
 		0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */; };
 		0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */; };
 		0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4494BF2AB821FD0082C909 /* AppDelegate.swift */; };
@@ -78,7 +79,7 @@
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
 		0A705BC42BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A705BC32BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift */; };
-		0A705BC72BB6C4D1006BC6BF /* ProcessUserProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A705BC62BB6C4D1006BC6BF /* ProcessUserProfileImage.swift */; };
+		0A705BC72BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A705BC62BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift */; };
 		0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */; };
 		0A7278AA2B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */; };
 		0A7278AC2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */; };
@@ -188,6 +189,7 @@
 		0A3AECFC2B84B20700B2F8F3 /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		0A3AECFE2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSubtitleTableViewCell.swift; sourceTree = "<group>"; };
 		0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFilesSupport.swift; sourceTree = "<group>"; };
+		0A3CFE732BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandlerUserProfileImageProtocol.swift; sourceTree = "<group>"; };
 		0A3FC2E12ADEBF4100E35739 /* FFImageDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewController.swift; sourceTree = "<group>"; };
 		0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFImageDetailsViewModel.swift; sourceTree = "<group>"; };
 		0A4494BC2AB821FD0082C909 /* FeelFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeelFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -224,7 +226,7 @@
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
 		0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		0A705BC32BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIContentUnavailableConfiguration+Extension.swift"; sourceTree = "<group>"; };
-		0A705BC62BB6C4D1006BC6BF /* ProcessUserProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessUserProfileImage.swift; sourceTree = "<group>"; };
+		0A705BC62BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandlerUploadedImageProtocol.swift; sourceTree = "<group>"; };
 		0A71580A2B359B1700FBCF72 /* FFLoadAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFLoadAnimatedImage.swift; sourceTree = "<group>"; };
 		0A7278A92B1DBD040055EECD /* FFMuscleGroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewCell.swift; sourceTree = "<group>"; };
 		0A7278AB2B1DFAE30055EECD /* FFMuscleGroupTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMuscleGroupTableViewDataSource.swift; sourceTree = "<group>"; };
@@ -571,8 +573,9 @@
 			isa = PBXGroup;
 			children = (
 				0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */,
+				0A705BC62BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift */,
+				0A3CFE732BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift */,
 				0A44950F2ABA031B0082C909 /* SetupProtocol.swift */,
-				0A705BC62BB6C4D1006BC6BF /* ProcessUserProfileImage.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -1306,7 +1309,7 @@
 				0AC145F72BA271B700C8544A /* HealthStoreRequest+Enum.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
 				0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */,
-				0A705BC72BB6C4D1006BC6BF /* ProcessUserProfileImage.swift in Sources */,
+				0A705BC72BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift in Sources */,
 				0A1A9DFF2BAECC8F00FC0884 /* FFWelcomeViewController.swift in Sources */,
 				0ABDEB0B2B1964D100BDDAFE /* FFMuscleGroupSelectionViewController.swift in Sources */,
 				0A71580B2B359B1700FBCF72 /* FFLoadAnimatedImage.swift in Sources */,
@@ -1331,6 +1334,7 @@
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
+				0A3CFE742BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift in Sources */,
 				0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */,
 				0A8EBE062B51248F007AC52E /* FFHealthTableViewCell.swift in Sources */,
 				0AEDA2E32B303A6A0079C564 /* FFPlanDetailTableViewCell.swift in Sources */,

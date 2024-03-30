@@ -9,16 +9,15 @@ import UIKit
 import Photos
 import PhotosUI
 import AVFoundation
+import RealmSwift
 
 
 ///Class display main information about user, his basic statistics and some terms about health access and etc
-class FFHealthUserProfileViewController: UIViewController, SetupViewController {
+class FFHealthUserProfileViewController: UIViewController, SetupViewController, HandlerUserProfileImageProtocol {
     
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    
-    private let userImageManager = FFUserImageManager.shared
     
     private var viewModel: FFHealthUserViewModel!
+    private let realm = try! Realm()
     
     private let headerTextSections = [
         "",
@@ -39,15 +38,13 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
         ["Export Medical Data"]
     ]
     
-    private var userImageFileName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    var userMainData: FFUserHealthMainData!
+
+    var cameraPickerController: UIImagePickerController!
     
-    private var pickerConfiguration: PHPickerConfiguration = PHPickerConfiguration(photoLibrary: .shared())
-    private var cameraPickerController: UIImagePickerController!
-    private var pickerViewController: PHPickerViewController!
+    var pickerViewController: PHPickerViewController!
     
     private var tableView: UITableView = UITableView(frame: .zero)
-    
-    private var managedUserImage: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,70 +59,15 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController {
     }
     
     ///method for displaying actions with users image
-    @objc private func didTapOpenImagePicker(_ gesture: UITapGestureRecognizer){
-        let fileName = userImageFileName
-        let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
-        alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self] _ in
-            self?.feedbackGenerator.impactOccurred()
-            self?.openCamera()
-        }))
-        alertController.addAction(UIAlertAction(title: "Open Library", style: .default,handler: { [weak self] _ in
-            self?.feedbackGenerator.impactOccurred()
-            self?.didTapOpenPickerController()
-        }))
-        alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            guard let strongSelf = self else { return }
-            strongSelf.feedbackGenerator.impactOccurred()
-            strongSelf.tableView.reloadData()
-            strongSelf.managedUserImage = strongSelf.userImageManager.deleteUserImage(fileName)
-        }))
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alertController, animated: true)
+    @objc private func didTapOpenMediaPicker(_ gesture: UITapGestureRecognizer){
+        didTapOpenImagePicker(tableView, cameraPickerController, pickerViewController, animated: true, gesture)
     }
-    
+
     ///Method for opening user image with long press gesture
     @objc private func didTapOpenUserImage(_ sender: UILongPressGestureRecognizer){
-        if sender.state == .began {
-            let vc = FFImageDetailsViewController(newsImage: managedUserImage, imageURL: "")
-            self.feedbackGenerator.impactOccurred()
-            present(vc, animated: true)
-        }
+        didTapLongPressOnImage(sender)
     }
-    
-    private func didTapOpenPickerController(){
-        checkAccessToCameraAndMedia { status in
-            if status {
-                present(pickerViewController, animated: true)
-            }else {
-                didTapOpenPickerController()
-            }
-        }
-    }
-    
-    private func checkAccessToCameraAndMedia(handler: (_ status: Bool) -> ()){
-        var status = false
-        FFMediaDataAccess.shared.returnCameraAccessStatus { success in
-            status = success
-        }
-        FFMediaDataAccess.shared.returnPhotoLibraryAccessStatus { success in
-            status = success
-        }
-        handler(status)
-    }
-    
-    private func openCamera(){
-        checkAccessToCameraAndMedia { status in
-            if status {
-                guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
-                    alertError(title: "Error to open Camera",message: "Check access status in System Settings")
-                    return
-                }
-                self.present(cameraPickerController, animated: true)
-            } else {
-                openCamera()
-            }
-        }
-    }
+
 }
 
     //MARK: Set up methods
@@ -138,31 +80,19 @@ extension FFHealthUserProfileViewController {
         setupNavigationController()
         setupViewModel()
         setupTableView()
-        setupMediaPickerController()
         setupCameraPickerController()
+        setupPickerViewController()
+        loadUserData()
         setupConstraints()
-        
     }
     
-    private func setupMediaPickerController(){
-        let newFilter = PHPickerFilter.any(of: [.images,.livePhotos])
-        pickerConfiguration.filter = newFilter
-        pickerConfiguration.preferredAssetRepresentationMode = .current
-        pickerConfiguration.selection = .ordered
-        pickerConfiguration.selectionLimit = 1
-        pickerConfiguration.mode = .default
+    func loadUserData(){
+        guard let data = FFUserHealthDataStoreManager.shared.mainUserData() else {
+            viewAlertController(text: "Empty data.Try again later", controllerView: view)
+            return
+        }
         
-        pickerViewController = PHPickerViewController(configuration: pickerConfiguration)
-        pickerViewController.delegate = self
-    }
-    
-    private func setupCameraPickerController(){
-        cameraPickerController = UIImagePickerController()
-        cameraPickerController.delegate = self
-        cameraPickerController.sourceType = .camera
-        cameraPickerController.allowsEditing = true
-        cameraPickerController.showsCameraControls = true
-        cameraPickerController.cameraCaptureMode = .photo
+        userMainData = data
     }
     
     func setupNavigationController() {
@@ -176,7 +106,7 @@ extension FFHealthUserProfileViewController {
     }
     
     private func setupUserImageView(){
-        managedUserImage = userImageManager.loadUserImage(userImageFileName)
+        managedUserImage = FFUserImageManager.shared.loadUserImage(userImageFileName)
     }
     
     private func setupTableView(){
@@ -205,16 +135,8 @@ extension FFHealthUserProfileViewController {
 extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
-        if let image = info[.editedImage] as? UIImage {
-            checkIsImageSaved(fileName: userImageFileName, image: image)
-            requestUserToSaveCameraImage(image)
-        }  else if let image = info[.originalImage] as? UIImage {
-            checkIsImageSaved(fileName: userImageFileName, image: image)
-            requestUserToSaveCameraImage(image)
-        } else {
-            alertError(title: "Can't get image from camera. Try again!")
-            return
-        }
+        handlerCapturedImage(info, tableView: tableView)
+        
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -223,48 +145,13 @@ extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & U
 }
 
 extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
-    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true)
-       convertSelectedImage(results)
-    }
-    
-    private func convertSelectedImage(_ results: [PHPickerResult]){
-        let fileName = "userImage.jpeg"
-        
-        guard let result = results.first else { return }
-        let itemProvider = result.itemProvider
-        if itemProvider.canLoadObject(ofClass: UIImage.self) {
-            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                guard let self = self else {
-                    return
-                }
-                
-                guard let image = image as? UIImage else {
-                    self.dismiss(animated: true)
-                    return
-                }
-                
-                checkIsImageSaved(fileName: fileName, image: image)
-            }
-        }
-    }
-    
-    private func checkIsImageSaved(fileName: String,image: UIImage) {
-        let saveStatus = userImageManager.isUserImageSavedInDirectory(userImageFileName)
-        if saveStatus {
-            managedUserImage = userImageManager.deleteUserImage(userImageFileName)
-        }
-        userImageFileName = fileName
-        userImageManager.saveUserImage(image, fileName: fileName)
-        managedUserImage = image
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-        
+        handlerSelectedImage(results, tableView: tableView)
     }
 }
 
+//MARK: - TableView Data Source
 extension FFHealthUserProfileViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         headerTextSections.count
@@ -301,7 +188,6 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
         } else {
             return view.frame.size.height / 5
         }
-        
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -312,8 +198,9 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
         if section == 0 {
             let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
             let customView = UserImageTableViewHeaderView(frame: frameRect)
-            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: "Some Name")
-            customView.configureImageTarget(selector: #selector(didTapOpenImagePicker), target: self)
+            let fullName = userMainData.name + " " + userMainData.secondName + " ID: \(userMainData.account)"
+            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: fullName)
+            customView.configureImageTarget(selector: #selector(didTapOpenMediaPicker), target: self)
             customView.configureLongGestureImageTarget(target: self, selector: #selector(didTapOpenUserImage))
             return customView
         } else {

@@ -108,8 +108,16 @@ class FFUserHealthDataStoreManager {
         }
     }
     
+    func mainUserData() -> FFUserHealthMainData? {
+        guard let userData = realm.objects(FFUserHealthDataModelRealm.self).last else { return nil }
+        let value = FFUserHealthMainData(name: userData.userFirstName ?? "No name",
+                                         secondName: userData.userSecondName ?? "No second name",
+                                         account: userData.userAccountLogin)
+        return value
+    }
+    
     func loadUserData() -> [[String:String]]?{
-        guard let userData = realm.objects(FFUserHealthDataModelRealm.self).first else { return nil }
+        guard let userData = realm.objects(FFUserHealthDataModelRealm.self).last else { return nil }
         let birthday = userData.userBirthOfDate?.dateAndUserAgeConverting()
         let userDataDictionary: [[String: String]] = [
             ["Name": userData.userFirstName ?? "Not Set",
@@ -130,4 +138,10 @@ class FFUserHealthDataStoreManager {
     func deleteUsersData(){
         
     }
+}
+
+struct FFUserHealthMainData {
+    let name: String
+    let secondName: String
+    let account: String
 }

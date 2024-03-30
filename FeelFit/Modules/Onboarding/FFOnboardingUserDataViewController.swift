@@ -8,7 +8,7 @@
 import UIKit
 import PhotosUI
 
-class FFOnboardingUserDataViewController: UIViewController, ActionsWithUserImageView {
+class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileImageProtocol {
     
     private let calendar = Calendar.current
     
@@ -192,15 +192,8 @@ extension FFOnboardingUserDataViewController: SetupViewController {
 extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
-        if let image = info[.editedImage] as? UIImage {
-            managedUserImage = image
-            tableView.reloadData()
-        } else if let image = info[.originalImage] as? UIImage {
-            managedUserImage = image
-            tableView.reloadData()
-        } else {
-            viewAlertController(text: "Error getting image. Try again!", controllerView: self.view)
-        }
+        handlerCapturedImage(info, tableView: tableView)
+        tableView.reloadData()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -211,8 +204,7 @@ extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & 
 extension FFOnboardingUserDataViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
-//        managedUserImage
-        print("User picker something")
+        handlerSelectedImage(results, tableView: tableView)
     }
 }
 
@@ -229,6 +221,7 @@ extension FFOnboardingUserDataViewController: FFPickerViewDelegate {
     }
 }
 
+//MARK: - Table View Data Source
 extension FFOnboardingUserDataViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return userDataDictionary.count
@@ -245,6 +238,7 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
     }
 }
 
+//MARK: - Table View Delegate
 extension FFOnboardingUserDataViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 55

@@ -149,6 +149,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
         cameraPickerController.allowsEditing = true
         cameraPickerController.showsCameraControls = true
         cameraPickerController.cameraCaptureMode = .photo
+        
     }
     
     func setupPickerViewController() {
@@ -163,6 +164,4 @@ extension ActionsWithUserImageView where Self: UIViewController {
         pickerViewController = PHPickerViewController(configuration: pickerConfiguration)
         pickerViewController.delegate = self as? any PHPickerViewControllerDelegate
     }
-    
-    
 }
