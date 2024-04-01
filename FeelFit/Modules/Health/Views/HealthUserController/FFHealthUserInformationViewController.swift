@@ -137,14 +137,30 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        switch indexPath.section {
+        case 0:
+            print("Open text field")
+        case 1:
+            print("Open picker view")
+        default:
+            break
+        }
     }
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
+        return 55
     }
     
+    
+    //Footer
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 5
+    }
+    
+    //Header
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4)
+        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4 - 10)
         let customView = UserImageTableViewHeaderView(frame: frameRect)
         customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true)
         return customView
@@ -152,7 +168,7 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
-            return view.frame.size.height/4
+            return view.frame.size.height/5
         } else {
             return 0
         }
@@ -164,7 +180,8 @@ private extension FFHealthUserInformationViewController {
     func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(5)
+            make.leading.trailing.bottom.equalToSuperview()
         }
     }
 }

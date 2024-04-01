@@ -38,7 +38,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
         ["Export Medical Data"]
     ]
     
-    var userMainData: FFUserHealthMainData!
+    var userMainData: FFUserHealthMainData?
 
     var cameraPickerController: UIImagePickerController!
     
@@ -198,7 +198,8 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
         if section == 0 {
             let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
             let customView = UserImageTableViewHeaderView(frame: frameRect)
-            let fullName = userMainData.name + " " + userMainData.secondName + " ID: \(userMainData.account)"
+//            let fullName = userMainData?.name ?? "No Name" + " " + userMainData?.secondName ?? "No Second Name" + " ID: \(userMainData?.account)"
+            let fullName = "Full name"
             customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: fullName)
             customView.configureImageTarget(selector: #selector(didTapOpenMediaPicker), target: self)
             customView.configureLongGestureImageTarget(target: self, selector: #selector(didTapOpenUserImage))
