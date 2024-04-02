@@ -10,6 +10,7 @@ import UserNotifications
 import HealthKit
 import RealmSwift
 import BackgroundTasks
+import TipKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,9 +23,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         registerBackgroundTask()
+        registerTipsConfigure()
         return true
     }
     
+    
+    /// Function register tip kit in app
+    private func registerTipsConfigure(){
+        try? Tips.configure([
+            .displayFrequency(.immediate),
+            .datastoreLocation(.applicationDefault)
+        ])
+    }
+    
+    /// Function register Background Tasks for collecting users steps
     private func registerBackgroundTask() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { task in
             self.handleAppRefreshTask(for: task as! BGProcessingTask)
@@ -48,7 +60,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         convertResult { model in
             guard let model = model else { return }
             let stepcount: Int = Int(model.last!.value)
-            FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
+            if stepcount == 10_000 {
+                FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
+            }
         }
         task.setTaskCompleted(success: true)
     }

@@ -63,10 +63,9 @@ class FFOnboardingAccessViewController: UIViewController {
     
     private let successStatusLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.setupLabelShadowColor()
-        label.font = UIFont.textLabelFont(size: 24, for: .body, weight: .medium, width: .compressed)
+        label.font = UIFont.textLabelFont(size: 32, for: .largeTitle, weight: .medium, width: .expanded)
         label.numberOfLines = 1
-        label.textColor = .mintGreen
+        label.textColor = .customBlack
         label.backgroundColor = .clear
         label.text = "Success"
         label.isHidden = true
@@ -96,10 +95,9 @@ class FFOnboardingAccessViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = FFResources.Colors.backgroundColor
         setupView()
     }
-    
+    //MARK: - Actions
     private func didTapAskNotificationRequest(_ button: UIButton){
         
         FFSendUserNotifications.shared.requestForAccessToLocalNotification { [weak self] result in
@@ -199,10 +197,11 @@ class FFOnboardingAccessViewController: UIViewController {
     }
 }
 
+//MARK: - Setup methods
 extension FFOnboardingAccessViewController: SetupViewController {
     
     func setupView(){
-        
+        view.backgroundColor = .secondarySystemBackground
         setupNavigationController()
         setupViewModel()
         configureAccessStatusButton()

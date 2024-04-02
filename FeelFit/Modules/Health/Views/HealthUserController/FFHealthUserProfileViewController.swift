@@ -10,7 +10,7 @@ import Photos
 import PhotosUI
 import AVFoundation
 import RealmSwift
-
+import TipKit
 
 ///Class display main information about user, his basic statistics and some terms about health access and etc
 class FFHealthUserProfileViewController: UIViewController, SetupViewController, HandlerUserProfileImageProtocol {
@@ -44,6 +44,8 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     
     var pickerViewController: PHPickerViewController!
     
+    var button = CustomConfigurationButton(configurationTitle: "Info",configurationImage: UIImage(systemName: "trash"))
+    
     private var tableView: UITableView = UITableView(frame: .zero)
     
     override func viewDidLoad() {
@@ -67,6 +69,14 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     @objc private func didTapOpenUserImage(_ sender: UILongPressGestureRecognizer){
         didTapLongPressOnImage(sender)
     }
+    
+    
+    /// Function open details about user's health
+    private func openUserHealthData(){
+        let vc = FFHealthUserInformationViewController()
+        vc.userImage = managedUserImage
+        navigationController?.pushViewController(vc, animated: true)
+    }
 
 }
 
@@ -76,7 +86,6 @@ extension FFHealthUserProfileViewController {
         view.backgroundColor = .secondarySystemBackground
         feedbackGenerator.prepare()
         FFHealthDataAccess.shared.requestAccessToCharactersData()
-        setupUserImageView()
         setupNavigationController()
         setupViewModel()
         setupTableView()
@@ -103,10 +112,6 @@ extension FFHealthUserProfileViewController {
 
     func setupViewModel() {
         viewModel = FFHealthUserViewModel(viewController: self)
-    }
-    
-    private func setupUserImageView(){
-        managedUserImage = FFUserImageManager.shared.loadUserImage(userImageFileName)
     }
     
     private func setupTableView(){
@@ -165,17 +170,20 @@ extension FFHealthUserProfileViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "userHealthCell", for: indexPath)
         cell.backgroundColor = .systemBackground
         cell.textLabel?.text = textLabelRows[indexPath.section][indexPath.row]
-        cell.accessoryType = .disclosureIndicator
+        cell.accessoryType = .detailDisclosureButton
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        showPopoverInfo()
     }
 }
 
 extension FFHealthUserProfileViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = FFHealthUserInformationViewController()
-        vc.userImage = managedUserImage
-        navigationController?.pushViewController(vc, animated: true)
+        showInlineInfo()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -198,7 +206,6 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
         if section == 0 {
             let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
             let customView = UserImageTableViewHeaderView(frame: frameRect)
-//            let fullName = userMainData?.name ?? "No Name" + " " + userMainData?.secondName ?? "No Second Name" + " ID: \(userMainData?.account)"
             let fullName = "Full name"
             customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: fullName)
             customView.configureImageTarget(selector: #selector(didTapOpenMediaPicker), target: self)
@@ -232,7 +239,7 @@ extension FFHealthUserProfileViewController {
 }
 
 #Preview {
-    let navVC = UINavigationController(rootViewController: FFHealthUserProfileViewController())
+    let navVC = FFNavigationController(rootViewController: FFHealthUserProfileViewController())
     return navVC
 }
 

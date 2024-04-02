@@ -19,9 +19,8 @@ class UserImageTableViewHeaderView: UIView {
         imageView.setupShadowLayer()
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.customBlack.cgColor
         imageView.layer.masksToBounds = true
+        imageView.backgroundColor = .clear
         return imageView
     }()
     
@@ -78,7 +77,7 @@ class UserImageTableViewHeaderView: UIView {
     }
     
     func configureCustomHeaderView(userImage: UIImage?,isLabelHidden: Bool = false, labelText: String? = "Malkov Konstantin"){
-        self.userImageView.image = userImage ?? defaultImage
+        self.userImageView.image = userImage
         self.userFullNameLabel.isHidden = isLabelHidden
         self.userFullNameLabel.text = labelText
         if isLabelHidden {

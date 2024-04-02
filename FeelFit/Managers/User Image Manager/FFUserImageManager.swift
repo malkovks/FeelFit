@@ -7,6 +7,27 @@
 
 import UIKit
 
+enum UserImageErrorHandler: Error {
+    case notSaved
+    case notConverted
+    case notLoaded
+    case notDeleted
+}
+
+extension UserImageErrorHandler: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .notSaved:
+            return "This image could not saved by some unexpected error"
+        case .notConverted:
+            return "Application can't convert this image. Try again later!"
+        case .notLoaded:
+            return "Can not load image from storage"
+        case .notDeleted:
+            return "Error deleting image from storage"
+        }
+    }
+}
 
 /// Class proccess, save ,load and delete users account image. It work with file manager
 class FFUserImageManager {
@@ -20,34 +41,33 @@ class FFUserImageManager {
         return directory
     }
     
-    func saveUserImage(_ image: UIImage,fileName: String){
+    func saveUserImage(_ image: UIImage,fileName: String) throws {
         guard let data = image.jpegData(compressionQuality: 1.0) else { return }
         let filesURL = getDocumentaryURL().appendingPathComponent(fileName)
         do {
             try data.write(to: filesURL)
-            UserDefaults.standard.set(fileName, forKey: "userProfileFileName")
+            
         } catch {
-            fatalError("FFHealthUserProfileViewController.saveUserImage ==> Error saving to file url. Check the way to save data")
+            throw UserImageErrorHandler.notSaved
         }
     }
     
-    func loadUserImage(_ userImageFileName: String ) -> UIImage? {
+    func loadUserImage(_ userImageFileName: String ) throws -> UIImage? {
         let filesURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             let imageData = try Data(contentsOf: filesURL)
             return UIImage(data: imageData)
         } catch {
-            return nil
+            throw UserImageErrorHandler.notLoaded
         }
     }
     
-    func deleteUserImage(_ userImageFileName: String) -> UIImage? {
+    func deleteUserImage(_ userImageFileName: String) throws {
         let fileURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             try FileManager.default.removeItem(at: fileURL)
-            return UIImage(systemName: "person.crop.circle")!
         } catch {
-            return nil
+            throw UserImageErrorHandler.notDeleted
         }
     }
     

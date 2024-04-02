@@ -67,10 +67,24 @@ extension ActionsWithUserImageView where Self: UIViewController {
     
     var managedUserImage: UIImage? {
         get {
-            return FFUserImageManager.shared.loadUserImage(userImageFileName)
+            do {
+                let image = try FFUserImageManager.shared.loadUserImage(userImageFileName)
+                return image
+            } catch let error as UserImageErrorHandler {
+                print(error.errorDescription!)
+            } catch {
+                fatalError()
+            }
+            return UIImage(systemName: "person.crop.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
         } set {
             guard let image = newValue else { return }
-            FFUserImageManager.shared.saveUserImage(image, fileName: userImageFileName)
+            do {
+                try FFUserImageManager.shared.saveUserImage(image, fileName: userImageFileName)
+            } catch let error as UserImageErrorHandler {
+                print(error.errorDescription!)
+            } catch {
+                fatalError()
+            }
         }
     }
 
@@ -128,10 +142,18 @@ extension ActionsWithUserImageView where Self: UIViewController {
     
     func deleteCurrentImage(_ tableView: UITableView){
         feedbackGenerator.impactOccurred()
-        managedUserImage = FFUserImageManager.shared.deleteUserImage(userImageFileName)
-        DispatchQueue.main.async {
-            tableView.reloadData()
+        do {
+            try FFUserImageManager.shared.deleteUserImage(userImageFileName)
+            managedUserImage = nil
+            DispatchQueue.main.async {
+                tableView.reloadData()
+            }
+        } catch let error as UserImageErrorHandler {
+            print(error.errorDescription!)
+        } catch {
+            fatalError()
         }
+        
     }
     
     func didTapLongPressOnImage(_ longGesture: UILongPressGestureRecognizer){

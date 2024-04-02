@@ -19,9 +19,15 @@ extension HandlerUploadedImageProtocol where Self: UIViewController {
         let manager = FFUserImageManager.shared
         let saveStatus = manager.isUserImageSavedInDirectory(name)
         if saveStatus {
-            _ = manager.deleteUserImage(name)
+            try! manager.deleteUserImage(name)
         }
-        manager.saveUserImage(image, fileName: name)
+        do {
+            try manager.saveUserImage(image, fileName: name)
+        } catch let error as UserImageErrorHandler {
+            viewAlertController(text: error.errorDescription, controllerView: self.view)
+        } catch {
+            fatalError()
+        }
         return image
     }
     

@@ -153,7 +153,7 @@ extension FFOnboardingUserDataViewController {
 //MARK: - Setup methods
 extension FFOnboardingUserDataViewController: SetupViewController {
     func setupView() {
-        view.backgroundColor = .secondarySystemGroupedBackground
+        view.backgroundColor = .secondarySystemBackground
         setupTableView()
         setupButtons()
         setupNavigationController()
