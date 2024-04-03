@@ -9,40 +9,24 @@ import UIKit
 import TipKit
 
 extension FFHealthUserProfileViewController {
-    @objc func showPopoverInfo(){
+    func showInlineInfo(titleText title: String, messageText subtitle: String,popoverImage image: String){
+        let tip = InformationDataTip(title: Text(title), message: Text(subtitle), image: Image(systemName: image))
         Task { @MainActor in
-            for await shouldDisplay in FavoritesTip().shouldDisplayUpdates {
+            for await shouldDisplay in tip.shouldDisplayUpdates {
                 if shouldDisplay {
-                    let vc = TipUIPopoverViewController(FavoritesTip(), sourceItem: button)
-                    present(vc, animated: true)
-                }
-            }
-        }
-    }
-    
-    @objc func showInlineInfo(){
-        Task { @MainActor in
-            for await shouldDisplay in FavoritesTip().shouldDisplayUpdates {
-                if shouldDisplay {
-                    let tipView = TipUIView(FavoritesTip(),arrowEdge: .bottom)
+                    let tipView = TipUIView(tip,arrowEdge: .bottom)
+                    tipView.backgroundColor = .secondarySystemGroupedBackground
+                    tipView.cornerRadius = 12
                     view.addSubview(tipView)
-                }
-            }
-        }
-    }
-    
-    @objc func showActionTipInfo(){
-        Task { @MainActor in
-            for await shouldDisplay in ActionTip(title:Text(verbatim: "Some text")).shouldDisplayUpdates {
-                if shouldDisplay {
-                    let tipView = TipUIView(ActionTip(title: Text(verbatim: "Some text")), arrowEdge: .top) { action in
-                        if action.id == "reset-password"{
-                            print("Reset password")
-                        }
-                        
+                    
+                    tipView.snp.makeConstraints { make in
+                        make.center.equalToSuperview()
+                        make.leading.trailing.equalToSuperview().inset(20)
                     }
                 } else {
-                    print("Displayed yet")
+                    if let tipView = view.subviews.first(where: { $0 is TipUIView }){
+                        tipView.removeFromSuperview()
+                    }
                 }
             }
         }

@@ -44,17 +44,14 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     
     var pickerViewController: PHPickerViewController!
     
-    var button = CustomConfigurationButton(configurationTitle: "Info",configurationImage: UIImage(systemName: "trash"))
+    var button = CustomConfigurationButton(configurationTitle: "Info",configurationImage: UIImage(systemName: "trash"),baseBackgroundColor: .systemRed)
     
     private var tableView: UITableView = UITableView(frame: .zero)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
     }
-    
-    
     //MARK: - Target methods
     @objc private func didTapDismiss(){
         self.dismiss(animated: true)
@@ -62,6 +59,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     
     ///method for displaying actions with users image
     @objc private func didTapOpenMediaPicker(_ gesture: UITapGestureRecognizer){
+        
         didTapOpenImagePicker(tableView, cameraPickerController, pickerViewController, animated: true, gesture)
     }
 
@@ -97,7 +95,6 @@ extension FFHealthUserProfileViewController {
     
     func loadUserData(){
         guard let data = FFUserHealthDataStoreManager.shared.mainUserData() else {
-            viewAlertController(text: "Empty data.Try again later", controllerView: view)
             return
         }
         
@@ -125,15 +122,6 @@ extension FFHealthUserProfileViewController {
         tableView.estimatedSectionFooterHeight = 0
         tableView.estimatedSectionHeaderHeight = 44
         tableView.setupAppearanceShadow()
-    }
-    
-    private func requestUserToSaveCameraImage(_ image: UIImage) {
-        let alertController = UIAlertController(title: nil, message: "Do you want to save captured photo?", preferredStyle: .actionSheet)
-        alertController.addAction(UIAlertAction(title: "Save", style: .default, handler: { _ in
-            UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
-        }))
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alertController, animated: true)
     }
 }
 
@@ -170,12 +158,7 @@ extension FFHealthUserProfileViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "userHealthCell", for: indexPath)
         cell.backgroundColor = .systemBackground
         cell.textLabel?.text = textLabelRows[indexPath.section][indexPath.row]
-        cell.accessoryType = .detailDisclosureButton
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        showPopoverInfo()
     }
 }
 
@@ -183,7 +166,14 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        showInlineInfo()
+        switch indexPath.section {
+        case 0 :
+            openUserHealthData()
+        default:
+            showInlineInfo(titleText: "Title",
+                           messageText: "This cell containts some info",
+                           popoverImage: "info.circle")
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
