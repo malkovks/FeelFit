@@ -38,7 +38,7 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
         ["Export Medical Data"]
     ]
     
-    var userMainData: FFUserHealthMainData?
+    var userMainData: FFUserHealthMainData!
 
     var cameraPickerController: UIImagePickerController!
     
@@ -68,6 +68,15 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
         didTapLongPressOnImage(sender)
     }
     
+    @objc private func didTapChangeUserName(_ gesture: UITapGestureRecognizer){
+        presentTextFieldAlertController(placeholder: "Enter full name", keyboardType: .default, text: userMainData.fullName, alertTitle: "Enter your full name", message: nil) { [weak self] text in
+            self?.userMainData.fullName = text
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+    }
+    
     
     /// Function open details about user's health
     private func openUserHealthData(){
@@ -94,11 +103,12 @@ extension FFHealthUserProfileViewController {
     }
     
     func loadUserData(){
-        guard let data = FFUserHealthDataStoreManager.shared.mainUserData() else {
-            return
+        if let data = FFUserHealthDataStoreManager.shared.mainUserData(){
+            userMainData = data
+        } else {
+            let value = FFUserHealthMainData(fullName: "Full name", account: "")
+            userMainData = value
         }
-        
-        userMainData = data
     }
     
     func setupNavigationController() {
@@ -196,10 +206,10 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
         if section == 0 {
             let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
             let customView = UserImageTableViewHeaderView(frame: frameRect)
-            let fullName = "Full name"
-            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: fullName)
+            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: userMainData.fullName)
             customView.configureImageTarget(selector: #selector(didTapOpenMediaPicker), target: self)
             customView.configureLongGestureImageTarget(target: self, selector: #selector(didTapOpenUserImage))
+            customView.configureChangeUserName(target: self, selector: #selector(didTapChangeUserName))
             return customView
         } else {
             let label = UILabel(frame: CGRect(x: 5, y: 5, width: tableView.frame.width-10, height: 34))

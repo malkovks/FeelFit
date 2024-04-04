@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import AuthenticationServices
-import Security
 import CryptoKit
 
 
@@ -16,9 +14,6 @@ struct CredentialUser {
     let password: String
     
 }
-
-
-
 
 class FFUserAccountManager {
     static let shared = FFUserAccountManager()
@@ -29,21 +24,6 @@ class FFUserAccountManager {
         let inputData = Data(password.utf8)
         let hashed = SHA256.hash(data: inputData)
         return hashed.compactMap { String(format: "%02x", $0) }.joined()
-    }
-    
-    func deleteAllAccountsFromKeychain(){
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword
-        ]
-        
-        let status = SecItemDelete(query as CFDictionary)
-        if status == errSecSuccess {
-            
-        } else if status == errSecItemNotFound {
-            
-        } else {
-            
-        }
     }
     
     func createNewUserAccount(userData: CredentialUser?) throws {
@@ -62,28 +42,9 @@ class FFUserAccountManager {
         ]
         
         var item: CFTypeRef?
-        try checkDuplicateAccount(userData: data)
         let status = SecItemAdd(query as CFDictionary, &item)
-//        guard status == errSecItemNotFound else { throw KeychainError.duplicateAccount }
+        guard status != errSecDuplicateItem else { throw KeychainError.duplicateAccount }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status)}
-    }
-    
-    private func checkDuplicateAccount(userData: CredentialUser) throws {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: userData.email,
-            kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecReturnAttributes as String: false,
-            kSecReturnData as String: false
-        ]
-        
-        var item: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &item)
-        if status == errSecSuccess {
-            throw KeychainError.duplicateAccount
-        } else {
-            throw KeychainError.unhandledError(status: status)
-        }
     }
     
     func loginToCreatedAccount(userData: CredentialUser?) throws  {

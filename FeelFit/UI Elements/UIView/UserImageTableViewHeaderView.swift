@@ -30,6 +30,7 @@ class UserImageTableViewHeaderView: UIView {
         label.font = UIFont.headerFont(size: 24)
         label.textAlignment = .center
         label.numberOfLines = 1
+        label.isUserInteractionEnabled = true
         return label
     }()
     
@@ -89,6 +90,11 @@ class UserImageTableViewHeaderView: UIView {
                 make.width.height.equalTo(self.frame.size.height * 0.6)
             }
         }
+    }
+    
+    func configureChangeUserName(target: Any?, selector: Selector){
+        let gesture = UITapGestureRecognizer(target: target, action: selector)
+        userFullNameLabel.addGestureRecognizer(gesture)
     }
     
     func configureLongGestureImageTarget(target: Any?, selector: Selector){

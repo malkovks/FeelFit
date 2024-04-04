@@ -12,6 +12,12 @@ class FFOnboardingPageViewController: UIPageViewController {
     private let pageControl = UIPageControl()
     private var nextPageButton = UIButton(type: .custom)
     private var skipOnboardingButton = UIButton(type: .custom)
+    private var xmarkButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "xmark")?.withConfiguration(UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        button.tintColor = .darkGray
+        return button
+    }()
     
     private let onboardingStackView: UIStackView = {
         let userInterfaceStackView = UIStackView(frame: .zero)
@@ -35,6 +41,7 @@ class FFOnboardingPageViewController: UIPageViewController {
         super.viewDidAppear(animated)
     }
     
+    //MARK: - Action methods
     @objc private func didTapPageControl(_ sender: UIPageControl){
         setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true)
     }
@@ -91,6 +98,10 @@ extension FFOnboardingPageViewController: SetupViewController {
         nextPageButton.addTarget(self, action: #selector(didTapNextPage), for: .primaryActionTriggered)
     }
     
+    private func setupXmarkButton(){
+        xmarkButton.addTarget(self, action: #selector(didTapDismissOnboarding), for: .primaryActionTriggered)
+    }
+    
     private func setupSkipOnboardingPageButton(){
         skipOnboardingButton.isHidden = true
         skipOnboardingButton.configuration = .filled()
@@ -114,8 +125,6 @@ extension FFOnboardingPageViewController: SetupViewController {
         dataSource = self
         delegate = self
         
-        
-        
         let page1 = FFOnboardingAccessViewController(imageName: "lock.square",
                                                pageTitle: "Access to sensitive information",
                                                pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
@@ -134,12 +143,18 @@ extension FFOnboardingPageViewController: SetupViewController {
     func setupNavigationController() { }
     
     func setupViewModel() {}
+    
+    private func isEndWorkWithOnboarding(isHidden: Bool){
+        nextPageButton.isHidden = !isHidden
+        xmarkButton.isHidden = !isHidden
+        skipOnboardingButton.isHidden = isHidden
+    }
 }
 
 extension FFOnboardingPageViewController: FFOnboardingActionsDelegate {
     
     func didTapSkipRegistration() {
-        dismiss(animated: true)
+        didTapNextPage()
     }
 }
 
@@ -170,16 +185,14 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil}
         if index < pages.count - 1  {
-            nextPageButton.isHidden = false
-            skipOnboardingButton.isHidden = true
+            isEndWorkWithOnboarding(isHidden: true)
             return pages[index + 1]
         } else if index == pages.count-1 {
-            nextPageButton.isHidden = true
-            skipOnboardingButton.isHidden = false
+            isEndWorkWithOnboarding(isHidden: false)
+            xmarkButton.isHidden = true
             return nil
         } else {
-            nextPageButton.isHidden = true
-            skipOnboardingButton.isHidden = false
+            isEndWorkWithOnboarding(isHidden: false)
             return nil
         }
         
@@ -210,6 +223,13 @@ extension FFOnboardingPageViewController {
             make.height.equalToSuperview().multipliedBy(0.1)
             make.bottom.equalToSuperview().multipliedBy(0.95)
             make.width.equalToSuperview().dividedBy(2)
+        }
+        
+        view.addSubview(xmarkButton)
+        xmarkButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
+            make.trailing.equalToSuperview().offset(-20)
+            make.width.height.equalTo(40)
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import TipKit
 
 protocol FFOnboardingActionsDelegate: AnyObject {
     func didTapSkipRegistration()
@@ -13,7 +14,9 @@ protocol FFOnboardingActionsDelegate: AnyObject {
 
 class FFOnboardingAuthenticationViewController: UIViewController {
     
+    
     weak var delegate: FFOnboardingActionsDelegate?
+    private weak var tipView: TipUIView?
     
     private var isPasswordHidden: Bool = true
     private let accountManager = FFUserAccountManager.shared
@@ -95,8 +98,8 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     
     private let updateOrDeleteAccountButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setTitle("Edit or delete account", for: .normal)
-        button.setTitleColor(.systemBlue, for: .normal)
+        button.setTitle("Delete account", for: .normal)
+        button.setTitleColor(.systemRed, for: .normal)
         button.isHidden = true
         return button
     }()
@@ -106,11 +109,34 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         setupView()
     }
     
-    //MARK: - Target methods
-    @objc private func didTapDismissKeyboard(){
-        view.endEditing(true)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showInlineInfo(titleText: "Registery", messageText: "This page is intended for user registration and for further storing unique data of this user. If you skip registration, the data will not be able to be fully saved and used in the future. Registration allows you to work regardless of connectivity.", popoverImage: "info",arrowEdge: .top) {[unowned self] tipView in
+            tipView.snp.remakeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.top.equalTo(self.authStackView.snp.bottom).offset(5)
+                make.width.equalToSuperview().multipliedBy(0.9)
+            }
+            self.tipView = tipView
+        }
     }
-     
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let tipView = tipView {
+            tipView.removeFromSuperview()
+            self.tipView = nil
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        if let tipView = view.subviews.first(where: { $0 is TipUIView }){
+            tipView.removeFromSuperview()
+        }
+    }
+    
+    //MARK: - Target methods
     @objc private func didTapSkipOnboarding(){
         defaultAlertController(message: "Do you want to skip registration and entering Your anthropometric indicators. Just in case you can do it later", actionTitle: "Skip", style: .alert) { [weak self] in
             self?.dismiss(animated: true)
@@ -126,40 +152,40 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         }
     }
     
-    @objc private func didTapContinue(){
-        saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
-        delegate?.didTapSkipRegistration()
-    }
-    
     //Create account
     @objc private func didTapCreateNewAccount(){
         performKeychainRequest() { [weak self] userData in
             try self?.accountManager.createNewUserAccount(userData: userData)
+            self?.delegate?.didTapSkipRegistration()
         }
     }
     //Log in to account
     @objc private func didTapLogin(){
         performKeychainRequest() { [weak self] userData in
             try self?.accountManager.loginToCreatedAccount(userData: userData)
-            
+            self?.delegate?.didTapSkipRegistration()
         }
     }
     
     //Update password or delete account
     @objc private func didTapUpdateOrDeleteAccount(){
-        alertControllerActionConfirm(title: "Warning", message: "Do you want to update your email or password or delete account?", confirmActionTitle: "Update", secondTitleAction: "Delete", style: .alert) { [weak self] in
-            
-            self?.performKeychainRequest(requestFunction: { userData in
-                    try self?.accountManager.updateUserAccountData(userData: userData)
-            })
-        } secondAction: { [weak self] in
+        defaultAlertController(title: "Warning", message: "Do you really want to delete created account?", actionTitle: "Delete",style: .actionSheet) { [weak self] in
             self?.performKeychainRequest(requestFunction: { userData in
                 try self?.accountManager.deleteUserAccountData(userData: userData)
+                self?.clearTextFields()
             })
         }
     }
     
+    
+    
     //MARK: - Action setups methods
+    private func clearTextFields(){
+        userEmailTextField.text = nil
+        userPasswordTextField.text = nil
+        confirmButton(completed: false)
+    }
+    
     private func checkFieldsEmptyStatus() -> CredentialUser? {
         guard let emailText = userEmailTextField.text,
               let password = userPasswordTextField.text else {
@@ -274,25 +300,13 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
         let arrayTextFields = [userEmailTextField, userPasswordTextField]
         arrayTextFields.forEach { textField in
             textField.delegate = self
-            textField.inputAccessoryView = setupToolBar()
+            textField.inputAccessoryView = setupToolBar(target: self)
         }
         let changePasswordSecureAction = UIAction { [weak self] _ in
             self?.changePasswordSecureAction()
         }
         changePasswordSecureButton.addAction(changePasswordSecureAction, for: .primaryActionTriggered)
         userPasswordTextField.rightView = changePasswordSecureButton
-    }
-    
-    private func setupToolBar() -> UIToolbar {
-        let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-        toolBar.sizeToFit()
-        toolBar.barStyle = .default
-        toolBar.sizeToFit()
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapDismissKeyboard))
-        let items = [flexibleSpace,doneButtonItem]
-        toolBar.setItems(items, animated: true)
-        return toolBar
     }
     
     

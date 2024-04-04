@@ -7,6 +7,7 @@
 
 import UIKit
 import PhotosUI
+import TipKit
 
 class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileImageProtocol {
     
@@ -14,6 +15,7 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
     
     var cameraPickerController: UIImagePickerController!
     var pickerViewController: PHPickerViewController!
+    private weak var tipView: TipUIView?
     
     private var userDataDictionary: [[String: String]] = [
         ["Name":"Enter Name",
@@ -41,6 +43,36 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
         setupView()
         
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showInlineInfo(titleText: "User Information", messageText: "You can fill out the table manually or download data from the Health application; it will be available if you previously filled it out and gave access to the application. Filling out this information is optional, but recommended.", popoverImage: "heart", arrowEdge: .bottom) { tipView in
+            tipView.snp.remakeConstraints { make in
+                make.top.equalToSuperview()
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().multipliedBy(0.9)
+            }
+            self.tipView = tipView
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let tipView = tipView {
+            tipView.removeFromSuperview()
+            self.tipView = nil
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        if let tipView = tipView {
+            tipView.removeFromSuperview()
+            self.tipView = nil
+        }
+    }
+    
+    
     
 }
 
