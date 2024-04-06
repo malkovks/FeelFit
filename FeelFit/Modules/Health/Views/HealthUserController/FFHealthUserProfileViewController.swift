@@ -51,6 +51,11 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        //сделать секции корректными. То есть 1 секция это данные пользователя, Также добавит вход выход из аккаунта
+        //вторая секция настройки кэша и памяти
+        //третья это доступ к данным типа уведомлений и пр.
+        //убрать модуль пользователь из tabBar
+        //подумать еще что нужно доделать /добавить
     }
     //MARK: - Target methods
     @objc private func didTapDismiss(){

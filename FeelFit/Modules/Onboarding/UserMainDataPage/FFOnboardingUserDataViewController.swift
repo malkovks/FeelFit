@@ -15,6 +15,7 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
     
     var cameraPickerController: UIImagePickerController!
     var pickerViewController: PHPickerViewController!
+    var viewModel: FFOnboardingUserDataViewModel!
     private weak var tipView: TipUIView?
     
     private var userDataDictionary: [[String: String]] = [
@@ -86,73 +87,32 @@ extension FFOnboardingUserDataViewController {
     }
     
     //MARK: - Actions methods
+    ///Обработан
     @objc private func didTapLoadHealthData(){
-        guard var dict = userDataDictionary.last else { return }
-        
-        
-        defaultAlertController(title: nil, message: "Do you want to download medical data from Health?", actionTitle: "Download", style: .alert) {
-            FFHealthDataLoading.shared.loadingCharactersData { [unowned self] userDataString in
-                guard let data = userDataString else { return }
-                for (key,_) in dict {
-                    switch key {
-                    case "Birthday":
-                        dict[key] = data.dateOfBirth?.convertComponentsToDateString() ?? "Not Set"
-                    case "Gender":
-                        dict[key] = data.userGender ?? "Not Set"
-                    case "Blood Type":
-                        dict[key] = data.bloodType ?? "Not Set"
-                    case "Skin Type(Fitzpatrick Type)":
-                        dict[key] = data.fitzpatrickSkinType ?? "Not Set"
-                    default:
-                        dict[key] = "Not Set"
-                        break
-                    }
-                }
-                self.userDataDictionary[1] = dict
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+        viewModel.loadHealthData(userData: userDataDictionary) { [unowned self] userData in
+            self.userDataDictionary[1] = userData
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
             }
         }
     }
     
+    ///Обработан
     @objc func didTapOpenPickerView(_ indexPath: IndexPath){
-        let index = indexPath.row
-        let value: String = returnSelectedValueFromDictionary(index)
-        let vc = FFPickerViewController(selectedValue: value,
-                                        tableViewIndex: index,
-                                        blurEffectStyle: .dark,
-                                        vibrancyEffect: .none)
-        vc.delegate = self
-        let nav = UINavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .formSheet
-        nav.sheetPresentationController?.detents = [.custom(resolver: { context in
-            return self.view.frame.size.height * 0.5
-        })]
-        nav.sheetPresentationController?.prefersGrabberVisible = true
-        present(nav,animated: true)
+        viewModel.openPickerView(indexPath)
     }
-    
+    ///Обработан
     @objc private func didTapSaveUserData(){
         let manager = FFUserHealthDataStoreManager.shared
         let resultSavingData = manager.saveNewUserData(userDataDictionary)
         switch resultSavingData {
-            
         case .success(_):
-            saveDataButton.configuration?.title = "Saved"
-            saveDataButton.configuration?.baseBackgroundColor = .mintGreen
-            saveDataButton.isEnabled = false
-            downloadDataButton.isHidden = true
-            didTapOpenWelcomeView()
+            setupViewAfterSaving(error: nil)
         case .failure(let error):
-            let textError = error.localizedDescription
-            saveDataButton.configuration?.title = "Error"
-            saveDataButton.configuration?.baseBackgroundColor = .systemRed
-            downloadDataButton.isHidden = false
-            viewAlertController(text: textError, controllerView: self.view)
+            setupViewAfterSaving(error: error)
         }
     }
+    
     
     private func changeUserDataValue(_ index: Int, section: Int = 1,text value: String?){
         let indexPath = IndexPath(row: index, section: section)
@@ -186,13 +146,29 @@ extension FFOnboardingUserDataViewController {
 extension FFOnboardingUserDataViewController: SetupViewController {
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
+        setupViewModel()
         setupTableView()
         setupButtons()
         setupNavigationController()
-        setupViewModel()
         setupCameraPickerController()
         setupPickerViewController()
         setupConstraints()
+    }
+    
+    func setupViewAfterSaving(error: (any Error)?){
+        if let error = error {
+            let textError = error.localizedDescription
+            saveDataButton.configuration?.title = "Error"
+            saveDataButton.configuration?.baseBackgroundColor = .systemRed
+            downloadDataButton.isHidden = false
+            viewAlertController(text: textError, controllerView: self.view)
+        } else {
+            saveDataButton.configuration?.title = "Saved"
+            saveDataButton.configuration?.baseBackgroundColor = .mintGreen
+            saveDataButton.isEnabled = false
+            downloadDataButton.isHidden = true
+            didTapOpenWelcomeView()
+        }
     }
     
     private func setupTableView(){
@@ -210,7 +186,10 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     
     func setupNavigationController() { }
     
-    func setupViewModel() { }
+    func setupViewModel() { 
+        viewModel = FFOnboardingUserDataViewModel(viewController: self, userDataDictionary: userDataDictionary, tableView: tableView)
+        viewModel.delegate = self
+    }
     
     
     
@@ -219,6 +198,16 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         let value: String = Array(dictionary.values).sorted()[index]
         return value
     }
+}
+
+extension FFOnboardingUserDataViewController: FFOnboardingUserDataProtocol {
+    func completionUserData(arrayDictionary: [[String : String]]?, text: String?, key: String?) {
+        guard let key = key else { return }
+        self.userDataDictionary[1][key] = text
+        //Делегат не доделан. Настроить и протестировать
+    }
+    
+    
 }
 
 extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
@@ -240,18 +229,7 @@ extension FFOnboardingUserDataViewController: PHPickerViewControllerDelegate {
     }
 }
 
-//Delegate method returning selected result from FFPickerViewDelegate
-extension FFOnboardingUserDataViewController: FFPickerViewDelegate {
-    func didReceiveSelectedDate(selectedDate: Date?, index: Int) {
-        let dateComponents = selectedDate?.convertDateToDateComponents()
-        let dateString = dateComponents?.convertComponentsToDateString()
-        changeUserDataValue(index, text: dateString)
-    }
-    
-    func didReceiveSelectedValue(selectedValue: String?, index: Int) {
-        changeUserDataValue(index, text: selectedValue)
-    }
-}
+
 
 //MARK: - Table View Data Source
 extension FFOnboardingUserDataViewController: UITableViewDataSource {

@@ -88,6 +88,7 @@ extension FFOnboardingPageViewController: SetupViewController {
         setupNextPageButton()
         setupSkipOnboardingPageButton()
         setupConstraints()
+        setupXmarkButton()
     }
     
     private func setupNextPageButton(){
@@ -146,7 +147,6 @@ extension FFOnboardingPageViewController: SetupViewController {
     
     private func isEndWorkWithOnboarding(isHidden: Bool){
         nextPageButton.isHidden = !isHidden
-        xmarkButton.isHidden = !isHidden
         skipOnboardingButton.isHidden = isHidden
     }
 }
@@ -189,7 +189,6 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
             return pages[index + 1]
         } else if index == pages.count-1 {
             isEndWorkWithOnboarding(isHidden: false)
-            xmarkButton.isHidden = true
             return nil
         } else {
             isEndWorkWithOnboarding(isHidden: false)

@@ -168,7 +168,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     }
     
     //Update password or delete account
-    @objc private func didTapUpdateOrDeleteAccount(){
+    @objc private func didTapDeleteAccount(){
         defaultAlertController(title: "Warning", message: "Do you really want to delete created account?", actionTitle: "Delete",style: .actionSheet) { [weak self] in
             self?.performKeychainRequest(requestFunction: { userData in
                 try self?.accountManager.deleteUserAccountData(userData: userData)
@@ -293,7 +293,7 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
         createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
         loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
         skipRegistrationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
-        updateOrDeleteAccountButton.addTarget(self, action: #selector(didTapUpdateOrDeleteAccount), for: .primaryActionTriggered)
+        updateOrDeleteAccountButton.addTarget(self, action: #selector(didTapDeleteAccount), for: .primaryActionTriggered)
     }
     
     private func setupTextFields(){

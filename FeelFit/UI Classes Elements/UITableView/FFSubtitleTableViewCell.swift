@@ -16,7 +16,6 @@ class FFSubtitleTableViewCell: UITableViewCell {
         label.numberOfLines = 1
         label.font = UIFont.textLabelFont(size: 16,weight: .heavy)
         label.textAlignment = .left
-        
         return label
     }()
     

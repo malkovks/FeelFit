@@ -46,8 +46,7 @@ final class FFTabBarController: UITabBarController {
         let exercises = createTabBarItem(vc: FFMusclesGroupViewController(), title: "Muscles", image: "figure.strengthtraining.traditional",tag: FFTabBarIndex.exercises.rawValue)
         let health = createTabBarItem(vc: FFPresentHealthCollectionView(), title: "Health", image: "heart.text.square",tag: FFTabBarIndex.health.rawValue)
         let plan = createTabBarItem(vc: FFTRainingPlanViewController(), title: "Plan", image: "checkmark.diamond",tag: FFTabBarIndex.trainingPlan.rawValue)
-        let profile = createTabBarItem(vc: FFProfileViewController(), title: "My Profile", image: "person.fill",tag: FFTabBarIndex.user.rawValue)
-        setViewControllers([news, exercises, plan, health, profile], animated: true)
+        setViewControllers([news, exercises, plan, health], animated: true)
     }
     
     private func getLastViewedViewControllerIndex() -> Int {

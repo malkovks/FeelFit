@@ -13,12 +13,20 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     private var usersData: UserCharactersData = UserCharactersData()
     
     private var userDataDictionary: [[String: String]] = [
-        ["Name":"Kostia","Second Name": "Malkov"],
-        ["Birthday":"21.10.1995","Gender":"Male","Blood Type":"A+","Skin Type(Fitzpatrick Type)":"Not Set"],
-        ["Stoller chair":"Not Set"]
+        ["Name":"Enter Name",
+         "Second Name": "Enter Second Name"],
+        ["Birthday":"Not Set",
+         "Gender":"Not Set",
+         "Blood Type":"Not Set",
+         "Skin Type(Fitzpatrick Type)":"Not Set",
+         "Stoller chair":"Not Set"],
+        ["Load data from Health" : ""],
+        ["Save edited data":""]
     ]
     
     private var isTableViewIsEditing: Bool = false
+    
+    
     
     var userImage: UIImage? = UIImage(systemName: "person.crop.circle")!
     
@@ -39,17 +47,9 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc private func didTapEditTableView(){
+    @objc private func didTapSaveUserData(){
         
-        if !isTableViewIsEditing {
-            tableView.isEditing = true
-            tableView.setEditing(true, animated: true)
-            isTableViewIsEditing.toggle()
-        } else {
-            tableView.isEditing = false
-            tableView.setEditing(false, animated: true)
-            isTableViewIsEditing.toggle()
-        }
+    
     }
     
     //MARK: - Set up methods
@@ -69,7 +69,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     func setupNavigationController() {
         title = "Health information"
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapDismiss), menu: nil)
-        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Edit", imageName: "", action: #selector(didTapEditTableView), menu: nil)
+        navigationItem.rightBarButtonItem = addNavigationBarButton(title: "Save", imageName: "", action: #selector(didTapSaveUserData), menu: nil)
     }
 
     private func setupTableView(){
@@ -77,6 +77,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
+        tableView.register(FFCenteredTitleTableViewCell.self, forCellReuseIdentifier: FFCenteredTitleTableViewCell.identifier)
         tableView.backgroundColor = .clear
         tableView.contentInsetAdjustmentBehavior = .never
     }
@@ -104,36 +105,20 @@ extension FFHealthUserInformationViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-        cell.configureView(userDictionary: userDataDictionary, indexPath)
-        return cell
+        switch indexPath.section {
+        case 0,1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
+            cell.configureView(userDictionary: userDataDictionary, indexPath)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
+            cell.configureCell(data: userDataDictionary, indexPath: indexPath)
+            return cell
+        }
     }
 }
 
 extension FFHealthUserInformationViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        let cell = tableView.cellForRow(at: indexPath) as? FFSubtitleTableViewCell
-        if !tableView.isEditing {
-            cell?.configureEditingCell(false)
-            
-            return .none
-        } else if tableView.isEditing == true {
-            cell?.configureEditingCell(true)
-            return .none
-        }
-        return .none
-    }
-    
-    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
-        let _ = tableView.cellForRow(at: indexPath!) as! FFSubtitleTableViewCell
-        if tableView.isEditing == false {
-            
-        }
-    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -158,6 +143,8 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
         return 5
     }
     
+
+    
     //Header
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4 - 10)
@@ -170,10 +157,9 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
         if section == 0 {
             return view.frame.size.height/5
         } else {
-            return 0
+            return 0.0
         }
     }
-
 }
 
 private extension FFHealthUserInformationViewController {
@@ -187,6 +173,6 @@ private extension FFHealthUserInformationViewController {
 }
 
 #Preview {
-    let navVC = UINavigationController(rootViewController: FFHealthUserInformationViewController())
+    let navVC = FFNavigationController(rootViewController: FFHealthUserInformationViewController())
     return navVC
 }
