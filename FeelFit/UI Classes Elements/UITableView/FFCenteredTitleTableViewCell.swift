@@ -25,18 +25,23 @@ class FFCenteredTitleTableViewCell: UITableViewCell {
         let dictionary = data[indexPath.section]
         let key: String = Array(dictionary.keys).sorted()[indexPath.row]
         
+        setupDisplayText(text: key)
+    }
+    
+    func setupDisplayText(text: String, backgroundColor: UIColor = .systemBackground, isUserInteractionEnabled status: Bool = true){
         var backgroundConfig = backgroundConfiguration
-        backgroundConfig?.backgroundColor = .systemBackground
+        backgroundConfig?.backgroundColor = backgroundColor
         
         var config = defaultContentConfiguration()
         config.textProperties.font = UIFont.textLabelFont(size: 16, weight: .heavy)
         config.textProperties.alignment = .center
         config.textProperties.numberOfLines = 1
         config.textProperties.color = .customBlack
-        config.text = key
+        config.text = text
         
         contentConfiguration = config
         backgroundConfiguration = backgroundConfig
+        isUserInteractionEnabled = status
     }
     
     required init?(coder: NSCoder) {

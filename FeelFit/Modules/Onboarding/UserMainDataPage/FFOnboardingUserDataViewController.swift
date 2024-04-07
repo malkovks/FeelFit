@@ -25,7 +25,9 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
          "Gender":"Not Set",
          "Blood Type":"Not Set",
          "Skin Type(Fitzpatrick Type)":"Not Set",
-         "Stoller chair":"Not Set"]
+         "Stoller chair":"Not Set"],
+        ["Load data from Health": ""],
+        ["Save data":""]
     ]
     
     private let tableView: UITableView = {
@@ -89,12 +91,7 @@ extension FFOnboardingUserDataViewController {
     //MARK: - Actions methods
     ///Обработан
     @objc private func didTapLoadHealthData(){
-        viewModel.loadHealthData(userData: userDataDictionary) { [unowned self] userData in
-            self.userDataDictionary[1] = userData
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
+        viewModel.loadHealthData(userData: userDataDictionary)
     }
     
     ///Обработан
@@ -103,41 +100,18 @@ extension FFOnboardingUserDataViewController {
     }
     ///Обработан
     @objc private func didTapSaveUserData(){
-        let manager = FFUserHealthDataStoreManager.shared
-        let resultSavingData = manager.saveNewUserData(userDataDictionary)
-        switch resultSavingData {
-        case .success(_):
-            setupViewAfterSaving(error: nil)
-        case .failure(let error):
-            setupViewAfterSaving(error: error)
+        viewModel.didTapSaveUserData { result in
+            switch result{
+            case .success(_):
+                setupViewAfterSaving(error: nil)
+            case .failure(let error):
+                setupViewAfterSaving(error: error)
+            }
         }
-    }
-    
-    
-    private func changeUserDataValue(_ index: Int, section: Int = 1,text value: String?){
-        let indexPath = IndexPath(row: index, section: section)
-        
-        guard let text = value else {
-            viewAlertController(text: "Value is empty", controllerView: view)
-            return
-        }
-
-        let dictionary = userDataDictionary[section]
-        let keys: [String] = Array(dictionary.keys).sorted()
-        let keyDictionary: String = keys[index]
-        userDataDictionary[section][keyDictionary] = text
-        
-        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
     @objc private func didTapOpenWelcomeView(){
-        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
-        let name = userDataDictionary[0]["Name"]
-        let vc = FFWelcomeViewController(welcomeLabelText: name)
-        vc.modalPresentationStyle = .fullScreen
-        UIView.transition(with: view, duration: 1, options: .transitionFlipFromTop, animations: {
-            self.present(vc, animated: true)
-        }, completion: nil)
+        viewModel.didTapOpenWelcomeView()
     }
 }
 
@@ -153,6 +127,28 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         setupCameraPickerController()
         setupPickerViewController()
         setupConstraints()
+    }
+    
+    func setupTableViewSelection(isDataLoaded: Bool, row: Int = 0, section: Int = 2){
+        let indexPath = IndexPath(row: row, section: section)
+//        let cell = tableView.cellForRow(at: indexPath) as! FFCenteredTitleTableViewCell
+        if isDataLoaded{
+            
+            DispatchQueue.main.async {
+                let cell = self.tableView.cellForRow(at: indexPath) as! FFCenteredTitleTableViewCell
+                self.tableView.reloadData()
+                cell.setupDisplayText(text: "Loaded",backgroundColor: .lightGray, isUserInteractionEnabled:  false)
+//                cell.setupDisplayText(text: "Loaded",backgroundColor: .lightGray, isUserInteractionEnabled:  false)
+            }
+        } else {
+            
+            DispatchQueue.main.async {
+                let cell = self.tableView.cellForRow(at: indexPath) as! FFCenteredTitleTableViewCell
+                self.tableView.reloadData()
+                cell.setupDisplayText(text: "Failed. Try again",backgroundColor: .systemMint, isUserInteractionEnabled:  true)
+//                cell.setupDisplayText(text: "Loaded",backgroundColor: .lightGray, isUserInteractionEnabled:  false)
+            }
+        }
     }
     
     func setupViewAfterSaving(error: (any Error)?){
@@ -177,6 +173,11 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.isScrollEnabled = false
         tableView.allowsSelection = true
+        tableView.bounces = false
+        tableView.showsVerticalScrollIndicator = true
+        tableView.flashScrollIndicators()
+        tableView.register(FFCenteredTitleTableViewCell.self, forCellReuseIdentifier: FFCenteredTitleTableViewCell.identifier)
+        tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
     }
     
     private func setupButtons(){
@@ -200,13 +201,21 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     }
 }
 
+///Delegate method from OnboardingUserViewModel for returning data
 extension FFOnboardingUserDataViewController: FFOnboardingUserDataProtocol {
     func completionUserData(arrayDictionary: [[String : String]]?, text: String?, key: String?) {
         guard let key = key else { return }
         self.userDataDictionary[1][key] = text
-        //Делегат не доделан. Настроить и протестировать
     }
     
+    func didTapLoadUserData(userData: [String : String]?) {
+        if let data = userData {
+            userDataDictionary[1] = data
+            setupTableViewSelection(isDataLoaded: true)
+        } else {
+            setupTableViewSelection(isDataLoaded: false)
+        }
+    }
     
 }
 
@@ -242,56 +251,35 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-        cell.configureView(userDictionary: userDataDictionary, indexPath)
-        return cell
+        switch indexPath.section {
+        case 0,1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
+            cell.configureView(userDictionary: userDataDictionary, indexPath)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
+            cell.configureCell(data: userDataDictionary, indexPath: indexPath)
+            return cell
+        }
     }
 }
 
 //MARK: - Table View Delegate
 extension FFOnboardingUserDataViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 55
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return view.frame.size.height / 5
-        } else {
-            return 0.0
-        }
+        viewModel.tableView(tableView, heightForHeaderInSection: section)
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section == 1 {
-            return 55
-        } else {
-            return 5
-        }
+        viewModel.tableView(tableView, heightForFooterInSection: section)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
-        let customView = UserImageTableViewHeaderView(frame: frameRect)
-        customView.configureCustomHeaderView(userImage: managedUserImage ,isLabelHidden: true)
-        customView.configureImageTarget(selector: #selector(didTapOpenImage), target: self)
-        return customView
-    }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
-        let horizontalStackView = UIStackView(arrangedSubviews: [downloadDataButton,saveDataButton])
-        horizontalStackView.axis = .horizontal
-        horizontalStackView.alignment = .fill
-        horizontalStackView.spacing = 5
-        horizontalStackView.distribution = .fillEqually
-        footerView.addSubview(horizontalStackView)
-        horizontalStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(5)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
-        return footerView
+        viewModel.tableView(tableView, viewForHeaderInSection: section, userImage: managedUserImage, isLabelHidden: true, didTapImage: #selector(didTapOpenImage), longPress: #selector(didTapLongPress), target: self)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -303,10 +291,14 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
         switch indexPath.section {
         case 0:
             presentTextFieldAlertController(placeholder: "Enter value",text: value,alertTitle: "Enter User Data",message: "Write Your Name and Second Name") { [unowned self] text in
-                self.changeUserDataValue(indexPath.row, section: indexPath.section, text: text)
+                self.viewModel.changeUserDataValue(indexPath.row, text: text)
             }
         case 1:
             didTapOpenPickerView(indexPath)
+        case 2:
+            didTapLoadHealthData()
+        case 3:
+            didTapSaveUserData()
         default:
             break
         }
