@@ -15,20 +15,28 @@ class FFCenteredTitleTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        contentConfiguration = nil
+        backgroundConfiguration = nil
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
-    func configureCell(data: [[String:String]], indexPath: IndexPath){
+    func configureCell(data: [[String:String]],loaded isDataLoaded: Bool = false, indexPath: IndexPath){
         let dictionary = data[indexPath.section]
         let key: String = Array(dictionary.keys).sorted()[indexPath.row]
-        
-        setupDisplayText(text: key)
+        let value: String = dictionary[key] ?? "Nil"
+        if indexPath.section == 2 {
+            let color = isDataLoaded ? UIColor.lightGray : UIColor.systemBackground
+            let isCellEnable = !isDataLoaded
+            setupDisplayText(text: value, backgroundColor: color, isUserInteractionEnabled: isCellEnable)
+        } else {
+            setupDisplayText(text: value)
+        }
     }
     
-    func setupDisplayText(text: String, backgroundColor: UIColor = .systemBackground, isUserInteractionEnabled status: Bool = true){
+    private func setupDisplayText(text: String, backgroundColor: UIColor = .systemBackground, isUserInteractionEnabled status: Bool = true){
         var backgroundConfig = backgroundConfiguration
         backgroundConfig?.backgroundColor = backgroundColor
         

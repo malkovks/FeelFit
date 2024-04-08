@@ -153,9 +153,9 @@ extension FFPickerViewController: SetupViewController {
         setupPickerView()
         view.backgroundColor = .clear
         
-        let vbe = UIVisualEffectView(effect: UIBlurEffect(style: blurEffect ?? .regular))
-        vbe.frame = view.bounds
-        view.addSubview(vbe)
+        let vew = UIVisualEffectView(effect: UIBlurEffect(style: blurEffect ?? .regular))
+        vew.frame = view.bounds
+        view.addSubview(vew)
         
         setupConstraints()
         

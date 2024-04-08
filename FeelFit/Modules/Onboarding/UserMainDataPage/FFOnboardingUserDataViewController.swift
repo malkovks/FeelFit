@@ -13,11 +13,7 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
     
     private let calendar = Calendar.current
     
-    var cameraPickerController: UIImagePickerController!
-    var pickerViewController: PHPickerViewController!
-    var viewModel: FFOnboardingUserDataViewModel!
-    private weak var tipView: TipUIView?
-    
+    private var isDataLoaded: Bool = false
     private var userDataDictionary: [[String: String]] = [
         ["Name":"Enter Name",
          "Second Name": "Enter Second Name"],
@@ -26,9 +22,17 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
          "Blood Type":"Not Set",
          "Skin Type(Fitzpatrick Type)":"Not Set",
          "Stoller chair":"Not Set"],
-        ["Load data from Health": ""],
-        ["Save data":""]
+        ["Load": "Load data from Health"],
+        ["Save":"Save Data"]
     ]
+    
+    
+    var cameraPickerController: UIImagePickerController!
+    var pickerViewController: PHPickerViewController!
+    var viewModel: FFOnboardingUserDataViewModel!
+    private weak var tipView: TipUIView?
+    
+    
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero,style: .insetGrouped)
@@ -37,9 +41,6 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
         tableView.backgroundColor = .clear
         return tableView
     }()
-    
-    private let downloadDataButton = CustomConfigurationButton(configurationTitle: "Download From Health",baseBackgroundColor: .systemBackground)
-    private let saveDataButton = CustomConfigurationButton(configurationTitle: "Save Data",baseBackgroundColor: .systemBackground)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,11 +75,9 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
             self.tipView = nil
         }
     }
-    
-    
-    
 }
 
+//MARK: - Action methods from Strategy Pattern HandlerUserProfileImageProtocol
 extension FFOnboardingUserDataViewController {
     @objc private func didTapOpenImage(_ sender: UITapGestureRecognizer){
         didTapOpenImagePicker(tableView, cameraPickerController, pickerViewController, animated: true, sender)
@@ -86,32 +85,6 @@ extension FFOnboardingUserDataViewController {
     
     @objc private func didTapLongPress(_ longGesture: UILongPressGestureRecognizer){
         didTapLongPressOnImage(longGesture)
-    }
-    
-    //MARK: - Actions methods
-    ///Обработан
-    @objc private func didTapLoadHealthData(){
-        viewModel.loadHealthData(userData: userDataDictionary)
-    }
-    
-    ///Обработан
-    @objc func didTapOpenPickerView(_ indexPath: IndexPath){
-        viewModel.openPickerView(indexPath)
-    }
-    ///Обработан
-    @objc private func didTapSaveUserData(){
-        viewModel.didTapSaveUserData { result in
-            switch result{
-            case .success(_):
-                setupViewAfterSaving(error: nil)
-            case .failure(let error):
-                setupViewAfterSaving(error: error)
-            }
-        }
-    }
-    
-    @objc private func didTapOpenWelcomeView(){
-        viewModel.didTapOpenWelcomeView()
     }
 }
 
@@ -122,49 +95,10 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         view.backgroundColor = .secondarySystemBackground
         setupViewModel()
         setupTableView()
-        setupButtons()
         setupNavigationController()
         setupCameraPickerController()
         setupPickerViewController()
         setupConstraints()
-    }
-    
-    func setupTableViewSelection(isDataLoaded: Bool, row: Int = 0, section: Int = 2){
-        let indexPath = IndexPath(row: row, section: section)
-//        let cell = tableView.cellForRow(at: indexPath) as! FFCenteredTitleTableViewCell
-        if isDataLoaded{
-            
-            DispatchQueue.main.async {
-                let cell = self.tableView.cellForRow(at: indexPath) as! FFCenteredTitleTableViewCell
-                self.tableView.reloadData()
-                cell.setupDisplayText(text: "Loaded",backgroundColor: .lightGray, isUserInteractionEnabled:  false)
-//                cell.setupDisplayText(text: "Loaded",backgroundColor: .lightGray, isUserInteractionEnabled:  false)
-            }
-        } else {
-            
-            DispatchQueue.main.async {
-                let cell = self.tableView.cellForRow(at: indexPath) as! FFCenteredTitleTableViewCell
-                self.tableView.reloadData()
-                cell.setupDisplayText(text: "Failed. Try again",backgroundColor: .systemMint, isUserInteractionEnabled:  true)
-//                cell.setupDisplayText(text: "Loaded",backgroundColor: .lightGray, isUserInteractionEnabled:  false)
-            }
-        }
-    }
-    
-    func setupViewAfterSaving(error: (any Error)?){
-        if let error = error {
-            let textError = error.localizedDescription
-            saveDataButton.configuration?.title = "Error"
-            saveDataButton.configuration?.baseBackgroundColor = .systemRed
-            downloadDataButton.isHidden = false
-            viewAlertController(text: textError, controllerView: self.view)
-        } else {
-            saveDataButton.configuration?.title = "Saved"
-            saveDataButton.configuration?.baseBackgroundColor = .mintGreen
-            saveDataButton.isEnabled = false
-            downloadDataButton.isHidden = true
-            didTapOpenWelcomeView()
-        }
     }
     
     private func setupTableView(){
@@ -180,11 +114,6 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
     }
     
-    private func setupButtons(){
-        downloadDataButton.addTarget(self, action: #selector(didTapLoadHealthData), for: .primaryActionTriggered)
-        saveDataButton.addTarget(self, action: #selector(didTapSaveUserData), for: .primaryActionTriggered)
-    }
-    
     func setupNavigationController() { }
     
     func setupViewModel() { 
@@ -192,33 +121,56 @@ extension FFOnboardingUserDataViewController: SetupViewController {
         viewModel.delegate = self
     }
     
-    
-    
-    private func returnSelectedValueFromDictionary(_ index: Int) -> String {
-        let dictionary = userDataDictionary[1]
-        let value: String = Array(dictionary.values).sorted()[index]
-        return value
-    }
-}
-
-///Delegate method from OnboardingUserViewModel for returning data
-extension FFOnboardingUserDataViewController: FFOnboardingUserDataProtocol {
-    func completionUserData(arrayDictionary: [[String : String]]?, text: String?, key: String?) {
-        guard let key = key else { return }
-        self.userDataDictionary[1][key] = text
-    }
-    
-    func didTapLoadUserData(userData: [String : String]?) {
-        if let data = userData {
+    private func setupTableAfterLoading(data: [String:String]?){
+        if let data = data {
             userDataDictionary[1] = data
-            setupTableViewSelection(isDataLoaded: true)
+            userDataDictionary[2]["Load"] = "Loaded"
+            isDataLoaded = true
         } else {
-            setupTableViewSelection(isDataLoaded: false)
+            isDataLoaded = false
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
     
+    func setupViewAfterSaving(error: (any Error)?){
+        if let error = error {
+            userDataDictionary[3]["Save"] = "Error Saving. Try again later."
+            viewAlertController(text: error.localizedDescription, controllerView: self.view)
+        } else {
+            userDataDictionary[3]["Save"] = "Saved successfully"
+            viewModel.openWelcomeView(user: userDataDictionary)
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
 }
 
+//MARK: - Delegate method from OnboardingUserViewModel for returning data
+extension FFOnboardingUserDataViewController: FFOnboardingUserDataProtocol {
+    func didTapSaveUserData(completion handler: (Result<Bool, any Error>)) {
+        switch handler {
+        case .success(_ ):
+            setupViewAfterSaving(error: nil)
+        case .failure(let failure):
+            setupViewAfterSaving(error: failure)
+        }
+    }
+    
+    func completionUserData(text: String?, key: String?) {
+        guard let key = key else { return }
+        self.userDataDictionary[1][key] = text
+    }
+
+    func didTapLoadUserData(userData: [String : String]?) {
+        setupTableAfterLoading(data: userData)
+    }
+    
+}
+
+//MARK: - Delegates for open and handle taken image from Camera
 extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
@@ -231,6 +183,7 @@ extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & 
     }
 }
 
+//MARK: - Delegate for handle picker image from media
 extension FFOnboardingUserDataViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
@@ -258,7 +211,7 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
-            cell.configureCell(data: userDataDictionary, indexPath: indexPath)
+            cell.configureCell(data: userDataDictionary, loaded: isDataLoaded, indexPath: indexPath)
             return cell
         }
     }
@@ -283,25 +236,7 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let dictionary = userDataDictionary[indexPath.section]
-        let key: String = Array(dictionary.keys).sorted()[indexPath.row]
-        let value: String = dictionary[key] ?? ""
-        
-        switch indexPath.section {
-        case 0:
-            presentTextFieldAlertController(placeholder: "Enter value",text: value,alertTitle: "Enter User Data",message: "Write Your Name and Second Name") { [unowned self] text in
-                self.viewModel.changeUserDataValue(indexPath.row, text: text)
-            }
-        case 1:
-            didTapOpenPickerView(indexPath)
-        case 2:
-            didTapLoadHealthData()
-        case 3:
-            didTapSaveUserData()
-        default:
-            break
-        }
+        viewModel.tableView(tableView, didSelectRowAt: indexPath, userData: userDataDictionary)
     }
     
 

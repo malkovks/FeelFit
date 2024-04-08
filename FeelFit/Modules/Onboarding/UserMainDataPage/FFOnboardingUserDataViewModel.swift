@@ -9,8 +9,9 @@ import UIKit
 import RealmSwift
 
 protocol FFOnboardingUserDataProtocol: AnyObject {
-    func completionUserData(arrayDictionary: [[String: String]]?,text: String?, key: String?)
+    func completionUserData(text: String?, key: String?)
     func didTapLoadUserData(userData: [String:String]?)
+    func didTapSaveUserData(completion handler: (Result<Bool,Error>))
 }
 
 final class FFOnboardingUserDataViewModel {
@@ -19,12 +20,12 @@ final class FFOnboardingUserDataViewModel {
     private let realm = try! Realm()
     
     let viewController: UIViewController
-    var userDataDictionary: [[String:String]]
+//    var userDataDictionary: [[String:String]]
     var tableView: UITableView
     
     init(viewController: UIViewController, userDataDictionary: [[String:String]], tableView: UITableView) {
         self.viewController = viewController
-        self.userDataDictionary = userDataDictionary
+//        self.userDataDictionary = userDataDictionary
         self.tableView = tableView
     }
     
@@ -65,9 +66,9 @@ final class FFOnboardingUserDataViewModel {
     
     
     /// Function open picker view with prepared visual displaying info for selected table view row
-    @objc func openPickerView(_ indexPath: IndexPath){
+    @objc func openPickerView(_ indexPath: IndexPath,_ userData: [[String:String]]){
         let index = indexPath.row
-        let value: String = returnSelectedValueFromDictionary(index)
+        let value: String = returnSelectedValueFromDictionary(index,userDictionary: userData)
         let vc = FFPickerViewController(selectedValue: value,
                                         tableViewIndex: index,
                                         blurEffectStyle: .dark,
@@ -90,15 +91,16 @@ final class FFOnboardingUserDataViewModel {
             return
         }
 
+        //доделать наследование словаря. Либо в делегат от пикервью либо иначе
         let dictionary = userDataDictionary[section]
         let keys: [String] = Array(dictionary.keys).sorted()
         let keyDictionary: String = keys[index]
         
-        delegate?.completionUserData(arrayDictionary: nil, text: text, key: keyDictionary)
+        delegate?.completionUserData(text: text, key: keyDictionary)
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
-    @objc func didTapOpenWelcomeView(){
+    @objc func openWelcomeView(user userDataDictionary: [[String:String]]){
         UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
         let name = userDataDictionary[0]["Name"]
         let vc = FFWelcomeViewController(welcomeLabelText: name)
@@ -108,21 +110,16 @@ final class FFOnboardingUserDataViewModel {
         }, completion: nil)
     }
     
-    func didTapSaveUserData(completion: (Result<Bool,Error>) -> ()){
+    func saveUserData(userData: [[String:String]]){
         let manager = FFUserHealthDataStoreManager.shared
-        let resultSavingData = manager.saveNewUserData(userDataDictionary)
-        switch resultSavingData {
-        case .success(let success):
-            completion(.success(success))
-        case .failure(let error):
-            completion(.failure(error))
-        }
+        let resultSavingData = manager.saveNewUserData(userData)
+        delegate?.didTapSaveUserData(completion: resultSavingData)
     }
 }
 
 private extension FFOnboardingUserDataViewModel {
-    func returnSelectedValueFromDictionary(_ index: Int) -> String {
-        let dictionary = userDataDictionary[1]
+    func returnSelectedValueFromDictionary(_ index: Int, userDictionary: [[String:String]]) -> String {
+        let dictionary = userDictionary[1]
         let value: String = Array(dictionary.values).sorted()[index]
         return value
     }
@@ -176,24 +173,23 @@ extension FFOnboardingUserDataViewModel {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, userData: [[String:String]]) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let dictionary = userDataDictionary[indexPath.section]
+        let dictionary = userData[indexPath.section]
         let key: String = Array(dictionary.keys).sorted()[indexPath.row]
         let value: String = dictionary[key] ?? ""
         
         switch indexPath.section {
         case 0:
             viewController.presentTextFieldAlertController(placeholder: "Enter value",text: value,alertTitle: "Enter User Data",message: "Write Your Name and Second Name") { [unowned self] text in
-                self.changeUserDataValue(indexPath.row, text: text)
+                self.changeUserDataValue(indexPath.row,section: indexPath.section, text: text)
             }
         case 1:
-            openPickerView(indexPath)
+            openPickerView(indexPath, userData)
         case 2:
-            loadHealthData(userData: userDataDictionary)
+            loadHealthData(userData: userData)
         case 3:
-            print("data")
+            saveUserData(userData: userData)
         default:
             break
         }
     }
-    
 }

@@ -158,7 +158,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
     
     func didTapLongPressOnImage(_ longGesture: UILongPressGestureRecognizer){
         if longGesture.state == .began {
-            feedbackGenerator.impactOccurred()
+            
             let vc = FFImageDetailsViewController(newsImage: managedUserImage, imageURL: "")
             present(vc, animated: true)
         }

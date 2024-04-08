@@ -26,7 +26,14 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     private var isTableViewIsEditing: Bool = false
     
+    init(userImage: UIImage = UIImage(systemName: "person.crop.circle")!){
+        self.userImage = userImage
+        super.init(nibName: nil, bundle: nil)
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     var userImage: UIImage? = UIImage(systemName: "person.crop.circle")!
     
@@ -149,7 +156,7 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4 - 10)
         let customView = UserImageTableViewHeaderView(frame: frameRect)
-        customView.configureCustomHeaderView(userImage: nil,isLabelHidden: true)
+        customView.configureCustomHeaderView(userImage: userImage,isLabelHidden: true)
         return customView
     }
     
