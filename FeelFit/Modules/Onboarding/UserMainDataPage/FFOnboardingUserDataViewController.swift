@@ -11,21 +11,7 @@ import TipKit
 
 class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileImageProtocol {
     
-    private let calendar = Calendar.current
-    
     private var isDataLoaded: Bool = false
-    private var userDataDictionary: [[String: String]] = [
-        ["Name":"Enter Name",
-         "Second Name": "Enter Second Name"],
-        ["Birthday":"Not Set",
-         "Gender":"Not Set",
-         "Blood Type":"Not Set",
-         "Skin Type(Fitzpatrick Type)":"Not Set",
-         "Stoller chair":"Not Set"],
-        ["Load": "Load data from Health"],
-        ["Save":"Save Data"]
-    ]
-    
     
     var cameraPickerController: UIImagePickerController!
     var pickerViewController: PHPickerViewController!
@@ -39,6 +25,14 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
         tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
         tableView.setupAppearanceShadow()
         tableView.backgroundColor = .clear
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.isScrollEnabled = false
+        tableView.allowsSelection = true
+        tableView.bounces = false
+        tableView.showsVerticalScrollIndicator = true
+        tableView.flashScrollIndicators()
+        tableView.register(FFCenteredTitleTableViewCell.self, forCellReuseIdentifier: FFCenteredTitleTableViewCell.identifier)
+        tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
         return tableView
     }()
     
@@ -104,68 +98,37 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     private func setupTableView(){
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.isScrollEnabled = false
-        tableView.allowsSelection = true
-        tableView.bounces = false
-        tableView.showsVerticalScrollIndicator = true
-        tableView.flashScrollIndicators()
-        tableView.register(FFCenteredTitleTableViewCell.self, forCellReuseIdentifier: FFCenteredTitleTableViewCell.identifier)
-        tableView.register(FFSubtitleTableViewCell.self, forCellReuseIdentifier: FFSubtitleTableViewCell.identifier)
     }
     
     func setupNavigationController() { }
     
     func setupViewModel() { 
-        viewModel = FFOnboardingUserDataViewModel(viewController: self, userDataDictionary: userDataDictionary, tableView: tableView)
+        viewModel = FFOnboardingUserDataViewModel(viewController: self)
         viewModel.delegate = self
-    }
-    
-    private func setupTableAfterLoading(data: [String:String]?){
-        if let data = data {
-            userDataDictionary[1] = data
-            userDataDictionary[2]["Load"] = "Loaded"
-            isDataLoaded = true
-        } else {
-            isDataLoaded = false
-        }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
-    
-    func setupViewAfterSaving(error: (any Error)?){
-        if let error = error {
-            userDataDictionary[3]["Save"] = "Error Saving. Try again later."
-            viewAlertController(text: error.localizedDescription, controllerView: self.view)
-        } else {
-            userDataDictionary[3]["Save"] = "Saved successfully"
-            viewModel.openWelcomeView(user: userDataDictionary)
-        }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
     }
 }
 
-//MARK: - Delegate method from OnboardingUserViewModel for returning data
+//MARK: - Delegate method from OnboardingUserViewModel for returning status of handling data
 extension FFOnboardingUserDataViewController: FFOnboardingUserDataProtocol {
-    func didTapSaveUserData(completion handler: (Result<Bool, any Error>)) {
-        switch handler {
-        case .success(_ ):
-            setupViewAfterSaving(error: nil)
-        case .failure(let failure):
-            setupViewAfterSaving(error: failure)
+    func didUserSavedData(isSaved: Bool) {
+        if !isSaved {
+            viewAlertController(text: "Error saving data to user manager. Try again later", controllerView: self.view)
+        }
+    }
+
+    func didLoadUserData(isDataLoaded: Bool) {
+        self.isDataLoaded = isDataLoaded
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
     
-    func completionUserData(text: String?, key: String?) {
-        guard let key = key else { return }
-        self.userDataDictionary[1][key] = text
-    }
-
-    func didTapLoadUserData(userData: [String : String]?) {
-        setupTableAfterLoading(data: userData)
+    func didReceiveSelectedData(isReceived: Bool, indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return }
+        DispatchQueue.main.async {
+            self.tableView.reloadRows(at: [indexPath], with: .fade)
+        }
+        
     }
     
 }
@@ -196,22 +159,22 @@ extension FFOnboardingUserDataViewController: PHPickerViewControllerDelegate {
 //MARK: - Table View Data Source
 extension FFOnboardingUserDataViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return userDataDictionary.count
+        return viewModel.userDataDictionary.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userDataDictionary[section].count
+        return viewModel.userDataDictionary[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0,1:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-            cell.configureView(userDictionary: userDataDictionary, indexPath)
+            cell.configureView(userDictionary: viewModel.userDataDictionary, indexPath)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
-            cell.configureCell(data: userDataDictionary, loaded: isDataLoaded, indexPath: indexPath)
+            cell.configureCell(data: viewModel.userDataDictionary, loaded: isDataLoaded, indexPath: indexPath)
             return cell
         }
     }
@@ -236,7 +199,7 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.tableView(tableView, didSelectRowAt: indexPath, userData: userDataDictionary)
+        viewModel.tableView(tableView, didSelectRowAt: indexPath)
     }
     
 

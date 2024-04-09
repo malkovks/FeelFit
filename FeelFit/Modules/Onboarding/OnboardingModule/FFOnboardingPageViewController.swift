@@ -9,6 +9,8 @@ import UIKit
 
 class FFOnboardingPageViewController: UIPageViewController {
     
+    
+    
     private let pageControl = UIPageControl()
     private var nextPageButton = UIButton(type: .custom)
     private var skipOnboardingButton = UIButton(type: .custom)
@@ -31,6 +33,7 @@ class FFOnboardingPageViewController: UIPageViewController {
     private var pages = [UIViewController]()
     private let initialPages = 0
     private var currentIndex = 0
+    private var viewModel: FFOnboardingPageViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,12 +46,12 @@ class FFOnboardingPageViewController: UIPageViewController {
     
     //MARK: - Action methods
     @objc private func didTapPageControl(_ sender: UIPageControl){
-        setViewControllers([pages[sender.currentPage]], direction: .forward, animated: true)
+        
+        viewModel.changePageViewController(sender: sender, pages: self.pages)
     }
     
     @objc private func didTapDismissOnboarding(){
-        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
-        self.dismiss(animated: true)
+        viewModel.closeOnboardingViewController()
     }
     
     @objc private func didTapNextPage() {
@@ -143,7 +146,9 @@ extension FFOnboardingPageViewController: SetupViewController {
     
     func setupNavigationController() { }
     
-    func setupViewModel() {}
+    func setupViewModel() {
+        viewModel = FFOnboardingPageViewModel(pageViewController: self)
+    }
     
     private func isEndWorkWithOnboarding(isHidden: Bool){
         nextPageButton.isHidden = !isHidden
@@ -160,9 +165,7 @@ extension FFOnboardingPageViewController: FFOnboardingActionsDelegate {
 
 extension FFOnboardingPageViewController: UIPageControlTimerProgressDelegate {
     func pageControlTimerProgress(_ progress: UIPageControlTimerProgress, shouldAdvanceToPage page: Int) -> Bool {
-        let nextPage = pages[page]
-        self.setViewControllers([nextPage], direction: .forward, animated: true)
-        return true
+        viewModel.pageControlTimerProgress(progress, shouldAdvanceToPage: page, pages: pages)
     }
 }
 
@@ -200,11 +203,7 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
 
 extension FFOnboardingPageViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-            
-            guard let viewControllers = pageViewController.viewControllers else { return }
-            guard let currentIndex = pages.lastIndex(of: viewControllers[0]) else { return }
-            
-            pageControl.currentPage = currentIndex
+        viewModel.pageViewController(pageViewController, didFinishAnimating: finished, previousViewControllers: previousViewControllers, viewControllerPages: pages, pageControl: pageControl, transitionCompleted: completed)
     }
 }
 

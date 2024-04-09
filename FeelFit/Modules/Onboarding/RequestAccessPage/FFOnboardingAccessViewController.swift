@@ -9,8 +9,8 @@ import UIKit
 
 class FFOnboardingAccessViewController: UIViewController {
     
+    var viewModel: FFOnboardingAccessViewModel!
     
-    private var accessToServicesBoolean: [Bool] = [false,false,false,false]
     
     private let pageTitleLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -166,36 +166,38 @@ class FFOnboardingAccessViewController: UIViewController {
     }
     
     private func setupButtonConfirm(isAccessed: Bool,_ button: UIButton,error: Error? = nil){
-        DispatchQueue.main.async { [weak self] in
-            guard let strongSelf = self else { return }
-            if let error = error {
-                strongSelf.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: strongSelf.view)
-                button.configuration?.showsActivityIndicator = false
-            } else {
-                strongSelf.accessToServicesBoolean[button.tag] = isAccessed
-                UIView.animate(withDuration: 0.2) {
-                    button.configuration?.showsActivityIndicator = !isAccessed
-                    button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
-                    button.isEnabled = isAccessed ? true : false
-                    button.configuration?.image = isAccessed ? UIImage(systemName: "lock.open") : UIImage(systemName: "lock")
-                    button.configuration?.baseBackgroundColor = .systemGreen
-                    strongSelf.view.layoutIfNeeded()
-                }
-            }
-            
-            if strongSelf.accessToServicesBoolean.allSatisfy({ $0 }) {
-                strongSelf.successStatusLabel.isHidden = false
-                strongSelf.notificationButton.isHidden = true
-                strongSelf.userHealthButton.isHidden = true
-                strongSelf.healthButton.isHidden = true
-                strongSelf.mediaButton.isHidden = true
-                strongSelf.buttonsStackView.alignment = .center
-                strongSelf.buttonsStackView.distribution = .equalCentering
-                strongSelf.view.layoutIfNeeded()
-            }
-        }
+        //        DispatchQueue.main.async { [weak self] in
+        //            guard let self = self else { return }
+        //            if let error = error {
+        //                self.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
+        //                button.configuration?.showsActivityIndicator = false
+        //            } else {
+        //                self.viewModel.accessArray[button.tag] = isAccessed
+        //                UIView.animate(withDuration: 0.2) {
+        //                    button.configuration?.showsActivityIndicator = !isAccessed
+        //                    button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
+        //                    button.isEnabled = isAccessed ? true : false
+        //                    button.configuration?.image = isAccessed ? UIImage(systemName: "lock.open") : UIImage(systemName: "lock")
+        //                    button.configuration?.baseBackgroundColor = .systemGreen
+        //                    self.view.layoutIfNeeded()
+        //                }
+        //            }
+        //        }
+        //    }
+    }
+    
+    func changeButtonsHiddens(){
+        self.successStatusLabel.isHidden = false
+        self.notificationButton.isHidden = true
+        self.userHealthButton.isHidden = true
+        self.healthButton.isHidden = true
+        self.mediaButton.isHidden = true
+        self.buttonsStackView.alignment = .center
+        self.buttonsStackView.distribution = .equalCentering
+        self.view.layoutIfNeeded()
     }
 }
+
 
 //MARK: - Setup methods
 extension FFOnboardingAccessViewController: SetupViewController {
@@ -239,8 +241,18 @@ extension FFOnboardingAccessViewController: SetupViewController {
     }
     
     func setupViewModel() {
-        
+        viewModel = FFOnboardingAccessViewModel(viewController: self)
+        viewModel.delegate = self
     }
+}
+
+
+extension FFOnboardingAccessViewController: FFOnboardingAccessDelegate {
+    func didGetAccessToAllServices() {
+        changeButtonsHiddens()
+    }
+    
+    
 }
 
 private extension FFOnboardingAccessViewController {

@@ -9,9 +9,9 @@ import UIKit
 import RealmSwift
 
 protocol FFOnboardingUserDataProtocol: AnyObject {
-    func completionUserData(text: String?, key: String?)
-    func didTapLoadUserData(userData: [String:String]?)
-    func didTapSaveUserData(completion handler: (Result<Bool,Error>))
+    func didLoadUserData(isDataLoaded: Bool)
+    func didUserSavedData(isSaved: Bool)
+    func didReceiveSelectedData(isReceived: Bool, indexPath: IndexPath?)
 }
 
 final class FFOnboardingUserDataViewModel {
@@ -19,14 +19,23 @@ final class FFOnboardingUserDataViewModel {
     
     private let realm = try! Realm()
     
-    let viewController: UIViewController
-//    var userDataDictionary: [[String:String]]
-    var tableView: UITableView
     
-    init(viewController: UIViewController, userDataDictionary: [[String:String]], tableView: UITableView) {
+    public var userDataDictionary: [[String:String]] = [
+        ["Name":"Enter Name",
+         "Second Name": "Enter Second Name"],
+        ["Birthday":"Not Set",
+         "Gender":"Not Set",
+         "Blood Type":"Not Set",
+         "Skin Type(Fitzpatrick Type)":"Not Set",
+         "Stoller chair":"Not Set"],
+        ["Load": "Load data from Health"],
+        ["Save":"Save Data"]
+    ]
+    
+    let viewController: UIViewController
+    
+    init(viewController: UIViewController) {
         self.viewController = viewController
-//        self.userDataDictionary = userDataDictionary
-        self.tableView = tableView
     }
     
     ///Function load data from system Health application. For using need user's access to Health Character's Data
@@ -36,12 +45,12 @@ final class FFOnboardingUserDataViewModel {
         
         viewController.defaultAlertController(title: nil, message: "Do you want to download medical data from Health?", actionTitle: "Download", style: .alert) { [weak self] in
             guard let self = self else {
-                self?.delegate?.didTapLoadUserData(userData: nil)
+                self?.delegate?.didLoadUserData(isDataLoaded: false)
                 return
             }
             FFHealthDataLoading.shared.loadingCharactersData { userDataString in
                 guard let data = userDataString else {
-                    self.delegate?.didTapLoadUserData(userData: nil)
+                    self.delegate?.didLoadUserData(isDataLoaded: false)
                     return
                 }
                 for (key,_) in dict {
@@ -59,14 +68,15 @@ final class FFOnboardingUserDataViewModel {
                         break
                     }
                 }
-                self.delegate?.didTapLoadUserData(userData: dict)
+                self.delegate?.didLoadUserData(isDataLoaded: true)
+                self.userDataDictionary[1] = dict
             }
         }
     }
     
     
     /// Function open picker view with prepared visual displaying info for selected table view row
-    @objc func openPickerView(_ indexPath: IndexPath,_ userData: [[String:String]]){
+    @objc func openPickerView(_ indexPath: IndexPath, userData: [[String:String]]){
         let index = indexPath.row
         let value: String = returnSelectedValueFromDictionary(index,userDictionary: userData)
         let vc = FFPickerViewController(selectedValue: value,
@@ -83,10 +93,11 @@ final class FFOnboardingUserDataViewModel {
         viewController.present(nav,animated: true)
     }
     
-    @objc func changeUserDataValue(_ index: Int, section: Int = 1, text value: String?){
+    @objc func changeUserDataValue(_ index: Int, section: Int = 1, text value: String?,userData: [[String:String]]){
         let indexPath = IndexPath(row: index, section: section)
         
         guard let text = value else {
+            delegate?.didReceiveSelectedData(isReceived: false, indexPath: nil)
             viewController.viewAlertController(text: "Value is empty", controllerView: viewController.view)
             return
         }
@@ -95,9 +106,8 @@ final class FFOnboardingUserDataViewModel {
         let dictionary = userDataDictionary[section]
         let keys: [String] = Array(dictionary.keys).sorted()
         let keyDictionary: String = keys[index]
-        
-        delegate?.completionUserData(text: text, key: keyDictionary)
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+        userDataDictionary[section][keyDictionary] = text
+        delegate?.didReceiveSelectedData(isReceived: true, indexPath: indexPath)
     }
     
     @objc func openWelcomeView(user userDataDictionary: [[String:String]]){
@@ -113,7 +123,12 @@ final class FFOnboardingUserDataViewModel {
     func saveUserData(userData: [[String:String]]){
         let manager = FFUserHealthDataStoreManager.shared
         let resultSavingData = manager.saveNewUserData(userData)
-        delegate?.didTapSaveUserData(completion: resultSavingData)
+        switch resultSavingData {
+        case .success(_):
+            openWelcomeView(user: userData)
+        case .failure(_):
+            delegate?.didUserSavedData(isSaved: false)
+        }
     }
 }
 
@@ -130,11 +145,11 @@ extension FFOnboardingUserDataViewModel: FFPickerViewDelegate {
     func didReceiveSelectedDate(selectedDate: Date?, index: Int) {
         let dateComponents = selectedDate?.convertDateToDateComponents()
         let dateString = dateComponents?.convertComponentsToDateString()
-        changeUserDataValue(index, text: dateString)
+        changeUserDataValue(index, text: dateString, userData: userDataDictionary)
     }
     
     func didReceiveSelectedValue(selectedValue: String?, index: Int) {
-        changeUserDataValue(index, text: selectedValue)
+        changeUserDataValue(index, text: selectedValue, userData: userDataDictionary)
     }
 }
 
@@ -171,23 +186,23 @@ extension FFOnboardingUserDataViewModel {
         return customView
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, userData: [[String:String]]) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let dictionary = userData[indexPath.section]
+        let dictionary = userDataDictionary[indexPath.section]
         let key: String = Array(dictionary.keys).sorted()[indexPath.row]
         let value: String = dictionary[key] ?? ""
         
         switch indexPath.section {
         case 0:
             viewController.presentTextFieldAlertController(placeholder: "Enter value",text: value,alertTitle: "Enter User Data",message: "Write Your Name and Second Name") { [unowned self] text in
-                self.changeUserDataValue(indexPath.row,section: indexPath.section, text: text)
+                self.changeUserDataValue(indexPath.row,section: indexPath.section, text: text, userData: userDataDictionary)
             }
         case 1:
-            openPickerView(indexPath, userData)
+            openPickerView(indexPath,userData: userDataDictionary)
         case 2:
-            loadHealthData(userData: userData)
+            loadHealthData(userData: userDataDictionary)
         case 3:
-            saveUserData(userData: userData)
+            saveUserData(userData: userDataDictionary)
         default:
             break
         }
