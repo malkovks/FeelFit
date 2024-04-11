@@ -11,7 +11,17 @@ protocol FFOnboardingAccessDelegate: AnyObject {
     func didGetAccessToAllServices()
 }
 
-class FFOnboardingAccessViewModel {
+protocol FFOnboardingAccessProtocol: AnyObject {
+    var delegate: FFOnboardingAccessDelegate? { get set}
+    func requestAccessToNotificationsServices(_ button: UIButton)
+    func requestAccessToUserHealthDataServices(_ button: UIButton)
+    func requestAccessToUserCharacterHealthDataServices(_ button: UIButton)
+    func requestAccessToUserMediaServices(_ button: UIButton)
+    
+}
+
+class FFOnboardingAccessViewModel: FFOnboardingAccessProtocol {
+    
     var accessArray: [Bool] = [false,false,false,false]
     weak var delegate: FFOnboardingAccessDelegate?
     
@@ -21,7 +31,7 @@ class FFOnboardingAccessViewModel {
         self.viewController = viewController
     }
     //Доделать методы запроса данных у пользователя
-    func askForAccessToNotification(_ button: UIButton, requestHandler: @escaping (@escaping (Result<Bool,Error>) -> Void) -> Void){
+    private func requestAccessToSelectedService(_ button: UIButton, requestHandler: @escaping (@escaping (Result<Bool,Error>) -> Void) -> Void){
         requestHandler { [weak self] result in
             DispatchQueue.main.async {
                 button.configuration?.showsActivityIndicator = true
@@ -31,6 +41,39 @@ class FFOnboardingAccessViewModel {
                 self?.setupButtonConfirm(isAccessed: success, button)
             case .failure(let failure):
                 self?.setupButtonConfirm(isAccessed: false, button, error: failure)
+            }
+        }
+    }
+    
+    func requestAccessToNotificationsServices( _ button: UIButton){
+        requestAccessToSelectedService(button) { completion in
+            FFSendUserNotifications.shared.requestForAccessToLocalNotification(completion: completion)
+        }
+    }
+    
+    func requestAccessToUserHealthDataServices(_ button: UIButton){
+        requestAccessToSelectedService(button) { completion in
+            FFHealthDataAccess.shared.requestForAccessToHealth(completion: completion)
+        }
+    }
+    
+    func requestAccessToUserCharacterHealthDataServices(_ button: UIButton){
+        requestAccessToSelectedService(button) { completion in
+            FFHealthDataAccess.shared.requestAccessToCharactersData(completion: completion)
+        }
+    }
+    
+    func requestAccessToUserMediaServices(_ button: UIButton){
+        requestAccessToSelectedService(button) { completion in
+            FFMediaDataAccess.shared.requestAccessForCamera { status in
+                if status {
+                    FFMediaDataAccess.shared.requestPhotoLibraryAccess { success in
+                        completion(.success(true))
+                    }
+                } else {
+                    completion(.success(false))
+                
+                }
             }
         }
     }

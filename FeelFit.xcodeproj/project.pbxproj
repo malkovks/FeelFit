@@ -154,6 +154,7 @@
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
+		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
 		FD9DE3662BBC3605005775DF /* DataTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3652BBC3605005775DF /* DataTips.swift */; };
 		FD9DE3682BBC3645005775DF /* TipKit+UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3672BBC3645005775DF /* TipKit+UIViewControllerExtension.swift */; };
 		FD9DE36A2BBEAB1A005775DF /* UIToolbar+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3692BBEAB1A005775DF /* UIToolbar+Extension.swift */; };
@@ -304,6 +305,7 @@
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
+		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		FD9DE3652BBC3605005775DF /* DataTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTips.swift; sourceTree = "<group>"; };
 		FD9DE3672BBC3645005775DF /* TipKit+UIViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TipKit+UIViewControllerExtension.swift"; sourceTree = "<group>"; };
 		FD9DE3692BBEAB1A005775DF /* UIToolbar+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIToolbar+Extension.swift"; sourceTree = "<group>"; };
@@ -1189,6 +1191,7 @@
 			isa = PBXGroup;
 			children = (
 				0AC99D642B932ED3000AAAD1 /* FFOnboardingAuthenticationViewController.swift */,
+				FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */,
 			);
 			path = AuthenticationPage;
 			sourceTree = "<group>";
@@ -1340,6 +1343,7 @@
 				0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */,
+				FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */,
 				0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */,
 				0AC145F72BA271B700C8544A /* HealthStoreRequest+Enum.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,

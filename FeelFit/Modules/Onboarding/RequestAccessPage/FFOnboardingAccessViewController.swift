@@ -98,94 +98,6 @@ class FFOnboardingAccessViewController: UIViewController {
         setupView()
     }
     //MARK: - Actions
-    private func didTapAskNotificationRequest(_ button: UIButton){
-        
-        FFSendUserNotifications.shared.requestForAccessToLocalNotification { [weak self] result in
-            switch result {
-                
-            case .success(let success):
-                self?.setupButtonConfirm(isAccessed: success,button)
-            case .failure(let error):
-                self?.setupButtonConfirm(isAccessed: false,button, error: error)
-            }
-        }
-        
-        DispatchQueue.main.async {
-            button.configuration?.showsActivityIndicator = true
-        }
-    }
-    
-    func didTapAskUserHealthRequest(_ button: UIButton){
-        FFHealthDataAccess.shared.requestAccessToCharactersData { [weak self] result in
-            switch result {
-            case .success(let success):
-                self?.setupButtonConfirm(isAccessed: success,button)
-            case .failure(let error):
-                self?.setupButtonConfirm(isAccessed: false,button,error: error)
-                return
-            }
-        }
-        DispatchQueue.main.async {
-            button.configuration?.showsActivityIndicator = true
-        }
-    }
-    
-    func didTapAskHealthRequest(_ button: UIButton){
-        FFHealthDataAccess.shared.requestForAccessToHealth { [weak self] result in
-            switch result {
-            case .success(let success):
-                self?.setupButtonConfirm(isAccessed: success,button)
-            case .failure(let error):
-                self?.setupButtonConfirm(isAccessed: false,button,error: error)
-                return
-            }
-        }
-        DispatchQueue.main.async {
-            button.configuration?.showsActivityIndicator = true
-        }
-    }
-    
-    private func didTapAskMediaRequest(_ button: UIButton){
-        let media = FFMediaDataAccess.shared
-        media.requestPhotoLibraryAccess { [weak self] success in
-            if success {
-                media.requestAccessForCamera { status in
-                    if !status {
-                        self?.setupButtonConfirm(isAccessed: false,button)
-                    } else {
-                        self?.setupButtonConfirm(isAccessed: true,button)
-                    }
-                }
-            } else {
-                self?.setupButtonConfirm(isAccessed: false,button)
-            }
-        }
-        DispatchQueue.main.async {
-            button.configuration?.showsActivityIndicator = true
-        }
-    }
-    
-    private func setupButtonConfirm(isAccessed: Bool,_ button: UIButton,error: Error? = nil){
-        //        DispatchQueue.main.async { [weak self] in
-        //            guard let self = self else { return }
-        //            if let error = error {
-        //                self.viewAlertController(text: error.localizedDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
-        //                button.configuration?.showsActivityIndicator = false
-        //            } else {
-        //                self.viewModel.accessArray[button.tag] = isAccessed
-        //                UIView.animate(withDuration: 0.2) {
-        //                    button.configuration?.showsActivityIndicator = !isAccessed
-        //                    button.configuration?.title = isAccessed ? "Access confirmed": "Access denied"
-        //                    button.isEnabled = isAccessed ? true : false
-        //                    button.configuration?.image = isAccessed ? UIImage(systemName: "lock.open") : UIImage(systemName: "lock")
-        //                    button.configuration?.baseBackgroundColor = .systemGreen
-        //                    self.view.layoutIfNeeded()
-        //                }
-        //            }
-        //        }
-        //    }
-    }
-    
     func changeButtonsHiddens(){
         self.successStatusLabel.isHidden = false
         self.notificationButton.isHidden = true
@@ -212,25 +124,25 @@ extension FFOnboardingAccessViewController: SetupViewController {
     
     func configureAccessStatusButton(){
         let notificationAction = UIAction { [unowned self] _ in
-            didTapAskNotificationRequest(notificationButton)
+            viewModel.requestAccessToNotificationsServices(notificationButton)
         }
         
         notificationButton = CustomConfigurationButton(primaryAction: notificationAction,buttonTag: 0, configurationTitle: "Access to Notification")
         
         let healthAction = UIAction { [unowned self] _ in
-            didTapAskHealthRequest(healthButton)
+            viewModel.requestAccessToUserHealthDataServices(healthButton)
         }
         
         healthButton = CustomConfigurationButton(primaryAction: healthAction,buttonTag: 1, configurationTitle: "Access to Health")
         
         let userHealthAction = UIAction { [unowned self] _ in
-            didTapAskUserHealthRequest(userHealthButton)
+            viewModel.requestAccessToUserMediaServices(userHealthButton)
         }
         
         userHealthButton = CustomConfigurationButton(primaryAction: userHealthAction,buttonTag: 2, configurationTitle: "Access to User's Health")
         
         let mediaAction = UIAction { [unowned self] _ in
-            didTapAskMediaRequest(mediaButton)
+            viewModel.requestAccessToUserMediaServices(mediaButton)
         }
         
         mediaButton = CustomConfigurationButton(primaryAction: mediaAction,buttonTag: 3, configurationTitle: "Access to Media and Camera")

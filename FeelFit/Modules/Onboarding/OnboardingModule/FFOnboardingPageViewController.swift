@@ -133,7 +133,6 @@ extension FFOnboardingPageViewController: SetupViewController {
                                                pageTitle: "Access to sensitive information",
                                                pageSubtitle: "This page displays the services that this application uses. Data from these services is intended for the correct and more detailed operation of the application, and this data will be protected and will not be accessible to anyone except you. If you want to change access to any service, you can always do this in the system Settings application.")
         let page2 = FFOnboardingAuthenticationViewController()
-        page2.delegate = self
         let page3 = FFOnboardingUserDataViewController()
         
         pages.append(page1)
@@ -153,13 +152,6 @@ extension FFOnboardingPageViewController: SetupViewController {
     private func isEndWorkWithOnboarding(isHidden: Bool){
         nextPageButton.isHidden = !isHidden
         skipOnboardingButton.isHidden = isHidden
-    }
-}
-
-extension FFOnboardingPageViewController: FFOnboardingActionsDelegate {
-    
-    func didTapSkipRegistration() {
-        didTapNextPage()
     }
 }
 

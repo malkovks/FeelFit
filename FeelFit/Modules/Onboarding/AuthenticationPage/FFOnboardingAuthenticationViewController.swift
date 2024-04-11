@@ -8,14 +8,11 @@
 import UIKit
 import TipKit
 
-protocol FFOnboardingActionsDelegate: AnyObject {
-    func didTapSkipRegistration()
-}
 
 class FFOnboardingAuthenticationViewController: UIViewController {
     
+    var viewModel: FFOnboardingAuthenticationViewModel!
     
-    weak var delegate: FFOnboardingActionsDelegate?
     private weak var tipView: TipUIView?
     
     private var isPasswordHidden: Bool = true
@@ -94,9 +91,8 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     private let logoutAccountButton = CustomConfigurationButton(configurationTitle: "Log out")
     private let createAccountButton = CustomConfigurationButton(configurationTitle: "Create Account")
     private let loginAccountButton = CustomConfigurationButton(configurationTitle: "Login")
-    private let skipRegistrationButton = CustomConfigurationButton(configurationTitle: "Skip registration")
     
-    private let updateOrDeleteAccountButton: UIButton = {
+    private let deleteAccountButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Delete account", for: .normal)
         button.setTitleColor(.systemRed, for: .normal)
@@ -123,70 +119,57 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        removeTipView()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        removeTipView()
+    }
+    
+    //MARK: - Target methods
+    
+    @objc private func didTapLogout(){
+        viewModel.logoutFromAccount()
+    }
+    
+    //Create account
+    @objc private func didTapCreateNewAccount(){
+        let account = getUserAccountData()
+        viewModel.createNewAccount(user: account)
+        
+    }
+    //Log in to account
+    @objc private func didTapLogin(){
+        let account = getUserAccountData()
+        viewModel.loginToAccount(user: account)
+    }
+    
+    //Update password or delete account
+    @objc private func didTapDeleteAccount(){
+        let account = getUserAccountData()
+        viewModel.deleteAccount(user: account)
+    }
+}
+
+extension FFOnboardingAuthenticationViewController: SetupViewController {
+    func removeTipView(){
         if let tipView = tipView {
             tipView.removeFromSuperview()
             self.tipView = nil
         }
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        if let tipView = view.subviews.first(where: { $0 is TipUIView }){
-            tipView.removeFromSuperview()
-        }
+    func setupView() {
+        view.backgroundColor = .secondarySystemBackground
+        setupUserConfirmButton()
+        setupTextFields()
+        setupNavigationController()
+        setupViewModel()
+        setupConstraints()
     }
     
-    //MARK: - Target methods
-    @objc private func didTapSkipOnboarding(){
-        defaultAlertController(message: "Do you want to skip registration and entering Your anthropometric indicators. Just in case you can do it later", actionTitle: "Skip", style: .alert) { [weak self] in
-            self?.dismiss(animated: true)
-            self?.saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
-            self?.delegate?.didTapSkipRegistration()
-        }
-    }
-    
-    @objc private func didTapLogout(){
-        defaultAlertController(message: "Do you want to log out from account?", actionTitle: "Log out", style: .alert) { [weak self] in
-            self?.saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
-            self?.confirmButton(completed: false)
-        }
-    }
-    
-    //Create account
-    @objc private func didTapCreateNewAccount(){
-        performKeychainRequest() { [weak self] userData in
-            try self?.accountManager.createNewUserAccount(userData: userData)
-            self?.delegate?.didTapSkipRegistration()
-        }
-    }
-    //Log in to account
-    @objc private func didTapLogin(){
-        performKeychainRequest() { [weak self] userData in
-            try self?.accountManager.loginToCreatedAccount(userData: userData)
-            self?.delegate?.didTapSkipRegistration()
-        }
-    }
-    
-    //Update password or delete account
-    @objc private func didTapDeleteAccount(){
-        defaultAlertController(title: "Warning", message: "Do you really want to delete created account?", actionTitle: "Delete",style: .actionSheet) { [weak self] in
-            self?.performKeychainRequest(requestFunction: { userData in
-                try self?.accountManager.deleteUserAccountData(userData: userData)
-                self?.clearTextFields()
-            })
-        }
-    }
-    
-    
-    
-    //MARK: - Action setups methods
-    private func clearTextFields(){
-        userEmailTextField.text = nil
-        userPasswordTextField.text = nil
-        confirmButton(completed: false)
-    }
-    
-    private func checkFieldsEmptyStatus() -> CredentialUser? {
+    private func getUserAccountData() -> CredentialUser? {
         guard let emailText = userEmailTextField.text,
               let password = userPasswordTextField.text else {
             viewAlertController(text: "Fill all fields correctly", controllerView: self.view)
@@ -195,69 +178,18 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         return CredentialUser(email: emailText, password: password)
     }
     
-    
-    private func performKeychainRequest(requestFunction: (_ userData: CredentialUser?) throws -> Void ){
-        let data = checkFieldsEmptyStatus()
-        do {
-            try requestFunction(data)
-            confirmButton(completed: true)
-            saveUserLoggedInStatus(isLoggedIn: true, userAccount: data?.email)
-            viewAlertController(text: "Successfully", startDuration: 0.5, timer: 4, controllerView: self.view)
-        } catch let error as KeychainError {
-            confirmButton(completed: false)
-            saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
-            self.viewAlertController(text: error.errorDescription, startDuration: 0.5, timer: 4, controllerView: self.view)
-        } catch {
-            confirmButton(completed: false)
-            saveUserLoggedInStatus(isLoggedIn: false, userAccount: nil)
-            self.viewAlertController(text: "Fatal error", startDuration: 0.5, timer: 4, controllerView: self.view)
-        }
+    private func setupUserConfirmButton(){
+        logoutAccountButton.isHidden = true
+        logoutAccountButton.addTarget(self, action: #selector(didTapLogout), for: .primaryActionTriggered)
+        createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
+        loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
+        deleteAccountButton.addTarget(self, action: #selector(didTapDeleteAccount), for: .primaryActionTriggered)
     }
     
-    private func saveUserLoggedInStatus(isLoggedIn: Bool, userAccount: String?){
-        UserDefaults.standard.setValue(isLoggedIn, forKey: "userLoggedIn")
-        UserDefaults.standard.setValue(userAccount, forKey: "userAccount")
-    }
-    
-    private func confirmButton(completed: Bool){
-        if completed {
-            UIView.animate(withDuration: 0.2) { [unowned self] in
-                loginAccountButton.alpha = 0
-                createAccountButton.alpha = 0
-                logoutAccountButton.alpha = 1
-                updateOrDeleteAccountButton.alpha = 1
-                skipRegistrationButton.alpha = 0
-            } completion: { [unowned self] _ in
-                skipRegistrationButton.isHidden = true
-                loginAccountButton.isHidden = true
-                createAccountButton.isHidden = true
-                logoutAccountButton.isHidden = false
-                updateOrDeleteAccountButton.isHidden = false
-                view.layoutIfNeeded()
-            }
-        } else {
-            skipRegistrationButton.configuration?.title = "Skip Registration"
-            skipRegistrationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
-            skipRegistrationButton.configuration?.baseBackgroundColor = .clear
-            
-            UIView.animate(withDuration: 0.2) { [unowned self] in
-                loginAccountButton.alpha = 1
-                createAccountButton.alpha = 1
-                logoutAccountButton.alpha = 0
-                updateOrDeleteAccountButton.alpha = 0
-                skipRegistrationButton.alpha = 1
-            } completion: { [unowned self] _ in
-                loginAccountButton.isHidden = false
-                createAccountButton.isHidden = false
-                skipRegistrationButton.isHidden = false
-                logoutAccountButton.isHidden = true
-                updateOrDeleteAccountButton.isHidden = true
-                view.layoutIfNeeded()
-            }
-            userEmailTextField.text = ""
-            userPasswordTextField.text = ""
-        }
-        
+    private func clearTextFields(){
+        userEmailTextField.text = nil
+        userPasswordTextField.text = nil
+        confirmButton(completed: false)
     }
     
     private func changePasswordSecureAction(){
@@ -271,30 +203,43 @@ class FFOnboardingAuthenticationViewController: UIViewController {
             changePasswordSecureButton.setImage(UIImage(systemName: "eye.slash"), for: .normal)
         }
     }
-}
+    
+    private func confirmButton(completed: Bool){
+        if completed {
+            UIView.animate(withDuration: 0.2) { [unowned self] in
+                loginAccountButton.alpha = 0
+                createAccountButton.alpha = 0
+                logoutAccountButton.alpha = 1
+                deleteAccountButton.alpha = 1
+            } completion: { [unowned self] _ in
+                loginAccountButton.isHidden = true
+                createAccountButton.isHidden = true
+                logoutAccountButton.isHidden = false
+                userEmailTextField.isHidden = true
+                userPasswordTextField.isHidden = true
+                deleteAccountButton.isHidden = false
+                view.layoutIfNeeded()
+            }
+        } else {
+            UIView.animate(withDuration: 0.2) { [unowned self] in
+                loginAccountButton.alpha = 1
+                createAccountButton.alpha = 1
+                logoutAccountButton.alpha = 0
+                deleteAccountButton.alpha = 0
+            } completion: { [unowned self] _ in
+                loginAccountButton.isHidden = false
+                createAccountButton.isHidden = false
+                logoutAccountButton.isHidden = true
+                deleteAccountButton.isHidden = true
+                userEmailTextField.isHidden = false
+                userPasswordTextField.isHidden = false
+                view.layoutIfNeeded()
+            }
+            userEmailTextField.text = ""
+            userPasswordTextField.text = ""
+        }
+    }
 
-extension FFOnboardingAuthenticationViewController: SetupViewController {
-    
-    
-    func setupView() {
-        view.backgroundColor = .secondarySystemBackground
-        setupUserConfirmButton()
-        setupTextFields()
-        setupNavigationController()
-        setupViewModel()
-        setupConstraints()
-        let accountLoggedIn = UserDefaults.standard.object(forKey: "userLoggedIn")
-        saveUserLoggedInStatus(isLoggedIn: (accountLoggedIn != nil), userAccount: nil)
-    }
-    
-    private func setupUserConfirmButton(){
-        logoutAccountButton.isHidden = true
-        logoutAccountButton.addTarget(self, action: #selector(didTapLogout), for: .primaryActionTriggered)
-        createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
-        loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
-        skipRegistrationButton.addTarget(self, action: #selector(didTapSkipOnboarding), for: .primaryActionTriggered)
-        updateOrDeleteAccountButton.addTarget(self, action: #selector(didTapDeleteAccount), for: .primaryActionTriggered)
-    }
     
     private func setupTextFields(){
         let arrayTextFields = [userEmailTextField, userPasswordTextField]
@@ -315,8 +260,21 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
     }
     
     func setupViewModel() {
-        
+        viewModel = FFOnboardingAuthenticationViewModel(viewController: self)
+        viewModel.delegate = self
     }
+}
+
+extension FFOnboardingAuthenticationViewController: FFAuthenticationDelegate {
+    func didClearTextFields() {
+        clearTextFields()
+    }
+    
+    func didTapConfirmButtons(completed: Bool) {
+        confirmButton(completed: completed)
+    }
+    
+    
 }
 
 extension FFOnboardingAuthenticationViewController: UITextFieldDelegate {
@@ -340,7 +298,7 @@ private extension FFOnboardingAuthenticationViewController {
         authStackView.addArrangedSubview(logoutAccountButton)
         authStackView.addArrangedSubview(loginAccountButton)
         authStackView.addArrangedSubview(createAccountButton)
-        authStackView.addArrangedSubview(updateOrDeleteAccountButton)
+        authStackView.addArrangedSubview(deleteAccountButton)
         
         view.addSubview(loginUserLabel)
         loginUserLabel.snp.makeConstraints { make in
@@ -369,18 +327,6 @@ private extension FFOnboardingAuthenticationViewController {
         loginAccountButton.snp.makeConstraints { make in
             make.height.equalTo(55)
         }
-        
-        view.addSubview(skipRegistrationButton)
-        skipRegistrationButton.snp.makeConstraints { make in
-            let skipButtonY = view.frame.size.height*0.75
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(skipButtonY)
-            
-            make.width.equalToSuperview().multipliedBy(0.85)
-            make.height.equalTo(55)
-        }
-        
-        
     }
 }
 
