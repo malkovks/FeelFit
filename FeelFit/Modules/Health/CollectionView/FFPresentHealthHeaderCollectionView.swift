@@ -20,7 +20,7 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
         return label
     }()
     
-    let setupHeaderFavouritesButton: UIButton = {
+    private let setupHeaderFavouritesButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Change", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
@@ -40,11 +40,17 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureHeaderCollectionView(isButtonAvailable: Bool, selector: Selector, target: Any){
+        setupHeaderFavouritesButton.addTarget(target, action: selector, for: .primaryActionTriggered)
+        setupHeaderFavouritesButton.isEnabled = isButtonAvailable
+    }
+    
     private func setupHeaderView() {
         
         headerLabel.text = "Favourites"
-        
     }
+    
+    
     
     private func setupHeaderConstraints(){
         let stackView = UIStackView(arrangedSubviews: [headerLabel,setupHeaderFavouritesButton])

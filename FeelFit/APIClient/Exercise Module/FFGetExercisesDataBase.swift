@@ -21,6 +21,7 @@ class FFGetExercisesDataBase {
     
     func getMuscleDatabase(muscle: String,limit number: String = "20",filter: String = "exerciseMuscle",completionHandler: @escaping (Result<[Exercise],Error>) -> ()){
         checkForDuplicatesInList()
+            
         let valueRequest = checkValueName(name: muscle)
         guard let url = prepareURL(value: valueRequest, number: number, filter: filter) else { return }
         let request = setupRequest(url: url)
@@ -29,19 +30,21 @@ class FFGetExercisesDataBase {
         if exercises.count > 0 {
             completionHandler(.success(exercises))
         } else {
-            AF.request(request).validate().responseDecodable(of: [Exercise].self) { response in
-                switch response.result {
-                case .success(let success):
-                    completionHandler(.success(success))
-                    FFExerciseStoreManager.shared.saveLoadData(model: success)
-                case .failure(let failure):
-                    completionHandler(.failure(failure))
-                }
-            }.resume()
+            DispatchQueue.global(qos: .background).async {
+                AF.request(request).validate().responseDecodable(of: [Exercise].self) { response in
+                    switch response.result {
+                    case .success(let model):
+                        completionHandler(.success(model))
+                        FFExerciseStoreManager.shared.saveLoadData(model: model)
+                    case .failure(let failure):
+                        completionHandler(.failure(failure))
+                    }
+                }.resume()
+            }
         }
     }
     
-    func checkForDuplicatesInList(){
+    private func checkForDuplicatesInList(){
         let objects = realm.objects(FFExerciseModelRealm.self)
         var uniqueValues = Set<String>()
         for object in objects {

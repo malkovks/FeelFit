@@ -12,6 +12,7 @@ import UIKit
 class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
+    var isAllowAccessToHealth: Bool = false
     
     
     private let loadHealthData = FFHealthDataLoading.shared
@@ -34,11 +35,6 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        FFHealthDataAccess.shared.requestForAccessToHealth()
-        FFHealthDataAccess.shared.requestAccessToCharactersData()
-        
-//        let navVC = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-//        present(navVC, animated: true)
         
         setupView()
     }
@@ -87,6 +83,21 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         setupRefreshControl()
         setupViewModel()
         setupConstraints()
+        checkAccessHealthAvailable()
+    }
+    
+    private func checkAccessHealthAvailable(){
+        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus { [weak self] success in
+            DispatchQueue.main.async {
+                self?.isAllowAccessToHealth = success
+                if !success {
+                    self?.alertError(message: "Error access to your health data")
+                } else {
+                    self?.alertError(message: "Everything is ok")
+                }
+                self?.collectionView.reloadData()
+            }
+        }
     }
     
     private func isDataLoading(isLoading status: Bool) {
@@ -184,7 +195,7 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
             let header =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier, for: indexPath) as! FFPresentHealthHeaderCollectionView
-            header.setupHeaderFavouritesButton.addTarget(self, action: #selector(didTapPressChangeFavouriteCollectionView), for: .primaryActionTriggered)
+            header.configureHeaderCollectionView(isButtonAvailable: isAllowAccessToHealth, selector: #selector(didTapPressChangeFavouriteCollectionView), target: self)
             return header
         }
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView

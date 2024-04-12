@@ -23,6 +23,11 @@ class FFMusclesGroupViewController: UIViewController, SetupViewController {
         setupCollectionView()
         setupConstraints()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        collectionView.reloadData()
+    }
     //MARK: - Action method
     @objc private func didTapOpenFavourite(){
         let vc = FFFavouriteExercisesViewController()

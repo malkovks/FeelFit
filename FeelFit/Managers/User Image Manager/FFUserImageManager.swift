@@ -53,6 +53,7 @@ class FFUserImageManager {
     }
     
     func loadUserImage(_ userImageFileName: String ) throws -> UIImage? {
+        
         let filesURL = getDocumentaryURL().appendingPathComponent(userImageFileName)
         do {
             let imageData = try Data(contentsOf: filesURL)

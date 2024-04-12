@@ -40,7 +40,7 @@ class FFHealthDataLoading {
                 completion(nil)
                 return
             }
-            
+            DispatchQueue.global(qos: .background).async { [weak self] in
             for iden in identifications {
                 let options: HKStatisticsOptions = selectedOptions ?? prepareStatisticOptions(for: iden.rawValue)
                 let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
@@ -53,7 +53,7 @@ class FFHealthDataLoading {
                 
                 query.initialResultsHandler = { queries, results, error in
                     guard error == nil,
-                          let results = results else {
+                            let results = results else {
                         completion(nil)
                         return
                     }
@@ -78,15 +78,15 @@ class FFHealthDataLoading {
                             }
                             
                             let value = FFUserHealthDataProvider(startDate: startDate,
-                                                                 endDate: endDate,
-                                                                 value: doubleValue,
-                                                                 identifier: iden.rawValue,
-                                                                 unit: unitQuantityType,
-                                                                 type: type,
-                                                                 typeIdentifier: iden)
+                                                                    endDate: endDate,
+                                                                    value: doubleValue,
+                                                                    identifier: iden.rawValue,
+                                                                    unit: unitQuantityType,
+                                                                    type: type,
+                                                                    typeIdentifier: iden)
                             arrayValue.append(value)
                         } else {
-                            let nilValue = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: 0.1, identifier: iden.rawValue, unit: unitQuantityType, type: type, typeIdentifier: iden)
+                            let nilValue = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: 0.1, identifier:iden.rawValue, unit: unitQuantityType, type: type, typeIdentifier: iden)
                             arrayValue.append(nilValue)
                         }
                     }
@@ -96,9 +96,10 @@ class FFHealthDataLoading {
                         completion(nil)
                     }
                 }
-                healthStore.execute(query)
+                self?.healthStore.execute(query)
             }
         }
+    }
     
     func loadingCharactersData(completion handler: @escaping (_ userDataString: UserCharactersData?) -> ()) {
         if !HKHealthStore.isHealthDataAvailable() {
@@ -108,13 +109,15 @@ class FFHealthDataLoading {
         healthStore.requestAuthorization(toShare: nil, read: userCharactersTypes) { [weak self] success, error in
             guard let self = self else { return }
             if success {
-                let gender = HealthStoreRequest.GenderTypeResult(from: try! self.healthStore.biologicalSex()).rawValue
-                let userDateOfBirth: DateComponents = try! healthStore.dateOfBirthComponents()
-                let wheelChairUse = HealthStoreRequest.WheelchairTypeResult(from: try! self.healthStore.wheelchairUse()).rawValue
-                let bloodType = HealthStoreRequest.BloodTypeResult(from: try! self.healthStore.bloodType()).rawValue
-                let skinType = HealthStoreRequest.FitzpatricSkinTypeResult(from: try! self.healthStore.fitzpatrickSkinType()).rawValue
-                let model = UserCharactersData(userGender: gender, dateOfBirth: userDateOfBirth, wheelChairUse: wheelChairUse, bloodType: bloodType, fitzpatrickSkinType: skinType)
-                handler(model)
+                DispatchQueue.global(qos: .background).async {
+                    let gender = HealthStoreRequest.GenderTypeResult(from: try! self.healthStore.biologicalSex()).rawValue
+                    let userDateOfBirth: DateComponents = try! self.healthStore.dateOfBirthComponents()
+                    let wheelChairUse = HealthStoreRequest.WheelchairTypeResult(from: try! self.healthStore.wheelchairUse()).rawValue
+                    let bloodType = HealthStoreRequest.BloodTypeResult(from: try! self.healthStore.bloodType()).rawValue
+                    let skinType = HealthStoreRequest.FitzpatricSkinTypeResult(from: try! self.healthStore.fitzpatrickSkinType()).rawValue
+                    let model = UserCharactersData(userGender: gender, dateOfBirth: userDateOfBirth, wheelChairUse: wheelChairUse, bloodType: bloodType, fitzpatrickSkinType: skinType)
+                    handler(model)
+                }
             } else {
                 handler(nil)
             }

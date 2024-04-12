@@ -436,13 +436,6 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
-		0A3AECF92B84A43000B2F8F3 /* HealthUserController */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = HealthUserController;
-			sourceTree = "<group>";
-		};
 		0A3AED002B84B8CE00B2F8F3 /* UITableView */ = {
 			isa = PBXGroup;
 			children = (
@@ -540,7 +533,7 @@
 				0A2347B82AF24B1A002C161C /* TableView */,
 				0A2347B32AF10B78002C161C /* CollectionView */,
 				0A44951C2ABA78EF0082C909 /* ViewModel */,
-				0A44951B2ABA78EA0082C909 /* View */,
+				0A44951B2ABA78EA0082C909 /* View+ViewModel */,
 				0A44951A2ABA78E30082C909 /* Model */,
 			);
 			path = Exercises;
@@ -552,7 +545,7 @@
 				0ADB786C2B710B3C00653952 /* CollectionView */,
 				0ADB786B2B710B3500653952 /* TableView */,
 				0A44951E2ABA79120082C909 /* Model */,
-				0A4495202ABA79250082C909 /* ViewModel */,
+				0A4495202ABA79250082C909 /* VIew+ViewModel */,
 				0A63AC652B6D8DB700B32981 /* Views */,
 			);
 			path = Health;
@@ -626,24 +619,20 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0A44951B2ABA78EA0082C909 /* View */ = {
+		0A44951B2ABA78EA0082C909 /* View+ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				0A4495282ABA79700082C909 /* FFMusclesGroupViewController.swift */,
-				0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */,
-				0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */,
-				0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */,
+				FD278D7C2BC955F70065DACE /* ExercisesController */,
+				FD278D7B2BC955BE0065DACE /* MusclesGroupController */,
+				FD278D7D2BC9561D0065DACE /* ExerciseDescriptionController */,
+				FD278D7E2BC9562C0065DACE /* FavouriteExerciseController */,
 			);
-			path = View;
+			path = "View+ViewModel";
 			sourceTree = "<group>";
 		};
 		0A44951C2ABA78EF0082C909 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				0A2347AD2AEFEF21002C161C /* FFMuscleGroupViewModel.swift */,
-				0A2347D02AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift */,
-				0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */,
-				0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -656,13 +645,13 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0A4495202ABA79250082C909 /* ViewModel */ = {
+		0A4495202ABA79250082C909 /* VIew+ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				0A63AC612B6BB87000B32981 /* FFHealthViewModel.swift */,
 				0A63AC632B6BB89F00B32981 /* FFHealthUserViewModel.swift */,
 			);
-			path = ViewModel;
+			path = "VIew+ViewModel";
 			sourceTree = "<group>";
 		};
 		0A4495242ABA793C0082C909 /* Model */ = {
@@ -744,7 +733,6 @@
 			children = (
 				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
 				0A3AECFA2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift */,
-				0A3AECF92B84A43000B2F8F3 /* HealthUserController */,
 				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
 				0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */,
 				0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */,
@@ -1158,6 +1146,42 @@
 				0A3FC2E32ADF0B8A00E35739 /* FFImageDetailsViewModel.swift */,
 			);
 			path = viewModel;
+			sourceTree = "<group>";
+		};
+		FD278D7B2BC955BE0065DACE /* MusclesGroupController */ = {
+			isa = PBXGroup;
+			children = (
+				0A2347AD2AEFEF21002C161C /* FFMuscleGroupViewModel.swift */,
+				0A4495282ABA79700082C909 /* FFMusclesGroupViewController.swift */,
+			);
+			path = MusclesGroupController;
+			sourceTree = "<group>";
+		};
+		FD278D7C2BC955F70065DACE /* ExercisesController */ = {
+			isa = PBXGroup;
+			children = (
+				0A2347B62AF11046002C161C /* FFExercisesMuscleGroupViewController.swift */,
+				0A2347D02AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift */,
+			);
+			path = ExercisesController;
+			sourceTree = "<group>";
+		};
+		FD278D7D2BC9561D0065DACE /* ExerciseDescriptionController */ = {
+			isa = PBXGroup;
+			children = (
+				0A2347D22AF39C3E002C161C /* FFExerciseDescriptionViewModel.swift */,
+				0A2347BB2AF24D1A002C161C /* FFExerciseDescriptionViewController.swift */,
+			);
+			path = ExerciseDescriptionController;
+			sourceTree = "<group>";
+		};
+		FD278D7E2BC9562C0065DACE /* FavouriteExerciseController */ = {
+			isa = PBXGroup;
+			children = (
+				0AE0F4F62B06159E00874C0B /* FFFavouriteExercisesViewController.swift */,
+				0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */,
+			);
+			path = FavouriteExerciseController;
 			sourceTree = "<group>";
 		};
 		FD9DE3642BBC35F3005775DF /* TipKit Test */ = {

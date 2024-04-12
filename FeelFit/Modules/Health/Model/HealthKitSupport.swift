@@ -43,19 +43,25 @@ class FFHealthDataAccess {
     }
     
     ///Function check status authorization to Health Store and return exact boolean value of gets status
-    func getHealthAuthorizationRequestStatus(){
+    func getHealthAuthorizationRequestStatus(completion: @escaping (Bool) -> ()){
         if !HKHealthStore.isHealthDataAvailable()  {
             return
         }
         healthStore.getRequestStatusForAuthorization(toShare: shareTypes, read: readTypes) { [weak self] authStatus, error in
             switch authStatus {
             case .unknown:
-                UserDefaults.standard.setValue(false, forKey: "healthKitAccess")
+                completion(false)
             case .unnecessary:
-                UserDefaults.standard.setValue(true, forKey: "healthKitAccess")
+                completion(true)
             case .shouldRequest:
-                self?.requestForAccessToHealth()
-                UserDefaults.standard.setValue(false, forKey: "healthKitAccess")
+                self?.requestForAccessToHealth(completion: { result in
+                    switch result {
+                    case .success(_):
+                        completion(true)
+                    case .failure(_):
+                        completion(false)
+                    }
+                })
             @unknown default:
                 break
             }

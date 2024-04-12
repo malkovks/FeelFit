@@ -38,15 +38,16 @@ class FFGetNewsRequest {
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.timeoutInterval = 10
-        
-        AF.request(request).validate().responseDecodable(of: APIResponse.self) { response in
-            if let data = response.value {
-                completion(.success(data.articles))
-            } else {
-                guard let error = response.error else { return }
-                completion(.failure(error))
-            }
-        }.resume()
+        DispatchQueue.global(qos: .background).async { 
+            AF.request(request).validate().responseDecodable(of: APIResponse.self) { response in
+                if let data = response.value {
+                    completion(.success(data.articles))
+                } else {
+                    guard let error = response.error else { return }
+                    completion(.failure(error))
+                }
+            }.resume()
+        }
     }
     
     private func setupDates() -> (String,String) {
