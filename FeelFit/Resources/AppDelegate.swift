@@ -58,9 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func handleAppRefreshTask(for task: BGProcessingTask){
         scheduleAppRefresh()
-        convertResult { model in
-            guard let model = model else { return }
-            let stepcount: Int = Int(model.last!.value)
+        convertResult { models in
+            guard let models = models,
+                  let model = models.last,
+                  let lastDayModel = model.last
+            else {
+                return
+            }
+            let stepcount: Int = Int(lastDayModel.value)
             if stepcount == 10_000 {
                 FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
             }
@@ -68,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         task.setTaskCompleted(success: true)
     }
 
-    private func convertResult(completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
+    private func convertResult(completion: @escaping (_ models: [[FFUserHealthDataProvider]]?) -> ()){
         let intervalDateComponents = DateComponents(day: 1)
         let interval: Int = -1
         let startDate = calendar.startOfDay(for: Date())

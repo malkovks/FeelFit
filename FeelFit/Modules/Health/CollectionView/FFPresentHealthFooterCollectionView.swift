@@ -31,6 +31,10 @@ class FFPresentHealthFooterCollectionView: UICollectionReusableView {
         setupFooterConstraints()
     }
     
+    func configureButtonTarget( target: Any, selector: Selector){
+        segueFooterButton.addTarget(target, action: selector, for: .primaryActionTriggered)
+    }
+    
     private func setupFooterView(){
     }
     private func setupFooterConstraints(){

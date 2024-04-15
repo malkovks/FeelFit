@@ -169,11 +169,12 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
                                     selectedOptions: nil,
                                     startDate: startDate,
                                     currentDate: Date()) { [weak self] models in
-            guard let models = models else {
+            guard let models = models,
+                  let model = models.first else {
                 self?.viewAlertController(text: "Did not get data. Try later", startDuration: 0.5, timer: 2, controllerView: self!.view)
                 return
             }
-            self?.chartDataProvider = models
+            self?.chartDataProvider = model
             self?.updateChartDataSeries()
             DispatchQueue.main.async {
                 self?.chartView.headerView.detailLabel.text = headerLabel

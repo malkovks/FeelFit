@@ -40,9 +40,8 @@ class FFPresentHealthHeaderCollectionView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureHeaderCollectionView(isButtonAvailable: Bool, selector: Selector, target: Any){
+    func configureHeaderCollectionView(selector: Selector, target: Any){
         setupHeaderFavouritesButton.addTarget(target, action: selector, for: .primaryActionTriggered)
-        setupHeaderFavouritesButton.isEnabled = isButtonAvailable
     }
     
     private func setupHeaderView() {

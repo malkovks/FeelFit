@@ -103,7 +103,7 @@
 		0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A91E89D2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift */; };
 		0A97CA852B135BFD00993AEF /* FFCreateTrainProgramViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */; };
 		0A9FF3862B6F7ED700F59714 /* FileManager + UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9FF3852B6F7ED700F59714 /* FileManager + UIViewController.swift */; };
-		0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */; };
+		0A9FF3882B6F885300F59714 /* FFUserHealthCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9FF3872B6F885300F59714 /* FFUserHealthCategoryViewController.swift */; };
 		0ABDEAFF2B173F3100BDDAFE /* FFAddExerciseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */; };
 		0ABDEB012B174E1300BDDAFE /* FFExersiceModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB002B174E1300BDDAFE /* FFExersiceModelRealm.swift */; };
 		0ABDEB032B18659B00BDDAFE /* FFExerciseModelStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABDEB022B18659B00BDDAFE /* FFExerciseModelStoreManager.swift */; };
@@ -155,6 +155,7 @@
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
+		FD68185F2BCD260900A9EDE8 /* FFUserHealthCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD68185E2BCD260900A9EDE8 /* FFUserHealthCategoryViewModel.swift */; };
 		FD9DE3662BBC3605005775DF /* DataTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3652BBC3605005775DF /* DataTips.swift */; };
 		FD9DE3682BBC3645005775DF /* TipKit+UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3672BBC3645005775DF /* TipKit+UIViewControllerExtension.swift */; };
 		FD9DE36A2BBEAB1A005775DF /* UIToolbar+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3692BBEAB1A005775DF /* UIToolbar+Extension.swift */; };
@@ -257,7 +258,7 @@
 		0A91E89D2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPresentHealthFooterCollectionView.swift; sourceTree = "<group>"; };
 		0A97CA842B135BFC00993AEF /* FFCreateTrainProgramViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateTrainProgramViewController.swift; sourceTree = "<group>"; };
 		0A9FF3852B6F7ED700F59714 /* FileManager + UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager + UIViewController.swift"; sourceTree = "<group>"; };
-		0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFPresentHealthCollectionView.swift; sourceTree = "<group>"; };
+		0A9FF3872B6F885300F59714 /* FFUserHealthCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthCategoryViewController.swift; sourceTree = "<group>"; };
 		0ABDEAFE2B173F3100BDDAFE /* FFAddExerciseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseViewController.swift; sourceTree = "<group>"; };
 		0ABDEB002B174E1300BDDAFE /* FFExersiceModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExersiceModelRealm.swift; sourceTree = "<group>"; };
 		0ABDEB022B18659B00BDDAFE /* FFExerciseModelStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModelStoreManager.swift; sourceTree = "<group>"; };
@@ -306,6 +307,7 @@
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
+		FD68185E2BCD260900A9EDE8 /* FFUserHealthCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthCategoryViewModel.swift; sourceTree = "<group>"; };
 		FD9DE3652BBC3605005775DF /* DataTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTips.swift; sourceTree = "<group>"; };
 		FD9DE3672BBC3645005775DF /* TipKit+UIViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TipKit+UIViewControllerExtension.swift"; sourceTree = "<group>"; };
 		FD9DE3692BBEAB1A005775DF /* UIToolbar+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIToolbar+Extension.swift"; sourceTree = "<group>"; };
@@ -731,9 +733,9 @@
 		0A63AC652B6D8DB700B32981 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				FD68185D2BCD25E000A9EDE8 /* UserHealthCategory */,
 				0A0059242B62B8CB000712D6 /* FFHealthUserProfileViewController.swift */,
 				0A3AECFA2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift */,
-				0A9FF3872B6F885300F59714 /* FFPresentHealthCollectionView.swift */,
 				0A63AC662B6D8DD800B32981 /* FFUserDetailCartesianChartViewController.swift */,
 				0A2A85E82B7D64D6008DBB8D /* FFHealthSettingsViewController.swift */,
 				0AE049A72B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift */,
@@ -1184,6 +1186,15 @@
 			path = FavouriteExerciseController;
 			sourceTree = "<group>";
 		};
+		FD68185D2BCD25E000A9EDE8 /* UserHealthCategory */ = {
+			isa = PBXGroup;
+			children = (
+				0A9FF3872B6F885300F59714 /* FFUserHealthCategoryViewController.swift */,
+				FD68185E2BCD260900A9EDE8 /* FFUserHealthCategoryViewModel.swift */,
+			);
+			path = UserHealthCategory;
+			sourceTree = "<group>";
+		};
 		FD9DE3642BBC35F3005775DF /* TipKit Test */ = {
 			isa = PBXGroup;
 			children = (
@@ -1336,7 +1347,7 @@
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
 				0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */,
-				0A9FF3882B6F885300F59714 /* FFPresentHealthCollectionView.swift in Sources */,
+				0A9FF3882B6F885300F59714 /* FFUserHealthCategoryViewController.swift in Sources */,
 				0A2A85E92B7D64D6008DBB8D /* FFHealthSettingsViewController.swift in Sources */,
 				0AC145FF2BA43D4700C8544A /* UILabel+Extension.swift in Sources */,
 				0ABDEB0D2B19655800BDDAFE /* FFMuscleGroupSelectionViewModel.swift in Sources */,
@@ -1397,6 +1408,7 @@
 				0AE049A42B7760F600697A82 /* Color+UIViewControler.swift in Sources */,
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
+				FD68185F2BCD260900A9EDE8 /* FFUserHealthCategoryViewModel.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
 				0A3CFE742BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift in Sources */,
 				0A13D8D12B5A3B0000FD8C92 /* CartesianChartView+Extension.swift in Sources */,

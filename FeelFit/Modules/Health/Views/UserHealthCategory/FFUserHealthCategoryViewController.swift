@@ -9,14 +9,14 @@ import HealthKit
 import UIKit
 
 ///Class displaying filtered collection view with main data of users selected information
-class FFPresentHealthCollectionView: UIViewController, SetupViewController {
+class FFUserHealthCategoryViewController: UIViewController, SetupViewController {
     
     var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
-    var isAllowAccessToHealth: Bool = false
     
     
     private let loadHealthData = FFHealthDataLoading.shared
     private var healthData = [[FFUserHealthDataProvider]]()
+    private var viewModel: FFUserHealthCategoryViewModel!
     
     private var collectionView: UICollectionView!
     
@@ -25,17 +25,9 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
         refresh.tintColor = FFResources.Colors.backgroundColor
         return refresh
     }()
-    
-    private let indicatorView: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = FFResources.Colors.activeColor
-        indicator.hidesWhenStopped = true
-        return indicator
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
     }
     
@@ -48,8 +40,8 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     
     @objc private func didTapRefreshView(){
         healthData.removeAll()
-        prepareCollectionViewData()
         refreshControl.endRefreshing()
+        prepareCollectionViewData()
         setupNavigationController()
     }
     
@@ -77,60 +69,25 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     //MARK: - Setup view
     func setupView() {
         setGradientBackground(topColor: FFResources.Colors.activeColor, bottom: .secondarySystemBackground)
+        setupViewModel()
         setupNavigationController()
         setupCollectionView()
         prepareCollectionViewData()
         setupRefreshControl()
-        setupViewModel()
+        
         setupConstraints()
-        checkAccessHealthAvailable()
-    }
-    
-    private func checkAccessHealthAvailable(){
-        FFHealthDataAccess.shared.getHealthAuthorizationRequestStatus { [weak self] success in
-            DispatchQueue.main.async {
-                self?.isAllowAccessToHealth = success
-                if !success {
-                    self?.alertError(message: "Error access to your health data")
-                } else {
-                    self?.alertError(message: "Everything is ok")
-                }
-                self?.collectionView.reloadData()
-            }
-        }
-    }
-    
-    private func isDataLoading(isLoading status: Bool) {
-        if status {
-            DispatchQueue.main.async { [self] in
-                collectionView.isHidden = true
-                indicatorView.isHidden = false
-                indicatorView.startAnimating()
-            }
-        } else {
-            DispatchQueue.main.async { [self] in
-                collectionView.isHidden = false
-                indicatorView.stopAnimating()
-                indicatorView.isHidden = true
-                healthData.sort { $0[0].identifier < $1[0].identifier }
-            }
-        }
     }
     
     private func prepareCollectionViewData(){
-        isDataLoading(isLoading: true)
         let userFavoriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
         healthData.removeAll()
         let startDate = Calendar.current.startOfDay(for: Date())
         loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil,startDate: startDate) { [weak self] models in
             if let model = models {
-                self?.healthData.append(model)
+                self?.healthData = model
                 DispatchQueue.main.async { [weak self] in
                     self?.collectionView.reloadData()
-                    self?.isDataLoading(isLoading: false)
                 }
-            } else {
-                self?.isDataLoading(isLoading: false)
             }
         }
     }
@@ -156,7 +113,7 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     func setupNavigationController() {
-        let image = loadUserImageWithFileManager(userImagePartialName)
+        let image = try? FFUserImageManager.shared.loadUserImage(userImagePartialName)
         let customView = FFNavigationControllerCustomView()
         customView.configureView(title: "Summary",image)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
@@ -165,28 +122,29 @@ class FFPresentHealthCollectionView: UIViewController, SetupViewController {
     }
     
     func setupViewModel() {
-        
+        viewModel = FFUserHealthCategoryViewModel(viewController: self)
     }
 
 }
 
-extension FFPresentHealthCollectionView: UICollectionViewDataSource {
+extension FFUserHealthCategoryViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return healthData.count
+        return viewModel.userFavouriteHealthCategoryArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFPresentHealthCollectionViewCell.identifier, for: indexPath) as! FFPresentHealthCollectionViewCell
-        cell.configureCell(indexPath, values: healthData[indexPath.row])
+        let data = viewModel.userFavouriteHealthCategoryArray[indexPath.row]
+        cell.configureCell(indexPath, values: data)
         return cell
     }
 }
 
-extension FFPresentHealthCollectionView: UICollectionViewDelegate {
+extension FFUserHealthCategoryViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         didTapOpenSelectedProvider(selectedItem: indexPath)
@@ -195,16 +153,16 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
             let header =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier, for: indexPath) as! FFPresentHealthHeaderCollectionView
-            header.configureHeaderCollectionView(isButtonAvailable: isAllowAccessToHealth, selector: #selector(didTapPressChangeFavouriteCollectionView), target: self)
+            header.configureHeaderCollectionView(selector: #selector(didTapPressChangeFavouriteCollectionView), target: self)
             return header
         }
         let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView
-        footer.segueFooterButton.addTarget(self, action: #selector(didTapPressChangeFavouriteCollectionView), for: .primaryActionTriggered)
+        footer.configureButtonTarget(target: self, selector: #selector(didTapPressChangeFavouriteCollectionView))
         return  footer
     }
 }
 
-extension FFPresentHealthCollectionView: UICollectionViewDelegateFlowLayout {
+extension FFUserHealthCategoryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width-20
         let height = CGFloat(view.frame.size.height/4)
@@ -220,26 +178,19 @@ extension FFPresentHealthCollectionView: UICollectionViewDelegateFlowLayout {
     }
 }
 
-private extension FFPresentHealthCollectionView {
+private extension FFUserHealthCategoryViewController {
     func setupConstraints(){
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        view.addSubview(indicatorView)
-        indicatorView.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
-            make.width.height.equalTo(50)
-        }
     }
 }
 
 #Preview {
-    let vc = FFPresentHealthCollectionView()
+    let vc = FFUserHealthCategoryViewController()
     let navVC = FFNavigationController(rootViewController: vc)
     return navVC
-    
 }
 
 

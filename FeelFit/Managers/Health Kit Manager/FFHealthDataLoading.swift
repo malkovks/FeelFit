@@ -33,72 +33,98 @@ class FFHealthDataLoading {
         selectedOptions: HKStatisticsOptions?,
         startDate: Date?,
         currentDate date: Date = Date(),
-        completion: @escaping (_ models: [FFUserHealthDataProvider]? )->()) {
-            let _ = preparePredicateHealthData(value: interval, byAdding: calendar, from: Date())
-            let anchorDate = startDate ?? createAnchorData()
-            if identifications.isEmpty {
+        completion: @escaping (_ models: [[FFUserHealthDataProvider]]? )->()) {
+            
+            guard !identifications.isEmpty else {
                 completion(nil)
                 return
             }
+            
             DispatchQueue.global(qos: .background).async { [weak self] in
-            for iden in identifications {
-                let options: HKStatisticsOptions = selectedOptions ?? prepareStatisticOptions(for: iden.rawValue)
-                let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
-                let id = HKQuantityType.quantityType(forIdentifier: iden)!
-                let query = HKStatisticsCollectionQuery(quantityType: id,
-                                                        quantitySamplePredicate: predicate,
-                                                        options: options,
-                                                        anchorDate: anchorDate,
-                                                        intervalComponents: dateComponents)
                 
-                query.initialResultsHandler = { queries, results, error in
-                    guard error == nil,
-                            let results = results else {
-                        completion(nil)
-                        return
-                    }
+                //dispatch group
+                let group = DispatchGroup()
+                
+                let _ = preparePredicateHealthData(value: interval, byAdding: calendar, from: Date())
+                let anchorDate = startDate ?? createAnchorData()
+                var sortedResult = [[FFUserHealthDataProvider]]()
+                for identification in identifications {
+                    let options: HKStatisticsOptions = selectedOptions ?? prepareStatisticOptions(for: identification.rawValue)
+                    let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
+                    let id = HKQuantityType.quantityType(forIdentifier: identification)!
+                    let query = HKStatisticsCollectionQuery(quantityType: id,
+                                                            quantitySamplePredicate: predicate,
+                                                            options: options,
+                                                            anchorDate: anchorDate,
+                                                            intervalComponents: dateComponents)
+                    group.enter()
                     
-                    let endDate = Date()
-                    var arrayValue = [FFUserHealthDataProvider]()
-                    results.enumerateStatistics(from: anchorDate, to: endDate) { stats, pointer in
-                        
-                        let unitQuantityType = prepareHealthUnit(iden) ?? .count()
-                        let startDate = stats.startDate
-                        let endDate = stats.endDate
-                        let type = stats.quantityType
-                        
-                        
-                        if var doubleValue = processingStatistics(statistics: stats, unit: unitQuantityType, value: options){
-                            
-                            switch unitQuantityType {
-                            case .meter().unitDivided(by: .second()):
-                                doubleValue *= 3.6
-                            default:
-                                break
-                            }
-                            
-                            let value = FFUserHealthDataProvider(startDate: startDate,
-                                                                    endDate: endDate,
-                                                                    value: doubleValue,
-                                                                    identifier: iden.rawValue,
-                                                                    unit: unitQuantityType,
-                                                                    type: type,
-                                                                    typeIdentifier: iden)
-                            arrayValue.append(value)
-                        } else {
-                            let nilValue = FFUserHealthDataProvider(startDate: startDate, endDate: endDate, value: 0.1, identifier:iden.rawValue, unit: unitQuantityType, type: type, typeIdentifier: iden)
-                            arrayValue.append(nilValue)
+                    query.initialResultsHandler = { [weak self] query, result, error in
+                        guard let result = result,
+                              let self = self else {
+                            completion(nil)
+                            return
                         }
+                        let value = processStatisticsData(result, identification, anchorDate, options)
+                        sortedResult.append(value)
+                        group.leave()
                     }
-                    if !arrayValue.isEmpty {
-                        completion(arrayValue)
-                    } else {
-                        completion(nil)
-                    }
+                    self?.healthStore.execute(query)
                 }
-                self?.healthStore.execute(query)
+                group.notify(queue: .main) {
+                    sortedResult.sort { $0[0].identifier < $1[0].identifier }
+                    completion(sortedResult)
+                }
+            }
+            
+    }
+    
+    
+    /// Function for collection and processing data into completed array
+    /// - Parameters:
+    ///   - results: Input result value as HKStatisticsCollection which give info about identifier by completed period
+    ///   - identification: health item identification
+    ///   - anchorDate: the start date from ordered period
+    /// - Returns: return converted array of data for ordered period
+    private func processStatisticsData(_ results: HKStatisticsCollection,_ identification: HKQuantityTypeIdentifier, _ anchorDate: Date,_ options: HKStatisticsOptions) -> [FFUserHealthDataProvider] {
+        let endDate = Date()
+        var processedData = [FFUserHealthDataProvider]()
+        
+        results.enumerateStatistics(from: anchorDate, to: endDate) { stats, pointer in
+            let unitQuantityType = prepareHealthUnit(identification) ?? .count()
+            let startDate = stats.startDate
+            let endDate = stats.endDate
+            let type = stats.quantityType
+            
+            
+            if var doubleValue = processingStatistics(statistics: stats, unit: unitQuantityType, value: options){
+                switch unitQuantityType {
+                case .meter().unitDivided(by: .second()):
+                    doubleValue *= 3.6
+                default:
+                    break
+                }
+                
+                let value = FFUserHealthDataProvider(startDate: startDate,
+                                                        endDate: endDate,
+                                                        value: doubleValue,
+                                                        identifier: identification.rawValue,
+                                                        unit: unitQuantityType,
+                                                        type: type,
+                                                        typeIdentifier: identification)
+                processedData.append(value)
+            } else {
+                let nilValue = FFUserHealthDataProvider(startDate: startDate,
+                                                        endDate: endDate,
+                                                        value: 0.1,
+                                                        identifier: identification.rawValue,
+                                                        unit: unitQuantityType,
+                                                        type: type,
+                                                        typeIdentifier: identification)
+                processedData.append(nilValue)
             }
         }
+        return processedData
     }
     
     func loadingCharactersData(completion handler: @escaping (_ userDataString: UserCharactersData?) -> ()) {
