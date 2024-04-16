@@ -1,5 +1,5 @@
 //
-//  FFUserDetailCartesianChartViewController.swift
+//  FFHealthCategoryCartesianViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 02.02.2024.
@@ -11,7 +11,9 @@ import HealthKit
 
 
 /// Class displaying selected identifier,add access to add data to healthStore for user and change periods of displaying data
-class FFUserDetailCartesianChartViewController: UIViewController, SetupViewController {
+class FFHealthCategoryCartesianViewController: UIViewController, SetupViewController {
+    
+    private var viewModel: FFHealthCategoryCartesianViewModel!
     
     private let identifier: HKQuantityTypeIdentifier
     
@@ -86,7 +88,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }
     //MARK: - Target and action methods
     @objc private func handleRefreshControl(){
-        loadSelectedData(startDate: self.startDate, headerLabel: "")
+//        loadSelectedData(startDate: self.startDate, headerLabel: "")
         DispatchQueue.main.async {
             self.scrollView.refreshControl?.endRefreshing()
         }
@@ -119,7 +121,7 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
             break
         }
         
-        loadSelectedData(components: components, interval: interval, startDate: self.startDate, headerLabel: headerDetailLabelText)
+//        loadSelectedData(components: components, interval: interval, startDate: self.startDate, headerLabel: headerDetailLabelText)
         userDefaults.set(sender.selectedSegmentIndex, forKey: "selectedSegmentControl")
     }
     
@@ -159,7 +161,12 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
         chartView.delegate = self
         chartView.isUserInteractionEnabled = true
         chartView.graphView.isUserInteractionEnabled = true 
-        loadSelectedData(startDate: startDate, headerLabel: "")
+        viewModel.loadSelectedCategoryData { model in
+            guard let model = model else { return }
+            self.chartDataProvider = model
+            self.updateChartDataSeries()
+        }
+//        loadSelectedData(startDate: startDate, headerLabel: "")
     }
     
     private func loadSelectedData(components: DateComponents = DateComponents(day: 1),interval: Int = -6,startDate: Date?,headerLabel: String?){
@@ -227,16 +234,16 @@ class FFUserDetailCartesianChartViewController: UIViewController, SetupViewContr
     }
     
     func setupViewModel() {
-        
+        viewModel = FFHealthCategoryCartesianViewModel(viewController: self, selectedCategoryIdentifier: identifier)
     }
 }
 
-private extension FFUserDetailCartesianChartViewController {
+private extension FFHealthCategoryCartesianViewController {
     func didAddNewData(with value: Double) {
         guard let sample = processHealthSample(with: value, data: chartDataProvider) else { return }
         FFHealthData.saveHealthData([sample]) { success, error in
             if let error = error {
-                print("FFUserDetailCartesianChartViewController  didAddNewData error: ",error.localizedDescription)
+                print("FFHealthCategoryCartesianViewController  didAddNewData error: ",error.localizedDescription)
             }
             if success {
                 print("Saved successfully")
@@ -282,7 +289,7 @@ private extension FFUserDetailCartesianChartViewController {
     }
 }
 
-extension FFUserDetailCartesianChartViewController: OCKChartViewDelegate {
+extension FFHealthCategoryCartesianViewController: OCKChartViewDelegate {
     func didSelectChartView(_ chartView: UIView & CareKitUI.OCKChartDisplayable) {
         guard let chart = chartView as? OCKCartesianChartView else { return }
         let index = chart.graphView.selectedIndex!
@@ -294,7 +301,7 @@ extension FFUserDetailCartesianChartViewController: OCKChartViewDelegate {
     }
 }
 
-private extension FFUserDetailCartesianChartViewController {
+private extension FFHealthCategoryCartesianViewController {
     func setupConstraints(){
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { make in
@@ -330,5 +337,6 @@ private extension FFUserDetailCartesianChartViewController {
 }
 
 #Preview {
-    return FFUserDetailCartesianChartViewController(typeIdentifier: .activeEnergyBurned)
+    let nav = FFNavigationController(rootViewController: FFHealthCategoryCartesianViewController(typeIdentifier: .activeEnergyBurned))
+    return nav
 }

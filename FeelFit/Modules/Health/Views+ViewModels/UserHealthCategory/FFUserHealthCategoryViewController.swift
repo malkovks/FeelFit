@@ -33,63 +33,30 @@ class FFUserHealthCategoryViewController: UIViewController, SetupViewController 
     
     //MARK: - Target methods
     @objc private func didTapPresentUserProfile(){
-        let vc = FFHealthUserProfileViewController()
-        let navVC = FFNavigationController(rootViewController: vc)
-        present(navVC, animated: true)
+        viewModel.presentUserProfilePage()
     }
     
     @objc private func didTapRefreshView(){
-        healthData.removeAll()
-        refreshControl.endRefreshing()
-        prepareCollectionViewData()
-        setupNavigationController()
+        viewModel.refreshView()
+        DispatchQueue.main.async { [weak self] in
+            self?.refreshControl.endRefreshing()
+            self?.collectionView.reloadData()
+        }
     }
     
     @objc private func didTapPressChangeFavouriteCollectionView(){
-        let vc = FFFavouriteHealthDataViewController()
-        vc.isViewDismissed = { [weak self] in
-            self?.prepareCollectionViewData()
-        }
-        let navVC = FFNavigationController(rootViewController: vc)
-        navVC.isNavigationBarHidden = false
-        present(navVC, animated: true)
-    }
-    
-    @objc private func didTapOpenDetails(){
-        let vc = FFHealthSettingsViewController()
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func didTapOpenSelectedProvider(selectedItem indexPath: IndexPath){
-        guard let identifier = healthData[indexPath.row].first?.typeIdentifier else { return }
-        let vc = FFUserDetailCartesianChartViewController(typeIdentifier: identifier)
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.presentHealthCategories()
     }
     
     //MARK: - Setup view
     func setupView() {
-        setGradientBackground(topColor: FFResources.Colors.activeColor, bottom: .secondarySystemBackground)
         setupViewModel()
-        setupNavigationController()
         setupCollectionView()
-        prepareCollectionViewData()
-        setupRefreshControl()
         
+        setGradientBackground(topColor: FFResources.Colors.activeColor, bottom: .secondarySystemBackground)
+        setupNavigationController()
+        setupRefreshControl()
         setupConstraints()
-    }
-    
-    private func prepareCollectionViewData(){
-        let userFavoriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
-        healthData.removeAll()
-        let startDate = Calendar.current.startOfDay(for: Date())
-        loadHealthData.performQuery(identifications: userFavoriteTypes,selectedOptions: nil,startDate: startDate) { [weak self] models in
-            if let model = models {
-                self?.healthData = model
-                DispatchQueue.main.async { [weak self] in
-                    self?.collectionView.reloadData()
-                }
-            }
-        }
     }
     
     private func setupCollectionView(){
@@ -113,7 +80,7 @@ class FFUserHealthCategoryViewController: UIViewController, SetupViewController 
     }
     
     func setupNavigationController() {
-        let image = try? FFUserImageManager.shared.loadUserImage(userImagePartialName)
+        let image = viewModel.userProfileImage
         let customView = FFNavigationControllerCustomView()
         customView.configureView(title: "Summary",image)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
@@ -123,8 +90,15 @@ class FFUserHealthCategoryViewController: UIViewController, SetupViewController 
     
     func setupViewModel() {
         viewModel = FFUserHealthCategoryViewModel(viewController: self)
+        viewModel.delegate = self
+        didTapRefreshView()
     }
+}
 
+extension FFUserHealthCategoryViewController: UserHealthCategoryDelegate {
+    func didTapReloadView() {
+        didTapRefreshView()
+    }
 }
 
 extension FFUserHealthCategoryViewController: UICollectionViewDataSource {
@@ -147,7 +121,7 @@ extension FFUserHealthCategoryViewController: UICollectionViewDataSource {
 extension FFUserHealthCategoryViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        didTapOpenSelectedProvider(selectedItem: indexPath)
+        viewModel.pushSelectedHealthCategory(selectedItem: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

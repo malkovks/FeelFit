@@ -42,7 +42,7 @@ class FFHealthDataLoading {
             
             DispatchQueue.global(qos: .background).async { [weak self] in
                 
-                //dispatch group
+                //dispatch group for full loading and completed handling data by request
                 let group = DispatchGroup()
                 
                 let _ = preparePredicateHealthData(value: interval, byAdding: calendar, from: Date())
@@ -76,7 +76,25 @@ class FFHealthDataLoading {
                     completion(sortedResult)
                 }
             }
-            
+    }
+    
+    func loadSelectedIdentifierData(identifier: HKQuantityTypeIdentifier,startDate: Date,endDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
+        let interval = DateComponents(day: 1)
+        let options: HKStatisticsOptions = .cumulativeSum
+        let quantityType = HKQuantityType.quantityType(forIdentifier: identifier)!
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+        let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: options, anchorDate: startDate, intervalComponents: interval)
+        
+        query.initialResultsHandler = { [weak self] query, result, error in
+            guard let result = result,
+                  let self = self else {
+                completion(nil)
+                return
+            }
+            let value = processStatisticsData(result, identifier, startDate, options)
+            completion(value)
+        }
+        healthStore.execute(query)
     }
     
     
