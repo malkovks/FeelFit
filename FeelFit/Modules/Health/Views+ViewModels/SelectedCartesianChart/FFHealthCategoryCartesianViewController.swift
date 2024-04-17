@@ -88,40 +88,43 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     }
     //MARK: - Target and action methods
     @objc private func handleRefreshControl(){
-//        loadSelectedData(startDate: self.startDate, headerLabel: "")
+        let index = userDefaults.value(forKey: "selectedSegmentControl") as? Int ?? 1
+        let value = SelectedTimePeriodType(rawValue: index)
+        let data = value.handlerSelectedTimePeriod()
+        loadUserData(filter: data)
         DispatchQueue.main.async {
             self.scrollView.refreshControl?.endRefreshing()
         }
     }
-    
+    //TODO: Донастроить сегменты и отображение корректного текста в графиках
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
-        isData(loading: true)
-        var components = DateComponents()
-        var headerDetailLabelText = ""
-        var interval: Int = 0
-        switch sender.selectedSegmentIndex {
-        case 0:
-            interval = -1
-            components.hour = 1
-            headerDetailLabelText = "24 Hours"
-            self.chartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkersForDay()
-            self.startDate = Calendar.current.startOfDay(for: Date())
-        case 1:
-            interval = -6
-            components.day = 1
-            self.startDate = createLastWeekStartDate()
-            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: nil)
-        case 2:
-            interval = -30
-            components.day = 1
-            self.startDate = createLastWeekStartDate(from: Date(), byAdding: .day, value: -30)
-            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: self.startDate)
-            self.chartView.graphView.horizontalAxisMarkers = generateWeeklyDateIntervals()
-        default:
-            break
-        }
-        
-//        loadSelectedData(components: components, interval: interval, startDate: self.startDate, headerLabel: headerDetailLabelText)
+        let value = SelectedTimePeriodType(rawValue: sender.selectedSegmentIndex)
+        guard let handledData = value.handlerSelectedTimePeriod() else { return }
+//        var components = DateComponents()
+//        var headerDetailLabelText = ""
+//        var interval: Int = 0
+//        switch sender.selectedSegmentIndex {
+//        case 0:
+//            interval = -1
+//            components.hour = 1
+//            headerDetailLabelText = "24 Hours"
+//            self.chartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkersForDay()
+//            self.startDate = Calendar.current.startOfDay(for: Date())
+//        case 1:
+//            interval = -6
+//            components.day = 1
+//            self.startDate = createLastWeekStartDate()
+//            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: nil)
+//        case 2:
+//            interval = -30
+//            components.day = 1
+//            self.startDate = createLastWeekStartDate(from: Date(), byAdding: .day, value: -30)
+//            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: self.startDate)
+//            self.chartView.graphView.horizontalAxisMarkers = generateWeeklyDateIntervals()
+//        default:
+//            break
+//        }
+        loadUserData(filter: handledData)
         userDefaults.set(sender.selectedSegmentIndex, forKey: "selectedSegmentControl")
     }
     
@@ -148,9 +151,10 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     //MARK: - Setup Methods
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
+        setupViewModel()
         setupSegmentControl()
         setupNavigationController()
-        setupViewModel()
+        
         setupScrollView()
         setupChartView()
         
@@ -161,34 +165,36 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         chartView.delegate = self
         chartView.isUserInteractionEnabled = true
         chartView.graphView.isUserInteractionEnabled = true 
-        viewModel.loadSelectedCategoryData { model in
+        loadUserData(filter: nil)
+    }
+    
+    private func loadUserData(filter: SelectedTimePeriodData?){
+        viewModel.loadSelectedCategoryData(filter: filter) { model in
             guard let model = model else { return }
             self.chartDataProvider = model
             self.updateChartDataSeries()
         }
-//        loadSelectedData(startDate: startDate, headerLabel: "")
     }
     
-    private func loadSelectedData(components: DateComponents = DateComponents(day: 1),interval: Int = -6,startDate: Date?,headerLabel: String?){
-        loadUserHealth.performQuery(identifications: [self.identifier],
-                                    value: components,
-                                    interval: interval,
-                                    selectedOptions: nil,
-                                    startDate: startDate,
-                                    currentDate: Date()) { [weak self] models in
-            guard let models = models,
-                  let model = models.first else {
-                self?.viewAlertController(text: "Did not get data. Try later", startDuration: 0.5, timer: 2, controllerView: self!.view)
-                return
-            }
-            self?.chartDataProvider = model
-            self?.updateChartDataSeries()
-            DispatchQueue.main.async {
-                self?.chartView.headerView.detailLabel.text = headerLabel
-                self?.isData(loading: false)
-            }
-        }
-    }
+//    private func loadSelectedData(components: DateComponents = DateComponents(day: 1),interval: Int = -6,startDate: Date?,headerLabel: String?){
+//        loadUserHealth.performQuery(identifications: [self.identifier],
+//                                    value: components,
+//                                    interval: interval,
+//                                    selectedOptions: nil,
+//                                    startDate: startDate,
+//                                    currentDate: Date()) { [weak self] models in
+//            guard let models = models,
+//                  let model = models.first else {
+//                self?.viewAlertController(text: "Did not get data. Try later", startDuration: 0.5, timer: 2, controllerView: self!.view)
+//                return
+//            }
+//            self?.chartDataProvider = model
+//            self?.updateChartDataSeries()
+//            DispatchQueue.main.async {
+//                self?.chartView.headerView.detailLabel.text = headerLabel
+//            }
+//        }
+//    }
     
     private func updateChartDataSeries(){
         let chartTitle = getDataTypeName(identifier)
@@ -202,16 +208,6 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         DispatchQueue.main.async { [weak self] in
             self?.chartView.graphView.dataSeries = [series]
             self?.chartView.headerView.titleLabel.text = chartTitle
-        }
-    }
-    
-    private func isData(loading status: Bool) {
-        if status {
-            chartView.isHidden = true
-            indicatorView.startAnimating()
-        } else {
-            chartView.isHidden = false
-            indicatorView.stopAnimating()
         }
     }
     

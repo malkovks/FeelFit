@@ -43,7 +43,6 @@ class FFUserHealthCategoryViewModel: UserHealthCategorySetting {
     }
     
     func refreshView(){
-        userFavouriteHealthCategoryArray.removeAll()
         loadFavouriteUserHealthCategory()
         loadUserImage()
     }

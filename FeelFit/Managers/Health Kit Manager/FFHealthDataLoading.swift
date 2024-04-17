@@ -77,13 +77,22 @@ class FFHealthDataLoading {
                 }
             }
     }
-    
-    func loadSelectedIdentifierData(identifier: HKQuantityTypeIdentifier,startDate: Date,endDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
-        let interval = DateComponents(day: 1)
-        let options: HKStatisticsOptions = .cumulativeSum
+    // TODO: Донастроить зависимость загрузки от функции. День и неделя работает, осталось месяц
+    func loadSelectedIdentifierData(filter: SelectedTimePeriodData?,identifier: HKQuantityTypeIdentifier,startDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
+        var intervalComponent = DateComponents(day: 1)
+        var dayInterval: Int = 6
+        var startDate = startDate
+        var now = Date()
+        if let filter = filter {
+            startDate = filter.startDate
+            dayInterval = filter.dayInterval
+            intervalComponent = filter.components
+        }
+        
+        let options: HKStatisticsOptions = prepareStatisticOptions(for: identifier.rawValue)
         let quantityType = HKQuantityType.quantityType(forIdentifier: identifier)!
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: options, anchorDate: startDate, intervalComponents: interval)
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: now, options: .strictStartDate)
+        let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: options, anchorDate: startDate, intervalComponents: intervalComponent)
         
         query.initialResultsHandler = { [weak self] query, result, error in
             guard let result = result,

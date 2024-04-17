@@ -723,7 +723,7 @@
 			children = (
 				FD6818612BCE971F00A9EDE8 /* HealthUserProfile */,
 				FD6818602BCE96AE00A9EDE8 /* SelectedCartesianChart */,
-				FD68185D2BCD25E000A9EDE8 /* UserHealthCategory */,
+				FD68185D2BCD25E000A9EDE8 /* UserHealthData */,
 				0A3AECFA2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift */,
 				0AE049A72B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift */,
 			);
@@ -1173,13 +1173,13 @@
 			path = FavouriteExerciseController;
 			sourceTree = "<group>";
 		};
-		FD68185D2BCD25E000A9EDE8 /* UserHealthCategory */ = {
+		FD68185D2BCD25E000A9EDE8 /* UserHealthData */ = {
 			isa = PBXGroup;
 			children = (
 				0A9FF3872B6F885300F59714 /* FFUserHealthCategoryViewController.swift */,
 				FD68185E2BCD260900A9EDE8 /* FFUserHealthCategoryViewModel.swift */,
 			);
-			path = UserHealthCategory;
+			path = UserHealthData;
 			sourceTree = "<group>";
 		};
 		FD6818602BCE96AE00A9EDE8 /* SelectedCartesianChart */ = {
