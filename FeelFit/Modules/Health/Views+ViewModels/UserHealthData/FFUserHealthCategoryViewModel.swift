@@ -66,7 +66,7 @@ class FFUserHealthCategoryViewModel: UserHealthCategorySetting {
     func loadFavouriteUserHealthCategory(){
         let userFavouriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
         let startDate = Calendar.current.startOfDay(for: Date())
-        FFHealthDataLoading.shared.performQuery(identifications: userFavouriteTypes, 
+        FFHealthDataManager.shared.performQuery(identifications: userFavouriteTypes, 
                                                 selectedOptions: nil, startDate: startDate) { [weak self] models in
             guard let model = models,
                   let self = self else {

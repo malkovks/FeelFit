@@ -88,7 +88,7 @@
 		0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */; };
 		0A82CD262B2E462400F98D8B /* NavigationItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A82CD252B2E462400F98D8B /* NavigationItemButton.swift */; };
 		0A8479B52BB41C0300C0F8EE /* ActionsWithUserImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */; };
-		0A85551C2B72436900B1A7EE /* FFHealthDataLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */; };
+		0A85551C2B72436900B1A7EE /* FFHealthDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A85551B2B72436900B1A7EE /* FFHealthDataManager.swift */; };
 		0A86DED62B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */; };
 		0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */; };
 		0A86DEDB2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */; };
@@ -150,6 +150,7 @@
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
 		0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* HealthKitSupport.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
+		FD0B87632BD157CA002E30F5 /* FFHealthDataProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0B87622BD157CA002E30F5 /* FFHealthDataProcess.swift */; };
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
@@ -242,7 +243,7 @@
 		0A82CD232B2E45F300F98D8B /* AlertControllerTwoActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerTwoActions.swift; sourceTree = "<group>"; };
 		0A82CD252B2E462400F98D8B /* NavigationItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationItemButton.swift; sourceTree = "<group>"; };
 		0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsWithUserImageView.swift; sourceTree = "<group>"; };
-		0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataLoading.swift; sourceTree = "<group>"; };
+		0A85551B2B72436900B1A7EE /* FFHealthDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataManager.swift; sourceTree = "<group>"; };
 		0A86DED52B231D1300E9DA24 /* FFAddExerciseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAddExerciseTableViewCell.swift; sourceTree = "<group>"; };
 		0A86DED72B23899500E9DA24 /* FFDatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFDatePickerViewController.swift; sourceTree = "<group>"; };
 		0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanStoreManager.swift; sourceTree = "<group>"; };
@@ -301,6 +302,7 @@
 		0AEE085F2B7B61960043722B /* HealthKitSupportMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupportMethods.swift; sourceTree = "<group>"; };
 		0AF03A662B58F85200715007 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthKitSupport.swift; path = ../Modules/Health/Model/HealthKitSupport.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
+		FD0B87622BD157CA002E30F5 /* FFHealthDataProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataProcess.swift; sourceTree = "<group>"; };
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
@@ -694,7 +696,8 @@
 		0A634C822B9CB5AB0068E544 /* Health Kit Manager */ = {
 			isa = PBXGroup;
 			children = (
-				0A85551B2B72436900B1A7EE /* FFHealthDataLoading.swift */,
+				0A85551B2B72436900B1A7EE /* FFHealthDataManager.swift */,
+				FD0B87622BD157CA002E30F5 /* FFHealthDataProcess.swift */,
 			);
 			path = "Health Kit Manager";
 			sourceTree = "<group>";
@@ -1464,9 +1467,10 @@
 				0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */,
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
 				0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */,
+				FD0B87632BD157CA002E30F5 /* FFHealthDataProcess.swift in Sources */,
 				FD9DE3732BC1433F005775DF /* FFOnboardingUserDataViewModel.swift in Sources */,
 				FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */,
-				0A85551C2B72436900B1A7EE /* FFHealthDataLoading.swift in Sources */,
+				0A85551C2B72436900B1A7EE /* FFHealthDataManager.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,
 				0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */,

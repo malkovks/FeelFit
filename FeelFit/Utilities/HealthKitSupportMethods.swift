@@ -147,6 +147,10 @@ func getUnitMeasurement(_ type: HKQuantityTypeIdentifier) -> String {
 }
 
 
+
+
+
+
 /// Method process input data and return converted value
 /// - Parameters:
 ///   - stats: formatted stats with all inputs value

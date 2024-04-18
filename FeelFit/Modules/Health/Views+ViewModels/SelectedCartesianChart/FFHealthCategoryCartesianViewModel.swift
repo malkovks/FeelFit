@@ -21,10 +21,10 @@ class FFHealthCategoryCartesianViewModel {
         self.selectedCategoryIdentifier = selectedCategoryIdentifier
     }
     
-    func loadSelectedCategoryData(filter: SelectedTimePeriodData?,completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
+    func loadSelectedCategoryData(filter: SelectedTimePeriodData,completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
         let start = Calendar.current.date(byAdding: DateComponents(day: -6), to: Date())!
         let startDate = Calendar.current.startOfDay(for: start)
-        FFHealthDataLoading.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate, completion: completion)
+        FFHealthDataManager.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate, completion: completion)
     }
 }
 
@@ -48,27 +48,27 @@ enum SelectedTimePeriodType: Int {
             break
         }
     }
-    // TODO: Сделать настройки сегментов
-    func handlerSelectedTimePeriod() -> SelectedTimePeriodData? {
+    
+    func handlerSelectedTimePeriod() -> SelectedTimePeriodData {
         let calendar = Calendar.current
-        var data: SelectedTimePeriodData?
         var components: DateComponents = .init(day: -6)
         var startDate = calendar.startOfDay(for: calendar.date(byAdding: components, to: Date())!)
         
-        var text = createChartWeeklyDateRangeLabel(startDate: startDate)
+        var detailText = createChartWeeklyDateRangeLabel(startDate: startDate)
+        var horizontalTextArray = createHorizontalAxisMarkers()
         switch self {
         case .day:
-            text = "24 Hours"
+            detailText = "Last 24 Hours"
             startDate = Calendar.current.startOfDay(for: Date())
-            
-            data = SelectedTimePeriodData(components: .init(hour: 1), headerDetailText: text, dayInterval: -1,startDate: startDate)
+            horizontalTextArray = createHoursHorizontalAxisForMarkers()
+            return  SelectedTimePeriodData(components: .init(hour: 1), headerDetailText: detailText, dayInterval: -1, horizontalAxisMarkers: horizontalTextArray,startDate: startDate)
         case .week:
-            data = SelectedTimePeriodData(components: .init(day: 1), headerDetailText: text, dayInterval: -6,startDate: startDate)
+            return  SelectedTimePeriodData(components: .init(day: 1), headerDetailText: detailText, dayInterval: -6, horizontalAxisMarkers: horizontalTextArray,startDate: startDate)
         case .month:
-            text = "Month"
-            data = SelectedTimePeriodData(components: .init(day: 30), headerDetailText: text, dayInterval: -30,startDate: startDate)
+            detailText = "Month"
+            horizontalTextArray = createMonthHorizontalAxisMarkers()
+            return SelectedTimePeriodData(components: .init(day: 30), headerDetailText: detailText, dayInterval: -30, horizontalAxisMarkers: horizontalTextArray,startDate: startDate)
         }
-        return data
     }
 }
 
@@ -76,5 +76,6 @@ struct SelectedTimePeriodData {
     var components: DateComponents
     var headerDetailText: String
     var dayInterval: Int
+    var horizontalAxisMarkers: [String]
     var startDate: Date
 }

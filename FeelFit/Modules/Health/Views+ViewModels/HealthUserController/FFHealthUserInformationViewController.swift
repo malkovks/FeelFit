@@ -43,7 +43,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        FFHealthDataLoading.shared.loadingCharactersData { [weak self] userDataString in
+        FFHealthDataManager.shared.loadingCharactersData { [weak self] userDataString in
             guard let data = userDataString else { return }
             self?.usersData = data
         }

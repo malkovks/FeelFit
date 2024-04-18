@@ -14,7 +14,7 @@ class FFUserHealthCategoryViewController: UIViewController, SetupViewController 
     var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
     
     
-    private let loadHealthData = FFHealthDataLoading.shared
+    private let loadHealthData = FFHealthDataManager.shared
     private var healthData = [[FFUserHealthDataProvider]]()
     private var viewModel: FFUserHealthCategoryViewModel!
     

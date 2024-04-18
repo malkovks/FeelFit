@@ -48,7 +48,7 @@ final class FFOnboardingUserDataViewModel {
                 self?.delegate?.didLoadUserData(isDataLoaded: false)
                 return
             }
-            FFHealthDataLoading.shared.loadingCharactersData { userDataString in
+            FFHealthDataManager.shared.loadingCharactersData { userDataString in
                 guard let data = userDataString else {
                     self.delegate?.didLoadUserData(isDataLoaded: false)
                     return

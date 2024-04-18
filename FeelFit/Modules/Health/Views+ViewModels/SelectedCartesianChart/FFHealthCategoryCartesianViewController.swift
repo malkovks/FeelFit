@@ -27,16 +27,12 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     }
     
     private var chartDataProvider = [FFUserHealthDataProvider]()
+    private var selectedSegmentIndex = UserDefaults.standard.value(forKey: "selectedSegmentControl") as? Int ?? 1
     
-    private let calendar = Calendar.current
-    private let healthStore = HKHealthStore()
     private let userDefaults = UserDefaults.standard
-    private let loadUserHealth = FFHealthDataLoading.shared
+    private let loadUserHealth = FFHealthDataManager.shared
     
-    private var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
-    
-    private var startDate: Date? = createLastWeekStartDate()
-    
+    //MARK: - UI elements
     private let refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl(frame: .zero)
         refresh.tintColor = FFResources.Colors.activeColor
@@ -67,9 +63,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     
     private let chartView: OCKCartesianChartView = {
         let chart = OCKCartesianChartView(type: .bar)
-        chart.headerView.detailLabel.text = createChartWeeklyDateRangeLabel(startDate: nil)
         chart.applyConfiguration()
-        chart.graphView.horizontalAxisMarkers = createHorizontalAxisMarkers()
         chart.backgroundColor = .systemBackground
         chart.layer.borderWidth = 0.3
         chart.layer.borderColor = FFResources.Colors.darkPurple.cgColor
@@ -82,50 +76,25 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         return indicator
     }()
     
+    //MARK: - display result
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
-    //MARK: - Target and action methods
+    //MARK: - Actions
     @objc private func handleRefreshControl(){
-        let index = userDefaults.value(forKey: "selectedSegmentControl") as? Int ?? 1
-        let value = SelectedTimePeriodType(rawValue: index)
-        let data = value.handlerSelectedTimePeriod()
+        let data = getAccessToFilterData(sender: nil)
         loadUserData(filter: data)
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now()+1.5) {
             self.scrollView.refreshControl?.endRefreshing()
         }
     }
     //TODO: Донастроить сегменты и отображение корректного текста в графиках
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
-        let value = SelectedTimePeriodType(rawValue: sender.selectedSegmentIndex)
-        guard let handledData = value.handlerSelectedTimePeriod() else { return }
-//        var components = DateComponents()
-//        var headerDetailLabelText = ""
-//        var interval: Int = 0
-//        switch sender.selectedSegmentIndex {
-//        case 0:
-//            interval = -1
-//            components.hour = 1
-//            headerDetailLabelText = "24 Hours"
-//            self.chartView.graphView.horizontalAxisMarkers = createHorizontalAxisMarkersForDay()
-//            self.startDate = Calendar.current.startOfDay(for: Date())
-//        case 1:
-//            interval = -6
-//            components.day = 1
-//            self.startDate = createLastWeekStartDate()
-//            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: nil)
-//        case 2:
-//            interval = -30
-//            components.day = 1
-//            self.startDate = createLastWeekStartDate(from: Date(), byAdding: .day, value: -30)
-//            headerDetailLabelText = createChartWeeklyDateRangeLabel(startDate: self.startDate)
-//            self.chartView.graphView.horizontalAxisMarkers = generateWeeklyDateIntervals()
-//        default:
-//            break
-//        }
-        loadUserData(filter: handledData)
+        let value = getAccessToFilterData(sender: sender.selectedSegmentIndex)
+        loadUserData(filter: value)
         userDefaults.set(sender.selectedSegmentIndex, forKey: "selectedSegmentControl")
+        selectedSegmentIndex = sender.selectedSegmentIndex
     }
     
     @objc private func didTapPopToRoot(){
@@ -154,50 +123,38 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         setupViewModel()
         setupSegmentControl()
         setupNavigationController()
-        
         setupScrollView()
         setupChartView()
         
         setupConstraints()
     }
     
+    func getAccessToFilterData(sender: Int?) -> SelectedTimePeriodData{
+        let selectedCase = SelectedTimePeriodType(rawValue: sender ?? selectedSegmentIndex)
+        let value = selectedCase.handlerSelectedTimePeriod()
+        return value
+    }
+    
     private func setupChartView(){
         chartView.delegate = self
         chartView.isUserInteractionEnabled = true
-        chartView.graphView.isUserInteractionEnabled = true 
-        loadUserData(filter: nil)
+        chartView.graphView.isUserInteractionEnabled = true
+        let data = getAccessToFilterData(sender: nil)
+        loadUserData(filter: data)
     }
     
-    private func loadUserData(filter: SelectedTimePeriodData?){
+    private func loadUserData(filter: SelectedTimePeriodData){
         viewModel.loadSelectedCategoryData(filter: filter) { model in
             guard let model = model else { return }
             self.chartDataProvider = model
-            self.updateChartDataSeries()
+            self.updateChartDataSeries(filter: filter)
         }
     }
     
-//    private func loadSelectedData(components: DateComponents = DateComponents(day: 1),interval: Int = -6,startDate: Date?,headerLabel: String?){
-//        loadUserHealth.performQuery(identifications: [self.identifier],
-//                                    value: components,
-//                                    interval: interval,
-//                                    selectedOptions: nil,
-//                                    startDate: startDate,
-//                                    currentDate: Date()) { [weak self] models in
-//            guard let models = models,
-//                  let model = models.first else {
-//                self?.viewAlertController(text: "Did not get data. Try later", startDuration: 0.5, timer: 2, controllerView: self!.view)
-//                return
-//            }
-//            self?.chartDataProvider = model
-//            self?.updateChartDataSeries()
-//            DispatchQueue.main.async {
-//                self?.chartView.headerView.detailLabel.text = headerLabel
-//            }
-//        }
-//    }
-    
-    private func updateChartDataSeries(){
+    private func updateChartDataSeries(filter: SelectedTimePeriodData?){
         let chartTitle = getDataTypeName(identifier)
+        let detailTextLabel = filter?.headerDetailText ?? createChartWeeklyDateRangeLabel(startDate: nil)
+        let axisHorizontalMarkers = filter?.horizontalAxisMarkers ?? createHorizontalAxisMarkers()
         
         let measurementUnitText = getUnitMeasurement(identifier)
         
@@ -208,6 +165,8 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         DispatchQueue.main.async { [weak self] in
             self?.chartView.graphView.dataSeries = [series]
             self?.chartView.headerView.titleLabel.text = chartTitle
+            self?.chartView.headerView.detailLabel.text = detailTextLabel
+            self?.chartView.graphView.horizontalAxisMarkers = axisHorizontalMarkers
         }
     }
     
@@ -217,8 +176,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     }
     
     func setupNavigationController() {
-        let text  = getDataTypeName(identifier)
-        title = text
+        title = "Periods"
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapPopToRoot), menu: nil)
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "plus", action: #selector(didTapCreateNewValue), menu: nil)
     }
@@ -236,52 +194,15 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
 
 private extension FFHealthCategoryCartesianViewController {
     func didAddNewData(with value: Double) {
-        guard let sample = processHealthSample(with: value, data: chartDataProvider) else { return }
-        FFHealthData.saveHealthData([sample]) { success, error in
+        guard let sample = FFHealthDataProcess.processHealthSample(with: value, data: chartDataProvider) else { return }
+        FFHealthData.saveHealthData([sample]) { [weak self] success, error in
             if let error = error {
-                print("FFHealthCategoryCartesianViewController  didAddNewData error: ",error.localizedDescription)
+                self?.alertError(title: "Error adding data to Health",message: error.localizedDescription)
             }
             if success {
-                print("Saved successfully")
-                DispatchQueue.main.async { [weak self] in
-                    self?.updateChartDataSeries()
-                }
-            } else {
-                print("error: could now save new sample", sample)
+                self?.handleRefreshControl()
             }
         }
-                
-    }
-    
-    func processHealthSample(with value: Double,data provider: [FFUserHealthDataProvider]) -> HKObject? {
-        guard 
-            let provider = provider.first,
-            let id = provider.typeIdentifier
-        else {
-            return nil
-        }
-        let idString = provider.identifier
-        
-        
-        let sampleType = getSampleType(for: idString)
-        guard let unit = prepareHealthUnit(id) else { return nil }
-        
-        let now = Date()
-        let start = now
-        let end = now
-        
-        var optionalSample: HKObject?
-        if let quantityType = sampleType as? HKQuantityType {
-            let quantity = HKQuantity(unit: unit, doubleValue: value)
-            let quantitySample = HKQuantitySample(type: quantityType, quantity: quantity, start: start, end: end)
-            optionalSample = quantitySample
-        }
-        if let categoryType = sampleType as? HKCategoryType {
-            let categorySample = HKCategorySample(type: categoryType, value: Int(value), start: start, end: end)
-            optionalSample = categorySample
-        }
-        
-        return optionalSample
     }
 }
 
@@ -333,6 +254,6 @@ private extension FFHealthCategoryCartesianViewController {
 }
 
 #Preview {
-    let nav = FFNavigationController(rootViewController: FFHealthCategoryCartesianViewController(typeIdentifier: .activeEnergyBurned))
+    let nav = FFNavigationController(rootViewController: FFHealthCategoryCartesianViewController(typeIdentifier: .stepCount))
     return nav
 }

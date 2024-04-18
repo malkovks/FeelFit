@@ -1,5 +1,5 @@
 //
-//  FFHealthDataLoading.swift
+//  FFHealthDataManager.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 06.02.2024.
@@ -16,8 +16,8 @@ struct UserCharactersData {
     var fitzpatrickSkinType: String?
 }
 
-class FFHealthDataLoading {
-    static let shared = FFHealthDataLoading()
+class FFHealthDataManager {
+    static let shared = FFHealthDataManager()
     
     private init() {}
     
@@ -77,15 +77,13 @@ class FFHealthDataLoading {
                 }
             }
     }
-    // TODO: Донастроить зависимость загрузки от функции. День и неделя работает, осталось месяц
+    
     func loadSelectedIdentifierData(filter: SelectedTimePeriodData?,identifier: HKQuantityTypeIdentifier,startDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
         var intervalComponent = DateComponents(day: 1)
-        var dayInterval: Int = 6
         var startDate = startDate
-        var now = Date()
+        let now = Date()
         if let filter = filter {
             startDate = filter.startDate
-            dayInterval = filter.dayInterval
             intervalComponent = filter.components
         }
         

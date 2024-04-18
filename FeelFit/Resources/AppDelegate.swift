@@ -16,7 +16,7 @@ import TipKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    private let healthDataLoading = FFHealthDataLoading.shared
+    private let healthDataLoading = FFHealthDataManager.shared
     private let calendar = Calendar.current
     private let taskId = "Malkov.KS.FeelFit.fitnessApp.fetch"
     
