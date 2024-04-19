@@ -67,6 +67,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         chart.backgroundColor = .systemBackground
         chart.layer.borderWidth = 0.3
         chart.layer.borderColor = FFResources.Colors.darkPurple.cgColor
+        chart.headerView.iconImageView?.image = UIImage(systemName: "heart")
         return chart
     }()
     
@@ -91,10 +92,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     }
     //TODO: Донастроить сегменты и отображение корректного текста в графиках
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
-        let value = getAccessToFilterData(sender: sender.selectedSegmentIndex)
-        loadUserData(filter: value)
-        userDefaults.set(sender.selectedSegmentIndex, forKey: "selectedSegmentControl")
-        selectedSegmentIndex = sender.selectedSegmentIndex
+        loadSelectedIndexData(selectedIndex: sender.selectedSegmentIndex)
     }
     
     @objc private func didTapPopToRoot(){
@@ -117,6 +115,57 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         }
     }
     
+    func loadSelectedIndexData(selectedIndex: Int){
+        let value = getAccessToFilterData(sender: selectedIndex)
+        loadUserData(filter: value)
+        userDefaults.set(selectedIndex, forKey: "selectedSegmentControl")
+        selectedSegmentIndex = selectedIndex
+    }
+    
+    @objc func didTapSwipeGestureRecognize(_ gesture: UISwipeGestureRecognizer){
+        var currentIndex = segmentControl.selectedSegmentIndex
+        
+        if gesture.direction == .left {
+            currentIndex += 1
+        } else if gesture.direction == .right {
+            currentIndex -= 1
+        }
+        
+        if currentIndex < 0 {
+            currentIndex = 0
+        } else if currentIndex >= segmentControl.numberOfSegments {
+            currentIndex = segmentControl.numberOfSegments - 1
+        }
+        
+        segmentControl.selectedSegmentIndex = currentIndex
+        loadSelectedIndexData(selectedIndex: currentIndex)
+    }
+    
+    @objc func didTapChangeIdentifier(_ button: UIButton){
+        let data: [String] = FFHealthData.favouriteQuantityTypeIdentifier.map { $0.rawValue }
+        let menu = UIMenu(title: "Select displaying data",children: data.compactMap({ text in
+            UIAction(title: text) { _ in
+                print("Selected \(text)")
+            }
+        }))
+        
+        
+    }
+    
+    func setupMenu() -> UIMenu {
+        let data: [String] = FFHealthData.favouriteQuantityTypeIdentifier.map { getDataTypeName($0) }
+        var items = [UIAction]()
+        data.forEach { text in
+            items.append( UIAction(title: text) { _ in
+                print("Selected \(text)")
+            })
+        }
+        var menu: UIMenu {
+            return UIMenu(title: "Selected health category", image: UIImage(systemName: "heart.fill"),children: items)
+        }
+        
+        return menu
+    }
     //MARK: - Setup Methods
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
@@ -125,7 +174,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         setupNavigationController()
         setupScrollView()
         setupChartView()
-        
+        setupGestures()
         setupConstraints()
     }
     
@@ -159,8 +208,11 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         let measurementUnitText = getUnitMeasurement(identifier)
         
         let value: [CGFloat] = chartDataProvider.map { CGFloat($0.value) }
+        let size = filter?.barSize ?? 5.0
         
-        let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: 2.0, color: FFResources.Colors.activeColor)
+        let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: size, color: FFResources.Colors.activeColor)
+        
+        
         
         DispatchQueue.main.async { [weak self] in
             self?.chartView.graphView.dataSeries = [series]
@@ -170,13 +222,35 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         }
     }
     
+    private func setupGestures(){
+        let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didTapSwipeGestureRecognize))
+        let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(didTapSwipeGestureRecognize))
+        rightSwipeGesture.direction = .right
+        leftSwipeGesture.direction = .left
+        scrollView.addGestureRecognizer(rightSwipeGesture)
+        scrollView.addGestureRecognizer(leftSwipeGesture)
+        
+        scrollView.panGestureRecognizer.require(toFail: rightSwipeGesture)
+        scrollView.panGestureRecognizer.require(toFail: leftSwipeGesture)
+    }
+    
+
+    
     private func setupScrollView(){
         scrollView.refreshControl = refreshControl
         scrollView.refreshControl?.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
     }
     
     func setupNavigationController() {
-        title = "Periods"
+        let button = UIButton(type: .custom)
+        button.configuration = .borderless()
+        button.configuration?.title = "Data type"
+        button.configuration?.image = UIImage(systemName: "chevron.down")
+        button.configuration?.imagePlacement = .trailing
+        button.menu = setupMenu()
+        button.showsMenuAsPrimaryAction = true
+        
+        navigationItem.titleView = button
         navigationItem.leftBarButtonItem = addNavigationBarButton(title: "Back", imageName: "", action: #selector(didTapPopToRoot), menu: nil)
         navigationItem.rightBarButtonItem = addNavigationBarButton(title: "", imageName: "plus", action: #selector(didTapCreateNewValue), menu: nil)
     }

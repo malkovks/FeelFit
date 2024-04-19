@@ -60,12 +60,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         scheduleAppRefresh()
         convertResult { models in
             guard let models = models,
-                  let model = models.last,
-                  let lastDayModel = model.last
+                  let model = models.last
             else {
                 return
             }
-            let stepcount: Int = Int(lastDayModel.value)
+            let stepcount: Int = Int(model.value)
             if stepcount == 10_000 {
                 FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
             }
@@ -73,11 +72,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         task.setTaskCompleted(success: true)
     }
 
-    private func convertResult(completion: @escaping (_ models: [[FFUserHealthDataProvider]]?) -> ()){
+    private func convertResult(completion: @escaping (_ models: [FFUserHealthDataProvider]?) -> ()){
         let intervalDateComponents = DateComponents(day: 1)
         let interval: Int = -1
         let startDate = calendar.startOfDay(for: Date())
-        healthDataLoading.performQuery(identifications: [.stepCount], value: intervalDateComponents, interval: interval, selectedOptions: .cumulativeSum, startDate: startDate, completion: completion)
+        healthDataLoading.loadSelectedIdentifierData(filter: nil, identifier: .stepCount, startDate: startDate, completion: completion)
     }
 }
 

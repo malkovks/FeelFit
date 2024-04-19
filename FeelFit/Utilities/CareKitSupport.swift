@@ -64,6 +64,9 @@ func createHorizontalAxisMarkers(lastDate: Date = Date(), useWeekdays: Bool = tr
     }
 }
 
+
+
+/// Function convert and return value as "01.01-02.01" where first number is day and second is month
 func createMonthHorizontalAxisMarkers() -> [String] {
     let calendar = Calendar.current
     var result = [String]()

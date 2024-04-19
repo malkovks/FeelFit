@@ -26,6 +26,7 @@ class FFHealthCategoryCartesianViewModel {
         let startDate = Calendar.current.startOfDay(for: start)
         FFHealthDataManager.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate, completion: completion)
     }
+    
 }
 
 enum SelectedTimePeriodType: Int {
@@ -51,7 +52,7 @@ enum SelectedTimePeriodType: Int {
     
     func handlerSelectedTimePeriod() -> SelectedTimePeriodData {
         let calendar = Calendar.current
-        var components: DateComponents = .init(day: -6)
+        let components: DateComponents = .init(day: -6)
         var startDate = calendar.startOfDay(for: calendar.date(byAdding: components, to: Date())!)
         
         var detailText = createChartWeeklyDateRangeLabel(startDate: startDate)
@@ -61,13 +62,14 @@ enum SelectedTimePeriodType: Int {
             detailText = "Last 24 Hours"
             startDate = Calendar.current.startOfDay(for: Date())
             horizontalTextArray = createHoursHorizontalAxisForMarkers()
-            return  SelectedTimePeriodData(components: .init(hour: 1), headerDetailText: detailText, dayInterval: -1, horizontalAxisMarkers: horizontalTextArray,startDate: startDate)
+            return  SelectedTimePeriodData(components: .init(hour: 1), headerDetailText: detailText, horizontalAxisMarkers: horizontalTextArray,startDate: startDate, barSize: 20.0)
         case .week:
-            return  SelectedTimePeriodData(components: .init(day: 1), headerDetailText: detailText, dayInterval: -6, horizontalAxisMarkers: horizontalTextArray,startDate: startDate)
+            return  SelectedTimePeriodData(components: .init(day: 1), headerDetailText: detailText, horizontalAxisMarkers: horizontalTextArray,startDate: startDate, barSize: 10.0)
         case .month:
-            detailText = "Month"
+            detailText = createMonthHorizontalAxisMarkers().first!
             horizontalTextArray = createMonthHorizontalAxisMarkers()
-            return SelectedTimePeriodData(components: .init(day: 30), headerDetailText: detailText, dayInterval: -30, horizontalAxisMarkers: horizontalTextArray,startDate: startDate)
+            startDate = calendar.date(byAdding: .day, value: -30, to: Date())!
+            return SelectedTimePeriodData(components: .init(day: 1), headerDetailText: detailText, horizontalAxisMarkers: horizontalTextArray,startDate: startDate, barSize: 5.0)
         }
     }
 }
@@ -75,7 +77,7 @@ enum SelectedTimePeriodType: Int {
 struct SelectedTimePeriodData {
     var components: DateComponents
     var headerDetailText: String
-    var dayInterval: Int
     var horizontalAxisMarkers: [String]
     var startDate: Date
+    var barSize: CGFloat
 }
