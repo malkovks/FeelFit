@@ -71,7 +71,7 @@
 		0A69AF392B0DD5710013FB1B /* FFCreateFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */; };
 		0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */; };
 		0A69E0CD2B4AA4690023487B /* FFSearchPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */; };
-		0A69E0D32B4E26F10023487B /* FFHealthData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0D22B4E26F10023487B /* FFHealthData.swift */; };
+		0A69E0D32B4E26F10023487B /* UserHealthDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69E0D22B4E26F10023487B /* UserHealthDataProvider.swift */; };
 		0A6D9C512AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */; };
 		0A6D9C532AEA5228002CAD2C /* ViewAlert+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */; };
 		0A6D9C552AEA5D1A002CAD2C /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6D9C542AEA5D1A002CAD2C /* UIFont+Extensions.swift */; };
@@ -150,7 +150,6 @@
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
 		0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* HealthKitSupport.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
-		FD0B87632BD157CA002E30F5 /* FFHealthDataProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0B87622BD157CA002E30F5 /* FFHealthDataProcess.swift */; };
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
@@ -161,6 +160,7 @@
 		FD9DE36A2BBEAB1A005775DF /* UIToolbar+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3692BBEAB1A005775DF /* UIToolbar+Extension.swift */; };
 		FD9DE36C2BC13360005775DF /* FFCenteredTitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE36B2BC13360005775DF /* FFCenteredTitleTableViewCell.swift */; };
 		FD9DE3732BC1433F005775DF /* FFOnboardingUserDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3722BC1433F005775DF /* FFOnboardingUserDataViewModel.swift */; };
+		FDE1D7E72BD5719A0019A5D2 /* FFHealthDataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE1D7E62BD5719A0019A5D2 /* FFHealthDataHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -225,7 +225,7 @@
 		0A69AF382B0DD5710013FB1B /* FFCreateFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCreateFooterView.swift; sourceTree = "<group>"; };
 		0A69E0CA2B4AA45C0023487B /* FFSearchPlanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewController.swift; sourceTree = "<group>"; };
 		0A69E0CC2B4AA4690023487B /* FFSearchPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFSearchPlanViewModel.swift; sourceTree = "<group>"; };
-		0A69E0D22B4E26F10023487B /* FFHealthData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthData.swift; sourceTree = "<group>"; };
+		0A69E0D22B4E26F10023487B /* UserHealthDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHealthDataProvider.swift; sourceTree = "<group>"; };
 		0A69E0D42B4E44F80023487B /* FeelFit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FeelFit.entitlements; sourceTree = "<group>"; };
 		0A6D9C502AE99AAA002CAD2C /* FFNewsSetupRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsSetupRequestTableViewCell.swift; sourceTree = "<group>"; };
 		0A6D9C522AEA5228002CAD2C /* ViewAlert+UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewAlert+UIViewController.swift"; sourceTree = "<group>"; };
@@ -302,7 +302,6 @@
 		0AEE085F2B7B61960043722B /* HealthKitSupportMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupportMethods.swift; sourceTree = "<group>"; };
 		0AF03A662B58F85200715007 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthKitSupport.swift; path = ../Modules/Health/Model/HealthKitSupport.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
-		FD0B87622BD157CA002E30F5 /* FFHealthDataProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataProcess.swift; sourceTree = "<group>"; };
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
@@ -313,6 +312,7 @@
 		FD9DE3692BBEAB1A005775DF /* UIToolbar+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIToolbar+Extension.swift"; sourceTree = "<group>"; };
 		FD9DE36B2BC13360005775DF /* FFCenteredTitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCenteredTitleTableViewCell.swift; sourceTree = "<group>"; };
 		FD9DE3722BC1433F005775DF /* FFOnboardingUserDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingUserDataViewModel.swift; sourceTree = "<group>"; };
+		FDE1D7E62BD5719A0019A5D2 /* FFHealthDataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -472,8 +472,8 @@
 				0AD8F42F2B29C2CC00A40C4B /* arnold_run.jpeg */,
 				0A4495002AB9CFB40082C909 /* Modules */,
 				0A634C812B9CB53D0068E544 /* Managers */,
+				0A4495342ABC3F720082C909 /* API Managers */,
 				0AC59C632B931E420009489E /* UI Classes Elements */,
-				0A4495342ABC3F720082C909 /* APIClient */,
 				0A44950C2AB9FC310082C909 /* Extensions */,
 				0A705BC52BB6BE78006BC6BF /* Enums */,
 				0A634C832B9CB8DB0068E544 /* Utilities */,
@@ -640,7 +640,7 @@
 		0A44951E2ABA79120082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0A69E0D22B4E26F10023487B /* FFHealthData.swift */,
+				0A69E0D22B4E26F10023487B /* UserHealthDataProvider.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -662,14 +662,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0A4495342ABC3F720082C909 /* APIClient */ = {
+		0A4495342ABC3F720082C909 /* API Managers */ = {
 			isa = PBXGroup;
 			children = (
 				0A7158092B359AEC00FBCF72 /* Animated Image */,
 				0A2347E82AFBBC74002C161C /* News Module */,
 				0A2347E92AFBBC80002C161C /* Exercise Module */,
 			);
-			path = APIClient;
+			path = "API Managers";
 			sourceTree = "<group>";
 		};
 		0A4495372ABC43150082C909 /* Navigation */ = {
@@ -697,7 +697,6 @@
 			isa = PBXGroup;
 			children = (
 				0A85551B2B72436900B1A7EE /* FFHealthDataManager.swift */,
-				FD0B87622BD157CA002E30F5 /* FFHealthDataProcess.swift */,
 			);
 			path = "Health Kit Manager";
 			sourceTree = "<group>";
@@ -708,6 +707,7 @@
 				FD9DE3642BBC35F3005775DF /* TipKit Additionals */,
 				0AEE085F2B7B61960043722B /* HealthKitSupportMethods.swift */,
 				0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */,
+				FDE1D7E62BD5719A0019A5D2 /* FFHealthDataHandler.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1382,6 +1382,7 @@
 				0A4495292ABA79700082C909 /* FFMusclesGroupViewController.swift in Sources */,
 				0A9FF3862B6F7ED700F59714 /* FileManager + UIViewController.swift in Sources */,
 				0AEE08602B7B61960043722B /* HealthKitSupportMethods.swift in Sources */,
+				FDE1D7E72BD5719A0019A5D2 /* FFHealthDataHandler.swift in Sources */,
 				0A7278AF2B1E408F0055EECD /* FFPlanExercisesViewController.swift in Sources */,
 				0A44952D2ABA79FB0082C909 /* FFTRainingPlanViewController.swift in Sources */,
 				0A86DED82B23899500E9DA24 /* FFDatePickerViewController.swift in Sources */,
@@ -1441,7 +1442,7 @@
 				0A9151A12B037A1B00FE5E41 /* FFCreateTableViewCell.swift in Sources */,
 				0A705BC42BB6B3AD006BC6BF /* UIContentUnavailableConfiguration+Extension.swift in Sources */,
 				0A634C862B9CC1000068E544 /* Keychain Error Handler.swift in Sources */,
-				0A69E0D32B4E26F10023487B /* FFHealthData.swift in Sources */,
+				0A69E0D32B4E26F10023487B /* UserHealthDataProvider.swift in Sources */,
 				0AE049A82B776ECA00697A82 /* FFFavouriteHealthDataViewController.swift in Sources */,
 				0A13D8D62B5A40A800FD8C92 /* CareKitSupport.swift in Sources */,
 				FD9DE3662BBC3605005775DF /* DataTips.swift in Sources */,
@@ -1467,7 +1468,6 @@
 				0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */,
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
 				0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */,
-				FD0B87632BD157CA002E30F5 /* FFHealthDataProcess.swift in Sources */,
 				FD9DE3732BC1433F005775DF /* FFOnboardingUserDataViewModel.swift in Sources */,
 				FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */,
 				0A85551C2B72436900B1A7EE /* FFHealthDataManager.swift in Sources */,

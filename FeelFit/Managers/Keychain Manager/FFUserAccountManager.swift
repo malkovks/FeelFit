@@ -12,7 +12,6 @@ import CryptoKit
 struct CredentialUser {
     let email: String
     let password: String
-    
 }
 
 class FFUserAccountManager {

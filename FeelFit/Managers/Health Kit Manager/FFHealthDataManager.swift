@@ -8,7 +8,6 @@
 import HealthKit
 
 struct UserCharactersData {
-    
     var userGender: String?
     var dateOfBirth: DateComponents?
     var wheelChairUse: String?

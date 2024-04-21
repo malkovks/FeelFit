@@ -268,7 +268,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
 
 private extension FFHealthCategoryCartesianViewController {
     func didAddNewData(with value: Double) {
-        guard let sample = FFHealthDataProcess.processHealthSample(with: value, data: chartDataProvider) else { return }
+        guard let sample = FFHealthData.processHealthSample(with: value, data: chartDataProvider) else { return }
         FFHealthData.saveHealthData([sample]) { [weak self] success, error in
             if let error = error {
                 self?.alertError(title: "Error adding data to Health",message: error.localizedDescription)

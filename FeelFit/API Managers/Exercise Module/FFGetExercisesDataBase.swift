@@ -13,9 +13,7 @@ class FFGetExercisesDataBase {
     static let shared = FFGetExercisesDataBase()
     
     private init() {}
-    
-//e0e5e1e85dmsh75869aa45796c4cp15cb28jsn509b82f98306
-//993d6b8eacmshf5233f92ac39081p16b3f7jsnc30a9fca4475 - закончился лимит
+
     
     private let realm = try! Realm()
     

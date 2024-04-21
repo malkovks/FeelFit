@@ -2,30 +2,10 @@
 //  FFHealthData.swift
 //  FeelFit
 //
-//  Created by Константин Малков on 10.01.2024.
+//  Created by Константин Малков on 21.04.2024.
 //
 
-import UIKit
 import HealthKit
-
-struct FFUserHealthDataProvider : Hashable{
-    ///start period of loading data
-    let startDate: Date
-    ///End period of loading. Last time updating current value in HealthKit
-    let endDate: Date
-    ///Inherited and converted data from healthKit
-    let value: Double
-    ///String identifier of loading type data
-    let identifier: String
-    ///unit type include returning type of inherited data
-    let unit: HKUnit
-    ///type of sample searching for
-    let type: HKSampleType
-    ///health kit quantity type
-    let typeIdentifier: HKQuantityTypeIdentifier?
-}
-
-
 
 ///Health class which return requested HealthKit Identifiers to user and return correct types
 class FFHealthData {
@@ -65,6 +45,37 @@ class FFHealthData {
     
     static var characteristicDataTypes: [HKCharacteristicTypeIdentifier] {
         return charactersTypes.compactMap { HKCharacteristicTypeIdentifier(rawValue: $0) }
+    }
+    
+    static func processHealthSample(with value: Double,data provider: [FFUserHealthDataProvider]) -> HKObject? {
+        guard
+            let provider = provider.first,
+            let id = provider.typeIdentifier
+        else {
+            return nil
+        }
+        let idString = provider.identifier
+        
+        
+        let sampleType = getSampleType(for: idString)
+        guard let unit = prepareHealthUnit(id) else { return nil }
+        
+        let now = Date()
+        let start = now
+        let end = now
+        
+        var optionalSample: HKObject?
+        if let quantityType = sampleType as? HKQuantityType {
+            let quantity = HKQuantity(unit: unit, doubleValue: value)
+            let quantitySample = HKQuantitySample(type: quantityType, quantity: quantity, start: start, end: end)
+            optionalSample = quantitySample
+        }
+        if let categoryType = sampleType as? HKCategoryType {
+            let categorySample = HKCategorySample(type: categoryType, value: Int(value), start: start, end: end)
+            optionalSample = categorySample
+        }
+        
+        return optionalSample
     }
     
     private static var charactersTypes: [String] = [
