@@ -78,29 +78,32 @@ class FFHealthDataManager {
     }
     
     func loadSelectedIdentifierData(filter: SelectedTimePeriodData?,identifier: HKQuantityTypeIdentifier,startDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
-        var intervalComponent = DateComponents(day: 1)
-        var startDate = startDate
-        let now = Date()
-        if let filter = filter {
-            startDate = filter.startDate
-            intervalComponent = filter.components
-        }
-        
-        let options: HKStatisticsOptions = prepareStatisticOptions(for: identifier.rawValue)
-        let quantityType = HKQuantityType.quantityType(forIdentifier: identifier)!
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: now, options: .strictStartDate)
-        let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: options, anchorDate: startDate, intervalComponents: intervalComponent)
-        
-        query.initialResultsHandler = { [weak self] query, result, error in
-            guard let result = result,
-                  let self = self else {
-                completion(nil)
-                return
+        DispatchQueue.global().async { [weak self] in
+            var intervalComponent = DateComponents(day: 1)
+            var startDate = startDate
+            let now = Date()
+            if let filter = filter {
+                startDate = filter.startDate
+                intervalComponent = filter.components
             }
-            let value = processStatisticsData(result, identifier, startDate, options)
-            completion(value)
+            
+            let options: HKStatisticsOptions = prepareStatisticOptions(for: identifier.rawValue)
+            let quantityType = HKQuantityType.quantityType(forIdentifier: identifier)!
+            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: now, options: .strictStartDate)
+            let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: options, anchorDate: startDate, intervalComponents: intervalComponent)
+            
+            query.initialResultsHandler = { [weak self] query, result, error in
+                guard let result = result,
+                      let self = self else {
+                    completion(nil)
+                    return
+                }
+                let value = processStatisticsData(result, identifier, startDate, options)
+                completion(value)
+            }
+            self?.healthStore.execute(query)
         }
-        healthStore.execute(query)
+        
     }
     
     

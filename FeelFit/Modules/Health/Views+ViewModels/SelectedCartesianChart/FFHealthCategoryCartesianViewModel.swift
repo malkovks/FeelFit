@@ -12,72 +12,93 @@ import HealthKit
 class FFHealthCategoryCartesianViewModel {
     
     
-    
+    private let userDefaults = UserDefaults.standard
     private let viewController: UIViewController
     private let selectedCategoryIdentifier: HKQuantityTypeIdentifier
+    
+    var selectedSegmentIndex = UserDefaults.standard.value(forKey: "selectedSegmentControl") as? Int ?? 1
+    var chartDataProvider = [FFUserHealthDataProvider]()
     
     init(viewController: UIViewController, selectedCategoryIdentifier: HKQuantityTypeIdentifier) {
         self.viewController = viewController
         self.selectedCategoryIdentifier = selectedCategoryIdentifier
     }
     
-    func loadSelectedCategoryData(filter: SelectedTimePeriodData,completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
+    func pullToRefreshControl(){
+        guard let data = getAccessToFilterData(nil) else { return }
+        loadSelectedCategoryData(filter: data)
+    }
+    
+    @objc func didTapAddNewValue(){
+        let title = getDataTypeName(self.selectedCategoryIdentifier)
+        
+        let message = "Enter a value to add a sample to your health data."
+        
+        viewController.presentTextFieldAlertController(placeholder: title, keyboardType: .numberPad, alertTitle: title,message: message) { [weak self] text in
+            guard let doubleValue = Double(text) else { return }
+            self?.didTapAddNewValueToHealthStore(with: doubleValue)
+        }
+    }
+    
+    @objc func didTapPopToViewController(){
+        viewController.navigationController?.popViewController(animated: true)
+    }
+    
+    func loadSelectedSegmentIndex(_ index: Int) {
+        guard let value = getAccessToFilterData(index) else { return }
+        loadSelectedCategoryData(filter: value)
+        userDefaults.set(index, forKey: "selectedSegmentControl")
+        selectedSegmentIndex = index
+    }
+    
+    func didTapAddNewValueToHealthStore(with value: Double) {
+        guard let sample = FFHealthData.processHealthSample(with: value, data: chartDataProvider) else { return }
+        FFHealthData.saveHealthData([sample]) { [weak self] success, error in
+            if let error = error {
+                self?.viewController.alertError(title: "Error adding data to Health",message: error.localizedDescription)
+            }
+            if success {
+                self?.pullToRefreshControl()
+            }
+        }
+    }
+    
+    func loadSelectedCategoryData(filter: SelectedTimePeriodData){
         let start = Calendar.current.date(byAdding: DateComponents(day: -6), to: Date())!
         let startDate = Calendar.current.startOfDay(for: start)
-        FFHealthDataManager.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate, completion: completion)
-    }
-    
-}
-
-enum SelectedTimePeriodType: Int {
-    
-    
-    case day = 0
-    case week = 1
-    case month = 2
-    
-    init(rawValue: Int) {
-        switch rawValue {
-        case 0:
-            self = .day
-        case 1:
-            self = .week
-        case 2:
-            self = .month
-        default:
-            self = .week
-            break
+        FFHealthDataManager.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate) { [weak self] model in
+            guard let model = model else { return }
+            self?.chartDataProvider = model
         }
     }
     
-    func handlerSelectedTimePeriod() -> SelectedTimePeriodData {
-        let calendar = Calendar.current
-        let components: DateComponents = .init(day: -6)
-        var startDate = calendar.startOfDay(for: calendar.date(byAdding: components, to: Date())!)
+    func getValueData() -> ChartData {
+        let filter = getAccessToFilterData(selectedSegmentIndex)
+        let chartTitle = getDataTypeName(selectedCategoryIdentifier)
+        let detailTextLabel = filter?.headerDetailText ?? createChartWeeklyDateRangeLabel(startDate: nil)
+        let axisHorizontalMarkers = filter?.horizontalAxisMarkers ?? createHorizontalAxisMarkers()
         
-        var detailText = createChartWeeklyDateRangeLabel(startDate: startDate)
-        var horizontalTextArray = createHorizontalAxisMarkers()
-        switch self {
-        case .day:
-            detailText = "Last 24 Hours"
-            startDate = Calendar.current.startOfDay(for: Date())
-            horizontalTextArray = createHoursHorizontalAxisForMarkers()
-            return  SelectedTimePeriodData(components: .init(hour: 1), headerDetailText: detailText, horizontalAxisMarkers: horizontalTextArray,startDate: startDate, barSize: 20.0)
-        case .week:
-            return  SelectedTimePeriodData(components: .init(day: 1), headerDetailText: detailText, horizontalAxisMarkers: horizontalTextArray,startDate: startDate, barSize: 10.0)
-        case .month:
-            detailText = createMonthHorizontalAxisMarkers().first!
-            horizontalTextArray = createMonthHorizontalAxisMarkers()
-            startDate = calendar.date(byAdding: .day, value: -30, to: Date())!
-            return SelectedTimePeriodData(components: .init(day: 1), headerDetailText: detailText, horizontalAxisMarkers: horizontalTextArray,startDate: startDate, barSize: 5.0)
-        }
+        let measurementUnitText = getUnitMeasurement(selectedCategoryIdentifier)
+        
+        let value: [CGFloat] = chartDataProvider.map { CGFloat($0.value) }
+        let size = filter?.barSize ?? 5.0
+        
+        let series = OCKDataSeries(values: value, title: measurementUnitText.capitalized ,size: size, color: FFResources.Colors.activeColor)
+        return ChartData(series: [series], headerViewTitleLabel: chartTitle, headerViewDetailLabel: detailTextLabel, graphViewAxisMarkers: axisHorizontalMarkers)
+    }
+    
+    func getAccessToFilterData(_ sender: Int?) -> SelectedTimePeriodData? {
+        let _case = SelectedTimePeriodType(rawValue: sender ?? selectedSegmentIndex)
+        let value = _case.handlerSelectedTimePeriod()
+        return value
     }
 }
 
-struct SelectedTimePeriodData {
-    var components: DateComponents
-    var headerDetailText: String
-    var horizontalAxisMarkers: [String]
-    var startDate: Date
-    var barSize: CGFloat
+struct ChartData {
+    let series: [OCKDataSeries]
+    let headerViewTitleLabel: String
+    let headerViewDetailLabel: String
+    let graphViewAxisMarkers: [String]
 }
+
+
