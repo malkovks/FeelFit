@@ -23,6 +23,7 @@ class FFHealthDataManager {
     private let healthStore = HKHealthStore()
     private let calendar = Calendar.current
     private let userCharactersTypes = Set(FFHealthData.charDataTypes)
+    private let group = DispatchGroup()
     
     func performQuery(
         identifications : [HKQuantityTypeIdentifier] = [],
@@ -41,9 +42,6 @@ class FFHealthDataManager {
             
             DispatchQueue.global(qos: .background).async { [weak self] in
                 
-                //dispatch group for full loading and completed handling data by request
-                let group = DispatchGroup()
-                
                 let _ = preparePredicateHealthData(value: interval, byAdding: calendar, from: Date())
                 let anchorDate = startDate ?? createAnchorData()
                 var sortedResult = [[FFUserHealthDataProvider]]()
@@ -56,7 +54,7 @@ class FFHealthDataManager {
                                                             options: options,
                                                             anchorDate: anchorDate,
                                                             intervalComponents: dateComponents)
-                    group.enter()
+                    self?.group.enter()
                     
                     query.initialResultsHandler = { [weak self] query, result, error in
                         guard let result = result,
@@ -70,7 +68,7 @@ class FFHealthDataManager {
                     }
                     self?.healthStore.execute(query)
                 }
-                group.notify(queue: .main) {
+                self?.group.notify(queue: .main) {
                     sortedResult.sort { $0[0].identifier < $1[0].identifier }
                     completion(sortedResult)
                 }
@@ -103,7 +101,6 @@ class FFHealthDataManager {
             }
             self?.healthStore.execute(query)
         }
-        
     }
     
     

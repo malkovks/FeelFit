@@ -64,16 +64,24 @@ class FFUserHealthCategoryViewModel: UserHealthCategorySetting {
     }
     
     func loadFavouriteUserHealthCategory(){
+        
         let userFavouriteTypes: [HKQuantityTypeIdentifier] = FFHealthData.favouriteQuantityTypeIdentifier
         let startDate = Calendar.current.startOfDay(for: Date())
-        FFHealthDataManager.shared.performQuery(identifications: userFavouriteTypes, 
-                                                selectedOptions: nil, startDate: startDate) { [weak self] models in
-            guard let model = models,
-                  let self = self else {
-                return
+        
+        for identifier in userFavouriteTypes {
+            var value: [[FFUserHealthDataProvider]] = [[]]
+            group.enter()
+            FFHealthDataManager.shared.loadSelectedIdentifierData(filter: nil, identifier: identifier, startDate: startDate) { model in
+                guard let model = model else { return }
+                value.append(model)
+                self.group.leave()
             }
-            userFavouriteHealthCategoryArray = model
+            group.notify(queue: .main) {
+                self.userFavouriteHealthCategoryArray = value
+            }
         }
+
+        
     }
     //Load from UserImageManager
     func loadUserImage(){

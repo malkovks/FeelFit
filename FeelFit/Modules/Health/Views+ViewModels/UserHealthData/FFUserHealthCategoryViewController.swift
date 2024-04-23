@@ -11,11 +11,6 @@ import UIKit
 ///Class displaying filtered collection view with main data of users selected information
 class FFUserHealthCategoryViewController: UIViewController, SetupViewController {
     
-    var userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
-    
-    
-    private let loadHealthData = FFHealthDataManager.shared
-    private var healthData = [[FFUserHealthDataProvider]]()
     private var viewModel: FFUserHealthCategoryViewModel!
     
     private var collectionView: UICollectionView!

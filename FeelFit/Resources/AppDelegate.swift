@@ -73,8 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func convertResult(completion: @escaping (_ models: [FFUserHealthDataProvider]?) -> ()){
-        let intervalDateComponents = DateComponents(day: 1)
-        let interval: Int = -1
         let startDate = calendar.startOfDay(for: Date())
         healthDataLoading.loadSelectedIdentifierData(filter: nil, identifier: .stepCount, startDate: startDate, completion: completion)
     }

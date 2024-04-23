@@ -162,6 +162,7 @@
 		FD9DE36C2BC13360005775DF /* FFCenteredTitleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE36B2BC13360005775DF /* FFCenteredTitleTableViewCell.swift */; };
 		FD9DE3732BC1433F005775DF /* FFOnboardingUserDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3722BC1433F005775DF /* FFOnboardingUserDataViewModel.swift */; };
 		FDE1D7E72BD5719A0019A5D2 /* FFHealthDataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE1D7E62BD5719A0019A5D2 /* FFHealthDataHandler.swift */; };
+		FDEF7BA22BD7B9BE004B303C /* FFChartDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDEF7BA12BD7B9BE004B303C /* FFChartDataModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -315,6 +316,7 @@
 		FD9DE36B2BC13360005775DF /* FFCenteredTitleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFCenteredTitleTableViewCell.swift; sourceTree = "<group>"; };
 		FD9DE3722BC1433F005775DF /* FFOnboardingUserDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingUserDataViewModel.swift; sourceTree = "<group>"; };
 		FDE1D7E62BD5719A0019A5D2 /* FFHealthDataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthDataHandler.swift; sourceTree = "<group>"; };
+		FDEF7BA12BD7B9BE004B303C /* FFChartDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFChartDataModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -644,6 +646,7 @@
 			children = (
 				0A69E0D22B4E26F10023487B /* UserHealthDataProvider.swift */,
 				FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */,
+				FDEF7BA12BD7B9BE004B303C /* FFChartDataModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1474,6 +1477,7 @@
 				0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */,
 				FD9DE3732BC1433F005775DF /* FFOnboardingUserDataViewModel.swift in Sources */,
 				FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */,
+				FDEF7BA22BD7B9BE004B303C /* FFChartDataModel.swift in Sources */,
 				0A85551C2B72436900B1A7EE /* FFHealthDataManager.swift in Sources */,
 				0A4494C22AB821FD0082C909 /* SceneDelegate.swift in Sources */,
 				0ACEA9DF2ACF1C9B00899CF6 /* FFNewsModelRealm.swift in Sources */,

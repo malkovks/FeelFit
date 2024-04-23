@@ -9,8 +9,19 @@ import UIKit
 import CareKit
 import HealthKit
 
-class FFHealthCategoryCartesianViewModel {
+protocol HealthCartesianDelegate: AnyObject {
+    func didLoadData()
+}
+
+protocol HealthCartesianViewModelProtocol: AnyObject {
+    var delegate: HealthCartesianDelegate? { get set }
+    func loadData(selectedIndex: Int?)
+    func getChartViewData() -> ChartData
+}
+
+class FFHealthCategoryCartesianViewModel: HealthCartesianViewModelProtocol {
     
+    weak var delegate: HealthCartesianDelegate?
     
     private let userDefaults = UserDefaults.standard
     private let viewController: UIViewController
@@ -22,11 +33,6 @@ class FFHealthCategoryCartesianViewModel {
     init(viewController: UIViewController, selectedCategoryIdentifier: HKQuantityTypeIdentifier) {
         self.viewController = viewController
         self.selectedCategoryIdentifier = selectedCategoryIdentifier
-    }
-    
-    func pullToRefreshControl(){
-        guard let data = getAccessToFilterData(nil) else { return }
-        loadSelectedCategoryData(filter: data)
     }
     
     @objc func didTapAddNewValue(){
@@ -44,35 +50,19 @@ class FFHealthCategoryCartesianViewModel {
         viewController.navigationController?.popViewController(animated: true)
     }
     
-    func loadSelectedSegmentIndex(_ index: Int) {
-        guard let value = getAccessToFilterData(index) else { return }
-        loadSelectedCategoryData(filter: value)
-        userDefaults.set(index, forKey: "selectedSegmentControl")
+    //load data by selected index or by last used selected index in segment control
+    func loadData(selectedIndex: Int? = nil){
+        let index = selectedIndex ?? selectedSegmentIndex
         selectedSegmentIndex = index
+        userDefaults.set(index, forKey: "selectedSegmentControl")
+        guard let filter = getAccessToFilterData(index) else { return }
+        loadSelectedCategoryData(filter: filter)
+        delegate?.didLoadData()
     }
     
-    func didTapAddNewValueToHealthStore(with value: Double) {
-        guard let sample = FFHealthData.processHealthSample(with: value, data: chartDataProvider) else { return }
-        FFHealthData.saveHealthData([sample]) { [weak self] success, error in
-            if let error = error {
-                self?.viewController.alertError(title: "Error adding data to Health",message: error.localizedDescription)
-            }
-            if success {
-                self?.pullToRefreshControl()
-            }
-        }
-    }
     
-    func loadSelectedCategoryData(filter: SelectedTimePeriodData){
-        let start = Calendar.current.date(byAdding: DateComponents(day: -6), to: Date())!
-        let startDate = Calendar.current.startOfDay(for: start)
-        FFHealthDataManager.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate) { [weak self] model in
-            guard let model = model else { return }
-            self?.chartDataProvider = model
-        }
-    }
-    
-    func getValueData() -> ChartData {
+    /// Convert loaded data and return completed data for display in chart
+    func getChartViewData() -> ChartData {
         let filter = getAccessToFilterData(selectedSegmentIndex)
         let chartTitle = getDataTypeName(selectedCategoryIdentifier)
         let detailTextLabel = filter?.headerDetailText ?? createChartWeeklyDateRangeLabel(startDate: nil)
@@ -87,18 +77,41 @@ class FFHealthCategoryCartesianViewModel {
         return ChartData(series: [series], headerViewTitleLabel: chartTitle, headerViewDetailLabel: detailTextLabel, graphViewAxisMarkers: axisHorizontalMarkers)
     }
     
-    func getAccessToFilterData(_ sender: Int?) -> SelectedTimePeriodData? {
+    private func didTapAddNewValueToHealthStore(with value: Double) {
+        guard let sample = FFHealthData.processHealthSample(with: value, data: chartDataProvider) else { return }
+        FFHealthData.saveHealthData([sample]) { [weak self] success, error in
+            if let error = error {
+                self?.viewController.alertError(title: "Error adding data to Health",message: error.localizedDescription)
+            }
+            if success {
+                self?.loadData()
+                self?.delegate?.didLoadData()
+            }
+        }
+    }
+    
+    private func loadSelectedCategoryData(filter: SelectedTimePeriodData){
+        let start = Calendar.current.date(byAdding: DateComponents(day: -6), to: Date())!
+        let startDate = Calendar.current.startOfDay(for: start)
+        
+        FFHealthDataManager.shared.loadSelectedIdentifierData(filter: filter, identifier: selectedCategoryIdentifier, startDate: startDate) { [weak self] model in
+            guard let model = model else { return }
+            self?.chartDataProvider = model
+            self?.delegate?.didLoadData()
+        }
+    }
+    
+
+    
+    private func getAccessToFilterData(_ sender: Int?) -> SelectedTimePeriodData? {
         let _case = SelectedTimePeriodType(rawValue: sender ?? selectedSegmentIndex)
         let value = _case.handlerSelectedTimePeriod()
         return value
     }
 }
 
-struct ChartData {
-    let series: [OCKDataSeries]
-    let headerViewTitleLabel: String
-    let headerViewDetailLabel: String
-    let graphViewAxisMarkers: [String]
-}
+
+
+
 
 

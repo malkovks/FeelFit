@@ -26,8 +26,6 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         fatalError("init(coder:) has not been implemented")
     }
     
-    private var chartDataProvider = [FFUserHealthDataProvider]()
-    
     private let loadUserHealth = FFHealthDataManager.shared
     
     //MARK: - UI elements
@@ -59,9 +57,11 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         return scrollView
     }()
     
-    private let chartView: OCKCartesianChartView = {
+    private var chartView: OCKCartesianChartView = {
         let chart = OCKCartesianChartView(type: .bar)
         chart.applyConfiguration()
+        chart.isUserInteractionEnabled = true
+        chart.graphView.isUserInteractionEnabled = true
         chart.backgroundColor = .systemBackground
         chart.layer.borderWidth = 0.3
         chart.layer.borderColor = FFResources.Colors.darkPurple.cgColor
@@ -82,11 +82,9 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     }
     //MARK: - Actions
     @objc private func handleRefreshControl(){
-        viewModel.pullToRefreshControl()
-
+        viewModel.loadData()
         DispatchQueue.main.asyncAfter(deadline: .now()+1.5) { [weak self] in
             self?.scrollView.refreshControl?.endRefreshing()
-            self?.updateChartDataSeries()
         }
     }
     
@@ -95,17 +93,12 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     }
 
     @objc private func handlerSegmentController(_ sender: UISegmentedControl){
-        viewModel.loadSelectedSegmentIndex(sender.selectedSegmentIndex)
-        DispatchQueue.main.async {
-            self.updateChartDataSeries()
-        }
+        let index = sender.selectedSegmentIndex
+        viewModel.loadData(selectedIndex: index)
     }
     
     @objc private func didTapAddNewValue(){
         viewModel.didTapAddNewValue()
-        DispatchQueue.main.async {
-            self.updateChartDataSeries()
-        }
     }
     
     @objc func didTapSwipeGestureRecognize(_ gesture: UISwipeGestureRecognizer){
@@ -124,10 +117,7 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         }
         
         segmentControl.selectedSegmentIndex = currentIndex
-        viewModel.loadSelectedSegmentIndex(currentIndex)
-        DispatchQueue.main.async {
-            self.updateChartDataSeries()
-        }
+        viewModel.loadData(selectedIndex: currentIndex)
     }
     //
     func didTapCallMenu() -> UIMenu {
@@ -157,23 +147,15 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
         setupGestures()
         setupConstraints()
     }
-
     
     private func setupChartView(){
         chartView.delegate = self
-        chartView.isUserInteractionEnabled = true
-        chartView.graphView.isUserInteractionEnabled = true
-        guard let data = viewModel.getAccessToFilterData(viewModel.selectedSegmentIndex) else { return }
-        viewModel.loadSelectedCategoryData(filter: data)
-        DispatchQueue.main.async {
-            self.updateChartDataSeries()
-        }
-        
+        viewModel.loadData()
     }
     
     //complete
     private func updateChartDataSeries(){
-        let data = viewModel.getValueData()
+        let data = viewModel.getChartViewData()
         DispatchQueue.main.async { [weak self] in
             self?.chartView.graphView.dataSeries = data.series
             self?.chartView.headerView.titleLabel.text = data.headerViewTitleLabel
@@ -223,6 +205,14 @@ class FFHealthCategoryCartesianViewController: UIViewController, SetupViewContro
     
     func setupViewModel() {
         viewModel = FFHealthCategoryCartesianViewModel(viewController: self, selectedCategoryIdentifier: identifier)
+        viewModel.delegate = self
+    }
+}
+
+extension FFHealthCategoryCartesianViewController: HealthCartesianDelegate {
+    
+    func didLoadData() {
+        updateChartDataSeries()
     }
 }
 
