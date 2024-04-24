@@ -9,9 +9,9 @@ import HealthKit
 import UIKit
 
 ///Class displaying filtered collection view with main data of users selected information
-class FFUserHealthCategoryViewController: UIViewController, SetupViewController {
+class FFFavouriteHealthCategoriesViewController: UIViewController, SetupViewController {
     
-    private var viewModel: FFUserHealthCategoryViewModel!
+    private var viewModel: FFFavouriteHealthCategoriesViewModel!
     
     private var collectionView: UICollectionView!
     
@@ -32,8 +32,9 @@ class FFUserHealthCategoryViewController: UIViewController, SetupViewController 
     }
     
     @objc private func didTapRefreshView(){
+        viewModel.userFavouriteHealthCategoryArray.removeAll()
         viewModel.refreshView()
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now()+1.5) { [weak self] in
             self?.refreshControl.endRefreshing()
             self?.collectionView.reloadData()
         }
@@ -84,19 +85,19 @@ class FFUserHealthCategoryViewController: UIViewController, SetupViewController 
     }
     
     func setupViewModel() {
-        viewModel = FFUserHealthCategoryViewModel(viewController: self)
+        viewModel = FFFavouriteHealthCategoriesViewModel(viewController: self)
         viewModel.delegate = self
         didTapRefreshView()
     }
 }
 
-extension FFUserHealthCategoryViewController: UserHealthCategoryDelegate {
+extension FFFavouriteHealthCategoriesViewController: UserHealthCategoryDelegate {
     func didTapReloadView() {
         didTapRefreshView()
     }
 }
 
-extension FFUserHealthCategoryViewController: UICollectionViewDataSource {
+extension FFFavouriteHealthCategoriesViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -113,7 +114,7 @@ extension FFUserHealthCategoryViewController: UICollectionViewDataSource {
     }
 }
 
-extension FFUserHealthCategoryViewController: UICollectionViewDelegate {
+extension FFFavouriteHealthCategoriesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         viewModel.pushSelectedHealthCategory(selectedItem: indexPath)
@@ -131,7 +132,7 @@ extension FFUserHealthCategoryViewController: UICollectionViewDelegate {
     }
 }
 
-extension FFUserHealthCategoryViewController: UICollectionViewDelegateFlowLayout {
+extension FFFavouriteHealthCategoriesViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width-20
         let height = CGFloat(view.frame.size.height/4)
@@ -147,7 +148,7 @@ extension FFUserHealthCategoryViewController: UICollectionViewDelegateFlowLayout
     }
 }
 
-private extension FFUserHealthCategoryViewController {
+private extension FFFavouriteHealthCategoriesViewController {
     func setupConstraints(){
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -157,7 +158,7 @@ private extension FFUserHealthCategoryViewController {
 }
 
 #Preview {
-    let vc = FFUserHealthCategoryViewController()
+    let vc = FFFavouriteHealthCategoriesViewController()
     let navVC = FFNavigationController(rootViewController: vc)
     return navVC
 }

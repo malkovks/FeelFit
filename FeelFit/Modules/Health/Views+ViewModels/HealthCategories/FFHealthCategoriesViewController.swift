@@ -1,5 +1,5 @@
 //
-//  FFFavouriteHealthDataViewController.swift
+//  FFHealthCategoriesViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 10.02.2024.
@@ -8,7 +8,7 @@
 import UIKit
 
 /// Class displaying table view with all accessed Quantity Type Identifiers and give to user possibility for filter collection view
-class FFFavouriteHealthDataViewController: UIViewController, SetupViewController {
+class FFHealthCategoriesViewController: UIViewController, SetupViewController {
     
     var isViewDismissed: (() -> ())?
     
@@ -58,7 +58,7 @@ class FFFavouriteHealthDataViewController: UIViewController, SetupViewController
     
 }
 
-extension FFFavouriteHealthDataViewController: UITableViewDataSource {
+extension FFHealthCategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sharedIdentifiers.count
     }
@@ -70,7 +70,7 @@ extension FFFavouriteHealthDataViewController: UITableViewDataSource {
     }
 }
 
-extension FFFavouriteHealthDataViewController: UITableViewDelegate {
+extension FFHealthCategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let cell = tableView.cellForRow(at: indexPath) as! FFFavouriteHealthDataTableViewCell
@@ -82,7 +82,7 @@ extension FFFavouriteHealthDataViewController: UITableViewDelegate {
     }
 }
 
-private extension FFFavouriteHealthDataViewController {
+private extension FFHealthCategoriesViewController {
     func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in

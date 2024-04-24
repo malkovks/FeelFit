@@ -24,7 +24,6 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         ["Save edited data":""]
     ]
     
-    private var isTableViewIsEditing: Bool = false
     
     init(userImage: UIImage = UIImage(systemName: "person.crop.circle")!){
         self.userImage = userImage
