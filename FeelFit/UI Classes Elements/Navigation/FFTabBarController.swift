@@ -44,7 +44,7 @@ final class FFTabBarController: UITabBarController {
     private func setupControllerBar(){
         let news = createTabBarItem(vc: FFNewsPageViewController(), title: "News", image: "newspaper",tag: FFTabBarIndex.news.rawValue)
         let exercises = createTabBarItem(vc: FFMusclesGroupViewController(), title: "Muscles", image: "figure.strengthtraining.traditional",tag: FFTabBarIndex.exercises.rawValue)
-        let health = createTabBarItem(vc: FFUserHealthCategoryViewController(), title: "Health", image: "heart.text.square",tag: FFTabBarIndex.health.rawValue)
+        let health = createTabBarItem(vc: FFFavouriteHealthCategoriesViewController(), title: "Health", image: "heart.text.square",tag: FFTabBarIndex.health.rawValue)
         let plan = createTabBarItem(vc: FFTRainingPlanViewController(), title: "Plan", image: "checkmark.diamond",tag: FFTabBarIndex.trainingPlan.rawValue)
         setViewControllers([news, exercises, plan, health], animated: true)
     }

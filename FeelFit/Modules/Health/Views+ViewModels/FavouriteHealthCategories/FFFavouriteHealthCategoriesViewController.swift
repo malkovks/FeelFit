@@ -11,7 +11,7 @@ import UIKit
 ///Class displaying filtered collection view with main data of users selected information
 class FFFavouriteHealthCategoriesViewController: UIViewController, SetupViewController {
     
-    private var viewModel: FFFavouriteHealthCategoriesViewModel!
+    private var viewModel:FFFavouriteUserCategoriesViewModel!
     
     private var collectionView: UICollectionView!
     
@@ -85,7 +85,7 @@ class FFFavouriteHealthCategoriesViewController: UIViewController, SetupViewCont
     }
     
     func setupViewModel() {
-        viewModel = FFFavouriteHealthCategoriesViewModel(viewController: self)
+        viewModel = FFFavouriteUserCategoriesViewModel(viewController: self)
         viewModel.delegate = self
         didTapRefreshView()
     }
@@ -162,6 +162,9 @@ private extension FFFavouriteHealthCategoriesViewController {
     let navVC = FFNavigationController(rootViewController: vc)
     return navVC
 }
+
+
+
 
 
 

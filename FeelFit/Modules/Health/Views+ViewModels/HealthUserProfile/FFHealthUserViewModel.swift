@@ -8,7 +8,7 @@
 import UIKit
 
 class FFHealthUserViewModel {
-    var viewController: UIViewController
+    private let viewController: UIViewController
     
     init(viewController: UIViewController) {
         self.viewController = viewController

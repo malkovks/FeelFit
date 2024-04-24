@@ -21,59 +21,7 @@ class FFHealthDataManager {
     private init() {}
     
     private let healthStore = HKHealthStore()
-    private let calendar = Calendar.current
     private let userCharactersTypes = Set(FFHealthData.charDataTypes)
-    private let group = DispatchGroup()
-    
-    func performQuery(
-        identifications : [HKQuantityTypeIdentifier] = [],
-        value dateComponents: DateComponents = DateComponents(day: 1),
-        calendar: Calendar.Component? = .day,
-        interval: Int = -6,
-        selectedOptions: HKStatisticsOptions?,
-        startDate: Date?,
-        currentDate date: Date = Date(),
-        completion: @escaping (_ models: [[FFUserHealthDataProvider]]? )->()) {
-            
-            guard !identifications.isEmpty else {
-                completion(nil)
-                return
-            }
-            
-            DispatchQueue.global(qos: .background).async { [weak self] in
-                
-                let _ = preparePredicateHealthData(value: interval, byAdding: calendar, from: Date())
-                let anchorDate = startDate ?? createAnchorData()
-                var sortedResult = [[FFUserHealthDataProvider]]()
-                for identification in identifications {
-                    let options: HKStatisticsOptions = selectedOptions ?? prepareStatisticOptions(for: identification.rawValue)
-                    let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
-                    let id = HKQuantityType.quantityType(forIdentifier: identification)!
-                    let query = HKStatisticsCollectionQuery(quantityType: id,
-                                                            quantitySamplePredicate: predicate,
-                                                            options: options,
-                                                            anchorDate: anchorDate,
-                                                            intervalComponents: dateComponents)
-                    self?.group.enter()
-                    
-                    query.initialResultsHandler = { [weak self] query, result, error in
-                        guard let result = result,
-                              let self = self else {
-                            completion(nil)
-                            return
-                        }
-                        let value = processStatisticsData(result, identification, anchorDate, options)
-                        sortedResult.append(value)
-                        group.leave()
-                    }
-                    self?.healthStore.execute(query)
-                }
-                self?.group.notify(queue: .main) {
-                    sortedResult.sort { $0[0].identifier < $1[0].identifier }
-                    completion(sortedResult)
-                }
-            }
-    }
     
     func loadSelectedIdentifierData(filter: SelectedTimePeriodData?,identifier: HKQuantityTypeIdentifier,startDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
         DispatchQueue.global().async { [weak self] in
