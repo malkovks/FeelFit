@@ -13,6 +13,7 @@ class FFHealthCategoriesViewController: UIViewController, SetupViewController {
     var isViewDismissed: (() -> ())?
     
     private let sharedIdentifiers = FFHealthData.allQuantityTypeIdentifiers
+    private var viewModel: FFHealthCategoriesViewModel!
     
     private var tableView: UITableView!
     
@@ -42,7 +43,7 @@ class FFHealthCategoriesViewController: UIViewController, SetupViewController {
     }
     
     func setupViewModel() {
-        
+        viewModel = FFHealthCategoriesViewModel(viewController: self)
     }
     
     private func setupTableView(){

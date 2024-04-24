@@ -153,6 +153,7 @@
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
+		FD60AA872BD928D200A54463 /* FFHealthCategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */; };
 		FD6818632BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6818622BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift */; };
 		FD75D2EB2BD638C000AE509D /* HealthCategoruCartesianModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */; };
 		FD9DE3662BBC3605005775DF /* DataTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DE3652BBC3605005775DF /* DataTips.swift */; };
@@ -308,6 +309,7 @@
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
+		FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCategoriesViewModel.swift; sourceTree = "<group>"; };
 		FD6818622BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCategoryCartesianViewModel.swift; sourceTree = "<group>"; };
 		FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCategoruCartesianModel.swift; sourceTree = "<group>"; };
 		FD9DE3652BBC3605005775DF /* DataTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTips.swift; sourceTree = "<group>"; };
@@ -1278,6 +1280,7 @@
 			isa = PBXGroup;
 			children = (
 				0AE049A72B776ECA00697A82 /* FFHealthCategoriesViewController.swift */,
+				FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */,
 			);
 			path = HealthCategories;
 			sourceTree = "<group>";
@@ -1392,6 +1395,7 @@
 				0AE049AB2B77806800697A82 /* FFFavouriteHealthDataTableViewCell.swift in Sources */,
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0A8479B52BB41C0300C0F8EE /* ActionsWithUserImageView.swift in Sources */,
+				FD60AA872BD928D200A54463 /* FFHealthCategoriesViewModel.swift in Sources */,
 				FDEF7BA52BD9208E004B303C /* FFHealthUserInformationViewModel.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */,
