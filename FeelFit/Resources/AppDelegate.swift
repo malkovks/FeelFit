@@ -18,14 +18,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     private let healthDataLoading = FFHealthDataManager.shared
     private let calendar = Calendar.current
-    private let taskId = "Malkov.KS.FeelFit.fitnessApp.fetch"
+    private let taskId = "Malkov.KS.FeelFit.fitApp.refresh"
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         registerBackgroundTask()
+        scheduleAppRefresh()
         registerTipsConfigure()
         return true
     }
+    
+    
     
     
     /// Function register tip kit in app
@@ -40,41 +43,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /// Function register Background Tasks for collecting users steps
     private func registerBackgroundTask() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: nil) { task in
-            self.handleAppRefreshTask(for: task as! BGProcessingTask)
+            self.refreshData()
+            task.setTaskCompleted(success: true)
         }
     }
     
     private func scheduleAppRefresh(){
         let request = BGProcessingTaskRequest(identifier: taskId)
-        request.requiresNetworkConnectivity = true
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 10)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15)
         do {
-            
             try BGTaskScheduler.shared.submit(request)
         } catch {
-            fatalError(error.localizedDescription)
+            print("Could not schedule app refresh : \(error.localizedDescription)")
         }
     }
     
-    private func handleAppRefreshTask(for task: BGProcessingTask){
-        scheduleAppRefresh()
-        convertResult { models in
-            guard let models = models,
-                  let model = models.last
-            else {
-                return
-            }
-            let stepcount: Int = Int(model.value)
-            if stepcount == 10_000 {
-                FFSendUserNotifications.shared.sendReachedStepObjectiveNotification()
-            }
-        }
-        task.setTaskCompleted(success: true)
-    }
-
-    private func convertResult(completion: @escaping (_ models: [FFUserHealthDataProvider]?) -> ()){
-        let startDate = calendar.startOfDay(for: Date())
-        healthDataLoading.loadSelectedIdentifierData(filter: nil, identifier: .stepCount, startDate: startDate, completion: completion)
+    func refreshData(){
+        
+//        let vm = FFFavouriteUserCategoriesViewModel(viewController: UIViewController())
+//        vm.refreshView()
+        print("data is refreshing")
     }
 }
 

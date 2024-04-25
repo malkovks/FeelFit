@@ -12,7 +12,6 @@ class FFHealthCategoriesViewController: UIViewController, SetupViewController {
     
     var isViewDismissed: (() -> ())?
     
-    private let sharedIdentifiers = FFHealthData.allQuantityTypeIdentifiers
     private var viewModel: FFHealthCategoriesViewModel!
     
     private var tableView: UITableView!
@@ -23,8 +22,8 @@ class FFHealthCategoriesViewController: UIViewController, SetupViewController {
     }
     
     @objc private func didTapSave(){
-        self.isViewDismissed?()
-        self.dismiss(animated: true)
+        isViewDismissed?()
+        viewModel.saveSelectedCategories()
     }
     
     func setupView() {
@@ -61,25 +60,21 @@ class FFHealthCategoriesViewController: UIViewController, SetupViewController {
 
 extension FFHealthCategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sharedIdentifiers.count
+        viewModel.tableView(tableView, numberOfRowsInSection: section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {        
-        let cell = tableView.dequeueReusableCell(withIdentifier: FFFavouriteHealthDataTableViewCell.identifier, for: indexPath) as! FFFavouriteHealthDataTableViewCell
-        cell.configureCell(indexPath,identifier: sharedIdentifiers)
-        return cell
+        viewModel.tableView(tableView, cellForRowAt: indexPath)
     }
 }
 
 extension FFHealthCategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath) as! FFFavouriteHealthDataTableViewCell
-        cell.didTapChangeStatus()
+        viewModel.tableView(tableView, didSelectRowAt: indexPath)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
 }
 

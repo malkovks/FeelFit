@@ -26,6 +26,7 @@ class FFNavigationControllerCustomView: UIView {
         button.backgroundColor = .systemBackground
         button.layer.cornerRadius = 15
         button.layer.masksToBounds = true
+        button.imageView?.contentMode = .scaleAspectFill
         return button
     }()
     

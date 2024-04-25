@@ -1,5 +1,5 @@
     //
-//  FFHealthUserProfileViewController.swift
+//  FFUserProfileViewController.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 25.01.2024.
@@ -13,10 +13,10 @@ import RealmSwift
 import TipKit
 
 ///Class display main information about user, his basic statistics and some terms about health access and etc
-class FFHealthUserProfileViewController: UIViewController, SetupViewController, HandlerUserProfileImageProtocol {
+class FFUserProfileViewController: UIViewController, SetupViewController, HandlerUserProfileImageProtocol {
     
     
-    private var viewModel: FFHealthUserViewModel!
+    private var viewModel: FFUserProfileViewModel!
     private let realm = try! Realm()
     
     private let headerTextSections = [
@@ -28,10 +28,11 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     
     
     private let textLabelRows = [
-        ["Health information"
+        ["User Profile"
          ,"Medical Card"],
-        ["Health Checklist",
-         "Notification"],
+        ["Clean cache data",
+         "Clean storage data",
+         "Access to Services"],
         ["Application and services",
          "Scientific Research",
          "Devices"],
@@ -84,16 +85,36 @@ class FFHealthUserProfileViewController: UIViewController, SetupViewController, 
     
     
     /// Function open details about user's health
-    private func openUserHealthData(){
+    private func pushUserHealthData(){
         let vc = FFHealthUserInformationViewController()
         vc.userImage = managedUserImage
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func pushUserData(){
+        //показывать изображение, имя фамилию, почту аккаунта возможность выйти из аккаунта(мб сделать в таблице)
+    }
+    
+    func clearUserCache(){
+        //создать запрос у пользователя хочет ли он очистить весь кэш приложения
+    }
+    
+    func clearStoreData(){
+        //cоздать запрос хочет ли пользователь удалить весь сохраненный материал на устройство
+    }
+    
+    func checkAccessStatus(){
+        //открывает отдельный класс где показывается к каким сервисам доступ у пользователя есть, а каким нету
+    }
+    
+    
+    
+    
 
 }
 
     //MARK: Set up methods
-extension FFHealthUserProfileViewController {
+extension FFUserProfileViewController {
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         feedbackGenerator.prepare()
@@ -123,7 +144,7 @@ extension FFHealthUserProfileViewController {
     
 
     func setupViewModel() {
-        viewModel = FFHealthUserViewModel(viewController: self)
+        viewModel = FFUserProfileViewModel(viewController: self)
     }
     
     private func setupTableView(){
@@ -140,7 +161,7 @@ extension FFHealthUserProfileViewController {
     }
 }
 
-extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+extension FFUserProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
         handlerCapturedImage(info, tableView: tableView)
@@ -152,7 +173,7 @@ extension FFHealthUserProfileViewController: UIImagePickerControllerDelegate & U
     }
 }
 
-extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
+extension FFUserProfileViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true)
         handlerSelectedImage(results, tableView: tableView)
@@ -160,7 +181,7 @@ extension FFHealthUserProfileViewController: PHPickerViewControllerDelegate {
 }
 
 //MARK: - TableView Data Source
-extension FFHealthUserProfileViewController: UITableViewDataSource {
+extension FFUserProfileViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         headerTextSections.count
     }
@@ -173,17 +194,20 @@ extension FFHealthUserProfileViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "userHealthCell", for: indexPath)
         cell.backgroundColor = .systemBackground
         cell.textLabel?.text = textLabelRows[indexPath.section][indexPath.row]
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 }
 
-extension FFHealthUserProfileViewController: UITableViewDelegate {
+extension FFUserProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath.section {
-        case 0 :
-            openUserHealthData()
+        switch indexPath {
+        case [0,0]:
+            pushUserHealthData()
+        case [0,1]:
+            pushUserData()
         default:
             showInlineInfo(titleText: "Title",
                            messageText: "This cell containts some info",
@@ -228,7 +252,7 @@ extension FFHealthUserProfileViewController: UITableViewDelegate {
     }
 }
 
-extension FFHealthUserProfileViewController {
+extension FFUserProfileViewController {
     private func setupConstraints(){
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
@@ -238,13 +262,9 @@ extension FFHealthUserProfileViewController {
             make.width.equalToSuperview()
         }
     }
-    
-    
-
 }
 
 #Preview {
-    let navVC = FFNavigationController(rootViewController: FFHealthUserProfileViewController())
-    return navVC
+    let vc = FFNavigationController(rootViewController: FFUserProfileViewController())
+    return vc
 }
-

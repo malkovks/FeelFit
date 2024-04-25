@@ -4,7 +4,8 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>Malkov.KS.FeelFit.fitnessApp.fetch</string>
+		<string>Malkov.KS.FeelFit.fitApp.refresh</string>
+		<string>Malkov.KS.FeelFit.fitApp.db_cleaning</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>

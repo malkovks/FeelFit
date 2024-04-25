@@ -37,7 +37,7 @@ class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
     }
     
     func presentUserProfilePage(){
-        let vc = FFHealthUserProfileViewController()
+        let vc = FFUserProfileViewController()
         let navVC = FFNavigationController(rootViewController: vc)
         viewController.present(navVC, animated: true)
     }
@@ -47,7 +47,7 @@ class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
         loadUserImage()
     }
     
-    func presentHealthCategories(){
+    @objc func presentHealthCategories(){
         let vc = FFHealthCategoriesViewController()
         vc.isViewDismissed = { [weak self] in
             self?.delegate?.didTapReloadView()
@@ -90,5 +90,57 @@ class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
         } catch {
             fatalError("Fatal error loading image from users directory")
         }
+    }
+}
+
+//MARK: - Collection view Data Source
+extension FFFavouriteUserCategoriesViewModel {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return userFavouriteHealthCategoryArray.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FFPresentHealthCollectionViewCell.identifier, for: indexPath) as! FFPresentHealthCollectionViewCell
+        let data = userFavouriteHealthCategoryArray[indexPath.row]
+        cell.configureCell(indexPath, values: data)
+        return cell
+    }
+}
+//MARK: - Collection view Delegate
+extension FFFavouriteUserCategoriesViewModel {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        pushSelectedHealthCategory(selectedItem: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthHeaderCollectionView.identifier, for: indexPath) as! FFPresentHealthHeaderCollectionView
+            header.configureHeaderCollectionView(selector: #selector(presentHealthCategories), target: self)
+            return header
+        }
+        let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FFPresentHealthFooterCollectionView.identifier, for: indexPath) as! FFPresentHealthFooterCollectionView
+        footer.configureButtonTarget(target: self, selector: #selector(presentHealthCategories))
+        return  footer
+    }
+}
+//MARK: - Collection view delegate flow layout
+extension FFFavouriteUserCategoriesViewModel {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.bounds.width-20
+        let height = CGFloat(viewController.view.frame.size.height/4)
+        return CGSize(width: width, height: height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.bounds.width-10, height: 50)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.bounds.width-10, height: 60)
     }
 }
