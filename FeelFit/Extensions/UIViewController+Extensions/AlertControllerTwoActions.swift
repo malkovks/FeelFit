@@ -35,9 +35,9 @@ extension UIViewController {
         present(alert, animated: true)
     }
     
-    func defaultAlertController(title: String? = nil, message: String? = nil, actionTitle: String = "OK", style: UIAlertController.Style = .alert, action: @escaping () -> ()){
+    func defaultAlertController(title: String? = nil, message: String? = nil, actionTitle: String = "OK", style: UIAlertController.Style = .alert, buttonStyle: UIAlertAction.Style = .default, action: @escaping () -> ()){
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
-        alert.addAction(UIAlertAction(title: actionTitle, style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: actionTitle, style: buttonStyle, handler: { _ in
             action()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))

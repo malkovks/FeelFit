@@ -41,6 +41,7 @@ class FFUserHealthDataStoreManager {
     
     private init() {}
     
+    
     private func loadUserAuthenticationStatus() -> (status: Bool,account: String) {
         let isLoggedIn = UserDefaults.standard.bool(forKey: "userLoggedIn")
         guard let userAccount = UserDefaults.standard.string(forKey: "userAccount")
@@ -117,7 +118,7 @@ class FFUserHealthDataStoreManager {
         return value
     }
     
-    func loadUserData() -> [[String:String]]?{
+    func loadUserDataDictionary() -> [[String:String]]?{
         guard let userData = realm.objects(FFUserHealthDataModelRealm.self).last else { return nil }
         let birthday = userData.userBirthOfDate?.dateAndUserAgeConverting()
         let userDataDictionary: [[String: String]] = [
@@ -131,6 +132,12 @@ class FFUserHealthDataStoreManager {
              ]
         return userDataDictionary
     }
+    
+    func loadUserDataModel() -> FFUserHealthDataModelRealm?  {
+        let userData = realm.objects(FFUserHealthDataModelRealm.self).last
+        return userData ?? nil
+    }
+    
     
     func editUserData(){
         

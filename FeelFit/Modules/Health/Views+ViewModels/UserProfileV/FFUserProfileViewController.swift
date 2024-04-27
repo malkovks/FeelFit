@@ -36,10 +36,11 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
         ["Application and services",
          "Scientific Research",
          "Devices"],
-        ["Export Medical Data"]
+        ["Exit from account"]
     ]
     
     var userMainData: FFUserHealthMainData!
+    var fullUserData: FFUserHealthDataModelRealm!
 
     var cameraPickerController: UIImagePickerController!
     
@@ -96,21 +97,36 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     }
     
     func clearUserCache(){
-        //создать запрос у пользователя хочет ли он очистить весь кэш приложения
+        defaultAlertController(title: "Clear cache", message: "Do you want to delete all cached information?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
+            print("Delete")
+        }
     }
     
     func clearStoreData(){
-        //cоздать запрос хочет ли пользователь удалить весь сохраненный материал на устройство
+        defaultAlertController(title: "Clear store data", message: "Do you want to delete storage and delete all data?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
+            print("Delete")
+        }
     }
     
     func checkAccessStatus(){
-        //открывает отдельный класс где показывается к каким сервисам доступ у пользователя есть, а каким нету
+        
+    }
+
+    func exitFromAccount(){
+        let id = fullUserData.userAccountLogin
+        let alert = UIAlertController(title: "Exit from account", message: "Your ID is \(id) and you want to leave this account.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Continue", style: .destructive, handler: { [weak self ] _ in
+            let vc = FFOnboardingAuthenticationViewController()
+            vc.modalPresentationStyle = .fullScreen
+            self?.present(vc, animated: true)
+        }))
+        present(alert, animated: true)
+        //функция предлагает пользователю выйти из аккаунта, данные должны быть привязаны к айди аккаунта. То есть айди это логин пользователя, а логин = почта
+        //покрасить кнопку в красный а текст отцентровать
+        //Выходить из Keychain Manager, перед этим сохранив все данные под айди в realm. Если выпадает ошибка, то алерт и прочее
     }
     
-    
-    
-    
-
 }
 
     //MARK: Set up methods
@@ -135,6 +151,9 @@ extension FFUserProfileViewController {
             let value = FFUserHealthMainData(fullName: "Full name", account: "")
             userMainData = value
         }
+        
+        guard let fullData = FFUserHealthDataStoreManager.shared.loadUserDataModel() else { return }
+        fullUserData = fullData
     }
     
     func setupNavigationController() {
@@ -208,10 +227,22 @@ extension FFUserProfileViewController: UITableViewDelegate {
             pushUserHealthData()
         case [0,1]:
             pushUserData()
+        case [1,0]:
+            clearUserCache()
+        case [1,1]:
+            clearStoreData()
+        case [1,2]:
+            checkAccessStatus()
+        case [3,0]:
+            print("Информация о приложении и сервисах")
+        case [3,1]:
+            print("Исследовательская работа. Опциональная строка")
+        case [3,2]:
+            print("Девайсы. опционально")
+        case [3,0]:
+            exitFromAccount()
         default:
-            showInlineInfo(titleText: "Title",
-                           messageText: "This cell containts some info",
-                           popoverImage: "info.circle")
+            break
         }
     }
     
@@ -235,7 +266,7 @@ extension FFUserProfileViewController: UITableViewDelegate {
         if section == 0 {
             let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4-10)
             let customView = UserImageTableViewHeaderView(frame: frameRect)
-            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: userMainData.fullName)
+            customView.configureCustomHeaderView(userImage: managedUserImage,isLabelHidden: false, labelText: fullUserData.userAccountLogin)
             customView.configureImageTarget(selector: #selector(didTapOpenMediaPicker), target: self)
             customView.configureLongGestureImageTarget(target: self, selector: #selector(didTapOpenUserImage))
             customView.configureChangeUserName(target: self, selector: #selector(didTapChangeUserName))
