@@ -18,9 +18,31 @@ final class FFTabBarController: UITabBarController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    
     private func configureTabBar(){
-        setupControllerBar()
+        if !FFOnboardingManager.shared.hasShownOnboarding(){
+            showOnboarding()
+        } else {
+            showOnboarding()
+        }
         
+        setupControllerBar()
+        setupTabBar()
+        
+        
+    }
+    
+    private func showOnboarding(){
+        let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        let nav = FFNavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.isNavigationBarHidden = true
+        present(nav, animated: true)
+//        vc.continueToMainModules()
+    }
+    
+    private func setupTabBar(){
         tabBar.tintColor = FFResources.Colors.activeColor
         tabBar.barTintColor = .systemBackground
         tabBar.backgroundColor = .systemBackground
@@ -31,7 +53,6 @@ final class FFTabBarController: UITabBarController {
         
         selectedIndex = getLastViewedViewControllerIndex()
         delegate = self
-        
     }
     
     private func createTabBarItem(vc: UIViewController, title: String, image: String,tag: Int) -> UINavigationController {

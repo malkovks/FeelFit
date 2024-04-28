@@ -111,7 +111,7 @@ final class FFOnboardingUserDataViewModel {
     }
     
     @objc func openWelcomeView(user userDataDictionary: [[String:String]]){
-        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
+        FFOnboardingManager.shared.setOnboardingShown()
         let name = userDataDictionary[0]["Name"]
         let vc = FFWelcomeViewController(welcomeLabelText: name)
         vc.modalPresentationStyle = .fullScreen

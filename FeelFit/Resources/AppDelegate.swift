@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     /// Function register tip kit in app
     private func registerTipsConfigure(){
-        try? Tips.resetDatastore()
+//        try? Tips.resetDatastore()
         try? Tips.configure([
             .displayFrequency(.immediate),
             .datastoreLocation(.applicationDefault)

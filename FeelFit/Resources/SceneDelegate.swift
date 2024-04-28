@@ -49,13 +49,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         openViewController(windowScene)
     }
     
+    
+    
     private func openViewController(_ windowScene: UIWindowScene){
         let tabBar = FFTabBarController()
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = tabBar
         window.makeKeyAndVisible()
         self.window = window
-        checkIfOnboardingIsLaunched(tabBar: tabBar)
+//        checkIfOnboardingIsLaunched(tabBar: tabBar)
     }
     
     private func checkIfOnboardingIsLaunched(tabBar: UITabBarController){

@@ -9,10 +9,10 @@ import UIKit
 
 class FFOnboardingPageViewController: UIPageViewController {
     
+    var isDisplayServicesAccess: Bool = true
     
-    
+    var nextPageButton = UIButton(type: .custom)
     private let pageControl = UIPageControl()
-    private var nextPageButton = UIButton(type: .custom)
     private var skipOnboardingButton = UIButton(type: .custom)
     private var xmarkButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -39,11 +39,7 @@ class FFOnboardingPageViewController: UIPageViewController {
         super.viewDidLoad()
         setupView()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
+
     //MARK: - Action methods
     @objc private func didTapPageControl(_ sender: UIPageControl){
         
@@ -52,6 +48,7 @@ class FFOnboardingPageViewController: UIPageViewController {
     
     @objc private func didTapDismissOnboarding(){
         viewModel.closeOnboardingViewController()
+        continueToMainModules()
     }
     
     @objc private func didTapNextPage() {
@@ -92,6 +89,10 @@ extension FFOnboardingPageViewController: SetupViewController {
         setupSkipOnboardingPageButton()
         setupConstraints()
         setupXmarkButton()
+    }
+    
+    func continueToMainModules(){
+        UIApplication.shared.windows.first?.rootViewController = FFTabBarController()
     }
     
     private func setupNextPageButton(){
@@ -135,7 +136,11 @@ extension FFOnboardingPageViewController: SetupViewController {
         let page2 = FFOnboardingAuthenticationViewController()
         let page3 = FFOnboardingUserDataViewController()
         
-        pages.append(page1)
+        if isDisplayServicesAccess {
+            pages.append(page1)
+        }
+        
+        
         pages.append(page2)
         pages.append(page3)
         currentIndex = pages.count

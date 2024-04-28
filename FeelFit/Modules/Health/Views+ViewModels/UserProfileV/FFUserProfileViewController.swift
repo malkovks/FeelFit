@@ -39,8 +39,9 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
         ["Exit from account"]
     ]
     
-    var userMainData: FFUserHealthMainData!
-    var fullUserData: FFUserHealthDataModelRealm!
+    var userMainData = FFUserHealthMainData(fullName: "No name exist", account: "No account")
+    var fullUserData = FFUserHealthDataModelRealm()
+    var isUserLoggedIn = UserDefaults.standard.bool(forKey: "userLoggedIn")
 
     var cameraPickerController: UIImagePickerController!
     
@@ -93,7 +94,8 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     }
     
     func pushUserData(){
-        //показывать изображение, имя фамилию, почту аккаунта возможность выйти из аккаунта(мб сделать в таблице)
+        let vc = FFUserAccountViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func clearUserCache(){
@@ -103,21 +105,32 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     }
     
     func clearStoreData(){
-        defaultAlertController(title: "Clear store data", message: "Do you want to delete storage and delete all data?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
+        guard let textSize = collectRealmStorageWeight() else { return }//подсчет веса данных всех моделей реалма на устройстве
+        defaultAlertController(title: "Clear store data", message: "Storage memory fille on \(textSize) MB.\nDo you want to delete storage and delete all data?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
             print("Delete")
         }
     }
     
     func checkAccessStatus(){
-        
+        let vc = FFAccessToServicesViewController()
+        let nav = FFNavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .pageSheet
+        nav.isNavigationBarHidden = false
+        nav.sheetPresentationController?.detents = [.medium()]
+        nav.sheetPresentationController?.prefersGrabberVisible = true
+        present(nav, animated: true)
     }
 
     func exitFromAccount(){
+        let status = UserDefaults.standard.bool(forKey: "userLoggedIn")
+        print(status)
         let id = fullUserData.userAccountLogin
         let alert = UIAlertController(title: "Exit from account", message: "Your ID is \(id) and you want to leave this account.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Continue", style: .destructive, handler: { [weak self ] _ in
-            let vc = FFOnboardingAuthenticationViewController()
+            let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            vc.isDisplayServicesAccess = false
+            vc.nextPageButton.isHidden = true
             vc.modalPresentationStyle = .fullScreen
             self?.present(vc, animated: true)
         }))
@@ -214,6 +227,11 @@ extension FFUserProfileViewController: UITableViewDataSource {
         cell.backgroundColor = .systemBackground
         cell.textLabel?.text = textLabelRows[indexPath.section][indexPath.row]
         cell.accessoryType = .disclosureIndicator
+        if indexPath.section == (headerTextSections.count-1) {
+            cell.textLabel?.textAlignment = .center
+            cell.textLabel?.textColor = .systemRed
+            cell.accessoryType = .none
+        }
         return cell
     }
 }
@@ -224,20 +242,20 @@ extension FFUserProfileViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath {
         case [0,0]:
-            pushUserHealthData()
-        case [0,1]:
             pushUserData()
+        case [0,1]:
+            pushUserHealthData()
         case [1,0]:
             clearUserCache()
         case [1,1]:
             clearStoreData()
         case [1,2]:
             checkAccessStatus()
-        case [3,0]:
+        case [2,0]:
             print("Информация о приложении и сервисах")
-        case [3,1]:
+        case [2,1]:
             print("Исследовательская работа. Опциональная строка")
-        case [3,2]:
+        case [2,2]:
             print("Девайсы. опционально")
         case [3,0]:
             exitFromAccount()

@@ -33,7 +33,8 @@ class FFWelcomeViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         DispatchQueue.main.asyncAfter(deadline: .now()+3) {
-            self.view.window?.rootViewController?.dismiss(animated: true)
+            self.dismiss(animated: true)
+            UIApplication.shared.windows.first?.rootViewController = FFTabBarController()
         }
     }
     
