@@ -54,11 +54,6 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        //сделать секции корректными. То есть 1 секция это данные пользователя, Также добавит вход выход из аккаунта
-        //вторая секция настройки кэша и памяти
-        //третья это доступ к данным типа уведомлений и пр.
-        //убрать модуль пользователь из tabBar
-        //подумать еще что нужно доделать /добавить
     }
     //MARK: - Target methods
     @objc private func didTapDismiss(){
@@ -123,23 +118,23 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
 
     func exitFromAccount(){
         let status = UserDefaults.standard.bool(forKey: "userLoggedIn")
-        print(status)
         let id = fullUserData.userAccountLogin
         let alert = UIAlertController(title: "Exit from account", message: "Your ID is \(id) and you want to leave this account.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Continue", style: .destructive, handler: { [weak self ] _ in
-            let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-            vc.isDisplayServicesAccess = false
-            vc.nextPageButton.isHidden = true
+            let vc = FFOnboardingAuthenticationViewController()
+            vc.saveEditedAccountButton.isHidden = false
             vc.modalPresentationStyle = .fullScreen
             self?.present(vc, animated: true)
         }))
         present(alert, animated: true)
-        //функция предлагает пользователю выйти из аккаунта, данные должны быть привязаны к айди аккаунта. То есть айди это логин пользователя, а логин = почта
         //покрасить кнопку в красный а текст отцентровать
         //Выходить из Keychain Manager, перед этим сохранив все данные под айди в realm. Если выпадает ошибка, то алерт и прочее
     }
     
+    func checkRealmAccessByAccount(){
+        
+    }
 }
 
     //MARK: Set up methods
@@ -183,7 +178,7 @@ extension FFUserProfileViewController {
         tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "userHealthCell")
+        tableView.register(FFUserProfileTableViewCell.self, forCellReuseIdentifier: FFUserProfileTableViewCell.identifier)
         tableView.isScrollEnabled = true
         tableView.backgroundColor = .clear
         tableView.bounces = true
@@ -223,15 +218,8 @@ extension FFUserProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "userHealthCell", for: indexPath)
-        cell.backgroundColor = .systemBackground
-        cell.textLabel?.text = textLabelRows[indexPath.section][indexPath.row]
-        cell.accessoryType = .disclosureIndicator
-        if indexPath.section == (headerTextSections.count-1) {
-            cell.textLabel?.textAlignment = .center
-            cell.textLabel?.textColor = .systemRed
-            cell.accessoryType = .none
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: FFUserProfileTableViewCell.identifier, for: indexPath) as! FFUserProfileTableViewCell
+        cell.configureCell(indexPath: indexPath, textArray: textLabelRows)
         return cell
     }
 }

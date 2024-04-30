@@ -41,6 +41,11 @@ class FFOnboardingAuthenticationViewModel: FFAuthenticationProtocol {
         }
     }
     
+    func saveEditsAndDismiss(user: CredentialUser?, completion: @escaping (_ status: Bool) -> ()){
+        let model = FFUserHealthDataStoreManager.shared.loadUserAuthenticationStatus()
+        completion(model.status)
+    }
+    
     func createNewAccount(user: CredentialUser?){
         performKeychaingRequest(userData: user) { [weak self] userData in
             try self?.accountManager.createNewUserAccount(userData: userData)

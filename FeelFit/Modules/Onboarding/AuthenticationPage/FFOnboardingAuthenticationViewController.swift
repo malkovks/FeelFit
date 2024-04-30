@@ -92,6 +92,18 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     private let createAccountButton = CustomConfigurationButton(configurationTitle: "Create Account")
     private let loginAccountButton = CustomConfigurationButton(configurationTitle: "Login")
     
+    var saveEditedAccountButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.configuration = .tinted()
+        button.configuration?.title = "Saved new account"
+        button.isEnabled = true
+        button.isHidden = true
+        button.configuration?.titleAlignment = .center
+        button.configuration?.baseBackgroundColor = .systemGreen
+        button.configuration?.baseForegroundColor = .customBlack
+        return button
+    }()
+    
     private let deleteAccountButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Delete account", for: .normal)
@@ -150,6 +162,20 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         let account = getUserAccountData()
         viewModel.deleteAccount(user: account)
     }
+    
+    @objc private func didTapSaveEdits(){
+        let account = getUserAccountData()
+        viewModel.saveEditsAndDismiss(user: account) { [weak self] status in
+            if !status {
+                DispatchQueue.main.async {
+                    self?.saveEditedAccountButton.configuration?.title = "Not logged in"
+                    self?.saveEditedAccountButton.configuration?.baseBackgroundColor = .systemRed
+                }
+            } else {
+                self?.dismiss(animated: true)
+            }
+        }
+    }
 }
 
 extension FFOnboardingAuthenticationViewController: SetupViewController {
@@ -170,8 +196,8 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
     }
     
     private func getUserAccountData() -> CredentialUser? {
-        guard let emailText = userEmailTextField.text,
-              let password = userPasswordTextField.text else {
+        guard let emailText = userEmailTextField.text, !emailText.isEmpty,
+              let password = userPasswordTextField.text, !password.isEmpty else {
             viewAlertController(text: "Fill all fields correctly", controllerView: self.view)
             return nil
         }
@@ -184,6 +210,7 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
         createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
         loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
         deleteAccountButton.addTarget(self, action: #selector(didTapDeleteAccount), for: .primaryActionTriggered)
+        saveEditedAccountButton.addTarget(self, action: #selector(didTapSaveEdits), for: .primaryActionTriggered)
     }
     
     private func clearTextFields(){
@@ -314,6 +341,14 @@ private extension FFOnboardingAuthenticationViewController {
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.85)
             make.height.lessThanOrEqualToSuperview().multipliedBy(0.3)
+        }
+        
+        view.addSubview(saveEditedAccountButton)
+        saveEditedAccountButton.snp.makeConstraints { make in
+            make.top.equalTo(authStackView.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.85)
+            make.height.equalTo(55)
         }
         
         logoutAccountButton.snp.makeConstraints { make in

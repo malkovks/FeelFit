@@ -38,7 +38,7 @@ class FFNavigationControllerCustomView: UIView {
     
     
     func configureView(title text: String,_ image: UIImage? ){
-        let optionalImage =  UIImage(systemName: "person")!
+        let optionalImage =  UIImage(systemName: "person.circle")!
         navigationTitleLabel.text = text
         navigationButton.setImage(image ?? optionalImage, for: .normal)
     }

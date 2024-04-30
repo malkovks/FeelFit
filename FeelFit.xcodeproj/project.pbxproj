@@ -168,7 +168,7 @@
 		FDFC22D42BDE2CA8005BE41C /* FFUserAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFC22D32BDE2CA8005BE41C /* FFUserAccountViewController.swift */; };
 		FDFC22D62BDE2DB4005BE41C /* FFAccessToServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFC22D52BDE2DB4005BE41C /* FFAccessToServicesViewController.swift */; };
 		FDFC22D82BDE31DD005BE41C /* RealmHandlerSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFC22D72BDE31DD005BE41C /* RealmHandlerSupport.swift */; };
-		FDFC22DA2BDE358C005BE41C /* FFFFUserProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFC22D92BDE358C005BE41C /* FFFFUserProfileTableViewCell.swift */; };
+		FDFC22DA2BDE358C005BE41C /* FFUserProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFC22D92BDE358C005BE41C /* FFUserProfileTableViewCell.swift */; };
 		FDFC22DC2BDE3E02005BE41C /* FFOnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFC22DB2BDE3E02005BE41C /* FFOnboardingManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -329,7 +329,7 @@
 		FDFC22D32BDE2CA8005BE41C /* FFUserAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserAccountViewController.swift; sourceTree = "<group>"; };
 		FDFC22D52BDE2DB4005BE41C /* FFAccessToServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAccessToServicesViewController.swift; sourceTree = "<group>"; };
 		FDFC22D72BDE31DD005BE41C /* RealmHandlerSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmHandlerSupport.swift; sourceTree = "<group>"; };
-		FDFC22D92BDE358C005BE41C /* FFFFUserProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFFFUserProfileTableViewCell.swift; sourceTree = "<group>"; };
+		FDFC22D92BDE358C005BE41C /* FFUserProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserProfileTableViewCell.swift; sourceTree = "<group>"; };
 		FDFC22DB2BDE3E02005BE41C /* FFOnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1294,7 +1294,7 @@
 				FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */,
 				0A63AC632B6BB89F00B32981 /* FFUserProfileViewModel.swift */,
 				0A0059242B62B8CB000712D6 /* FFUserProfileViewController.swift */,
-				FDFC22D92BDE358C005BE41C /* FFFFUserProfileTableViewCell.swift */,
+				FDFC22D92BDE358C005BE41C /* FFUserProfileTableViewCell.swift */,
 			);
 			path = UserProfileV;
 			sourceTree = "<group>";
@@ -1405,7 +1405,7 @@
 				0A1BEC712AC06D4600914FD5 /* AlertError+UIViewControllerExtensions.swift in Sources */,
 				0ACEA9E22ACF77C400899CF6 /* FFNewsImageView.swift in Sources */,
 				0A38936F2B6A3F2D007FC363 /* FFHealthTableViewHeaderFooterView.swift in Sources */,
-				FDFC22DA2BDE358C005BE41C /* FFFFUserProfileTableViewCell.swift in Sources */,
+				FDFC22DA2BDE358C005BE41C /* FFUserProfileTableViewCell.swift in Sources */,
 				0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */,
 				0A9FF3882B6F885300F59714 /* FFFavouriteHealthCategoriesViewController.swift in Sources */,
 				0AC145FF2BA43D4700C8544A /* UILabel+Extension.swift in Sources */,

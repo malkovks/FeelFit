@@ -86,7 +86,7 @@ class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
             let image = try FFUserImageManager.shared.loadUserImage(userImagePartialName)
             self.userProfileImage = image
         } catch let error as UserImageErrorHandler {
-            viewController.alertError(title: "Error",message: error.errorDescription)
+            print(error.errorDescription)
         } catch {
             fatalError("Fatal error loading image from users directory")
         }

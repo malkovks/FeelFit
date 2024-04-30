@@ -9,10 +9,10 @@ import UIKit
 
 class UserImageTableViewHeaderView: UIView {
     
-    private let defaultImage: UIImage = UIImage(systemName: "person.crop.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
+    private let defaultImage: UIImage = UIImage(systemName: "person.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
     
     private var userImageView: UIImageView = {
-        let image = UIImage(systemName: "person.crop.circle")!
+        let image = UIImage(systemName: "person.circle")!
         let scaledImage = image.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
         let imageView = UIImageView(image: scaledImage )
         imageView.tintColor = .main
@@ -32,15 +32,6 @@ class UserImageTableViewHeaderView: UIView {
         label.numberOfLines = 1
         label.isUserInteractionEnabled = true
         return label
-    }()
-    
-    private let stackView: UIStackView = {
-        let stackView = UIStackView(frame: .zero)
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .fill
-        stackView.spacing = 5
-        return stackView
     }()
     
     override init(frame: CGRect) {

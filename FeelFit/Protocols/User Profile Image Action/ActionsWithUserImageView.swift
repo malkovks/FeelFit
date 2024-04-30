@@ -75,7 +75,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
             } catch {
                 fatalError()
             }
-            return UIImage(systemName: "person.crop.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
+            return UIImage(systemName: "person.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
         } set {
             guard let image = newValue else { return }
             do {

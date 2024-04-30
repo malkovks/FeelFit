@@ -20,7 +20,7 @@ class FFOnboardingPageViewModel {
     }
     
     func closeOnboardingViewController(){
-        UserDefaults.standard.setValue(true, forKey: "isOnboardingOpenedFirst")
+        FFOnboardingManager.shared.setOnboardingShown()
         pageViewController.dismiss(animated: true)
     }
     

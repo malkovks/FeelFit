@@ -25,7 +25,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     ]
     
     
-    init(userImage: UIImage = UIImage(systemName: "person.crop.circle")!){
+    init(userImage: UIImage = UIImage(systemName: "person.circle")!){
         self.userImage = userImage
         super.init(nibName: nil, bundle: nil)
     }
@@ -34,7 +34,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         fatalError("init(coder:) has not been implemented")
     }
     
-    var userImage: UIImage? = UIImage(systemName: "person.crop.circle")!
+    var userImage: UIImage? = UIImage(systemName: "person.circle")!
     
     private var userImageView: UIImageView!
     private var tableView: UITableView!

@@ -11,8 +11,22 @@ class FFOnboardingPageViewController: UIPageViewController {
     
     var isDisplayServicesAccess: Bool = true
     
-    var nextPageButton = UIButton(type: .custom)
-    private let pageControl = UIPageControl()
+    var nextPageButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.configuration = .filled()
+        button.configuration?.baseBackgroundColor = .systemBlue
+        button.configuration?.title = "Next"
+        return button
+    }()
+    
+    let pageControl: UIPageControl = {
+        let pageControl = UIPageControl(frame: .zero)
+        pageControl.currentPageIndicatorTintColor = FFResources.Colors.activeColor
+        pageControl.pageIndicatorTintColor = FFResources.Colors.darkPurple
+        pageControl.backgroundStyle = .automatic
+        pageControl.direction = .leftToRight
+        return pageControl
+    }()
     private var skipOnboardingButton = UIButton(type: .custom)
     private var xmarkButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -48,7 +62,6 @@ class FFOnboardingPageViewController: UIPageViewController {
     
     @objc private func didTapDismissOnboarding(){
         viewModel.closeOnboardingViewController()
-        continueToMainModules()
     }
     
     @objc private func didTapNextPage() {
@@ -91,15 +104,8 @@ extension FFOnboardingPageViewController: SetupViewController {
         setupXmarkButton()
     }
     
-    func continueToMainModules(){
-        UIApplication.shared.windows.first?.rootViewController = FFTabBarController()
-    }
-    
     private func setupNextPageButton(){
-        nextPageButton.isHidden = false
-        nextPageButton.configuration = .filled()
-        nextPageButton.configuration?.baseBackgroundColor = .systemBlue
-        nextPageButton.configuration?.title = "Next"
+        
         nextPageButton.addTarget(self, action: #selector(didTapNextPage), for: .primaryActionTriggered)
     }
     
@@ -116,14 +122,9 @@ extension FFOnboardingPageViewController: SetupViewController {
     }
     
     private func setupPageControl(){
-        pageControl.currentPageIndicatorTintColor = FFResources.Colors.activeColor
-        pageControl.pageIndicatorTintColor = FFResources.Colors.darkPurple
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = initialPages
         pageControl.addTarget(self, action: #selector(didTapPageControl), for: .primaryActionTriggered)
-        pageControl.backgroundStyle = .automatic
-        pageControl.direction = .leftToRight
-        
     }
     
     private func setupPageViewController(){
@@ -174,10 +175,10 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
         if index == 0 {
             return nil
         } else if index != pages.count {
-            nextPageButton.isHidden = false
-            skipOnboardingButton.isHidden = true
+            isEndWorkWithOnboarding(isHidden: false)
             return pages[index-1]
         } else {
+            isEndWorkWithOnboarding(isHidden: true)
             return pages[index-1]
         }
     }
@@ -188,7 +189,7 @@ extension FFOnboardingPageViewController: UIPageViewControllerDataSource {
             isEndWorkWithOnboarding(isHidden: true)
             return pages[index + 1]
         } else if index == pages.count-1 {
-            isEndWorkWithOnboarding(isHidden: false)
+            isEndWorkWithOnboarding(isHidden: true)
             return nil
         } else {
             isEndWorkWithOnboarding(isHidden: false)

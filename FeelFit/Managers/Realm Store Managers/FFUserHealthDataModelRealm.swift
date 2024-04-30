@@ -42,13 +42,21 @@ class FFUserHealthDataStoreManager {
     private init() {}
     
     
-    private func loadUserAuthenticationStatus() -> (status: Bool,account: String) {
+    func loadUserAuthenticationStatus() -> (status: Bool,account: String) {
         let isLoggedIn = UserDefaults.standard.bool(forKey: "userLoggedIn")
         guard let userAccount = UserDefaults.standard.string(forKey: "userAccount")
         else {
             return (false, UUID().uuidString)
         }
         return (isLoggedIn, userAccount)
+    }
+    
+    func checkLoginIdentifier(userAccount: String) -> Bool {
+        if let model = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: userAccount) {
+            return true
+        } else {
+            return false
+        }
     }
     
     
@@ -58,6 +66,7 @@ class FFUserHealthDataStoreManager {
         futureModel.userLoginStatus = authData.status
         futureModel.userAccountLogin = authData.account
 
+        let isModelCreated = checkLoginIdentifier(userAccount: authData.account)
         
         let userDataCount = userDataDictionary.count
         for index in 0..<userDataCount {

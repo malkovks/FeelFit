@@ -11,25 +11,29 @@ final class FFTabBarController: UITabBarController {
 
     init() {
         super.init(nibName: nil, bundle: nil)
-        configureTabBar()
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureTabBar()
+    }
+    
     
     
     private func configureTabBar(){
-        if !FFOnboardingManager.shared.hasShownOnboarding(){
-            showOnboarding()
-        } else {
-            showOnboarding()
-        }
-        
         setupControllerBar()
         setupTabBar()
         
+        DispatchQueue.main.asyncAfter(deadline: .now()+1){
+            if !FFOnboardingManager.shared.hasShownOnboarding(){
+                self.showOnboarding()
+            }
+        }
         
     }
     
@@ -39,7 +43,7 @@ final class FFTabBarController: UITabBarController {
         nav.modalPresentationStyle = .fullScreen
         nav.isNavigationBarHidden = true
         present(nav, animated: true)
-//        vc.continueToMainModules()
+
     }
     
     private func setupTabBar(){
