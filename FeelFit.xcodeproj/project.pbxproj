@@ -153,6 +153,8 @@
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
+		FD48C8C62BE22FE900CB67BD /* FFAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD48C8C52BE22FE900CB67BD /* FFAuthenticationManager.swift */; };
+		FD48C8C82BE285C600CB67BD /* PrivacyManifest.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FD48C8C72BE285C600CB67BD /* PrivacyManifest.xcprivacy */; };
 		FD60AA872BD928D200A54463 /* FFHealthCategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */; };
 		FD6818632BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6818622BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift */; };
 		FD75D2EB2BD638C000AE509D /* HealthCategoruCartesianModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */; };
@@ -314,6 +316,8 @@
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
+		FD48C8C52BE22FE900CB67BD /* FFAuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAuthenticationManager.swift; sourceTree = "<group>"; };
+		FD48C8C72BE285C600CB67BD /* PrivacyManifest.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyManifest.xcprivacy; sourceTree = "<group>"; };
 		FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCategoriesViewModel.swift; sourceTree = "<group>"; };
 		FD6818622BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCategoryCartesianViewModel.swift; sourceTree = "<group>"; };
 		FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCategoruCartesianModel.swift; sourceTree = "<group>"; };
@@ -448,6 +452,7 @@
 		0A256A672B8CD34300137B6C /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				FD48C8C52BE22FE900CB67BD /* FFAuthenticationManager.swift */,
 				FDFC22DB2BDE3E02005BE41C /* FFOnboardingManager.swift */,
 				FD9DE36D2BC14223005775DF /* OnboardingModule */,
 				FD9DE36E2BC14244005775DF /* RequestAccessPage */,
@@ -499,7 +504,7 @@
 				0A13D8D42B5A408900FD8C92 /* Authorization To Services */,
 				0A44950B2AB9FC260082C909 /* Protocols */,
 				0A634C842B9CC0E00068E544 /* Error Handler */,
-				0A4495012AB9CFDF0082C909 /* Resources */,
+				0A4495012AB9CFDF0082C909 /* Source */,
 			);
 			path = FeelFit;
 			sourceTree = "<group>";
@@ -516,16 +521,17 @@
 			path = Modules;
 			sourceTree = "<group>";
 		};
-		0A4495012AB9CFDF0082C909 /* Resources */ = {
+		0A4495012AB9CFDF0082C909 /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				0A4495022AB9CFEF0082C909 /* Assets */,
 				0A4494CA2AB822000082C909 /* LaunchScreen.storyboard */,
 				0A4494BF2AB821FD0082C909 /* AppDelegate.swift */,
 				0A4494C12AB821FD0082C909 /* SceneDelegate.swift */,
+				FD48C8C72BE285C600CB67BD /* PrivacyManifest.xcprivacy */,
 				0A4494CD2AB822000082C909 /* Info.plist */,
 			);
-			path = Resources;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		0A4495022AB9CFEF0082C909 /* Assets */ = {
@@ -1388,6 +1394,7 @@
 				0A4494CC2AB822000082C909 /* LaunchScreen.storyboard in Resources */,
 				0A38936D2B6A3936007FC363 /* discord-notification.mp3 in Resources */,
 				0A4494C92AB822000082C909 /* Assets.xcassets in Resources */,
+				FD48C8C82BE285C600CB67BD /* PrivacyManifest.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1507,6 +1514,7 @@
 				0A3AECFD2B84B20700B2F8F3 /* UIImageView+Extensions.swift in Sources */,
 				0A82CD1D2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
+				FD48C8C62BE22FE900CB67BD /* FFAuthenticationManager.swift in Sources */,
 				0A91519B2B024C8400FE5E41 /* FFTrainingPlanViewModel.swift in Sources */,
 				FD9DE36A2BBEAB1A005775DF /* UIToolbar+Extension.swift in Sources */,
 				0A2347BA2AF24B3E002C161C /* FFExercisesMuscleTableViewCell.swift in Sources */,

@@ -43,7 +43,7 @@ class FFUserHealthDataStoreManager {
     
     
     func loadUserAuthenticationStatus() -> (status: Bool,account: String) {
-        let isLoggedIn = UserDefaults.standard.bool(forKey: "userLoggedIn")
+        let isLoggedIn = FFAuthenticationManager.shared.isUserEnteredInAccount()
         guard let userAccount = UserDefaults.standard.string(forKey: "userAccount")
         else {
             return (false, UUID().uuidString)
@@ -51,11 +51,26 @@ class FFUserHealthDataStoreManager {
         return (isLoggedIn, userAccount)
     }
     
-    func checkLoginIdentifier(userAccount: String) -> Bool {
-        if let model = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: userAccount) {
+    func isDataExisted() -> Bool {
+        let value = loadUserAuthenticationStatus()
+        if let _ = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: value.account){
             return true
         } else {
+            createNewUserData(enterStatus: value.status, account: value.account)
             return false
+        }
+    }
+    
+    func createNewUserData(enterStatus: Bool, account: String){
+        let futureModel = FFUserHealthDataModelRealm()
+        futureModel.userAccountLogin = account
+        futureModel.userLoginStatus = enterStatus
+        futureModel.userFirstName = "Not set"
+        do {
+            try! realm.write {
+                realm.add(futureModel,update: .modified)
+                print(futureModel.userAccountLogin)
+            }
         }
     }
     
@@ -65,8 +80,6 @@ class FFUserHealthDataStoreManager {
         let authData = loadUserAuthenticationStatus()
         futureModel.userLoginStatus = authData.status
         futureModel.userAccountLogin = authData.account
-
-        let isModelCreated = checkLoginIdentifier(userAccount: authData.account)
         
         let userDataCount = userDataDictionary.count
         for index in 0..<userDataCount {

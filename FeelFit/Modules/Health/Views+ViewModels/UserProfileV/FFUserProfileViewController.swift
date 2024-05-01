@@ -41,7 +41,7 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     
     var userMainData = FFUserHealthMainData(fullName: "No name exist", account: "No account")
     var fullUserData = FFUserHealthDataModelRealm()
-    var isUserLoggedIn = UserDefaults.standard.bool(forKey: "userLoggedIn")
+    var isUserLoggedIn = FFAuthenticationManager.shared.isUserEnteredInAccount()
 
     var cameraPickerController: UIImagePickerController!
     
@@ -117,24 +117,24 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     }
 
     func exitFromAccount(){
-        let status = UserDefaults.standard.bool(forKey: "userLoggedIn")
+        
         let id = fullUserData.userAccountLogin
         let alert = UIAlertController(title: "Exit from account", message: "Your ID is \(id) and you want to leave this account.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Continue", style: .destructive, handler: { [weak self ] _ in
+            FFAuthenticationManager.shared.didExitFromAccount()
             let vc = FFOnboardingAuthenticationViewController()
             vc.saveEditedAccountButton.isHidden = false
+            vc.isDataCreated = { status in
+                FFUserHealthDataStoreManager.shared.loadUserDataDictionary()
+            }
             vc.modalPresentationStyle = .fullScreen
             self?.present(vc, animated: true)
+            
         }))
         present(alert, animated: true)
-        //покрасить кнопку в красный а текст отцентровать
-        //Выходить из Keychain Manager, перед этим сохранив все данные под айди в realm. Если выпадает ошибка, то алерт и прочее
     }
-    
-    func checkRealmAccessByAccount(){
-        
-    }
+
 }
 
     //MARK: Set up methods

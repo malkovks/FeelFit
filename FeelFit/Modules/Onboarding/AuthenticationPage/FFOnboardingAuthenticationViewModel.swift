@@ -41,9 +41,9 @@ class FFOnboardingAuthenticationViewModel: FFAuthenticationProtocol {
         }
     }
     
-    func saveEditsAndDismiss(user: CredentialUser?, completion: @escaping (_ status: Bool) -> ()){
-        let model = FFUserHealthDataStoreManager.shared.loadUserAuthenticationStatus()
-        completion(model.status)
+    func saveEditsAndDismiss(completion: @escaping (_ status: Bool) -> ()){
+        let boolean = FFUserHealthDataStoreManager.shared.isDataExisted()
+        completion(boolean)
     }
     
     func createNewAccount(user: CredentialUser?){

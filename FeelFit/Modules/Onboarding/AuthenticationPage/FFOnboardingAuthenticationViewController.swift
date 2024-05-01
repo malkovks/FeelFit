@@ -18,6 +18,8 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     private var isPasswordHidden: Bool = true
     private let accountManager = FFUserAccountManager.shared
     
+    var isDataCreated: ((Bool) -> Void)?
+    
     private let loginUserLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.text = "Login"
@@ -164,16 +166,8 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     }
     
     @objc private func didTapSaveEdits(){
-        let account = getUserAccountData()
-        viewModel.saveEditsAndDismiss(user: account) { [weak self] status in
-            if !status {
-                DispatchQueue.main.async {
-                    self?.saveEditedAccountButton.configuration?.title = "Not logged in"
-                    self?.saveEditedAccountButton.configuration?.baseBackgroundColor = .systemRed
-                }
-            } else {
-                self?.dismiss(animated: true)
-            }
+        viewModel.saveEditsAndDismiss { [weak self] status in
+            self?.isDataCreated?(status)
         }
     }
 }
