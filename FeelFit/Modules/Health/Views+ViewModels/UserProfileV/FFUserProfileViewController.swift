@@ -83,9 +83,7 @@ class FFUserProfileViewController: UIViewController, SetupViewController, Handle
     
     /// Function open details about user's health
     private func pushUserHealthData(){
-        let vc = FFHealthUserInformationViewController()
-        vc.userImage = managedUserImage
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.pushUserHealthData(image: managedUserImage)
     }
     
     func pushUserData(){
@@ -171,7 +169,7 @@ extension FFUserProfileViewController {
     
 
     func setupViewModel() {
-        viewModel = FFUserProfileViewModel(viewController: self)
+        viewModel = FFUserProfileViewModel(viewController: self, cameraPickerController: cameraPickerController, pickerViewController: pickerViewController)
     }
     
     private func setupTableView(){

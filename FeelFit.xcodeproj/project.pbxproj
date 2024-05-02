@@ -216,7 +216,7 @@
 		0A4494C32AB821FD0082C909 /* FFNewsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageViewController.swift; sourceTree = "<group>"; };
 		0A4494C82AB822000082C909 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A4494CB2AB822000082C909 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		0A4494CD2AB822000082C909 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A4494CD2AB822000082C909 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = FeelFit/Source/Info.plist; sourceTree = SOURCE_ROOT; };
 		0A4494FE2AB99FA40082C909 /* FFNewsPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNewsPageViewModel.swift; sourceTree = "<group>"; };
 		0A44950F2ABA031B0082C909 /* SetupProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupProtocol.swift; sourceTree = "<group>"; };
 		0A4495152ABA67CE0082C909 /* FFTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTabBarController.swift; sourceTree = "<group>"; };
@@ -1700,7 +1700,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2275P6FG35;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
+				INFOPLIST_FILE = FeelFit/Source/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to Camera for taking pictures";
@@ -1737,7 +1737,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2275P6FG35;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FeelFit/Resources/Info.plist;
+				INFOPLIST_FILE = FeelFit/Source/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FeelFit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to Camera for taking pictures";

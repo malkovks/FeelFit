@@ -8,7 +8,8 @@
 import UIKit
 import PhotosUI
 
-class FFUserProfileViewModel: HandlerUserProfileImageProtocol {
+class FFUserProfileViewModel {
+    
     private let viewController: UIViewController
     private let cameraPickerController: UIImagePickerController
     private let pickerViewController: PHPickerViewController
@@ -25,26 +26,26 @@ class FFUserProfileViewModel: HandlerUserProfileImageProtocol {
     
     
     /// Function open details about user's health
-    func pushUserHealthData(){
+    func pushUserHealthData(image: UIImage?){
         let vc = FFHealthUserInformationViewController()
-        vc.userImage = managedUserImage
-        navigationController?.pushViewController(vc, animated: true)
+        vc.userImage = image
+        viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
     func pushUserData(){
         let vc = FFUserAccountViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
     func clearUserCache(){
-        defaultAlertController(title: "Clear cache", message: "Do you want to delete all cached information?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
+        viewController.defaultAlertController(title: "Clear cache", message: "Do you want to delete all cached information?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
             print("Delete")
         }
     }
     
     func clearStoreData(){
         guard let textSize = collectRealmStorageWeight() else { return }//подсчет веса данных всех моделей реалма на устройстве
-        defaultAlertController(title: "Clear store data", message: "Storage memory fille on \(textSize) MB.\nDo you want to delete storage and delete all data?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
+        viewController.defaultAlertController(title: "Clear store data", message: "Storage memory fille on \(textSize) MB.\nDo you want to delete storage and delete all data?", actionTitle: "Delete", style: .alert, buttonStyle: .destructive) {
             print("Delete")
         }
     }
@@ -56,7 +57,7 @@ class FFUserProfileViewModel: HandlerUserProfileImageProtocol {
         nav.isNavigationBarHidden = false
         nav.sheetPresentationController?.detents = [.medium()]
         nav.sheetPresentationController?.prefersGrabberVisible = true
-        present(nav, animated: true)
+        viewController.present(nav, animated: true)
     }
 
     func exitFromAccount(){
@@ -72,9 +73,9 @@ class FFUserProfileViewModel: HandlerUserProfileImageProtocol {
                 FFUserHealthDataStoreManager.shared.loadUserDataDictionary()
             }
             vc.modalPresentationStyle = .fullScreen
-            self?.present(vc, animated: true)
+            self?.viewController.present(vc, animated: true)
             
         }))
-        present(alert, animated: true)
+        viewController.present(alert, animated: true)
     }
 }
