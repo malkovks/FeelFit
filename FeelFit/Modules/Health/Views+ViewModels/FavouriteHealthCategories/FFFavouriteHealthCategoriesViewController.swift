@@ -9,7 +9,7 @@ import HealthKit
 import UIKit
 
 ///Class displaying filtered collection view with main data of users selected information
-class FFFavouriteHealthCategoriesViewController: UIViewController, SetupViewController {
+class FFFavouriteHealthCategoriesViewController: UIViewController, SetupViewController, HandleUserImageProtocol {
     
     private var viewModel:FFFavouriteUserCategoriesViewModel!
     
@@ -73,9 +73,8 @@ class FFFavouriteHealthCategoriesViewController: UIViewController, SetupViewCont
     }
     
     func setupNavigationController() {
-        let image = viewModel.userProfileImage
         let customView = FFNavigationControllerCustomView()
-        customView.configureView(title: "Summary",image)
+        customView.configureView(title: "Summary",userImage)
         customView.navigationButton.addTarget(self, action: #selector(didTapPresentUserProfile), for: .primaryActionTriggered)
         navigationItem.titleView = customView
         navigationController?.navigationBar.backgroundColor = .clear

@@ -23,7 +23,7 @@ extension HandlerUserProfileImageProtocol where Self: UIViewController {
             itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image , error in
                 guard let self = self else { return }
                 guard let image = image as? UIImage else { return }
-                managedUserImage = checkIsImageSavedInManaged(fileName: userImageFileName, image: image)
+                userImage = checkIsImageSavedInManaged(fileName: userImageFileName, image: image)
                 DispatchQueue.main.async {
                     table.reloadData()
                 }
@@ -33,10 +33,10 @@ extension HandlerUserProfileImageProtocol where Self: UIViewController {
     
     func handlerCapturedImage(_ info: [UIImagePickerController.InfoKey : Any], tableView table: UITableView){
         if let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            managedUserImage = editedImage
+            userImage = editedImage
             askUserToSaveImageToStorage(editedImage)
         } else if let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            managedUserImage = originalImage
+            userImage = originalImage
             askUserToSaveImageToStorage(originalImage)
         } else {
             viewAlertController(text: "Error getting captured image. Try again later", controllerView: self.view)

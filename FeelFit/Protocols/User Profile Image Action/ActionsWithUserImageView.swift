@@ -8,7 +8,7 @@
 import UIKit
 import PhotosUI
 
-protocol ActionsWithUserImageView: AnyObject {
+protocol ActionsWithUserImageView: AnyObject, HandleUserImageProtocol {
     
     /// property for serving UIImagePickerController. Using when need to open camera for taking a picture
     var cameraPickerController: UIImagePickerController! { get set }
@@ -18,11 +18,6 @@ protocol ActionsWithUserImageView: AnyObject {
     
     /// property for using haptic vibrations while doing some actions
     var feedbackGenerator: UIImpactFeedbackGenerator { get }
-    /// propety for storing image while user take picture or take from media
-    var managedUserImage: UIImage? { get set }
-    
-    /// user file name store default name of it for saving, loading and deleting from File Manager
-    var userImageFileName: String { get }
     
     
     /// Function set up default configuration include delegation for correct processing, displaying and taking picture from camera
@@ -56,35 +51,6 @@ extension ActionsWithUserImageView where Self: UIViewController {
     var feedbackGenerator: UIImpactFeedbackGenerator {
         get {
             return UIImpactFeedbackGenerator(style: .medium)
-        }
-    }
-    
-    var userImageFileName: String {
-        get {
-            return "userImage.jpeg"
-        }
-    }
-    
-    var managedUserImage: UIImage? {
-        get {
-            do {
-                let image = try FFUserImageManager.shared.loadUserImage(userImageFileName)
-                return image
-            } catch let error as UserImageErrorHandler {
-                print(error.errorDescription!)
-            } catch {
-                fatalError()
-            }
-            return UIImage(systemName: "person.circle")!.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
-        } set {
-            guard let image = newValue else { return }
-            do {
-                try FFUserImageManager.shared.saveUserImage(image, fileName: userImageFileName)
-            } catch let error as UserImageErrorHandler {
-                print(error.errorDescription!)
-            } catch {
-                fatalError()
-            }
         }
     }
 
@@ -144,7 +110,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
         feedbackGenerator.impactOccurred()
         do {
             try FFUserImageManager.shared.deleteUserImage(userImageFileName)
-            managedUserImage = nil
+            userImage = nil
             DispatchQueue.main.async {
                 tableView.reloadData()
             }
@@ -159,7 +125,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
     func didTapLongPressOnImage(_ longGesture: UILongPressGestureRecognizer){
         if longGesture.state == .began {
             
-            let vc = FFImageDetailsViewController(newsImage: managedUserImage, imageURL: "")
+            let vc = FFImageDetailsViewController(newsImage: userImage, imageURL: "")
             present(vc, animated: true)
         }
     }

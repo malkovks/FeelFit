@@ -195,7 +195,7 @@ extension FFOnboardingUserDataViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        viewModel.tableView(tableView, viewForHeaderInSection: section, userImage: managedUserImage, isLabelHidden: true, didTapImage: #selector(didTapOpenImage), longPress: #selector(didTapLongPress), target: self)
+        viewModel.tableView(tableView, viewForHeaderInSection: section, userImage: userImage, isLabelHidden: true, didTapImage: #selector(didTapOpenImage), longPress: #selector(didTapLongPress), target: self)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

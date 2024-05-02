@@ -19,7 +19,6 @@ protocol UserHealthCategorySetting: AnyObject {
     func presentHealthCategories()
     func pushSelectedHealthCategory(selectedItem indexPath: IndexPath)
     func loadFavouriteUserHealthCategory()
-    func loadUserImage()
 }
 
 class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
@@ -44,7 +43,6 @@ class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
     
     func refreshView(){
         loadFavouriteUserHealthCategory()
-        loadUserImage()
     }
     
     @objc func presentHealthCategories(){
@@ -77,18 +75,6 @@ class FFFavouriteUserCategoriesViewModel: UserHealthCategorySetting {
                 self.userFavouriteHealthCategoryArray.append(model)
                 self.userFavouriteHealthCategoryArray.sort { $0[0].identifier < $1[0].identifier }
             }
-        }
-    }
-    //Load from UserImageManager
-    func loadUserImage(){
-        let userImagePartialName = UserDefaults.standard.string(forKey: "userProfileFileName") ?? "userImage.jpeg"
-        do {
-            let image = try FFUserImageManager.shared.loadUserImage(userImagePartialName)
-            self.userProfileImage = image
-        } catch let error as UserImageErrorHandler {
-            print(error.errorDescription)
-        } catch {
-            fatalError("Fatal error loading image from users directory")
         }
     }
 }

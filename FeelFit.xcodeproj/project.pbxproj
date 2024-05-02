@@ -155,6 +155,7 @@
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
 		FD48C8C62BE22FE900CB67BD /* FFAuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD48C8C52BE22FE900CB67BD /* FFAuthenticationManager.swift */; };
 		FD48C8C82BE285C600CB67BD /* PrivacyManifest.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FD48C8C72BE285C600CB67BD /* PrivacyManifest.xcprivacy */; };
+		FD48C8CC2BE384BD00CB67BD /* HandlerUserImageProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD48C8CB2BE384BD00CB67BD /* HandlerUserImageProtocol.swift */; };
 		FD60AA872BD928D200A54463 /* FFHealthCategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */; };
 		FD6818632BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6818622BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift */; };
 		FD75D2EB2BD638C000AE509D /* HealthCategoruCartesianModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */; };
@@ -318,6 +319,7 @@
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
 		FD48C8C52BE22FE900CB67BD /* FFAuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAuthenticationManager.swift; sourceTree = "<group>"; };
 		FD48C8C72BE285C600CB67BD /* PrivacyManifest.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyManifest.xcprivacy; sourceTree = "<group>"; };
+		FD48C8CB2BE384BD00CB67BD /* HandlerUserImageProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandlerUserImageProtocol.swift; sourceTree = "<group>"; };
 		FD60AA862BD928D200A54463 /* FFHealthCategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCategoriesViewModel.swift; sourceTree = "<group>"; };
 		FD6818622BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthCategoryCartesianViewModel.swift; sourceTree = "<group>"; };
 		FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCategoruCartesianModel.swift; sourceTree = "<group>"; };
@@ -823,6 +825,7 @@
 				0A8479B42BB41C0300C0F8EE /* ActionsWithUserImageView.swift */,
 				0A705BC62BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift */,
 				0A3CFE732BB817680071D7C8 /* HandlerUserProfileImageProtocol.swift */,
+				FD48C8CB2BE384BD00CB67BD /* HandlerUserImageProtocol.swift */,
 			);
 			path = "User Profile Image Action";
 			sourceTree = "<group>";
@@ -1512,6 +1515,7 @@
 				0ADB786E2B710B8100653952 /* FFPresentHealthCollectionViewCell.swift in Sources */,
 				0A82CD262B2E462400F98D8B /* NavigationItemButton.swift in Sources */,
 				0A3AECFD2B84B20700B2F8F3 /* UIImageView+Extensions.swift in Sources */,
+				FD48C8CC2BE384BD00CB67BD /* HandlerUserImageProtocol.swift in Sources */,
 				0A82CD1D2B2C3AE700F98D8B /* FFPlanDetailsViewController.swift in Sources */,
 				0A4494FF2AB99FA40082C909 /* FFNewsPageViewModel.swift in Sources */,
 				FD48C8C62BE22FE900CB67BD /* FFAuthenticationManager.swift in Sources */,

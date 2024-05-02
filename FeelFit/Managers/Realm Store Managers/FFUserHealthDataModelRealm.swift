@@ -133,8 +133,8 @@ class FFUserHealthDataStoreManager {
     
     func mainUserData() -> FFUserHealthMainData? {
         guard let userData = realm.objects(FFUserHealthDataModelRealm.self).last else { return nil }
-        let name = userData.userFirstName ?? "No name"
-        let secondName = userData.userSecondName ?? "No second name"
+        let name = userData.userFirstName ?? "Name - "
+        let secondName = userData.userSecondName ?? "Second name"
         let fullName = name + " " + secondName
         let value = FFUserHealthMainData(fullName: fullName, account: userData.userAccountLogin)
         return value
