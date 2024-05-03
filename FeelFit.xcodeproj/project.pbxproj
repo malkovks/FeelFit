@@ -754,6 +754,7 @@
 		0A63AC652B6D8DB700B32981 /* Views+ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */,
 				FDFC22D12BDAB1FF005BE41C /* UserProfileV */,
 				FDEF7BA62BD920BB004B303C /* HealthCategories */,
 				FDEF7BA32BD92077004B303C /* HealthUserInfo */,
@@ -1300,7 +1301,6 @@
 		FDFC22D12BDAB1FF005BE41C /* UserProfileV */ = {
 			isa = PBXGroup;
 			children = (
-				FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */,
 				0A63AC632B6BB89F00B32981 /* FFUserProfileViewModel.swift */,
 				0A0059242B62B8CB000712D6 /* FFUserProfileViewController.swift */,
 				FDFC22D92BDE358C005BE41C /* FFUserProfileTableViewCell.swift */,

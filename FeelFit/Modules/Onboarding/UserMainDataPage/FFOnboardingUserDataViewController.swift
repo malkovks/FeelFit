@@ -74,7 +74,8 @@ class FFOnboardingUserDataViewController: UIViewController, HandlerUserProfileIm
 //MARK: - Action methods from Strategy Pattern HandlerUserProfileImageProtocol
 extension FFOnboardingUserDataViewController {
     @objc private func didTapOpenImage(_ sender: UITapGestureRecognizer){
-        didTapOpenImagePicker(tableView, cameraPickerController, pickerViewController, animated: true, sender)
+        didTapOpenImagePicker(cameraPickerController, pickerViewController, animated: true, sender)
+        reloadTableView()
     }
     
     @objc private func didTapLongPress(_ longGesture: UILongPressGestureRecognizer){
@@ -105,6 +106,12 @@ extension FFOnboardingUserDataViewController: SetupViewController {
     func setupViewModel() { 
         viewModel = FFOnboardingUserDataViewModel(viewController: self)
         viewModel.delegate = self
+    }
+    
+    func reloadTableView(){
+        DispatchQueue.main.async { [unowned self] in
+            tableView.reloadData()
+        }
     }
 }
 
@@ -137,8 +144,8 @@ extension FFOnboardingUserDataViewController: FFOnboardingUserDataProtocol {
 extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
-        handlerCapturedImage(info, tableView: tableView)
-        tableView.reloadData()
+        handlerCapturedImage(info)
+        reloadTableView()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -150,7 +157,7 @@ extension FFOnboardingUserDataViewController: UIImagePickerControllerDelegate & 
 extension FFOnboardingUserDataViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
-        handlerSelectedImage(results, tableView: tableView)
+        handlerSelectedImage(results)
     }
 }
 

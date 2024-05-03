@@ -37,11 +37,11 @@ protocol ActionsWithUserImageView: AnyObject, HandleUserImageProtocol {
     ///   - pickerViewController: property of PHPickerViewController
     ///   - animated: animation boolean value
     ///   - gesture: tap gesture value
-    func didTapOpenImagePicker(_ tableView: UITableView,_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool ,_ gesture: UITapGestureRecognizer)
+    func didTapOpenImagePicker(_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool ,_ gesture: UITapGestureRecognizer)
     
     func openMedia(_ pickerViewController: PHPickerViewController, animated: Bool)
     func openCamera(_ cameraPickerController: UIImagePickerController, animated: Bool)
-    func deleteCurrentImage(_ tableView: UITableView)
+    func deleteCurrentImage()
 }
 
 extension ActionsWithUserImageView where Self: UIViewController {
@@ -54,7 +54,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
         }
     }
 
-    func didTapOpenImagePicker(_ tableView: UITableView,_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool,_ gesture: UITapGestureRecognizer){
+    func didTapOpenImagePicker(_ cameraPickerController: UIImagePickerController, _ pickerViewController: PHPickerViewController, animated: Bool,_ gesture: UITapGestureRecognizer){
         feedbackGenerator.prepare()
         let alertController = UIAlertController(title: "What to do?", message: nil, preferredStyle: .actionSheet)
         alertController.addAction(UIAlertAction(title: "Open Camera", style: .default,handler: { [weak self]  _ in
@@ -64,7 +64,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
             self?.openMedia(pickerViewController, animated: animated)
         }))
         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            self?.deleteCurrentImage(tableView)
+            self?.deleteCurrentImage()
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alertController, animated: true)
@@ -106,14 +106,11 @@ extension ActionsWithUserImageView where Self: UIViewController {
         present(cameraPickerController, animated: true)
     }
     
-    func deleteCurrentImage(_ tableView: UITableView){
+    func deleteCurrentImage(){
         feedbackGenerator.impactOccurred()
         do {
             try FFUserImageManager.shared.deleteUserImage(userImageFileName)
             userImage = nil
-            DispatchQueue.main.async {
-                tableView.reloadData()
-            }
         } catch let error as UserImageErrorHandler {
             print(error.errorDescription!)
         } catch {
@@ -144,8 +141,8 @@ extension ActionsWithUserImageView where Self: UIViewController {
         let filter = PHPickerFilter.any(of: [.images,.livePhotos])
         var pickerConfiguration = PHPickerConfiguration(photoLibrary: .shared())
         pickerConfiguration.filter = filter
-        pickerConfiguration.preferredAssetRepresentationMode = .current
-        pickerConfiguration.selection = .ordered
+        pickerConfiguration.preferredAssetRepresentationMode = .automatic
+        pickerConfiguration.selection = .continuousAndOrdered
         pickerConfiguration.selectionLimit = 1
         pickerConfiguration.mode = .default
         

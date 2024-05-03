@@ -26,7 +26,7 @@ class UserImageTableViewHeaderView: UIView {
     
     private var userFullNameLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.text = "Malkov Konstantin"
+        label.text = "Name - Second Name"
         label.font = UIFont.headerFont(size: 24)
         label.textAlignment = .center
         label.numberOfLines = 1

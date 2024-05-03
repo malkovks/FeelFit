@@ -1,0 +1,254 @@
+//
+//  FFUserAccountViewController.swift
+//  FeelFit
+//
+//  Created by Константин Малков on 28.04.2024.
+//
+
+import UIKit
+import PhotosUI
+
+class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
+    
+    private var userData: FFUserHealthMainData = .init(fullName: "Name example", account: "example@mail.com")
+    
+    var cameraPickerController: UIImagePickerController!
+    var pickerViewController: PHPickerViewController!
+    
+    var userImageView: UIImageView = {
+        let image = UIImage(systemName: "person.circle")!
+        let scaledImage = image.withConfiguration(UIImage.SymbolConfiguration(scale: .large))
+        let imageView = UIImageView(image: scaledImage )
+        imageView.tintColor = .main
+        imageView.setupShadowLayer()
+        imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .clear
+        return imageView
+    }()
+    
+    var userFullNameLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.text = "Name - Second Name"
+        label.font = UIFont.headerFont(size: 24)
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
+    var userAccountNameLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.text = "example@mail.com"
+        label.font = UIFont.headerFont(size: 20,for: .extraLargeTitle)
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView(frame: .zero)
+        scrollView.alwaysBounceHorizontal = false
+        scrollView.alwaysBounceVertical = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.isDirectionalLockEnabled = true
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = .secondarySystemBackground
+        return scrollView
+    }()
+    
+    private let indicatorView: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = FFResources.Colors.activeColor
+        return indicator
+    }()
+    
+    private let refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl(frame: .zero)
+        refresh.tintColor = .customBlack
+        return refresh
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupView()
+    }
+    
+    //MARK: - Targets
+    @objc private func openImageViewAlert(_ gesture: UITapGestureRecognizer){
+        didTapOpenImagePicker(cameraPickerController, pickerViewController, animated: true, gesture)
+    }
+    
+    @objc private func openDetailImage(_ gesture: UILongPressGestureRecognizer){
+        didTapLongPressOnImage(gesture)
+    }
+    
+    @objc private func didGrabScrollView(){
+        reloadUserImageView()
+    }
+    
+    @objc private func changeUserName(){
+        presentTextFieldAlertController(placeholder: "Enter Full Name", keyboardType: .default , text: nil, alertTitle: nil, message: "Enter your Name and Second Name") { [unowned self] text in
+            self.userFullNameLabel.text = text
+            
+        }
+    }
+    
+    @objc private func changeUserAccount(){
+        defaultAlertController(title: "Warning", message: "Do you want to leave account?",actionTitle: "Leave",buttonStyle: .destructive) { [unowned self] in
+            print("Open controller with authentication")
+            let vc = FFOnboardingAuthenticationViewController()
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: true)
+            
+        }
+    }
+}
+
+extension FFUserAccountViewController: SetupViewController {
+    func setupView() {
+        title = "User account"
+        view.backgroundColor = .clear
+        loadUserData()
+        userImageView.image = userImage
+        setupUserImageView()
+        setupUserNameLabel()
+        setupNavigationController()
+        setupViewModel()
+        setupScrollView()
+        setupUserAccountNameLabel()
+
+        setupPickerViewController()
+        setupCameraPickerController()
+        
+        setupConstraints()
+    }
+    
+    func setupUserImageView(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openImageViewAlert))
+        userImageView.addGestureRecognizer(tapGesture)
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(openDetailImage))
+        userImageView.addGestureRecognizer(longPressGesture)
+    }
+    
+    func setupUserNameLabel(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(changeUserName))
+        userFullNameLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    func setupUserAccountNameLabel(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(changeUserAccount))
+        userAccountNameLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    func loadUserData(){
+        guard let data =  FFUserHealthDataStoreManager.shared.mainUserData() else { return }
+        userData = data
+        userFullNameLabel.text = data.fullName
+        userAccountNameLabel.text = data.account
+    }
+    
+    func setupScrollView(){
+        scrollView.refreshControl = refreshControl
+        scrollView.refreshControl?.addTarget(self, action: #selector(didGrabScrollView), for: .primaryActionTriggered)
+    }
+    
+    func setupNavigationController() {
+        
+    }
+    
+    func setupViewModel() {
+        
+    }
+    
+    func reloadUserImageView(){
+        DispatchQueue.main.asyncAfter(deadline: .now()+1) { [ unowned self ] in
+            userImageView.image = userImage
+            refreshControl.endRefreshing()
+            indicatorView.stopAnimating()
+            userImageView.isHidden = false
+            userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
+        }
+    }
+    
+}
+
+extension FFUserAccountViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        userImageView.isHidden = true
+        indicatorView.startAnimating()
+        handlerSelectedImage(results)
+        didGrabScrollView()
+    }
+}
+
+extension FFUserAccountViewController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        userImageView.isHidden = true
+        indicatorView.startAnimating()
+        handlerCapturedImage(info)
+        didGrabScrollView()
+    }
+}
+
+extension FFUserAccountViewController: HandlerUserProfileImageProtocol {
+    
+}
+
+extension FFUserAccountViewController {
+    func setupConstraints(){
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        scrollView.addSubview(indicatorView)
+        indicatorView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(view.frame.size.height/5)
+        }
+        
+        scrollView.addSubview(userImageView)
+        userImageView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(view.frame.size.height/5)
+        }
+        
+        userImageView.layoutIfNeeded()
+        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
+        userImageView.clipsToBounds = true
+        userImageView.layer.masksToBounds = true
+        
+        scrollView.addSubview(userFullNameLabel)
+        userFullNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(userImageView.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().inset(20)
+            make.height.equalTo(55)
+        }
+        
+        scrollView.addSubview(userAccountNameLabel)
+        userAccountNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(userFullNameLabel.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().inset(20)
+            make.height.equalTo(55)
+        }
+        
+        scrollView.snp.makeConstraints { make in
+            make.bottom.equalTo(userAccountNameLabel.snp.bottom).offset(10)
+        }
+    }
+}
+
+#Preview {
+    let vc = FFUserAccountViewController()
+    let navVC = FFNavigationController(rootViewController: vc)
+    navVC.isNavigationBarHidden = false
+    navVC.modalPresentationStyle = .pageSheet
+    return navVC
+}
