@@ -29,7 +29,7 @@ class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
     
     var userFullNameLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.text = "Name - Second Name"
+        label.text = "Name & Second Name"
         label.font = UIFont.headerFont(size: 24)
         label.textAlignment = .center
         label.numberOfLines = 1
@@ -90,19 +90,32 @@ class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
     }
     
     @objc private func changeUserName(){
-        presentTextFieldAlertController(placeholder: "Enter Full Name", keyboardType: .default , text: nil, alertTitle: nil, message: "Enter your Name and Second Name") { [unowned self] text in
-            self.userFullNameLabel.text = text
-            
+        let alertController = UIAlertController(title: "", message: "Enter your name and second name", preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.placeholder = "Enter name"
+            textField.autocapitalizationType = .words
         }
+        alertController.addTextField { textField in
+            textField.placeholder = "Enter second Name"
+            textField.autocapitalizationType = .words
+        }
+        
+        alertController.addAction(UIAlertAction(title: "Save", style: .default, handler: { _ in
+            let text1 = alertController.textFields?[0].text ?? "Name"
+            let text2 = alertController.textFields?[1].text ?? "Second Name"
+            self.userFullNameLabel.text = text1.removeSpaces() + " " + text2.removeSpaces()
+            FFUserMainDataManager().saveUserName(name: text1, secondName: text2)
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alertController, animated: true)
     }
     
     @objc private func changeUserAccount(){
         defaultAlertController(title: "Warning", message: "Do you want to leave account?",actionTitle: "Leave",buttonStyle: .destructive) { [unowned self] in
-            print("Open controller with authentication")
+            FFAuthenticationManager.shared.didExitFromAccount()
             let vc = FFOnboardingAuthenticationViewController()
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true)
-            
         }
     }
 }
@@ -112,7 +125,7 @@ extension FFUserAccountViewController: SetupViewController {
         title = "User account"
         view.backgroundColor = .clear
         loadUserData()
-        userImageView.image = userImage
+        
         setupUserImageView()
         setupUserNameLabel()
         setupNavigationController()
@@ -127,6 +140,7 @@ extension FFUserAccountViewController: SetupViewController {
     }
     
     func setupUserImageView(){
+        userImageView.image = userImage
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openImageViewAlert))
         userImageView.addGestureRecognizer(tapGesture)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(openDetailImage))
@@ -144,10 +158,11 @@ extension FFUserAccountViewController: SetupViewController {
     }
     
     func loadUserData(){
-        guard let data =  FFUserHealthDataStoreManager.shared.mainUserData() else { return }
+        guard let data = FFUserMainDataManager().loadUserMainData() else { return }
         userData = data
         userFullNameLabel.text = data.fullName
         userAccountNameLabel.text = data.account
+        
     }
     
     func setupScrollView(){
@@ -165,6 +180,7 @@ extension FFUserAccountViewController: SetupViewController {
     
     func reloadUserImageView(){
         DispatchQueue.main.asyncAfter(deadline: .now()+1) { [ unowned self ] in
+            loadUserData()
             userImageView.image = userImage
             refreshControl.endRefreshing()
             indicatorView.stopAnimating()

@@ -56,7 +56,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = tabBar
         window.makeKeyAndVisible()
         self.window = window
-//        checkIfOnboardingIsLaunched(tabBar: tabBar)
+        
+        tabBar.checkOnboarding()
+        tabBar.checkAuthentication()
     }
     
     private func checkIfOnboardingIsLaunched(tabBar: UITabBarController){

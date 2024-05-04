@@ -30,7 +30,7 @@
 		0A2347E52AF9BC96002C161C /* FFGetExercisesDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */; };
 		0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */; };
 		0A256A642B89DBC000137B6C /* DateComponents+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */; };
-		0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */; };
+		0A256A662B89E8E400137B6C /* FFUserHealthDataStoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A652B89E8E400137B6C /* FFUserHealthDataStoreManager.swift */; };
 		0A256A692B8CD35900137B6C /* FFOnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */; };
 		0A256A6B2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A256A6A2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift */; };
 		0A38936B2B6A35CB007FC363 /* NotificationsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */; };
@@ -150,6 +150,9 @@
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
 		0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* HealthKitSupport.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
+		FD4480AE2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */; };
+		FD4480B02BE60A5400BB2CBD /* UserHealthMainData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */; };
+		FD4480B22BE60A7800BB2CBD /* FFUserMainDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480B12BE60A7800BB2CBD /* FFUserMainDataManager.swift */; };
 		FD47817D2BC52AE70035354A /* FFOnboardingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */; };
 		FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */; };
 		FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */; };
@@ -198,7 +201,7 @@
 		0A2347E42AF9BC96002C161C /* FFGetExercisesDataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFGetExercisesDataBase.swift; sourceTree = "<group>"; };
 		0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFExerciseModel.swift; sourceTree = "<group>"; };
 		0A256A632B89DBC000137B6C /* DateComponents+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extensions.swift"; sourceTree = "<group>"; };
-		0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
+		0A256A652B89E8E400137B6C /* FFUserHealthDataStoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataStoreManager.swift; sourceTree = "<group>"; };
 		0A256A682B8CD35900137B6C /* FFOnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewController.swift; sourceTree = "<group>"; };
 		0A256A6A2B8CD63B00137B6C /* FFOnboardingAccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewController.swift; sourceTree = "<group>"; };
 		0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsSupport.swift; sourceTree = "<group>"; };
@@ -314,6 +317,9 @@
 		0AEE085F2B7B61960043722B /* HealthKitSupportMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupportMethods.swift; sourceTree = "<group>"; };
 		0AF03A662B58F85200715007 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthKitSupport.swift; path = ../Modules/Health/Model/HealthKitSupport.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
+		FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
+		FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHealthMainData.swift; sourceTree = "<group>"; };
+		FD4480B12BE60A7800BB2CBD /* FFUserMainDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserMainDataManager.swift; sourceTree = "<group>"; };
 		FD47817C2BC52AE70035354A /* FFOnboardingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingPageViewModel.swift; sourceTree = "<group>"; };
 		FD47817E2BC530580035354A /* FFOnboardingAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAccessViewModel.swift; sourceTree = "<group>"; };
 		FD4781802BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFOnboardingAuthenticationViewModel.swift; sourceTree = "<group>"; };
@@ -560,7 +566,6 @@
 			children = (
 				0A2347B82AF24B1A002C161C /* TableView */,
 				0A2347B32AF10B78002C161C /* CollectionView */,
-				0A44951C2ABA78EF0082C909 /* ViewModel */,
 				0A44951B2ABA78EA0082C909 /* View+ViewModel */,
 				0A44951A2ABA78E30082C909 /* Model */,
 			);
@@ -640,8 +645,6 @@
 			isa = PBXGroup;
 			children = (
 				0A2347E62AF9CCCB002C161C /* FFExerciseModel.swift */,
-				0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */,
-				0ABDEB002B174E1300BDDAFE /* FFExersiceModelRealm.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -657,19 +660,13 @@
 			path = "View+ViewModel";
 			sourceTree = "<group>";
 		};
-		0A44951C2ABA78EF0082C909 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
 		0A44951E2ABA79120082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				0A69E0D22B4E26F10023487B /* UserHealthDataProvider.swift */,
 				FD75D2EA2BD638C000AE509D /* HealthCategoruCartesianModel.swift */,
 				FDEF7BA12BD7B9BE004B303C /* FFChartDataModel.swift */,
+				FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -677,7 +674,6 @@
 		0A4495242ABA793C0082C909 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -686,7 +682,6 @@
 			isa = PBXGroup;
 			children = (
 				0A4495382ABC43B70082C909 /* FFNewsModel.swift */,
-				0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -716,7 +711,7 @@
 			children = (
 				0A1D31C52BB2DEC800239A33 /* User Image Manager */,
 				0A634C822B9CB5AB0068E544 /* Health Kit Manager */,
-				0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */,
+				0ACEA9DB2ACF1B6E00899CF6 /* Realm Store */,
 				0AC99D6A2B97F64A000AAAD1 /* Keychain Manager */,
 			);
 			path = Managers;
@@ -1016,16 +1011,13 @@
 			path = "V+VM";
 			sourceTree = "<group>";
 		};
-		0ACEA9DB2ACF1B6E00899CF6 /* Realm Store Managers */ = {
+		0ACEA9DB2ACF1B6E00899CF6 /* Realm Store */ = {
 			isa = PBXGroup;
 			children = (
-				0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */,
-				0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */,
-				0ABDEB022B18659B00BDDAFE /* FFExerciseModelStoreManager.swift */,
-				0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */,
-				0A256A652B89E8E400137B6C /* FFUserHealthDataModelRealm.swift */,
+				FD4480AC2BE6090400BB2CBD /* Managers */,
+				FD4480AB2BE608FC00BB2CBD /* Models */,
 			);
-			path = "Realm Store Managers";
+			path = "Realm Store";
 			sourceTree = "<group>";
 		};
 		0ACEA9E02ACF77AB00899CF6 /* SecondaryView+UIView */ = {
@@ -1206,6 +1198,31 @@
 				0A69AF352B09D02C0013FB1B /* FFFavouriteExerciseViewModel.swift */,
 			);
 			path = FavouriteExerciseController;
+			sourceTree = "<group>";
+		};
+		FD4480AB2BE608FC00BB2CBD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0A9151A62B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift */,
+				0AE0F4F82B0619E600874C0B /* FFFavouriteExercisesModel.swift */,
+				0ABDEB002B174E1300BDDAFE /* FFExersiceModelRealm.swift */,
+				0ACEA9DE2ACF1C9B00899CF6 /* FFNewsModelRealm.swift */,
+				FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		FD4480AC2BE6090400BB2CBD /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				0ACEA9DC2ACF1B9800899CF6 /* FFNewsStoreManager.swift */,
+				0AE0F4F42B0613F200874C0B /* FFFavouriteExerciseStoreManager.swift */,
+				0ABDEB022B18659B00BDDAFE /* FFExerciseModelStoreManager.swift */,
+				0A86DEDA2B23E8CE00E9DA24 /* FFTrainingPlanStoreManager.swift */,
+				0A256A652B89E8E400137B6C /* FFUserHealthDataStoreManager.swift */,
+				FD4480B12BE60A7800BB2CBD /* FFUserMainDataManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		FD68185D2BCD25E000A9EDE8 /* FavouriteHealthCategories */ = {
@@ -1455,6 +1472,7 @@
 				FD4781812BC7C7310035354A /* FFOnboardingAuthenticationViewModel.swift in Sources */,
 				0A82CD242B2E45F300F98D8B /* AlertControllerTwoActions.swift in Sources */,
 				0AC145F72BA271B700C8544A /* HealthStoreRequest+Enum.swift in Sources */,
+				FD4480AE2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift in Sources */,
 				0ABDEB092B19532100BDDAFE /* FFAddExerciseViewModel.swift in Sources */,
 				0A3C56CD2B64F65800FCD2D8 /* MediaFilesSupport.swift in Sources */,
 				0A705BC72BB6C4D1006BC6BF /* HandlerUploadedImageProtocol.swift in Sources */,
@@ -1478,10 +1496,11 @@
 				FD9DE3682BBC3645005775DF /* TipKit+UIViewControllerExtension.swift in Sources */,
 				0A4494C02AB821FD0082C909 /* AppDelegate.swift in Sources */,
 				0A1D31C72BB2DFB200239A33 /* FFUserImageManager.swift in Sources */,
-				0A256A662B89E8E400137B6C /* FFUserHealthDataModelRealm.swift in Sources */,
+				0A256A662B89E8E400137B6C /* FFUserHealthDataStoreManager.swift in Sources */,
 				0ACEA9E42ACF7E3100899CF6 /* FFNewsPageDetailViewController.swift in Sources */,
 				0A3FC2E22ADEBF4100E35739 /* FFImageDetailsViewController.swift in Sources */,
 				0AE049A42B7760F600697A82 /* Color+UIViewControler.swift in Sources */,
+				FD4480B22BE60A7800BB2CBD /* FFUserMainDataManager.swift in Sources */,
 				0A2347D12AF39C31002C161C /* FFExerciseMuscleGroupViewModel.swift in Sources */,
 				0A4495102ABA031B0082C909 /* SetupProtocol.swift in Sources */,
 				0A69E0CB2B4AA45C0023487B /* FFSearchPlanViewController.swift in Sources */,
@@ -1538,6 +1557,7 @@
 				0A2347E72AF9CCCB002C161C /* FFExerciseModel.swift in Sources */,
 				0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */,
 				FD9DE3732BC1433F005775DF /* FFOnboardingUserDataViewModel.swift in Sources */,
+				FD4480B02BE60A5400BB2CBD /* UserHealthMainData.swift in Sources */,
 				FD47817F2BC530580035354A /* FFOnboardingAccessViewModel.swift in Sources */,
 				FDEF7BA22BD7B9BE004B303C /* FFChartDataModel.swift in Sources */,
 				0A85551C2B72436900B1A7EE /* FFHealthDataManager.swift in Sources */,

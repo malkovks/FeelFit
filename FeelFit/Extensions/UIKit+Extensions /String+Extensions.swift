@@ -27,6 +27,10 @@ extension String {
         return passwordPredicate.evaluate(with: self)
     }
     
+    func removeSpaces() -> Self {
+        return self.trimmingCharacters(in: .whitespaces)
+    }
+    
     
     /// Function process string date, input format style and return formatted date
     /// - Parameter format: iso format value

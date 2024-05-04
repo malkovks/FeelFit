@@ -28,22 +28,26 @@ final class FFTabBarController: UITabBarController {
     private func configureTabBar(){
         setupControllerBar()
         setupTabBar()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now()+1){
-            if !FFOnboardingManager.shared.hasShownOnboarding(){
-                self.showOnboarding()
-            }
-        }
-        
+    
     }
     
-    private func showOnboarding(){
-        let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        let nav = FFNavigationController(rootViewController: vc)
-        nav.modalPresentationStyle = .fullScreen
-        nav.isNavigationBarHidden = true
-        present(nav, animated: true)
-
+    func checkAuthentication(){
+        if !FFAuthenticationManager.shared.isUserEnteredInAccount() {
+            let vc = FFOnboardingAuthenticationViewController()
+            vc.modalPresentationStyle = .fullScreen
+            
+            present(vc, animated: true)
+        }
+    }
+    
+    func checkOnboarding(){
+        if !FFOnboardingManager.shared.hasShownOnboarding() {
+            let vc = FFOnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            let nav = FFNavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            nav.isNavigationBarHidden = true
+            present(nav, animated: true)
+        }
     }
     
     private func setupTabBar(){
