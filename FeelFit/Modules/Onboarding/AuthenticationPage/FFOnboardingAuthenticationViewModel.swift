@@ -41,11 +41,6 @@ class FFOnboardingAuthenticationViewModel: FFAuthenticationProtocol {
         }
     }
     
-    func saveEditsAndDismiss(completion: @escaping (_ status: Bool) -> ()){
-        let boolean = FFUserHealthDataStoreManager.shared.isDataExisted()
-        completion(boolean)
-    }
-    
     func createNewAccount(user: CredentialUser?){
         performKeychaingRequest(userData: user) { [weak self] userData in
             try self?.accountManager.createNewUserAccount(userData: userData)
@@ -70,6 +65,7 @@ class FFOnboardingAuthenticationViewModel: FFAuthenticationProtocol {
     func saveUserLoggedInStatus(isLoggedIn: Bool, userAccount: String?){
         UserDefaults.standard.setValue(isLoggedIn, forKey: "userLoggedIn")
         UserDefaults.standard.setValue(userAccount, forKey: "userAccount")
+        FFUserHealthDataStoreManager.shared.isDataAlmostCreated(userAccount: userAccount)
     }
     
     private func performKeychaingRequest(userData: CredentialUser?, requestFunction: (_ userData: CredentialUser?) throws -> Void){

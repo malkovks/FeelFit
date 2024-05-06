@@ -81,8 +81,7 @@ class FFUserProfileViewModel: HandleUserImageProtocol {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Continue", style: .destructive, handler: { [weak self ] _ in
             FFAuthenticationManager.shared.didExitFromAccount()
-            let vc = FFOnboardingAuthenticationViewController()
-            vc.saveEditedAccountButton.isHidden = false
+            let vc = FFOnboardingAuthenticationViewController(type: .authenticationOnlyDisplay)
             vc.isDataCreated = { [weak self] status in
                 self?.loadUserData()
             }

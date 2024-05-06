@@ -28,14 +28,12 @@ final class FFTabBarController: UITabBarController {
     private func configureTabBar(){
         setupControllerBar()
         setupTabBar()
-    
     }
     
     func checkAuthentication(){
         if !FFAuthenticationManager.shared.isUserEnteredInAccount() {
-            let vc = FFOnboardingAuthenticationViewController()
+            let vc = FFOnboardingAuthenticationViewController(type: .authenticationOnlyDisplay)
             vc.modalPresentationStyle = .fullScreen
-            
             present(vc, animated: true)
         }
     }

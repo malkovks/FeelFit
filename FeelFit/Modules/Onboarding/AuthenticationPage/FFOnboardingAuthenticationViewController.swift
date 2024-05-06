@@ -8,15 +8,33 @@
 import UIKit
 import TipKit
 
+enum AuthenticationTypeDisplaying {
+    case onboardingDisplay
+    case authenticationOnlyDisplay
+    case changePassword
+}
+
 
 class FFOnboardingAuthenticationViewController: UIViewController {
     
-    var viewModel: FFOnboardingAuthenticationViewModel!
+    private var viewModel: FFOnboardingAuthenticationViewModel!
+    private var authenticationTypeDisplay: AuthenticationTypeDisplaying
     
     private weak var tipView: TipUIView?
-    
+    private weak var timer: Timer?
     private var isPasswordHidden: Bool = true
-    private let accountManager = FFUserAccountManager.shared
+    private var isUserTappedButton: Bool = false
+
+    
+    
+    init(type: AuthenticationTypeDisplaying = .onboardingDisplay){
+        self.authenticationTypeDisplay = type
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     var isDataCreated: ((Bool) -> Void)?
     
@@ -27,6 +45,17 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         label.textAlignment = .center
         label.contentMode = .scaleToFill
         label.adjustsFontForContentSizeCategory = true
+        return label
+    }()
+    
+    private let authenticationStatusLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.numberOfLines = 2
+        label.font = UIFont.headerFont(size: 24,for: .largeTitle)
+        label.textColor = .customBlack
+        label.textAlignment = .center
+        label.contentMode = .scaleAspectFit
+        label.text = "Authentication status"
         return label
     }()
     
@@ -93,18 +122,7 @@ class FFOnboardingAuthenticationViewController: UIViewController {
     private let logoutAccountButton = CustomConfigurationButton(configurationTitle: "Log out")
     private let createAccountButton = CustomConfigurationButton(configurationTitle: "Create Account")
     private let loginAccountButton = CustomConfigurationButton(configurationTitle: "Login")
-    
-    var saveEditedAccountButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.configuration = .tinted()
-        button.configuration?.title = "Saved new account"
-        button.isEnabled = true
-        button.isHidden = true
-        button.configuration?.titleAlignment = .center
-        button.configuration?.baseBackgroundColor = .systemGreen
-        button.configuration?.baseForegroundColor = .customBlack
-        return button
-    }()
+    private let closeViewControllerButton = CustomConfigurationButton(configurationTitle: "Close", baseBackgroundColor: .systemGreen)
     
     private let deleteAccountButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -165,10 +183,10 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         viewModel.deleteAccount(user: account)
     }
     
-    @objc private func didTapSaveEdits(){
-        viewModel.saveEditsAndDismiss { [weak self] status in
-            self?.isDataCreated?(status)
-        }
+    @objc private func didTapDismissAuthentication(){
+        isUserTappedButton = true
+        timer?.invalidate()
+        dismiss(animated: true)
     }
 }
 
@@ -180,9 +198,18 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
         }
     }
     
+    func dismissViewAfterSuccessAuthentication(){
+        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: { [unowned self] _ in
+            if !isUserTappedButton {
+                dismiss(animated: true)
+            }
+        })
+    }
+    
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
         setupUserConfirmButton()
+        setupLabel()
         setupTextFields()
         setupNavigationController()
         setupViewModel()
@@ -200,11 +227,16 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
     
     private func setupUserConfirmButton(){
         logoutAccountButton.isHidden = true
+        closeViewControllerButton.isHidden = true
+        closeViewControllerButton.addTarget(self, action: #selector(didTapDismissAuthentication), for: .primaryActionTriggered)
         logoutAccountButton.addTarget(self, action: #selector(didTapLogout), for: .primaryActionTriggered)
         createAccountButton.addTarget(self, action: #selector(didTapCreateNewAccount), for: .primaryActionTriggered)
         loginAccountButton.addTarget(self, action: #selector(didTapLogin), for: .primaryActionTriggered)
         deleteAccountButton.addTarget(self, action: #selector(didTapDeleteAccount), for: .primaryActionTriggered)
-        saveEditedAccountButton.addTarget(self, action: #selector(didTapSaveEdits), for: .primaryActionTriggered)
+    }
+    
+    private  func setupLabel(){
+        authenticationStatusLabel.isHidden = true
     }
     
     private func clearTextFields(){
@@ -227,7 +259,7 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
     
     private func confirmButton(completed: Bool){
         if completed {
-            UIView.animate(withDuration: 0.2) { [unowned self] in
+            UIView.animate(withDuration: 1) { [unowned self] in
                 loginAccountButton.alpha = 0
                 createAccountButton.alpha = 0
                 logoutAccountButton.alpha = 1
@@ -242,7 +274,7 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
                 view.layoutIfNeeded()
             }
         } else {
-            UIView.animate(withDuration: 0.2) { [unowned self] in
+            UIView.animate(withDuration: 1) { [unowned self] in
                 loginAccountButton.alpha = 1
                 createAccountButton.alpha = 1
                 logoutAccountButton.alpha = 0
@@ -258,6 +290,27 @@ extension FFOnboardingAuthenticationViewController: SetupViewController {
             }
             userEmailTextField.text = ""
             userPasswordTextField.text = ""
+        }
+    }
+    
+    private func confirmAnotherAuth(completed: Bool){
+        UIView.animate(withDuration: 1) { [unowned self] in
+            authenticationStatusLabel.isHidden = false
+            let buttons = [loginAccountButton,createAccountButton,logoutAccountButton,deleteAccountButton]
+            if completed {
+                buttons.forEach { button in
+                    button.isHidden = true
+                }
+                closeViewControllerButton.isHidden = false
+                authenticationStatusLabel.text = "Successfully"
+                authenticationStatusLabel.textColor = .systemGreen
+                dismissViewAfterSuccessAuthentication()
+            } else {
+                closeViewControllerButton.isHidden = true
+                authenticationStatusLabel.text = "Failure. Try again"
+                authenticationStatusLabel.textColor = .systemRed
+            }
+            view.layoutIfNeeded()
         }
     }
 
@@ -292,7 +345,13 @@ extension FFOnboardingAuthenticationViewController: FFAuthenticationDelegate {
     }
     
     func didTapConfirmButtons(completed: Bool) {
-        confirmButton(completed: completed)
+        switch authenticationTypeDisplay{
+            
+        case .onboardingDisplay, .changePassword:
+            confirmButton(completed: completed)
+        case .authenticationOnlyDisplay:
+            confirmAnotherAuth(completed: completed)
+        }
     }
     
     
@@ -337,11 +396,11 @@ private extension FFOnboardingAuthenticationViewController {
             make.height.lessThanOrEqualToSuperview().multipliedBy(0.3)
         }
         
-        view.addSubview(saveEditedAccountButton)
-        saveEditedAccountButton.snp.makeConstraints { make in
+        view.addSubview(authenticationStatusLabel)
+        authenticationStatusLabel.snp.makeConstraints { make in
             make.top.equalTo(authStackView.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.85)
+            make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(55)
         }
         
@@ -356,10 +415,18 @@ private extension FFOnboardingAuthenticationViewController {
         loginAccountButton.snp.makeConstraints { make in
             make.height.equalTo(55)
         }
+        
+        view.addSubview(closeViewControllerButton)
+        closeViewControllerButton.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-10)
+            make.width.equalToSuperview().multipliedBy(0.85)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(44)
+        }
     }
 }
 
 #Preview {
-    let navVC = UINavigationController(rootViewController: FFOnboardingAuthenticationViewController())
+    let navVC = UINavigationController(rootViewController: FFOnboardingAuthenticationViewController(type: .authenticationOnlyDisplay))
     return navVC
 }

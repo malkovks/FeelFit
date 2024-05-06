@@ -30,9 +30,11 @@ class FFUserMainDataManager {
     func saveUserName(name text: String, secondName secondText: String) {
         let key = authenticationData.account
         if let user = getUserData(byKey: key) {
-            user.userFirstName = text
-            user.userSecondName = secondText
-            realm.add(user, update: .modified)
+            
+            try! realm.write({
+                user.userFirstName = text
+                user.userSecondName = secondText
+            })
         } else {
             print("Model was not found by this key")
         }

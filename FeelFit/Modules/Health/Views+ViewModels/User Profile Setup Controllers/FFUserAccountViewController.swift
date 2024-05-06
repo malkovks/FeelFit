@@ -37,14 +37,15 @@ class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
         return label
     }()
     
-    var userAccountNameLabel: UILabel = {
-        let label = UILabel(frame: .zero)
-        label.text = "example@mail.com"
-        label.font = UIFont.headerFont(size: 20,for: .extraLargeTitle)
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        label.isUserInteractionEnabled = true
-        return label
+    var userAccountButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("example@mail.ru", for: .normal)
+        button.setImage(UIImage(systemName: "arrow.backward.square"), for: .normal)
+        button.semanticContentAttribute = .forceRightToLeft
+        button.tintColor = .systemRed
+        button.setTitleColor(.customBlack, for: .normal)
+        button.titleLabel?.font = UIFont.headerFont(size: 20, for: .extraLargeTitle)
+        return button
     }()
     
     private let scrollView: UIScrollView = {
@@ -113,7 +114,7 @@ class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
     @objc private func changeUserAccount(){
         defaultAlertController(title: "Warning", message: "Do you want to leave account?",actionTitle: "Leave",buttonStyle: .destructive) { [unowned self] in
             FFAuthenticationManager.shared.didExitFromAccount()
-            let vc = FFOnboardingAuthenticationViewController()
+            let vc = FFOnboardingAuthenticationViewController(type: .authenticationOnlyDisplay)
             vc.modalPresentationStyle = .fullScreen
             present(vc, animated: true)
         }
@@ -131,7 +132,7 @@ extension FFUserAccountViewController: SetupViewController {
         setupNavigationController()
         setupViewModel()
         setupScrollView()
-        setupUserAccountNameLabel()
+        setupUserAccountButton()
 
         setupPickerViewController()
         setupCameraPickerController()
@@ -152,17 +153,17 @@ extension FFUserAccountViewController: SetupViewController {
         userFullNameLabel.addGestureRecognizer(tapGesture)
     }
     
-    func setupUserAccountNameLabel(){
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(changeUserAccount))
-        userAccountNameLabel.addGestureRecognizer(tapGesture)
+    func setupUserAccountButton(){
+        userAccountButton.addTarget(self, action: #selector(changeUserAccount), for: .primaryActionTriggered)
     }
     
     func loadUserData(){
         guard let data = FFUserMainDataManager().loadUserMainData() else { return }
         userData = data
-        userFullNameLabel.text = data.fullName
-        userAccountNameLabel.text = data.account
-        
+        DispatchQueue.main.async { [weak self] in
+            self?.userFullNameLabel.text = data.fullName
+            self?.userAccountButton.setTitle(data.account, for: .normal)
+        }
     }
     
     func setupScrollView(){
@@ -247,8 +248,8 @@ extension FFUserAccountViewController {
             make.height.equalTo(55)
         }
         
-        scrollView.addSubview(userAccountNameLabel)
-        userAccountNameLabel.snp.makeConstraints { make in
+        scrollView.addSubview(userAccountButton)
+        userAccountButton.snp.makeConstraints { make in
             make.top.equalTo(userFullNameLabel.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().inset(20)
@@ -256,7 +257,7 @@ extension FFUserAccountViewController {
         }
         
         scrollView.snp.makeConstraints { make in
-            make.bottom.equalTo(userAccountNameLabel.snp.bottom).offset(10)
+            make.bottom.equalTo(userAccountButton.snp.bottom).offset(10)
         }
     }
 }

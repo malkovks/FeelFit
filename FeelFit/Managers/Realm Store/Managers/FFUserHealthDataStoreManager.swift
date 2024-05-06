@@ -37,6 +37,15 @@ class FFUserHealthDataStoreManager {
         }
     }
     
+    func isDataAlmostCreated(userAccount: String?) {
+        guard let key = userAccount else { return }
+        if let _ = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: key){
+            print("Model almost created")
+        } else {
+            createNewUserData(enterStatus: true, account: key)
+        }
+    }
+    
     func createNewUserData(enterStatus: Bool, account: String){
         let futureModel = FFUserHealthDataModelRealm()
         futureModel.userAccountLogin = account
@@ -117,7 +126,8 @@ class FFUserHealthDataStoreManager {
     }
     
     func loadUserDataDictionary() -> [[String:String]]?{
-        guard let userData = realm.objects(FFUserHealthDataModelRealm.self).last else { return nil }
+        let value = loadUserAuthenticationStatus()
+        guard let userData = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: value.account) else { return nil }
         let birthday = userData.userBirthOfDate?.dateAndUserAgeConverting()
         let userDataDictionary: [[String: String]] = [
             ["Name": userData.userFirstName ?? "Not Set",
