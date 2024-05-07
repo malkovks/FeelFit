@@ -9,21 +9,7 @@ import UIKit
 
 class FFHealthUserInformationViewController: UIViewController, SetupViewController {
     
-    private let tableViewText: [[String]] = [["Name","Second Name"],["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)"],["Stoller chair"]]
-    private var usersData: UserCharactersData = UserCharactersData()
-    
-    private var userDataDictionary: [[String: String]] = [
-        ["Name":"Enter Name",
-         "Second Name": "Enter Second Name"],
-        ["Birthday":"Not Set",
-         "Gender":"Not Set",
-         "Blood Type":"Not Set",
-         "Skin Type(Fitzpatrick Type)":"Not Set",
-         "Stoller chair":"Not Set"],
-        ["Load data from Health" : ""],
-        ["Save edited data":""]
-    ]
-    
+    private var viewModel: FFHealthUserInformationViewModel!
     
     init(userImage: UIImage = UIImage(systemName: "person.circle")!){
         self.userImage = userImage
@@ -36,16 +22,12 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     var userImage: UIImage? = UIImage(systemName: "person.circle")!
     
-    private var userImageView: UIImageView!
     private var tableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        FFHealthDataManager.shared.loadingCharactersData { [weak self] userDataString in
-            guard let data = userDataString else { return }
-            self?.usersData = data
-        }
+        
     }
     
     //MARK: - Action methods
@@ -61,15 +43,18 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     //MARK: - Set up methods
     func setupView() {
         view.backgroundColor = .secondarySystemBackground
-        setupUserImageView()
-        setupTableView()
         setupViewModel()
+
+        setupTableView()
         setupNavigationController()
         setupConstraints()
+        
     }
     
+    
     func setupViewModel() {
-        
+        viewModel = FFHealthUserInformationViewModel(viewController: self)
+        viewModel.loadUserData()
     }
 
     func setupNavigationController() {
@@ -87,43 +72,33 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
         tableView.backgroundColor = .clear
         tableView.contentInsetAdjustmentBehavior = .never
     }
-    
-    private func setupUserImageView(){
-        userImageView = UIImageView(image: userImage)
-        userImageView.frame = CGRectMake(0, 0, view.frame.size.width/5, view.frame.size.width/5)
-        userImageView.tintColor = FFResources.Colors.activeColor
-        userImageView.setupShadowLayer()
-        userImageView.isUserInteractionEnabled = true
-        userImageView.layer.cornerRadius = userImageView.frame.size.width / 2
-        userImageView.layer.masksToBounds = true
-        userImageView.contentMode = .scaleAspectFill
-    }
-
 }
 
+//MARK: - Table view data source
 extension FFHealthUserInformationViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return userDataDictionary.count
+        return viewModel.userDataDictionary.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userDataDictionary[section].count
+        return viewModel.userDataDictionary[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0,1:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-            cell.configureView(userDictionary: userDataDictionary, indexPath)
+            cell.configureView(userDictionary: viewModel.userDataDictionary, indexPath)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
-            cell.configureCell(data: userDataDictionary, indexPath: indexPath)
+            cell.configureCell(loaded: false, indexPath: indexPath)
             return cell
         }
     }
 }
 
+//MARK: - Table view delegate
 extension FFHealthUserInformationViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -149,22 +124,8 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
         return 5
     }
     
-
-    
-    //Header
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let frameRect = CGRect(x: 0, y: 0, width: tableView.frame.width, height: view.frame.size.height/4 - 10)
-        let customView = UserImageTableViewHeaderView(frame: frameRect)
-        customView.configureCustomHeaderView(userImage: userImage,isLabelHidden: true)
-        return customView
-    }
-    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return view.frame.size.height/5
-        } else {
-            return 0.0
-        }
+        return 0
     }
 }
 

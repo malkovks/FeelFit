@@ -142,6 +142,7 @@ class FFUserHealthDataStoreManager {
     }
     
     func loadUserDataModel() -> FFUserHealthDataModelRealm?  {
+        
         let userData = realm.objects(FFUserHealthDataModelRealm.self).last
         return userData ?? nil
     }

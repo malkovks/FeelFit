@@ -181,7 +181,7 @@ extension FFOnboardingUserDataViewController: UITableViewDataSource {
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
-            cell.configureCell(data: viewModel.userDataDictionary, loaded: isDataLoaded, indexPath: indexPath)
+            cell.configureCell(loaded: isDataLoaded, indexPath: indexPath)
             return cell
         }
     }

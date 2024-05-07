@@ -11,7 +11,7 @@ class FFCenteredTitleTableViewCell: UITableViewCell {
     
     static let identifier = "FFCenteredTitleTableViewCell"
     
-    
+    var cellNameString: [[String]] = [[""],[""],["Load user's data"],["Exit from account"]]
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -23,10 +23,8 @@ class FFCenteredTitleTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
-    func configureCell(data: [[String:String]],loaded isDataLoaded: Bool = false, indexPath: IndexPath){
-        let dictionary = data[indexPath.section]
-        let key: String = Array(dictionary.keys).sorted()[indexPath.row]
-        let value: String = dictionary[key] ?? "Nil"
+    func configureCell(loaded isDataLoaded: Bool = false, indexPath: IndexPath){
+        let value: String = cellNameString[indexPath.section][indexPath.row]
         if indexPath.section == 2 {
             let color = isDataLoaded ? UIColor.lightGray : UIColor.systemBackground
             let isCellEnable = !isDataLoaded
