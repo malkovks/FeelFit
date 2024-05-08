@@ -54,7 +54,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     func setupViewModel() {
         viewModel = FFHealthUserInformationViewModel(viewController: self)
-        viewModel.loadUserData()
+        viewModel.loadFullUserData()
     }
 
     func setupNavigationController() {
@@ -77,22 +77,22 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
 //MARK: - Table view data source
 extension FFHealthUserInformationViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel.userDataDictionary.count
+        return viewModel.tableViewData.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.userDataDictionary[section].count
+        return viewModel.tableViewData[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0,1:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-            cell.configureView(userDictionary: viewModel.userDataDictionary, indexPath)
+            cell.configureLabels(value: viewModel.userData, indexPath: indexPath)
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
-            cell.configureCell(loaded: false, indexPath: indexPath)
+            cell.configureCell( indexPath: indexPath)
             return cell
         }
     }
@@ -103,11 +103,14 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath.section {
-        case 0:
+        switch indexPath {
+        case [0,0]:
             print("Open text field")
-        case 1:
+        case [0,1]:
             print("Open picker view")
+        case [2,0]:
+            viewModel.requestToLoadHealthUserData()
+            print("load user data")
         default:
             break
         }

@@ -19,6 +19,11 @@ class FFSubtitleTableViewCell: UITableViewCell {
         return label
     }()
     
+    var tableViewData: [[String]] = [
+        ["Name","Second Name"],
+        ["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)","Stoller chair"],
+    ]
+    
     let titleTextField: UITextField = {
         let field = UITextField(frame: .zero)
         field.textAlignment = .right
@@ -66,6 +71,12 @@ class FFSubtitleTableViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureLabels(value: [[String]], indexPath: IndexPath){
+        let text = value[indexPath.section][indexPath.row]
+        let mainText = tableViewData[indexPath.section][indexPath.row]
+        setupConfiguration(indexPath, titleLabel: mainText, info: text)
     }
     
     func configureView(userDictionary data: [[String:String]],_ indexPath: IndexPath){

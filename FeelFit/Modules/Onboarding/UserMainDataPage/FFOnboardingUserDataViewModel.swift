@@ -28,8 +28,8 @@ final class FFOnboardingUserDataViewModel {
          "Blood Type":"Not Set",
          "Skin Type(Fitzpatrick Type)":"Not Set",
          "Stoller chair":"Not Set"],
-        ["Load":""],
-        ["Save":""]
+        ["Load":"Load"],
+        ["Save":"Save"]
     ]
     
     let viewController: UIViewController

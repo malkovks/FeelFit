@@ -24,16 +24,45 @@ final class FFHealthUserInformationViewModel {
          "Blood Type":"Not Set",
          "Skin Type(Fitzpatrick Type)":"Not Set",
          "Stoller chair":"Not Set"],
-        ["Load":""],
-        ["Save":""]
+        ["Load":"Load"],
+        ["Save":"Save"]
     ]
     
-    func loadUserData(){
-        guard let data = storeManager.loadUserDataDictionary() else {
-            viewController.alertError(message: "Error loading")
-            return
-        }
-        
-        userDataDictionary = data
+    var tableViewData: [[String]] = [
+        ["Name","Second Name"],
+        ["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)","Stoller chair"],
+        ["Load"],
+        ["Save"]
+    ]
+    
+    var userData: [[String]] = [
+        [],
+        []
+    ]
+    
+    func loadFullUserData(){
+        userData = storeManager.loadUserDataModel()
     }
+    
+    func requestToLoadHealthUserData(){
+        viewController.defaultAlertController(message: "Do you want to load your own data from Health?", actionTitle: "Load") { [unowned self] in
+            loadHealthUserData()
+        }
+    }
+    
+    private func loadHealthUserData(){
+        FFHealthDataManager.shared.loadingCharactersData { [unowned self] data in
+            userData[1].append(data?.dateOfBirth?.convertComponentsToDateString() ?? "Not set")
+            userData[1].append(data?.userGender ?? "Not set")
+            userData[1].append(data?.bloodType ?? "Not set")
+            userData[1].append(data?.fitzpatrickSkinType ?? "Not set")
+            userData[1].append(data?.wheelChairUse ?? "Not set")
+        }
+    }
+    
+    func saveUserData(){
+        
+    }
+    
+    
 }

@@ -59,6 +59,39 @@ class FFUserHealthDataStoreManager {
         }
     }
     
+    func saveUserData(_ userData: [[String]]){
+        let value = loadUserAuthenticationStatus()
+        guard let model = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: value.account) else {
+            return
+        }
+        
+        try! realm.write {
+            model.userFirstName = userData[0][0]
+            model.userSecondName = userData[0][1]
+            model.userBirthOfDate = userData[1][0].convertStringToDate()
+            model.userBiologicalSex = userData[1][1]
+            model.userBloodType = userData[1][2]
+            model.userFitzpatrickSkinType = userData[1][3]
+            model.userWheelchairType = userData[1][4]
+        }
+    }
+    
+    func loadUserDataModel() -> [[String]] {
+        var userData: [[String]] = [[],[]]
+        let value = loadUserAuthenticationStatus()
+        guard let data = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: value.account) else { return userData }
+        userData[0].append(data.userFirstName ?? "Not set")
+        userData[0].append(data.userSecondName ?? "Not set")
+        
+        userData[1].append(data.userBirthOfDate?.dateAndUserAgeConverting() ?? "Not set")
+        userData[1].append(data.userBiologicalSex ?? "Not set")
+        userData[1].append(data.userBloodType ?? "Not set")
+        userData[1].append(data.userFitzpatrickSkinType ?? "Not set")
+        userData[1].append(data.userWheelchairType ?? "Not set")
+        
+        return userData
+    }
+    
     
     func saveNewUserData(_ userDataDictionary: [[String:String]]) -> Result <Bool,Error> {
         let futureModel = FFUserHealthDataModelRealm()
@@ -141,11 +174,7 @@ class FFUserHealthDataStoreManager {
         return userDataDictionary
     }
     
-    func loadUserDataModel() -> FFUserHealthDataModelRealm?  {
-        
-        let userData = realm.objects(FFUserHealthDataModelRealm.self).last
-        return userData ?? nil
-    }
+
     
     
     func editUserData(){
