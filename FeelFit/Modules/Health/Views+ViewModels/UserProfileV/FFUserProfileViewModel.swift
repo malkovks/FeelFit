@@ -42,7 +42,6 @@ class FFUserProfileViewModel: HandleUserImageProtocol {
     /// Function open details about user's health
     func pushUserHealthData(image: UIImage?){
         let vc = FFHealthUserInformationViewController()
-        vc.userImage = image
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     

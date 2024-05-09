@@ -85,6 +85,7 @@ final class FFOnboardingUserDataViewModel {
                                         vibrancyEffect: .none)
         vc.delegate = self
         let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = .main
         nav.modalPresentationStyle = .formSheet
         nav.sheetPresentationController?.detents = [.custom(resolver: { context in
             return self.viewController.view.frame.size.height * 0.5

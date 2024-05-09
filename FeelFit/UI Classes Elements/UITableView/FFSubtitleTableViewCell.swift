@@ -93,7 +93,7 @@ class FFSubtitleTableViewCell: UITableViewCell {
         switch indexPath.section {
         case 0:
             firstTitleLabel.text = titleLabel
-            titleTextField.text = info ?? ""
+            titleTextField.text = info
             titleTextField.isHidden = false
             subtitleResultLabel.isHidden = true
         case 1:

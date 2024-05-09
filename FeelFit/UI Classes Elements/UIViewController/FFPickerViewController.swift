@@ -29,13 +29,16 @@ class FFPickerViewController: UIViewController {
     init(
         selectedValue: String,
         tableViewIndex: Int,
+        title: String? = nil,
         blurEffectStyle: UIBlurEffect.Style?,
         vibrancyEffect: UIVibrancyEffectStyle?) {
+            
             self.selectedValue = selectedValue
             self.tableViewIndex = tableViewIndex
             self.blurEffect = blurEffectStyle
             self.vibrancyEffect = vibrancyEffect
             super.init(nibName: nil, bundle: nil)
+            self.title = title
     }
     
     required init?(coder: NSCoder) {
@@ -117,13 +120,8 @@ class FFPickerViewController: UIViewController {
 
     
     private func setupDisplayDatePickerView(_ isDatePickerPresented: Bool) {
-        if isDatePickerPresented {
-            datePickerView.isHidden = false
-            pickerView.isHidden = true
-        } else {
-            datePickerView.isHidden = true
-            pickerView.isHidden = false
-        }
+        datePickerView.isHidden = !isDatePickerPresented
+        pickerView.isHidden = isDatePickerPresented
     }
     
     @objc private func didTapSaveResult(){
@@ -153,9 +151,9 @@ extension FFPickerViewController: SetupViewController {
         setupPickerView()
         view.backgroundColor = .clear
         
-        let vew = UIVisualEffectView(effect: UIBlurEffect(style: blurEffect ?? .regular))
-        vew.frame = view.bounds
-        view.addSubview(vew)
+        let visualEffect = UIVisualEffectView(effect: UIBlurEffect(style: blurEffect ?? .regular))
+        visualEffect.frame = view.bounds
+        view.addSubview(visualEffect)
         
         setupConstraints()
         

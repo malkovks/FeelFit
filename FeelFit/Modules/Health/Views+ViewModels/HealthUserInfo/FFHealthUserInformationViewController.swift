@@ -11,17 +11,6 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     private var viewModel: FFHealthUserInformationViewModel!
     
-    init(userImage: UIImage = UIImage(systemName: "person.circle")!){
-        self.userImage = userImage
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    var userImage: UIImage? = UIImage(systemName: "person.circle")!
-    
     private var tableView: UITableView!
 
     override func viewDidLoad() {
@@ -36,7 +25,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     }
     
     @objc private func didTapSaveUserData(){
-        
+        viewModel.saveUserData()
     
     }
     
@@ -54,6 +43,7 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     func setupViewModel() {
         viewModel = FFHealthUserInformationViewModel(viewController: self)
+        viewModel.delegate = self
         viewModel.loadFullUserData()
     }
 
@@ -102,18 +92,7 @@ extension FFHealthUserInformationViewController: UITableViewDataSource {
 extension FFHealthUserInformationViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath {
-        case [0,0]:
-            print("Open text field")
-        case [0,1]:
-            print("Open picker view")
-        case [2,0]:
-            viewModel.requestToLoadHealthUserData()
-            print("load user data")
-        default:
-            break
-        }
+        viewModel.tableView(tableView, didSelectRowAt: indexPath)
     }
     
     
@@ -130,6 +109,19 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0
     }
+}
+
+extension FFHealthUserInformationViewController: HealthUserInformationDelegate {
+    func didReloadTableView(indexPath: IndexPath?) {
+        if let indexPath = indexPath {
+            tableView.reloadRows(at: [indexPath], with: .fade)
+        } else {
+            tableView.reloadData()
+        }
+        
+    }
+    
+    
 }
 
 private extension FFHealthUserInformationViewController {

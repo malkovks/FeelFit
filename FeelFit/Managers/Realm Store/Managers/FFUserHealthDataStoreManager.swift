@@ -59,20 +59,25 @@ class FFUserHealthDataStoreManager {
         }
     }
     
-    func saveUserData(_ userData: [[String]]){
+    func saveUserData(_ userData: [[String]]) -> Result <Bool,Error>{
         let value = loadUserAuthenticationStatus()
         guard let model = realm.object(ofType: FFUserHealthDataModelRealm.self, forPrimaryKey: value.account) else {
-            return
+            return .success(false)
         }
         
-        try! realm.write {
-            model.userFirstName = userData[0][0]
-            model.userSecondName = userData[0][1]
-            model.userBirthOfDate = userData[1][0].convertStringToDate()
-            model.userBiologicalSex = userData[1][1]
-            model.userBloodType = userData[1][2]
-            model.userFitzpatrickSkinType = userData[1][3]
-            model.userWheelchairType = userData[1][4]
+        do {
+            try realm.write {
+                model.userFirstName = userData[0][0]
+                model.userSecondName = userData[0][1]
+                model.userBirthOfDate = userData[1][0].convertStringToDate()
+                model.userBiologicalSex = userData[1][1]
+                model.userBloodType = userData[1][2]
+                model.userFitzpatrickSkinType = userData[1][3]
+                model.userWheelchairType = userData[1][4]
+            }
+            return .success(true)
+        } catch {
+            return .failure(error)
         }
     }
     
