@@ -10,10 +10,12 @@ import PhotosUI
 
 class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
     
-    private var userData: FFUserHealthMainData = .init(fullName: "Name example", account: "example@mail.com")
+    
     
     var cameraPickerController: UIImagePickerController!
     var pickerViewController: PHPickerViewController!
+    
+    private var viewModel: FFUserAccountViewModel!
     
     var userImageView: UIImageView = {
         let image = UIImage(systemName: "person.circle")!
@@ -91,33 +93,11 @@ class FFUserAccountViewController: UIViewController, ActionsWithUserImageView {
     }
     
     @objc private func changeUserName(){
-        let alertController = UIAlertController(title: "", message: "Enter your name and second name", preferredStyle: .alert)
-        alertController.addTextField { textField in
-            textField.placeholder = "Enter name"
-            textField.autocapitalizationType = .words
-        }
-        alertController.addTextField { textField in
-            textField.placeholder = "Enter second Name"
-            textField.autocapitalizationType = .words
-        }
-        
-        alertController.addAction(UIAlertAction(title: "Save", style: .default, handler: { _ in
-            let text1 = alertController.textFields?[0].text ?? "Name"
-            let text2 = alertController.textFields?[1].text ?? "Second Name"
-            self.userFullNameLabel.text = text1.removeSpaces() + " " + text2.removeSpaces()
-            FFUserMainDataManager().saveUserName(name: text1, secondName: text2)
-        }))
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alertController, animated: true)
+        viewModel.changeUserName()
     }
     
     @objc private func changeUserAccount(){
-        defaultAlertController(title: "Warning", message: "Do you want to leave account?",actionTitle: "Leave",buttonStyle: .destructive) { [unowned self] in
-            FFAuthenticationManager.shared.didExitFromAccount()
-            let vc = FFOnboardingAuthenticationViewController(type: .authenticationOnlyDisplay)
-            vc.modalPresentationStyle = .fullScreen
-            present(vc, animated: true)
-        }
+        viewModel.changeUserAccount()
     }
 }
 
@@ -125,12 +105,13 @@ extension FFUserAccountViewController: SetupViewController {
     func setupView() {
         title = "User account"
         view.backgroundColor = .clear
-        loadUserData()
+        setupViewModel()
+        
         
         setupUserImageView()
         setupUserNameLabel()
         setupNavigationController()
-        setupViewModel()
+        
         setupScrollView()
         setupUserAccountButton()
 
@@ -157,15 +138,6 @@ extension FFUserAccountViewController: SetupViewController {
         userAccountButton.addTarget(self, action: #selector(changeUserAccount), for: .primaryActionTriggered)
     }
     
-    func loadUserData(){
-        guard let data = FFUserMainDataManager().loadUserMainData() else { return }
-        userData = data
-        DispatchQueue.main.async { [weak self] in
-            self?.userFullNameLabel.text = data.fullName
-            self?.userAccountButton.setTitle(data.account, for: .normal)
-        }
-    }
-    
     func setupScrollView(){
         scrollView.refreshControl = refreshControl
         scrollView.refreshControl?.addTarget(self, action: #selector(didGrabScrollView), for: .primaryActionTriggered)
@@ -176,12 +148,14 @@ extension FFUserAccountViewController: SetupViewController {
     }
     
     func setupViewModel() {
-        
+        viewModel = FFUserAccountViewModel(viewController: self)
+        viewModel.delegate = self
+        viewModel.loadUserData()
     }
     
     func reloadUserImageView(){
         DispatchQueue.main.asyncAfter(deadline: .now()+1) { [ unowned self ] in
-            loadUserData()
+            viewModel.loadUserData()
             userImageView.image = userImage
             refreshControl.endRefreshing()
             indicatorView.stopAnimating()
@@ -190,6 +164,23 @@ extension FFUserAccountViewController: SetupViewController {
         }
     }
     
+}
+
+extension FFUserAccountViewController: UserAccountDelegate {
+    func didChangeUserName(text: String) {
+        DispatchQueue.main.async { [unowned self] in
+            userFullNameLabel.text = text
+        }
+    }
+    
+    func didLoadUserData() {
+        let name = viewModel.userData.fullName
+        let account = viewModel.userData.account
+        DispatchQueue.main.async { [unowned self] in
+            userFullNameLabel.text = name
+            userAccountButton.setTitle(account, for: .normal)
+        }
+    }
 }
 
 extension FFUserAccountViewController: PHPickerViewControllerDelegate {

@@ -36,8 +36,6 @@ class FFOnboardingAuthenticationViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var isDataCreated: ((Bool) -> Void)?
-    
     private let loginUserLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.text = "Login"

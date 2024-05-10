@@ -21,12 +21,11 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
     
     //MARK: - Action methods
     @objc private func didTapDismiss(){
-        self.navigationController?.popViewController(animated: true)
+        viewModel.popPresentedController()
     }
     
     @objc private func didTapSaveUserData(){
         viewModel.saveUserData()
-    
     }
     
     //MARK: - Set up methods
@@ -67,24 +66,15 @@ class FFHealthUserInformationViewController: UIViewController, SetupViewControll
 //MARK: - Table view data source
 extension FFHealthUserInformationViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel.tableViewData.count
+        viewModel.numberOfSections(in: tableView)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.tableViewData[section].count
+        viewModel.tableView(tableView, numberOfRowsInSection: section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0,1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
-            cell.configureLabels(value: viewModel.userData, indexPath: indexPath)
-            return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
-            cell.configureCell( indexPath: indexPath)
-            return cell
-        }
+        viewModel.tableView(tableView, cellForRowAt: indexPath)
     }
 }
 
@@ -97,28 +87,29 @@ extension FFHealthUserInformationViewController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 55
+        viewModel.tableView(tableView, heightForRowAt: indexPath)
     }
     
     
     //Footer
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 5
+        viewModel.tableView(tableView, heightForFooterInSection: section)
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        viewModel.tableView(tableView, heightForHeaderInSection: section)
     }
 }
 
 extension FFHealthUserInformationViewController: HealthUserInformationDelegate {
     func didReloadTableView(indexPath: IndexPath?) {
-        if let indexPath = indexPath {
-            tableView.reloadRows(at: [indexPath], with: .fade)
-        } else {
-            tableView.reloadData()
+        DispatchQueue.main.async { [unowned self] in
+            if let indexPath = indexPath {
+                tableView.reloadRows(at: [indexPath], with: .fade)
+            } else {
+                tableView.reloadData()
+            }
         }
-        
     }
     
     

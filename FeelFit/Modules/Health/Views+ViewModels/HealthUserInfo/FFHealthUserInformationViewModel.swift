@@ -36,7 +36,7 @@ final class FFHealthUserInformationViewModel {
         ["Save":"Save"]
     ]
     
-    private(set) var tableViewData: [[String]] = [
+    private var tableViewData: [[String]] = [
         ["Name","Second Name"],
         ["Birthday","Gender","Blood Type","Skin Type(Fitzpatrick Type)","Stoller chair"],
         ["Load"],
@@ -48,21 +48,11 @@ final class FFHealthUserInformationViewModel {
         []
     ]
     
+    private var firstUserData: [[String]] = [[],[]]
+    
     func loadFullUserData(){
         userData = storeManager.loadUserDataModel()
-    }
-    
-    
-    
-    private func loadHealthUserData(){
-        FFHealthDataManager.shared.loadingCharactersData { [unowned self] data in
-            userData[1].append(data?.dateOfBirth?.convertComponentsToDateString() ?? "Not set")
-            userData[1].append(data?.userGender ?? "Not set")
-            userData[1].append(data?.bloodType ?? "Not set")
-            userData[1].append(data?.fitzpatrickSkinType ?? "Not set")
-            userData[1].append(data?.wheelChairUse ?? "Not set")
-            delegate?.didReloadTableView(indexPath: nil)
-        }
+        firstUserData = userData
     }
     
     func saveUserData(){
@@ -71,9 +61,41 @@ final class FFHealthUserInformationViewModel {
         case .success(let success):
             if !success {
                 viewController.alertError(message: "Error saving model")
+            } else {
+                viewController.navigationController?.popViewController(animated: true)
             }
         case .failure(let failure):
             viewController.alertError(title: "Error",message: failure.localizedDescription)
+        }
+    }
+    
+    func popPresentedController(){
+        if firstUserData != userData {
+            requestSaveChanges()
+        } else {
+            viewController.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    private func requestSaveChanges(){
+        let alert = UIAlertController(title: "Warning", message: "Do you want to save changes?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [unowned self] _ in
+            viewController.navigationController?.popViewController(animated: true)
+        }))
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [ unowned self] _ in
+            saveUserData()
+        }))
+        viewController.present(alert, animated: true)
+    }
+    
+    private func loadHealthUserData(){
+        FFHealthDataManager.shared.loadingCharactersData { [unowned self] data in
+            userData[1][0] = data?.dateOfBirth?.convertComponentsToDateString() ?? "Not set"
+            userData[1][1] = data?.userGender ?? "Not set"
+            userData[1][2] = data?.bloodType ?? "Not set"
+            userData[1][3] = data?.fitzpatrickSkinType ?? "Not set"
+            userData[1][4] = data?.wheelChairUse ?? "Not set"
+            delegate?.didReloadTableView(indexPath: nil)
         }
     }
     
@@ -123,16 +145,41 @@ final class FFHealthUserInformationViewModel {
             message: "Do you want to leave account",
             actionTitle: "Leave",
             style: .alert,
-            buttonStyle: .destructive) {
-                FFAuthenticationManager.shared.didExitFromAccount()
-                
+            buttonStyle: .destructive) { [unowned self] in
+                openAuthenticationController()
             }
+    }
+    
+    private func openAuthenticationController(){
+        let authVC = FFOnboardingAuthenticationViewController(type:.authenticationOnlyDisplay)
+        authVC.modalPresentationStyle = .fullScreen
+        viewController.present(authVC, animated: true)
+        FFAuthenticationManager.shared.didExitFromAccount()
     }
 }
 
 //MARK: - Table view data source
 extension FFHealthUserInformationViewModel {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return tableViewData.count
+    }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tableViewData[section].count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch indexPath.section {
+        case 0,1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: FFSubtitleTableViewCell.identifier, for: indexPath) as! FFSubtitleTableViewCell
+            cell.configureLabels(value: userData, indexPath: indexPath)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: FFCenteredTitleTableViewCell.identifier, for: indexPath) as! FFCenteredTitleTableViewCell
+            cell.configureCell( indexPath: indexPath)
+            return cell
+        }
+    }
 }
 
 //MARK: - Table view delegate
@@ -151,6 +198,20 @@ extension FFHealthUserInformationViewModel {
         default:
             break
         }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 55
+    }
+    
+    
+    //Footer
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
     }
 }
 

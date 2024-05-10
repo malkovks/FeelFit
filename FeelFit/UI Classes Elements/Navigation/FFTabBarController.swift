@@ -23,8 +23,6 @@ final class FFTabBarController: UITabBarController {
         configureTabBar()
     }
     
-    
-    
     private func configureTabBar(){
         setupControllerBar()
         setupTabBar()

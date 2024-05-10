@@ -150,6 +150,7 @@
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
 		0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* HealthKitSupport.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
+		FD3CBA432BEE1AD700DE9F78 /* FFUserAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3CBA422BEE1AD700DE9F78 /* FFUserAccountViewModel.swift */; };
 		FD4480AE2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */; };
 		FD4480B02BE60A5400BB2CBD /* UserHealthMainData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */; };
 		FD4480B22BE60A7800BB2CBD /* FFUserMainDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480B12BE60A7800BB2CBD /* FFUserMainDataManager.swift */; };
@@ -317,6 +318,7 @@
 		0AEE085F2B7B61960043722B /* HealthKitSupportMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupportMethods.swift; sourceTree = "<group>"; };
 		0AF03A662B58F85200715007 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthKitSupport.swift; path = ../Modules/Health/Model/HealthKitSupport.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
+		FD3CBA422BEE1AD700DE9F78 /* FFUserAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserAccountViewModel.swift; sourceTree = "<group>"; };
 		FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
 		FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHealthMainData.swift; sourceTree = "<group>"; };
 		FD4480B12BE60A7800BB2CBD /* FFUserMainDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserMainDataManager.swift; sourceTree = "<group>"; };
@@ -749,6 +751,7 @@
 		0A63AC652B6D8DB700B32981 /* Views+ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				FD3CBA412BEE1AB400DE9F78 /* UserAccont */,
 				FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */,
 				FDFC22D12BDAB1FF005BE41C /* UserProfileV */,
 				FDEF7BA62BD920BB004B303C /* HealthCategories */,
@@ -1200,6 +1203,15 @@
 			path = FavouriteExerciseController;
 			sourceTree = "<group>";
 		};
+		FD3CBA412BEE1AB400DE9F78 /* UserAccont */ = {
+			isa = PBXGroup;
+			children = (
+				FDFC22D32BDE2CA8005BE41C /* FFUserAccountViewController.swift */,
+				FD3CBA422BEE1AD700DE9F78 /* FFUserAccountViewModel.swift */,
+			);
+			path = UserAccont;
+			sourceTree = "<group>";
+		};
 		FD4480AB2BE608FC00BB2CBD /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -1328,7 +1340,6 @@
 		FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				FDFC22D32BDE2CA8005BE41C /* FFUserAccountViewController.swift */,
 				FDFC22D52BDE2DB4005BE41C /* FFAccessToServicesViewController.swift */,
 			);
 			path = "User Profile Setup Controllers";
@@ -1448,6 +1459,7 @@
 				0A1BEC742AC1D9FE00914FD5 /* FFNewsPageTableViewCell.swift in Sources */,
 				0A8479B52BB41C0300C0F8EE /* ActionsWithUserImageView.swift in Sources */,
 				FD60AA872BD928D200A54463 /* FFHealthCategoriesViewModel.swift in Sources */,
+				FD3CBA432BEE1AD700DE9F78 /* FFUserAccountViewModel.swift in Sources */,
 				FDEF7BA52BD9208E004B303C /* FFHealthUserInformationViewModel.swift in Sources */,
 				0ACEA9D82ACD341D00899CF6 /* Array+Extensions.swift in Sources */,
 				0A9151A72B03BE1A00FE5E41 /* FFTrainingPlanRealmModel.swift in Sources */,

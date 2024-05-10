@@ -45,9 +45,15 @@ class FFUserProfileViewModel: HandleUserImageProtocol {
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func pushUserData(){
+    func presentUserData(){
         let vc = FFUserAccountViewController()
-        viewController.navigationController?.pushViewController(vc, animated: true)
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .pageSheet
+        navVC.sheetPresentationController?.detents = [.medium()]
+        navVC.sheetPresentationController?.prefersGrabberVisible = true
+        navVC.isNavigationBarHidden = false
+        navVC.navigationBar.tintColor = .main
+        viewController.present(navVC, animated: true)
     }
     
     func clearUserCache(){
@@ -81,9 +87,6 @@ class FFUserProfileViewModel: HandleUserImageProtocol {
         alert.addAction(UIAlertAction(title: "Continue", style: .destructive, handler: { [weak self ] _ in
             FFAuthenticationManager.shared.didExitFromAccount()
             let vc = FFOnboardingAuthenticationViewController(type: .authenticationOnlyDisplay)
-            vc.isDataCreated = { [weak self] status in
-                self?.loadUserData()
-            }
             vc.modalPresentationStyle = .fullScreen
             self?.viewController.present(vc, animated: true)
             
@@ -120,7 +123,7 @@ extension FFUserProfileViewModel {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath {
         case [0,0]:
-            pushUserData()
+            presentUserData()
         case [0,1]:
             pushUserHealthData(image: userImage)
         case [1,0]:
