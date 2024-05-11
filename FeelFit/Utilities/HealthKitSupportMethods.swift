@@ -20,7 +20,7 @@ func getSampleType(for identifier: String) -> HKSampleType?{
     return nil
 }
 
-func getObjectType(for identifier: String) -> HKObjectType? {
+func getCharacterType(for identifier: String) -> HKCharacteristicType? {
     if let objectType = HKObjectType.characteristicType(forIdentifier: HKCharacteristicTypeIdentifier(rawValue: identifier)){
         return objectType
     }

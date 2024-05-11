@@ -21,7 +21,7 @@ class FFHealthDataManager {
     private init() {}
     
     private let healthStore = HKHealthStore()
-    private let userCharactersTypes = Set(FFHealthData.charDataTypes)
+    private let userCharactersTypes = Set(FFHealthDataUser.readDataTypes)
     
     func loadSelectedIdentifierData(filter: SelectedTimePeriodData?,identifier: HKQuantityTypeIdentifier,startDate: Date, completion: @escaping (_ model: [FFUserHealthDataProvider]?) -> ()){
         DispatchQueue.global().async { [weak self] in

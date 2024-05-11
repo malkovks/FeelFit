@@ -150,6 +150,9 @@
 		0AF03A652B57D48000715007 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF03A642B57D48000715007 /* CareKitUI */; };
 		0AF03A672B58F85200715007 /* HealthKitSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF03A662B58F85200715007 /* HealthKitSupport.swift */; };
 		0AFC89632AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */; };
+		FD075C482BEFA60F001C234A /* FFAccessToServicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD075C472BEFA60F001C234A /* FFAccessToServicesViewModel.swift */; };
+		FD075C4A2BEFC5FE001C234A /* FFHealthUserDataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD075C492BEFC5FE001C234A /* FFHealthUserDataHandler.swift */; };
+		FD075C4C2BEFC62B001C234A /* CheckServiceAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD075C4B2BEFC62B001C234A /* CheckServiceAuthentication.swift */; };
 		FD3CBA432BEE1AD700DE9F78 /* FFUserAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3CBA422BEE1AD700DE9F78 /* FFUserAccountViewModel.swift */; };
 		FD4480AE2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */; };
 		FD4480B02BE60A5400BB2CBD /* UserHealthMainData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */; };
@@ -318,6 +321,9 @@
 		0AEE085F2B7B61960043722B /* HealthKitSupportMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitSupportMethods.swift; sourceTree = "<group>"; };
 		0AF03A662B58F85200715007 /* HealthKitSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HealthKitSupport.swift; path = ../Modules/Health/Model/HealthKitSupport.swift; sourceTree = "<group>"; };
 		0AFC89622AFEDD60005ADC17 /* FFTrainingPlanCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTrainingPlanCollectionViewCell.swift; sourceTree = "<group>"; };
+		FD075C472BEFA60F001C234A /* FFAccessToServicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFAccessToServicesViewModel.swift; sourceTree = "<group>"; };
+		FD075C492BEFC5FE001C234A /* FFHealthUserDataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFHealthUserDataHandler.swift; sourceTree = "<group>"; };
+		FD075C4B2BEFC62B001C234A /* CheckServiceAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckServiceAuthentication.swift; sourceTree = "<group>"; };
 		FD3CBA422BEE1AD700DE9F78 /* FFUserAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserAccountViewModel.swift; sourceTree = "<group>"; };
 		FD4480AD2BE6093700BB2CBD /* FFUserHealthDataModelRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFUserHealthDataModelRealm.swift; sourceTree = "<group>"; };
 		FD4480AF2BE60A5400BB2CBD /* UserHealthMainData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHealthMainData.swift; sourceTree = "<group>"; };
@@ -372,6 +378,7 @@
 				0AF03A662B58F85200715007 /* HealthKitSupport.swift */,
 				0A3C56CC2B64F65800FCD2D8 /* MediaFilesSupport.swift */,
 				0A38936A2B6A35CB007FC363 /* NotificationsSupport.swift */,
+				FD075C4B2BEFC62B001C234A /* CheckServiceAuthentication.swift */,
 			);
 			path = "Authorization To Services";
 			sourceTree = "<group>";
@@ -735,6 +742,7 @@
 				0A13D8D52B5A40A800FD8C92 /* CareKitSupport.swift */,
 				FDE1D7E62BD5719A0019A5D2 /* FFHealthDataHandler.swift */,
 				FDFC22D72BDE31DD005BE41C /* RealmHandlerSupport.swift */,
+				FD075C492BEFC5FE001C234A /* FFHealthUserDataHandler.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -751,9 +759,7 @@
 		0A63AC652B6D8DB700B32981 /* Views+ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				FD3CBA412BEE1AB400DE9F78 /* UserAccont */,
-				FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */,
-				FDFC22D12BDAB1FF005BE41C /* UserProfileV */,
+				FDFC22D22BDE2B01005BE41C /* User Settings */,
 				FDEF7BA62BD920BB004B303C /* HealthCategories */,
 				FDEF7BA32BD92077004B303C /* HealthUserInfo */,
 				FD6818602BCE96AE00A9EDE8 /* SelectedCartesianChart */,
@@ -1167,6 +1173,15 @@
 			path = viewModel;
 			sourceTree = "<group>";
 		};
+		FD075C462BEFA5EB001C234A /* UserAccess */ = {
+			isa = PBXGroup;
+			children = (
+				FDFC22D52BDE2DB4005BE41C /* FFAccessToServicesViewController.swift */,
+				FD075C472BEFA60F001C234A /* FFAccessToServicesViewModel.swift */,
+			);
+			path = UserAccess;
+			sourceTree = "<group>";
+		};
 		FD278D7B2BC955BE0065DACE /* MusclesGroupController */ = {
 			isa = PBXGroup;
 			children = (
@@ -1337,12 +1352,14 @@
 			path = UserProfileV;
 			sourceTree = "<group>";
 		};
-		FDFC22D22BDE2B01005BE41C /* User Profile Setup Controllers */ = {
+		FDFC22D22BDE2B01005BE41C /* User Settings */ = {
 			isa = PBXGroup;
 			children = (
-				FDFC22D52BDE2DB4005BE41C /* FFAccessToServicesViewController.swift */,
+				FD075C462BEFA5EB001C234A /* UserAccess */,
+				FDFC22D12BDAB1FF005BE41C /* UserProfileV */,
+				FD3CBA412BEE1AB400DE9F78 /* UserAccont */,
 			);
-			path = "User Profile Setup Controllers";
+			path = "User Settings";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1496,6 +1513,7 @@
 				FD6818632BCE976600A9EDE8 /* FFHealthCategoryCartesianViewModel.swift in Sources */,
 				0A4494C42AB821FD0082C909 /* FFNewsPageViewController.swift in Sources */,
 				0A4495162ABA67CE0082C909 /* FFTabBarController.swift in Sources */,
+				FD075C4C2BEFC62B001C234A /* CheckServiceAuthentication.swift in Sources */,
 				0A5C6AD62B3E1FD700193DA0 /* FFPlanCompletedTrainingViewController.swift in Sources */,
 				0A91E89E2B74DBEC004ECC24 /* FFPresentHealthFooterCollectionView.swift in Sources */,
 				0A91E89C2B74DBC1004ECC24 /* FFPresentHealthHeaderCollectionView.swift in Sources */,
@@ -1503,6 +1521,7 @@
 				FDEF7BAA2BD9274D004B303C /* FFFavouriteUserCategoryViewModel.swift in Sources */,
 				0A3AECFF2B84B8C300B2F8F3 /* FFSubtitleTableViewCell.swift in Sources */,
 				0A3FC2E42ADF0B8A00E35739 /* FFImageDetailsViewModel.swift in Sources */,
+				FD075C482BEFA60F001C234A /* FFAccessToServicesViewModel.swift in Sources */,
 				0A3AECFB2B84A45D00B2F8F3 /* FFHealthUserInformationViewController.swift in Sources */,
 				0A7278B12B1E40D90055EECD /* FFPlanExercisesViewModel.swift in Sources */,
 				FD9DE3682BBC3645005775DF /* TipKit+UIViewControllerExtension.swift in Sources */,
@@ -1592,6 +1611,7 @@
 				FDFC22D62BDE2DB4005BE41C /* FFAccessToServicesViewController.swift in Sources */,
 				0A1A9E042BB160E400FC0884 /* UserImageTableViewHeaderView.swift in Sources */,
 				0ACEA9DA2ACD3A6900899CF6 /* FFNewsFavouriteViewController.swift in Sources */,
+				FD075C4A2BEFC5FE001C234A /* FFHealthUserDataHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

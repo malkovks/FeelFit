@@ -20,14 +20,6 @@ class FFHealthData {
         return allHealthDataTypes
     }
     
-    static var charDataTypes: [HKObjectType] {
-        return charactersTypes.compactMap { getObjectType(for: $0) }
-    }
-    
-    static var mainQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
-        return necessaryIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }
-    }
-    
     static var allQuantityTypeIdentifiers: [HKQuantityTypeIdentifier] {
         return typeIdentifiers.compactMap { HKQuantityTypeIdentifier(rawValue: $0) }.sorted { $0.rawValue < $1.rawValue }
     }
@@ -42,9 +34,31 @@ class FFHealthData {
         }
         return identifier
     }
+
+    private static var allHealthDataTypes: [HKSampleType] {
+        return typeIdentifiers.compactMap { getSampleType(for: $0) }
+    }
     
-    static var characteristicDataTypes: [HKCharacteristicTypeIdentifier] {
-        return charactersTypes.compactMap { HKCharacteristicTypeIdentifier(rawValue: $0) }
+    private static var typeIdentifiers: [String] = [
+        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
+        
+        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
+        HKQuantityTypeIdentifier.stepCount.rawValue,
+        HKQuantityTypeIdentifier.distanceCycling.rawValue,
+        HKQuantityTypeIdentifier.runningPower.rawValue,
+        HKQuantityTypeIdentifier.runningSpeed.rawValue,
+        
+        HKQuantityTypeIdentifier.vo2Max.rawValue,
+        
+        HKQuantityTypeIdentifier.height.rawValue,
+        HKQuantityTypeIdentifier.bodyMass.rawValue,
+        HKQuantityTypeIdentifier.bodyFatPercentage.rawValue,
+        HKQuantityTypeIdentifier.bodyMassIndex.rawValue
+    ]
+
+    
+    class func saveHealthData(_ data: [HKObject], completion: @escaping (_ success: Bool, _ error: Error?) -> ()){
+        healthStore.save(data, withCompletion: completion)
     }
     
     static func processHealthSample(with value: Double,data provider: [FFUserHealthDataProvider]) -> HKObject? {
@@ -77,44 +91,6 @@ class FFHealthData {
         
         return optionalSample
     }
-    
-    private static var charactersTypes: [String] = [
-        HKCharacteristicTypeIdentifier.bloodType.rawValue,
-        HKCharacteristicTypeIdentifier.biologicalSex.rawValue,
-        HKCharacteristicTypeIdentifier.fitzpatrickSkinType.rawValue,
-        HKCharacteristicTypeIdentifier.wheelchairUse.rawValue,
-        HKCharacteristicTypeIdentifier.dateOfBirth.rawValue,
-    ]
-    
-    private static var allHealthDataTypes: [HKSampleType] {
-        return typeIdentifiers.compactMap { getSampleType(for: $0) }
-    }
-    
-    private static var necessaryIdentifiers: [String] = [
-        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
-        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
-        HKQuantityTypeIdentifier.stepCount.rawValue,
-    ]
-    
-    private static var typeIdentifiers: [String] = [
-        HKQuantityTypeIdentifier.activeEnergyBurned.rawValue,
-        
-        HKQuantityTypeIdentifier.distanceWalkingRunning.rawValue,
-        HKQuantityTypeIdentifier.stepCount.rawValue,
-        HKQuantityTypeIdentifier.distanceCycling.rawValue,
-        HKQuantityTypeIdentifier.runningPower.rawValue,
-        HKQuantityTypeIdentifier.runningSpeed.rawValue,
-        
-        HKQuantityTypeIdentifier.vo2Max.rawValue,
-        
-        HKQuantityTypeIdentifier.height.rawValue,
-        HKQuantityTypeIdentifier.bodyMass.rawValue,
-        HKQuantityTypeIdentifier.bodyFatPercentage.rawValue,
-        HKQuantityTypeIdentifier.bodyMassIndex.rawValue
-    ]
-
-    
-    class func saveHealthData(_ data: [HKObject], completion: @escaping (_ success: Bool, _ error: Error?) -> ()){
-        healthStore.save(data, withCompletion: completion)
-    }
 }
+
+

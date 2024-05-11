@@ -16,7 +16,7 @@ class FFHealthDataAccess {
     
     private let readTypes = Set(FFHealthData.readDataTypes)
     private let shareTypes = Set(FFHealthData.shareDataTypes)
-    private let userCharactersTypes = Set(FFHealthData.charDataTypes)
+    private let userCharactersTypes = Set(FFHealthDataUser.readDataTypes)
     private let healthStore = HKHealthStore()
     
     ///Function for request access to Health Kit. Inherit read and share types
