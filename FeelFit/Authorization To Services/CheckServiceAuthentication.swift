@@ -11,20 +11,18 @@ import Photos
 import AVFoundation
 
 struct EnableServiceStatus {
-    var health: Bool
-    var userHealth: Bool
-    var media: Bool
-    var camera: Bool
-    var notification: Bool
+    var health: Bool = false
+    var userHealth: Bool = false
+    var media: Bool = false
+    var camera: Bool = false
+    var notification: Bool = false
 }
 
 class CheckServiceAuthentication {
     private let healthStore = HKHealthStore()
     
     func checkAccess() async -> EnableServiceStatus {
-        
-        
-        var model: EnableServiceStatus = .init(health: false, userHealth: false, media: false, camera: false, notification: false)
+        var model = EnableServiceStatus()
         model.notification = await notificationRequestAccess()
         model.media = await mediaRequestAccess()
         model.camera = await cameraRequestAccess()
