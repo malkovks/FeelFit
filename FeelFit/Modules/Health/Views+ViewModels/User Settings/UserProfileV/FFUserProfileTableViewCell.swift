@@ -29,11 +29,23 @@ class FFUserProfileTableViewCell: UITableViewCell {
         userTitleLabel.text = text
         switch indexPath.section {
         case 3:
-            userTitleLabel.textColor = .systemRed
-            accessoryType = .none
-            userTitleLabel.textAlignment = .center
+            setupThirdCell()
         default:
             break
+        }
+    }
+    
+    func setupThirdCell(){
+        let authStatus = FFAuthenticationManager.shared.isUserEnteredInAccount()
+        accessoryType = .none
+        userTitleLabel.textAlignment = .center
+        if authStatus {
+            userTitleLabel.textColor = .systemRed
+            userTitleLabel.text = "Exit from account"
+        } else {
+            userTitleLabel.textColor = .customBlack
+            userTitleLabel.text = "Authentication"
+            
         }
     }
     
@@ -60,5 +72,4 @@ class FFUserProfileTableViewCell: UITableViewCell {
         super.awakeFromNib()
         userTitleLabel.text = nil
     }
-
 }

@@ -35,15 +35,15 @@ class FFMediaDataAccess {
     }
 
     /// Function for creating asking access to users photo library and returning boolean status
-    func requestPhotoLibraryAccess(completionHandler: @escaping (_ success: Bool) -> ()) {
+    func requestPhotoLibraryAccess(completionHandler: ((_ success: Bool) -> Void)? = nil) {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             switch status {
             case .notDetermined,.denied,.restricted:
-                completionHandler(false)
+                completionHandler?(false)
             case .limited:
-                completionHandler(true)
+                completionHandler?(true)
             case .authorized:
-                completionHandler(true)
+                completionHandler?(true)
             @unknown default:
                 fatalError("Error getting status access of PHPhoto Library")
             }
@@ -72,9 +72,9 @@ class FFMediaDataAccess {
 
     ///  Making users request for getting access to Camera
     /// - Parameter completionsHandler: return boolean value which return is user give access or not
-    func requestAccessForCamera(completionsHandler: @escaping (_ status: Bool) -> ()) {
+    func requestAccessForCamera(completionsHandler: ((_ status: Bool) -> Void)? = nil) {
         AVCaptureDevice.requestAccess(for: .video) { success in
-            completionsHandler(success)
+            completionsHandler?(success)
         }
     }
 }

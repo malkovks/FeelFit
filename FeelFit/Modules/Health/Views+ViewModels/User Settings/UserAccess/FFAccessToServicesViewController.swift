@@ -59,6 +59,10 @@ extension FFAccessToServicesViewController: SetupViewController {
     
     private func setupTableView(){
         tableView.register(FFAccessTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.register(FFAccessHeaderTableView.self, forHeaderFooterViewReuseIdentifier: FFAccessHeaderTableView.identifier)
+        tableView.register(FFAccessFooterTableView.self, forHeaderFooterViewReuseIdentifier: FFAccessFooterTableView.identifier)
+        tableView.estimatedSectionHeaderHeight = 44
+        tableView.estimatedSectionFooterHeight = 44
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .secondarySystemBackground
@@ -80,6 +84,16 @@ extension FFAccessToServicesViewController: AccessToServicesDelegate {
         }
     }
     
+    func requestToOpenSystemAppSettings(){
+        let alert = UIAlertController(title: "Change access", message: "Do you want to change access of selected value. We will remove You to system settings", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
+            if let settings = URL(string: UIApplication.openSettingsURLString){
+                UIApplication.shared.open(settings)
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
     
 }
 
@@ -103,14 +117,19 @@ extension FFAccessToServicesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let alert = UIAlertController(title: "Change access", message: "Do you want to change access of selected value. We will remove You to system settings", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { _ in
-            if let settings = URL(string: UIApplicationOpenNotificationSettingsURLString){
-                UIApplication.shared.open(settings)
-            }
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alert, animated: true)
+        requestToOpenSystemAppSettings()
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: FFAccessHeaderTableView.identifier) as! FFAccessHeaderTableView
+        header.configureHeaderView(tableView)
+        return header
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: FFAccessFooterTableView.identifier) as! FFAccessFooterTableView
+        footer.configureFooterView(tableView)
+        return footer
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  FFAccessTableViewCell.swift
+//  FFAccessTableView.swift
 //  FeelFit
 //
 //  Created by Константин Малков on 13.05.2024.
@@ -32,10 +32,12 @@ class FFAccessTableViewCell : UITableViewCell {
     
     @objc private func didTapSwitch(_ sender: UISwitch){
         let switchTag = sender.tag
+        let handler = IndexHandlerRequestAccess(caseValue: switchTag)
         if !sender.isOn {
             print("Sender become to off")
         } else {
-            SwitchSetupHandler(caseValue: switchTag)
+            print("Request access to current index ")
+            handler.processCaseValue()
         }
     }
     
@@ -76,43 +78,43 @@ class FFAccessTableViewCell : UITableViewCell {
     
 }
 
-class SwitchSetupHandler {
+class FFAccessHeaderTableView: UITableViewHeaderFooterView {
+    static let identifier = "FFAccessHeaderTableView"
+
+    private let headerText: String = "This page include current status of application services. If you want to change access to service you can toggle switch button"
     
-    let caseValue: Int
-    
-    init(caseValue: Int){
-        self.caseValue = caseValue
-        processCaseValue()
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
     }
     
-    private func processCaseValue(){
-        switch caseValue {
-        case 0: requestAccessToNotification()
-        case 1: requestAccessToCamera()
-        case 2: requestAccessToMedia()
-        case 3: requestAccessToHealth()
-        case 4: requestAccessToUserHealth()
-        default: break
-        }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private func requestAccessToNotification(){
-        print("requestAccessToNotification")
+    func configureHeaderView(_ tableView: UITableView){
+        textLabel?.frame = CGRect(x: 0, y: 5, width: tableView.frame.width, height: tableView.sectionHeaderHeight)
+        textLabel?.text = headerText
+        textLabel?.numberOfLines = 0
+    }
+}
+
+class FFAccessFooterTableView: UITableViewHeaderFooterView {
+    static let identifier = "FFAccessFooterTableView"
+    
+    private let footerText: String = NSLocalizedString("Important information. If you want to disable access to any service it is better to switch in Settings -> FeelFit -> Services which status you want to change.\nIf you have disabled access to the service and need to re-enable it, you will need to do it manually back in the system settings and change access.", comment: "comment")
+    
+    
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
     }
     
-    private func requestAccessToCamera(){
-        print("requestAccessToCamera")
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private func requestAccessToMedia(){
-        print("requestAccessToMedia")
+    func configureFooterView(_ tableView: UITableView){
+        textLabel?.text = footerText
+        textLabel?.frame = CGRect(x: 0, y: 5, width: tableView.frame.width, height: tableView.sectionFooterHeight)
     }
     
-    private func requestAccessToHealth(){
-        print("requestAccessToHealth")
-    }
-    
-    private func requestAccessToUserHealth(){
-        print("requestAccessToHealth")
-    }
 }

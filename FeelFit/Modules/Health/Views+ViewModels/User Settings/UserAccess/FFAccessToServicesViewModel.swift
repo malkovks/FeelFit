@@ -19,6 +19,8 @@ class FFAccessToServicesViewModel {
     
     var accessData = EnableServiceStatus()
     
+    let headerText: String = ""
+    
     init(viewController: UIViewController) {
         self.viewController = viewController
     }

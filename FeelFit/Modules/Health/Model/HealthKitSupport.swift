@@ -67,21 +67,4 @@ class FFHealthDataAccess {
             }
         }
     }
-    
-    ///Function necessary for accessing to steps data and loading it while application in background mode
-    func requestAccessToBackgroundMode(completion handler: @escaping (Result<Bool,Error>) -> ()) {
-        if !HKHealthStore.isHealthDataAvailable() {
-            print("Can't get access to Health Kit")
-            return
-        }
-        
-        guard let steps = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
-        healthStore.enableBackgroundDelivery(for: steps, frequency: .immediate) { status, error in
-            if status {
-                handler(.success(status))
-            } else if let error = error {
-                handler(.failure(error))
-            }
-        }
-    }
 }
