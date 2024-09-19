@@ -80,7 +80,7 @@ extension ActionsWithUserImageView where Self: UIViewController {
                 if success {
                     self.present(pickerViewController, animated: animated)
                 } else {
-                    viewAlertController(text: "You did not give access to media files. Шf you need, you can provide access to system components", controllerView: self.view)
+                    viewAlertController(text: "You did not give access to media files. If you need, you can provide access to system components", controllerView: self.view)
                 }
             }
         case .restricted:

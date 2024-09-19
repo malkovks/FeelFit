@@ -23,6 +23,7 @@ extension UIViewController {
     func addNavigationBarButton(title: String,imageName: String,action: Selector?,menu: UIMenu?) -> UIBarButtonItem {
         let image = UIImage(systemName: imageName)
         let button = UIButton(type: .system)
+        button.isSymbolAnimationEnabled = true
         if title.isEmpty {
             button.setImage(image, for: .normal)
         } else {

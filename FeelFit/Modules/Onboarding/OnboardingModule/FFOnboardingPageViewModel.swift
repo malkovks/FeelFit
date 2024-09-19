@@ -1,9 +1,4 @@
-//
-//  FFOnboardingPageViewModel.swift
-//  FeelFit
-//
-//  Created by Константин Малков on 09.04.2024.
-//
+
 
 import UIKit
 

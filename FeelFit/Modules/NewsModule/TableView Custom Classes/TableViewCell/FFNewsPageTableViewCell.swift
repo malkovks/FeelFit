@@ -22,7 +22,11 @@ class FFNewsPageTableViewCell: UITableViewCell {
     static let identifier = "NewsPageTableViewCell"
     
     
-    private var isAddedToFavourite: Bool = false
+    private var isAddedToFavourite: Bool = false {
+        didSet {
+            newsAddFavouriteButton.setImage(isAddedToFavourite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart"), for: .normal)
+        }
+    }
     
     //MARK: - UI elements
     let titleLabel: UILabel = {
@@ -67,13 +71,13 @@ class FFNewsPageTableViewCell: UITableViewCell {
          return label
     }()
     
-    let contentLabel: UILabel = {
+    let descriptionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .natural
         label.textColor = FFResources.Colors.textColor
         label.font = .systemFont(ofSize: 14,weight: .thin)
-         return label
+        return label
     }()
     
     let newsImageView: UIImageView = {
@@ -85,7 +89,6 @@ class FFNewsPageTableViewCell: UITableViewCell {
         image.clipsToBounds = true
         image.backgroundColor = .clear
         image.contentMode = .scaleAspectFill
-        image.image = UIImage(systemName: "photo")
         image.tintColor = FFResources.Colors.activeColor
         return image
     }()
@@ -94,13 +97,24 @@ class FFNewsPageTableViewCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "heart"), for: .normal)
         button.tintColor = FFResources.Colors.activeColor
+        button.isSymbolAnimationEnabled = true
         return button
     }()
+    
+    private lazy var indicatorView: UIActivityIndicatorView = { view in
+        view.color = .alertRed
+        return view
+    }(UIActivityIndicatorView(style: .large))
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupConstraints()
         setupView()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        newsImageView.image = nil
     }
     
     
@@ -111,12 +125,8 @@ class FFNewsPageTableViewCell: UITableViewCell {
     
     //MARK: - Target methods
     @objc private func didTapButtonTapped(sender: UIButton){
-        isAddedToFavourite.toggle()
         let indexPath = IndexPath(row: newsAddFavouriteButton.tag, section: 0)
-        
-        let imageName = isAddedToFavourite ? "heart.fill" : "heart"
-        let image = UIImage(systemName: imageName)
-        newsAddFavouriteButton.setImage(image, for: .normal)
+        isAddedToFavourite.toggle()
         delegate?.buttonDidTapped(sender: self, indexPath: indexPath, status: isAddedToFavourite)
     }
     //MARK: - Setup methods
@@ -129,39 +139,41 @@ class FFNewsPageTableViewCell: UITableViewCell {
         let realm = try! Realm()
         
         let object = realm.objects(FFNewsModelRealm.self).filter("newsTitle == %@ AND newsPublishedAt == %@",model.title,model.publishedAt)
-        if !object.isEmpty {
-            newsAddFavouriteButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            isAddedToFavourite.toggle()
-        } else {
-            newsAddFavouriteButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        isAddedToFavourite.toggle()
+        if let _ = Array(object).first {
             isAddedToFavourite.toggle()
         }
     }
     
 
     
-    func configureCell(model: Articles?,indexPath: IndexPath){
+    internal func configureCell(model: Articles?,indexPath: IndexPath){
         newsAddFavouriteButton.tag = indexPath.row
         titleLabel.text = model?.title ?? nil
-        contentLabel.text = model?.description ?? nil
+        descriptionLabel.text = model?.description ?? nil
         sourceLabel.text = "Source: " + (model?.source.name ?? "")
         publishDateLabel.text = "Published: " + (model?.publishedAt.convertDateToString() ?? "")
+//        newsAddFavouriteButton.setImage(<#T##image: UIImage?##UIImage?#>, for: <#T##UIControl.State#>)
         
         guard let model = model,
               let imageUrl = model.urlToImage else {
+            indicatorView.stopAnimating()
             newsImageView.image = UIImage(systemName: "photo")
             return
         }
+        indicatorView.startAnimating()
         AF.request(imageUrl,method: .get).response { [weak self] response in
             switch response.result {
             case .success(let imageData):
                 let image = UIImage(data: imageData ?? Data(),scale: 1)
                 self?.newsImageView.image = image
+                self?.indicatorView.stopAnimating()
             case .failure(_):
                 self?.newsImageView.image = UIImage(systemName: "photo")
+                self?.indicatorView.stopAnimating()
             }
         }
-        self.filterModel(model: model, indexPath: indexPath)
+//        filterModel(model: model, indexPath: indexPath)
     }
 }
 //MARK: - Constraints
@@ -171,11 +183,12 @@ extension FFNewsPageTableViewCell {
         titleAndReleaseStackView.axis = .vertical
         titleAndReleaseStackView.alignment = .leading
         titleAndReleaseStackView.distribution = .fill
+        titleAndReleaseStackView.spacing = 5
         
         contentView.addSubview(newsAddFavouriteButton)
         newsAddFavouriteButton.snp.makeConstraints { make in
             make.top.trailing.equalToSuperview().offset(3)
-            make.width.height.equalToSuperview().dividedBy(7)
+            make.size.equalTo(44)
         }
         
         contentView.addSubview(titleAndReleaseStackView)
@@ -193,9 +206,15 @@ extension FFNewsPageTableViewCell {
             make.bottom.leading.equalToSuperview().inset(3)
             make.width.equalToSuperview().dividedBy(3.5)
         }
+        
+        newsImageView.addSubview(indicatorView)
+        indicatorView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalToSuperview().multipliedBy(0.7)
+        }
     
-        contentView.addSubview(contentLabel)
-        contentLabel.snp.makeConstraints { make in
+        contentView.addSubview(descriptionLabel)
+        descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(titleAndReleaseStackView.snp.bottom).offset(3)
             make.leading.equalTo(newsImageView.snp.trailing).offset(3)
             make.trailing.bottom.equalToSuperview().inset(3)
